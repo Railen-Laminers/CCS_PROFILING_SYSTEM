@@ -86,9 +86,7 @@ const LoginPage = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <FaChartLine className="text-3xl md:text-4xl text-white/90" />
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-                CCS Profiling
-              </h1>
+
             </div>
             <div className="space-y-4 mt-8">
               <h2 className="text-3xl md:text-4xl font-bold leading-tight">
