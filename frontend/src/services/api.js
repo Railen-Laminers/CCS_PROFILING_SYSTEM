@@ -66,7 +66,7 @@ export const userAPI = {
     return response.data.users;
   },
 
-  // Get single user by ID
+  // Get single user by ID or their username
   getUser: async (id) => {
     const response = await axiosInstance.get(`/users/${id}`);
     return response.data.user;
@@ -93,6 +93,18 @@ export const userAPI = {
   getFaculty: async () => {
     const response = await axiosInstance.get('/faculty');
     return response.data.faculty;
+  },
+
+  // Get all courses
+  getCourses: async () => {
+    const response = await axiosInstance.get('/courses');
+    return response.data.courses;
+  },
+
+  // ADDED: Get all events
+  getEvents: async () => {
+    const response = await axiosInstance.get('/events');
+    return response.data.events;
   },
 };
 
