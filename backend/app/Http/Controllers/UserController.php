@@ -9,7 +9,11 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    // List all users
+    /**
+     * Display a listing of all users.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         $users = User::select('id', 'firstname', 'middlename', 'lastname', 'user_id', 'email', 'role')
@@ -18,14 +22,12 @@ class UserController extends Controller
         return response()->json(['users' => $users], 200);
     }
 
-    // Show a single user nased on their id or user_id
-    // public function show($id)
-    // {
-    //     $user = User::select('id', 'firstname', 'middlename', 'lastname', 'user_id', 'email', 'role')
-    //         ->findOrFail($id);
-
-    //     return response()->json(['user' => $user], 200);
-    // }
+    /**
+     * Display a single user by ID or user_id.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show($id)
     {
         $user = User::select('id', 'firstname', 'middlename', 'lastname', 'user_id', 'email', 'role')
@@ -36,7 +38,12 @@ class UserController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-    // Create a new user
+    /**
+     * Create a new user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -68,7 +75,13 @@ class UserController extends Controller
         ], 201);
     }
 
-    // Update an existing user
+    /**
+     * Update an existing user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -101,7 +114,12 @@ class UserController extends Controller
         ], 200);
     }
 
-    // Delete a user
+    /**
+     * Delete a user.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy($id)
     {
         $user = User::findOrFail($id);
@@ -116,7 +134,11 @@ class UserController extends Controller
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
 
-    // Get all students
+    /**
+     * Get all students.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getStudents()
     {
         $students = User::select('id', 'firstname', 'middlename', 'lastname', 'user_id', 'email')
@@ -126,7 +148,11 @@ class UserController extends Controller
         return response()->json(['students' => $students], 200);
     }
 
-    // Get all faculty
+    /**
+     * Get all faculty.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getFaculty()
     {
         $faculty = User::select('id', 'firstname', 'middlename', 'lastname', 'user_id', 'email')
