@@ -1,6 +1,7 @@
 // App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import DashboardLayout from './components/DashboardLayout';
 import { ProtectedRoute, RoleBasedRoute, PublicRoute } from './components/ProtectedRoute';
 import Login from './pages/Login';
@@ -114,11 +115,13 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

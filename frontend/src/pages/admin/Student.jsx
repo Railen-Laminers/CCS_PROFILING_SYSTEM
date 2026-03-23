@@ -11,7 +11,6 @@ import {
     FaTimes
 } from 'react-icons/fa';
 
-// Spinner component
 const Spinner = () => (
     <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
 );
@@ -23,7 +22,7 @@ const StudentPage = () => {
     const [error, setError] = useState('');
 
     // Form state
-    const [formMode, setFormMode] = useState('create'); // 'create' or 'edit'
+    const [formMode, setFormMode] = useState('create');
     const [formData, setFormData] = useState({
         firstname: '',
         middlename: '',
@@ -36,29 +35,22 @@ const StudentPage = () => {
     const [editingId, setEditingId] = useState(null);
     const [showForm, setShowForm] = useState(false);
 
-    // Action loading states
     const [isCreating, setIsCreating] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-
-    // Password visibility toggle states
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    // Only admin can access this page
     if (user?.role !== 'admin') {
-        return <div className="p-6 text-red-500">You do not have permission to view this page.</div>;
+        return <div className="p-6 text-red-500 dark:text-red-400">You do not have permission to view this page.</div>;
     }
 
-    // Helper to extract meaningful error message from Laravel validation errors
     const getErrorMessage = (err) => {
         if (err.response?.data?.errors) {
             const firstError = Object.values(err.response.data.errors)[0]?.[0];
             return firstError;
         }
-        if (err.response?.data?.message) {
-            return err.response.data.message;
-        }
+        if (err.response?.data?.message) return err.response.data.message;
         return null;
     };
 
@@ -108,14 +100,12 @@ const StudentPage = () => {
                 setError('Passwords do not match.');
                 return false;
             }
-            // Password validation matching backend rules
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
             if (!passwordRegex.test(formData.password)) {
                 setError('Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number.');
                 return false;
             }
         } else if (formMode === 'edit' && formData.password) {
-            // Only validate if a new password is provided
             if (formData.password !== formData.password_confirmation) {
                 setError('Passwords do not match.');
                 return false;
@@ -182,9 +172,7 @@ const StudentPage = () => {
                 user_id: formData.user_id,
                 email: formData.email,
             };
-            if (formData.password) {
-                updateData.password = formData.password;
-            }
+            if (formData.password) updateData.password = formData.password;
             const updatedStudent = await userAPI.updateUser(editingId, updateData);
             setStudents((prev) =>
                 prev.map((s) => (s.id === editingId ? updatedStudent : s))
@@ -216,74 +204,74 @@ const StudentPage = () => {
     return (
         <div className="max-w-6xl mx-auto p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold text-gray-800">Students</h1>
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">Students</h1>
                 <button
                     onClick={() => {
                         resetForm();
                         setShowForm(true);
                     }}
-                    className="bg-brand-500 text-white px-4 py-2 rounded-md hover:bg-brand-600 flex items-center gap-2"
+                    className="bg-brand-500 text-white px-4 py-2 rounded-md hover:bg-brand-600 flex items-center gap-2 transition-colors"
                 >
                     <FaPlus className="text-sm" /> Add Student
                 </button>
             </div>
 
             {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div className="bg-red-100 dark:bg-red-900/50 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-4">
                     {error}
                 </div>
             )}
 
-            {/* Create/Edit Modal – Responsive with scrolling */}
+            {/* Modal */}
             {showForm && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-                        <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
-                            <h2 className="text-xl font-bold">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+                        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-4 flex justify-between items-center">
+                            <h2 className="text-xl font-bold dark:text-white">
                                 {formMode === 'create' ? 'Add Student' : 'Edit Student'}
                             </h2>
                             <button
                                 onClick={resetForm}
-                                className="text-gray-500 hover:text-gray-700"
+                                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                             >
                                 <FaTimes />
                             </button>
                         </div>
                         <form onSubmit={formMode === 'create' ? handleCreate : handleUpdate} className="p-4">
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700">First Name *</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name *</label>
                                 <input
                                     type="text"
                                     name="firstname"
                                     value={formData.firstname}
                                     onChange={handleInputChange}
                                     required
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700">Middle Name</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Middle Name</label>
                                 <input
                                     type="text"
                                     name="middlename"
                                     value={formData.middlename}
                                     onChange={handleInputChange}
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700">Last Name *</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name *</label>
                                 <input
                                     type="text"
                                     name="lastname"
                                     value={formData.lastname}
                                     onChange={handleInputChange}
                                     required
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700">User ID (7 digits) *</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">User ID (7 digits) *</label>
                                 <input
                                     type="text"
                                     name="user_id"
@@ -292,22 +280,22 @@ const StudentPage = () => {
                                     required
                                     pattern="\d{7}"
                                     title="Must be exactly 7 digits"
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700">Email *</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email *</label>
                                 <input
                                     type="email"
                                     name="email"
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     required
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Password {formMode === 'create' ? '*' : '(leave blank to keep current)'}
                                 </label>
                                 <div className="relative">
@@ -317,24 +305,24 @@ const StudentPage = () => {
                                         value={formData.password}
                                         onChange={handleInputChange}
                                         required={formMode === 'create'}
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 pr-10"
+                                        className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 pr-10 dark:bg-gray-700 dark:text-white"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                                     >
                                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                                     </button>
                                 </div>
                                 {formMode === 'create' && (
-                                    <p className="text-xs text-gray-500 mt-1">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                         Must be at least 8 characters, contain uppercase, lowercase, and number.
                                     </p>
                                 )}
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Confirm Password {formMode === 'create' ? '*' : '(if changing)'}
                                 </label>
                                 <div className="relative">
@@ -344,12 +332,12 @@ const StudentPage = () => {
                                         value={formData.password_confirmation}
                                         onChange={handleInputChange}
                                         required={formMode === 'create'}
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 pr-10"
+                                        className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 pr-10 dark:bg-gray-700 dark:text-white"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                                     >
                                         {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                                     </button>
@@ -359,7 +347,7 @@ const StudentPage = () => {
                                 <button
                                     type="button"
                                     onClick={resetForm}
-                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
                                     disabled={isCreating || isUpdating}
                                 >
                                     <FaTimes /> Cancel
@@ -385,31 +373,31 @@ const StudentPage = () => {
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
                 </div>
             ) : students.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">No students found.</div>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">No students found.</div>
             ) : (
                 <div className="overflow-x-auto">
-                    <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-                        <thead className="bg-gray-100">
+                    <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <thead className="bg-gray-100 dark:bg-gray-700">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User ID</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                             {students.map((student) => (
-                                <tr key={student.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">
+                                <tr key={student.id} className="dark:bg-gray-800 dark:hover:bg-gray-700">
+                                    <td className="px-6 py-4 whitespace-nowrap dark:text-gray-200">
                                         {[student.firstname, student.middlename, student.lastname].filter(Boolean).join(' ')}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{student.user_id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{student.email}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap dark:text-gray-200">{student.user_id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap dark:text-gray-200">{student.email}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right">
                                         <div className="flex justify-end gap-2">
                                             <button
                                                 onClick={() => handleEdit(student)}
-                                                className="text-blue-600 hover:text-blue-800 p-1"
+                                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1"
                                                 disabled={isDeleting}
                                                 title="Edit"
                                             >
@@ -417,7 +405,7 @@ const StudentPage = () => {
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(student.id)}
-                                                className="text-red-600 hover:text-red-800 p-1"
+                                                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1"
                                                 disabled={isDeleting}
                                                 title="Delete"
                                             >
