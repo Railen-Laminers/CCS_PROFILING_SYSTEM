@@ -6,7 +6,6 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import StudentPage from './pages/admin/Student';
 import FacultyPage from './pages/admin/Faculty';
-import './styles/routes.css';
 
 // Loading component using the accent color
 const LoadingSpinner = () => (
