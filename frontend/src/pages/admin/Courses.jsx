@@ -1,0 +1,302 @@
+import React, { useState, useEffect } from 'react';
+import { userAPI } from '../../services/api';
+import { FaPlus, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+
+const CoursesPage = () => {
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [editingCourse, setEditingCourse] = useState(null); // null for create, object for edit
+    const [formData, setFormData] = useState({
+        course_code: '',
+        course_title: '',
+        credits: 3,
+    });
+    const [formErrors, setFormErrors] = useState({});
+    const [submitLoading, setSubmitLoading] = useState(false);
+
+    useEffect(() => {
+        fetchCourses();
+    }, []);
+
+    const fetchCourses = async () => {
+        setLoading(true);
+        try {
+            const data = await userAPI.getCourses();
+            setCourses(data);
+        } catch (err) {
+            setError('Failed to load courses. Please try again later.');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const openCreateModal = () => {
+        setEditingCourse(null);
+        setFormData({ course_code: '', course_title: '', credits: 3 });
+        setFormErrors({});
+        setModalOpen(true);
+    };
+
+    const openEditModal = (course) => {
+        setEditingCourse(course);
+        setFormData({
+            course_code: course.course_code,
+            course_title: course.course_title,
+            credits: course.credits,
+        });
+        setFormErrors({});
+        setModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalOpen(false);
+        setEditingCourse(null);
+        setFormData({ course_code: '', course_title: '', credits: 3 });
+        setFormErrors({});
+    };
+
+    const validateForm = () => {
+        const errors = {};
+        if (!formData.course_code.trim()) {
+            errors.course_code = 'Course code is required';
+        } else if (formData.course_code.length > 20) {
+            errors.course_code = 'Course code must be at most 20 characters';
+        }
+        if (!formData.course_title.trim()) {
+            errors.course_title = 'Course title is required';
+        } else if (formData.course_title.length > 100) {
+            errors.course_title = 'Course title must be at most 100 characters';
+        }
+        if (!formData.credits) {
+            errors.credits = 'Credits are required';
+        } else if (formData.credits < 1 || formData.credits > 6) {
+            errors.credits = 'Credits must be between 1 and 6';
+        }
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+
+        setSubmitLoading(true);
+        try {
+            if (editingCourse) {
+                await userAPI.updateCourse(editingCourse.course_id, formData);
+                // Success message could be shown via toast, but we'll just refetch
+            } else {
+                await userAPI.createCourse(formData);
+            }
+            await fetchCourses();
+            closeModal();
+        } catch (err) {
+            if (err.response && err.response.data && err.response.data.errors) {
+                // Handle validation errors from backend (e.g., unique constraints)
+                const backendErrors = err.response.data.errors;
+                const mapped = {};
+                if (backendErrors.course_code) mapped.course_code = backendErrors.course_code[0];
+                if (backendErrors.course_title) mapped.course_title = backendErrors.course_title[0];
+                if (backendErrors.credits) mapped.credits = backendErrors.credits[0];
+                setFormErrors(mapped);
+            } else {
+                setError('Failed to save course. Please try again.');
+            }
+        } finally {
+            setSubmitLoading(false);
+        }
+    };
+
+    const handleDelete = async (courseId) => {
+        if (!window.confirm('Are you sure you want to delete this course?')) return;
+        try {
+            await userAPI.deleteCourse(courseId);
+            await fetchCourses();
+        } catch (err) {
+            setError('Failed to delete course. Please try again.');
+            console.error(err);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+        // Clear field-specific error when user types
+        if (formErrors[name]) {
+            setFormErrors((prev) => ({ ...prev, [name]: null }));
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                {error}
+            </div>
+        );
+    }
+
+    return (
+        <div className="max-w-6xl mx-auto">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-gray-800">Courses</h1>
+                <button
+                    onClick={openCreateModal}
+                    className="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                >
+                    <FaPlus size={14} />
+                    <span>Add Course</span>
+                </button>
+            </div>
+
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Credits</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {courses.length === 0 ? (
+                            <tr>
+                                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                                    No courses found. Click "Add Course" to create one.
+                                </td>
+                            </tr>
+                        ) : (
+                            courses.map((course) => (
+                                <tr key={course.course_id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{course.course_id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{course.course_code}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.course_title}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.credits}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button
+                                            onClick={() => openEditModal(course)}
+                                            className="text-brand-600 hover:text-brand-900 mr-3"
+                                            title="Edit"
+                                        >
+                                            <FaEdit />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(course.course_id)}
+                                            className="text-red-600 hover:text-red-900"
+                                            title="Delete"
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Modal for Create/Edit */}
+            {modalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+                        <button
+                            onClick={closeModal}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                        >
+                            <FaTimes />
+                        </button>
+                        <h2 className="text-xl font-bold mb-4">
+                            {editingCourse ? 'Edit Course' : 'Add New Course'}
+                        </h2>
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-4">
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="course_code">
+                                    Course Code
+                                </label>
+                                <input
+                                    type="text"
+                                    id="course_code"
+                                    name="course_code"
+                                    value={formData.course_code}
+                                    onChange={handleInputChange}
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.course_code ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                />
+                                {formErrors.course_code && (
+                                    <p className="text-red-500 text-xs mt-1">{formErrors.course_code}</p>
+                                )}
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="course_title">
+                                    Course Title
+                                </label>
+                                <input
+                                    type="text"
+                                    id="course_title"
+                                    name="course_title"
+                                    value={formData.course_title}
+                                    onChange={handleInputChange}
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.course_title ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                />
+                                {formErrors.course_title && (
+                                    <p className="text-red-500 text-xs mt-1">{formErrors.course_title}</p>
+                                )}
+                            </div>
+                            <div className="mb-6">
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="credits">
+                                    Credits
+                                </label>
+                                <input
+                                    type="number"
+                                    id="credits"
+                                    name="credits"
+                                    value={formData.credits}
+                                    onChange={handleInputChange}
+                                    min="1"
+                                    max="6"
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.credits ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                />
+                                {formErrors.credits && (
+                                    <p className="text-red-500 text-xs mt-1">{formErrors.credits}</p>
+                                )}
+                            </div>
+                            <div className="flex justify-end gap-2">
+                                <button
+                                    type="button"
+                                    onClick={closeModal}
+                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none"
+                                    disabled={submitLoading}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="bg-brand-500 hover:bg-brand-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-50"
+                                    disabled={submitLoading}
+                                >
+                                    {submitLoading ? 'Saving...' : editingCourse ? 'Update' : 'Create'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default CoursesPage;

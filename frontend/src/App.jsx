@@ -1,3 +1,4 @@
+// App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import DashboardLayout from './components/DashboardLayout';
@@ -6,6 +7,8 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import StudentPage from './pages/admin/Student';
 import FacultyPage from './pages/admin/Faculty';
+import CoursesPage from './pages/admin/Courses';
+import EventsPage from './pages/admin/Events';
 
 // Loading component using the accent color
 const LoadingSpinner = () => (
@@ -65,6 +68,27 @@ function AppContent() {
           <ProtectedRoute>
             <DashboardLayout>
               <FacultyPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/courses"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <CoursesPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/events"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <EventsPage />
             </DashboardLayout>
           </ProtectedRoute>
         }

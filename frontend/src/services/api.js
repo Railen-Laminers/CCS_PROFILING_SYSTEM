@@ -1,3 +1,4 @@
+// api.js (extended)
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
@@ -101,7 +102,30 @@ export const userAPI = {
     return response.data.courses;
   },
 
-  // ADDED: Get all events
+  // Get a single course by ID or code
+  getCourse: async (id) => {
+    const response = await axiosInstance.get(`/courses/${id}`);
+    return response.data.course;
+  },
+
+  // Create a new course
+  createCourse: async (courseData) => {
+    const response = await axiosInstance.post('/courses', courseData);
+    return response.data.course;
+  },
+
+  // Update an existing course
+  updateCourse: async (id, courseData) => {
+    const response = await axiosInstance.put(`/courses/${id}`, courseData);
+    return response.data.course;
+  },
+
+  // Delete a course
+  deleteCourse: async (id) => {
+    await axiosInstance.delete(`/courses/${id}`);
+  },
+
+  // Get all events
   getEvents: async () => {
     const response = await axiosInstance.get('/events');
     return response.data.events;
