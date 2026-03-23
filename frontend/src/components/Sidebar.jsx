@@ -1,7 +1,8 @@
+// Sidebar.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { FaTh, FaUserGraduate, FaChalkboardTeacher } from 'react-icons/fa';
+import { FaTh, FaUserGraduate, FaChalkboardTeacher, FaBook, FaCalendarAlt } from 'react-icons/fa';
 
 const Sidebar = () => {
   const { user } = useAuth();
@@ -54,6 +55,35 @@ const Sidebar = () => {
                 >
                   <FaChalkboardTeacher className="text-lg" />
                   <span>Faculty</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/courses"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
+                      ? 'bg-brand-500 text-white shadow-md'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    }`
+                  }
+                >
+                  <FaBook className="text-lg" />
+                  <span>Courses</span>
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/events"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
+                      ? 'bg-brand-500 text-white shadow-md'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    }`
+                  }
+                >
+                  <FaCalendarAlt className="text-lg" />
+                  <span>Events</span>
                 </NavLink>
               </li>
             </>

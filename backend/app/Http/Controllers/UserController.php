@@ -18,11 +18,20 @@ class UserController extends Controller
         return response()->json(['users' => $users], 200);
     }
 
-    // Show a single user
+    // Show a single user nased on their id or user_id
+    // public function show($id)
+    // {
+    //     $user = User::select('id', 'firstname', 'middlename', 'lastname', 'user_id', 'email', 'role')
+    //         ->findOrFail($id);
+
+    //     return response()->json(['user' => $user], 200);
+    // }
     public function show($id)
     {
         $user = User::select('id', 'firstname', 'middlename', 'lastname', 'user_id', 'email', 'role')
-            ->findOrFail($id);
+            ->where('id', $id)
+            ->orWhere('user_id', $id)
+            ->firstOrFail();
 
         return response()->json(['user' => $user], 200);
     }

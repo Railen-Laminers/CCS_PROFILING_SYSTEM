@@ -3,8 +3,8 @@ CCS_PROFILING_SYSTEM
 Backend
 - composer install
 - Create .env file then copy the code in env.example then paste the code to the created .env file
-- Run "php artisan migrate --seed" or php artisan "migrate:fresh --seed"
-- Run "php artisan storage link" for images to load
+- Run "php artisan migrate --seed" or "php artisan migrate:fresh --seed"
+- Run "php artisan storage:link" for images to load
 - Run "php artisan serve" to run
 
 Frontend
