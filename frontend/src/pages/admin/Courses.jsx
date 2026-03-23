@@ -87,7 +87,6 @@ const CoursesPage = () => {
         try {
             if (editingCourse) {
                 await userAPI.updateCourse(editingCourse.course_id, formData);
-                // Success message could be shown via toast, but we'll just refetch
             } else {
                 await userAPI.createCourse(formData);
             }
@@ -95,7 +94,7 @@ const CoursesPage = () => {
             closeModal();
         } catch (err) {
             if (err.response && err.response.data && err.response.data.errors) {
-                // Handle validation errors from backend (e.g., unique constraints)
+                // Handle validation errors from backend
                 const backendErrors = err.response.data.errors;
                 const mapped = {};
                 if (backendErrors.course_code) mapped.course_code = backendErrors.course_code[0];
@@ -140,7 +139,7 @@ const CoursesPage = () => {
 
     if (error) {
         return (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+            <div className="bg-red-100 dark:bg-red-900/50 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded relative mb-4">
                 {error}
             </div>
         );
@@ -149,7 +148,7 @@ const CoursesPage = () => {
     return (
         <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">Courses</h1>
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Courses</h1>
                 <button
                     onClick={openCreateModal}
                     className="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
@@ -159,42 +158,42 @@ const CoursesPage = () => {
                 </button>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Credits</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Code</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Credits</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         {courses.length === 0 ? (
                             <tr>
-                                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                                <td colSpan="5" className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                     No courses found. Click "Add Course" to create one.
                                 </td>
                             </tr>
                         ) : (
                             courses.map((course) => (
-                                <tr key={course.course_id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{course.course_id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{course.course_code}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.course_title}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.credits}</td>
+                                <tr key={course.course_id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{course.course_id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">{course.course_code}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{course.course_title}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{course.credits}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button
                                             onClick={() => openEditModal(course)}
-                                            className="text-brand-600 hover:text-brand-900 mr-3"
+                                            className="text-brand-600 dark:text-brand-400 hover:text-brand-900 dark:hover:text-brand-300 mr-3"
                                             title="Edit"
                                         >
                                             <FaEdit />
                                         </button>
                                         <button
                                             onClick={() => handleDelete(course.course_id)}
-                                            className="text-red-600 hover:text-red-900"
+                                            className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
                                             title="Delete"
                                         >
                                             <FaTrash />
@@ -210,19 +209,19 @@ const CoursesPage = () => {
             {/* Modal for Create/Edit */}
             {modalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 relative">
                         <button
                             onClick={closeModal}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                            className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                         >
                             <FaTimes />
                         </button>
-                        <h2 className="text-xl font-bold mb-4">
+                        <h2 className="text-xl font-bold mb-4 dark:text-white">
                             {editingCourse ? 'Edit Course' : 'Add New Course'}
                         </h2>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="course_code">
+                                <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="course_code">
                                     Course Code
                                 </label>
                                 <input
@@ -231,7 +230,7 @@ const CoursesPage = () => {
                                     name="course_code"
                                     value={formData.course_code}
                                     onChange={handleInputChange}
-                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.course_code ? 'border-red-500' : 'border-gray-300'
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 ${formErrors.course_code ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                                         }`}
                                 />
                                 {formErrors.course_code && (
@@ -239,7 +238,7 @@ const CoursesPage = () => {
                                 )}
                             </div>
                             <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="course_title">
+                                <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="course_title">
                                     Course Title
                                 </label>
                                 <input
@@ -248,7 +247,7 @@ const CoursesPage = () => {
                                     name="course_title"
                                     value={formData.course_title}
                                     onChange={handleInputChange}
-                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.course_title ? 'border-red-500' : 'border-gray-300'
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 ${formErrors.course_title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                                         }`}
                                 />
                                 {formErrors.course_title && (
@@ -256,7 +255,7 @@ const CoursesPage = () => {
                                 )}
                             </div>
                             <div className="mb-6">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="credits">
+                                <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="credits">
                                     Credits
                                 </label>
                                 <input
@@ -267,7 +266,7 @@ const CoursesPage = () => {
                                     onChange={handleInputChange}
                                     min="1"
                                     max="6"
-                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.credits ? 'border-red-500' : 'border-gray-300'
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 ${formErrors.credits ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                                         }`}
                                 />
                                 {formErrors.credits && (
@@ -278,7 +277,7 @@ const CoursesPage = () => {
                                 <button
                                     type="button"
                                     onClick={closeModal}
-                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none"
+                                    className="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-white font-bold py-2 px-4 rounded focus:outline-none"
                                     disabled={submitLoading}
                                 >
                                     Cancel

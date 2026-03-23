@@ -163,7 +163,7 @@ const EventsPage = () => {
 
     if (error) {
         return (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+            <div className="bg-red-100 dark:bg-red-900/50 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded relative mb-4">
                 {error}
             </div>
         );
@@ -172,7 +172,7 @@ const EventsPage = () => {
     return (
         <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">Events</h1>
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Events</h1>
                 <button
                     onClick={openCreateModal}
                     className="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
@@ -182,44 +182,44 @@ const EventsPage = () => {
                 </button>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Description</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Start</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">End</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         {events.length === 0 ? (
                             <tr>
-                                <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                                <td colSpan="6" className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                     No events found. Click "Add Event" to create one.
                                 </td>
                             </tr>
                         ) : (
                             events.map((event) => (
-                                <tr key={event.event_id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.event_id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{event.title}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{event.description}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDateTime(event.start_datetime)}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDateTime(event.end_datetime)}</td>
+                                <tr key={event.event_id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{event.event_id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">{event.title}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 max-w-xs truncate">{event.description}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{formatDateTime(event.start_datetime)}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{formatDateTime(event.end_datetime)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button
                                             onClick={() => openEditModal(event)}
-                                            className="text-brand-600 hover:text-brand-900 mr-3"
+                                            className="text-brand-600 dark:text-brand-400 hover:text-brand-900 dark:hover:text-brand-300 mr-3"
                                             title="Edit"
                                         >
                                             <FaEdit />
                                         </button>
                                         <button
                                             onClick={() => handleDelete(event.event_id)}
-                                            className="text-red-600 hover:text-red-900"
+                                            className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
                                             title="Delete"
                                         >
                                             <FaTrash />
@@ -235,19 +235,19 @@ const EventsPage = () => {
             {/* Modal for Create/Edit */}
             {modalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 relative">
                         <button
                             onClick={closeModal}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                            className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                         >
                             <FaTimes />
                         </button>
-                        <h2 className="text-xl font-bold mb-4">
+                        <h2 className="text-xl font-bold mb-4 dark:text-white">
                             {editingEvent ? 'Edit Event' : 'Add New Event'}
                         </h2>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
+                                <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="title">
                                     Title
                                 </label>
                                 <input
@@ -256,7 +256,7 @@ const EventsPage = () => {
                                     name="title"
                                     value={formData.title}
                                     onChange={handleInputChange}
-                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.title ? 'border-red-500' : 'border-gray-300'
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 ${formErrors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                                         }`}
                                 />
                                 {formErrors.title && (
@@ -264,7 +264,7 @@ const EventsPage = () => {
                                 )}
                             </div>
                             <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+                                <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="description">
                                     Description
                                 </label>
                                 <textarea
@@ -273,7 +273,7 @@ const EventsPage = () => {
                                     rows="3"
                                     value={formData.description}
                                     onChange={handleInputChange}
-                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.description ? 'border-red-500' : 'border-gray-300'
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 ${formErrors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                                         }`}
                                 ></textarea>
                                 {formErrors.description && (
@@ -281,7 +281,7 @@ const EventsPage = () => {
                                 )}
                             </div>
                             <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="start_datetime">
+                                <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="start_datetime">
                                     Start Date & Time
                                 </label>
                                 <input
@@ -290,7 +290,7 @@ const EventsPage = () => {
                                     name="start_datetime"
                                     value={formData.start_datetime}
                                     onChange={handleInputChange}
-                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.start_datetime ? 'border-red-500' : 'border-gray-300'
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 ${formErrors.start_datetime ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                                         }`}
                                 />
                                 {formErrors.start_datetime && (
@@ -298,7 +298,7 @@ const EventsPage = () => {
                                 )}
                             </div>
                             <div className="mb-6">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="end_datetime">
+                                <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="end_datetime">
                                     End Date & Time
                                 </label>
                                 <input
@@ -307,7 +307,7 @@ const EventsPage = () => {
                                     name="end_datetime"
                                     value={formData.end_datetime}
                                     onChange={handleInputChange}
-                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 ${formErrors.end_datetime ? 'border-red-500' : 'border-gray-300'
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 ${formErrors.end_datetime ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                                         }`}
                                 />
                                 {formErrors.end_datetime && (
@@ -318,7 +318,7 @@ const EventsPage = () => {
                                 <button
                                     type="button"
                                     onClick={closeModal}
-                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none"
+                                    className="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-white font-bold py-2 px-4 rounded focus:outline-none"
                                     disabled={submitLoading}
                                 >
                                     Cancel
