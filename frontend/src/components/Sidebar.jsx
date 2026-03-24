@@ -2,92 +2,57 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { FaTh, FaUserGraduate, FaChalkboardTeacher, FaBook, FaCalendarAlt } from 'react-icons/fa';
+import { 
+  FiGrid, 
+  FiUsers, 
+  FiBriefcase, 
+  FiBookOpen, 
+  FiClock, 
+  FiCalendar, 
+  FiFileText, 
+  FiSettings 
+} from 'react-icons/fi';
+
+const menuItems = [
+  { name: 'Dashboard', path: '/dashboard', icon: FiGrid },
+  { name: 'Students', path: '/students', icon: FiUsers },
+  { name: 'Faculty', path: '/faculty', icon: FiBriefcase },
+  { name: 'Instruction', path: '/instruction', icon: FiBookOpen },
+  { name: 'Scheduling', path: '/scheduling', icon: FiClock },
+  { name: 'Events', path: '/events', icon: FiCalendar },
+  { name: 'Reports', path: '/reports', icon: FiFileText },
+  { name: 'System Settings', path: '/settings', icon: FiSettings },
+];
 
 const Sidebar = () => {
   const { user } = useAuth();
 
   return (
-    <aside className="w-64 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 flex flex-col shadow-lg rounded-r-2xl overflow-hidden">
-      <nav className="flex-1 pt-6 pb-4">
-        <ul className="space-y-1 px-3">
-          <li>
-            <NavLink
-              to="/dashboard"
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
-                  ? 'bg-brand-500 text-white shadow-md'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
-                }`
-              }
-            >
-              <FaTh className="text-lg" />
-              <span>Dashboard</span>
-            </NavLink>
-          </li>
+    <aside className="w-[260px] bg-white dark:bg-[#1E1E1E] border-r border-gray-200/60 dark:border-gray-800 text-gray-800 dark:text-gray-200 flex flex-col transition-all duration-300">
+      <nav className="flex-1 pt-8 pb-4">
+        <ul className="space-y-2 px-4">
+          {menuItems.map((item, index) => {
+            // Keep existing admin-only logic for items beyond Dashboard
+            if (index > 0 && user?.role !== 'admin') return null;
 
-          {/* Admin-only links */}
-          {user?.role === 'admin' && (
-            <>
-              <li>
+            return (
+              <li key={item.name}>
                 <NavLink
-                  to="/students"
+                  to={item.path}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
-                      ? 'bg-brand-500 text-white shadow-md'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
+                    `flex items-center gap-4 px-4 py-3 text-[15px] font-medium rounded-xl transition-all duration-200 ${
+                      isActive
+                        ? 'bg-orange-500 text-white shadow-md'
+                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
                     }`
                   }
                 >
-                  <FaUserGraduate className="text-lg" />
-                  <span>Students</span>
+                  <item.icon className="w-5 h-5 stroke-[1.5]" />
+                  <span>{item.name}</span>
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to="/faculty"
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
-                      ? 'bg-brand-500 text-white shadow-md'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`
-                  }
-                >
-                  <FaChalkboardTeacher className="text-lg" />
-                  <span>Faculty</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/courses"
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
-                      ? 'bg-brand-500 text-white shadow-md'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`
-                  }
-                >
-                  <FaBook className="text-lg" />
-                  <span>Courses</span>
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink
-                  to="/events"
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
-                      ? 'bg-brand-500 text-white shadow-md'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`
-                  }
-                >
-                  <FaCalendarAlt className="text-lg" />
-                  <span>Events</span>
-                </NavLink>
-              </li>
-            </>
-          )}
+            );
+          })}
         </ul>
       </nav>
     </aside>
