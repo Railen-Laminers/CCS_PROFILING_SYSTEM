@@ -31,48 +31,48 @@ export const Header = () => {
   }, []);
 
   return (
-    <header className="bg-white dark:bg-[#1E1E1E] border-b border-gray-100 dark:border-gray-700 px-6 h-[72px] flex justify-between items-center shadow-sm">
+    <header className="bg-white dark:bg-[#1E1E1E] border-b border-gray-200 dark:border-gray-700 px-6 h-[80px] flex justify-between items-center">
       <div className="flex items-center gap-2">
-        <h1 className="text-[16px] sm:text-[18px] font-medium text-gray-800 dark:text-gray-100 tracking-tight">
+        <h1 className="text-[18px] font-bold text-gray-800 dark:text-gray-100 tracking-tight">
           CCS Comprehensive Profiling System
         </h1>
       </div>
-      <div className="flex items-center gap-5 sm:gap-6">
+      <div className="flex items-center gap-5">
         {/* Search Button */}
         <button 
-          className="text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors duration-200 focus:outline-none"
+          className="text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors duration-200 focus:outline-none p-2 w-[40px] h-[40px] flex justify-center items-center rounded-full"
           aria-label="Search"
         >
-          <FiSearch className="w-[18px] h-[18px] stroke-[2]" />
+          <FiSearch className="w-[20px] h-[20px] stroke-[2]" />
         </button>
 
         {/* Notifications Button */}
         <button 
-          className="relative text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors duration-200 focus:outline-none py-1"
+          className="relative text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors duration-200 focus:outline-none p-2 w-[40px] h-[40px] flex justify-center items-center rounded-full"
           aria-label="Notifications"
         >
-          <FiBell className="w-[18px] h-[18px] stroke-[2]" />
+          <FiBell className="w-[20px] h-[20px] stroke-[2]" />
           {/* Notification Badge */}
-          <span className="absolute top-0.5 right-0 block w-1.5 h-1.5 bg-orange-500 rounded-full border-[1.5px] border-white dark:border-gray-800"></span>
+          <span className="absolute top-2 right-2 block w-[6px] h-[6px] bg-orange-500 rounded-full border-[1.5px] border-white dark:border-gray-800"></span>
         </button>
 
         {/* Theme Toggle Switch */}
         <div className="flex items-center gap-2">
-          <FiSun className={`w-[16px] h-[16px] transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+          <FiSun className={`w-[18px] h-[18px] transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
           <button
             onClick={toggleTheme}
-            className="relative flex items-center w-[36px] h-[20px] bg-gray-200 dark:bg-gray-700 rounded-full p-[2px] transition-colors duration-300 focus:outline-none hover:bg-gray-300 dark:hover:bg-gray-600 shadow-inner"
+            className="relative flex items-center w-[32px] h-[18px] bg-gray-200 dark:bg-gray-700 rounded-full p-[2px] transition-colors duration-300 focus:outline-none hover:bg-gray-300 dark:hover:bg-gray-600 shadow-inner"
             aria-label="Toggle theme"
             title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
             {/* Sliding indicator */}
             <div
-              className={`absolute w-[16px] h-[16px] bg-white dark:bg-slate-300 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${
-                theme === 'dark' ? 'translate-x-[16px]' : 'translate-x-0'
+              className={`absolute w-[14px] h-[14px] bg-white dark:bg-slate-300 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${
+                theme === 'dark' ? 'translate-x-[14px]' : 'translate-x-0'
               }`}
             />
           </button>
-          <FiMoon className={`w-[16px] h-[16px] transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
+          <FiMoon className={`w-[18px] h-[18px] transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
         </div>
 
         {/* User Profile Dropdown */}
