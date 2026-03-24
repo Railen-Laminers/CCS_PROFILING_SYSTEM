@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { userAPI } from '../../services/api';
 import {
-    FaPlus,
-    FaEdit,
-    FaTrash,
-    FaEye,
-    FaEyeSlash,
-    FaSave,
-    FaTimes
-} from 'react-icons/fa';
+    FiPlus,
+    FiEdit2,
+    FiTrash2,
+    FiEye,
+    FiEyeOff,
+    FiSave,
+    FiX,
+    FiDownload,
+    FiSearch
+} from 'react-icons/fi';
 
 const Spinner = () => (
     <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
@@ -202,18 +204,23 @@ const StudentPage = () => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-6">
+        <div className="w-full">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">Students</h1>
-                <button
-                    onClick={() => {
-                        resetForm();
-                        setShowForm(true);
-                    }}
-                    className="bg-brand-500 text-white px-4 py-2 rounded-md hover:bg-brand-600 flex items-center gap-2 transition-colors"
-                >
-                    <FaPlus className="text-sm" /> Add Student
-                </button>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Student Management</h1>
+                <div className="flex items-center gap-3">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <FiDownload className="w-4 h-4" /> Export Data
+                    </button>
+                    <button
+                        onClick={() => {
+                            resetForm();
+                            setShowForm(true);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#F97316] text-white rounded-md text-sm font-medium hover:bg-orange-600 transition-colors shadow-sm"
+                    >
+                        <FiPlus className="w-4 h-4" /> Add Student
+                    </button>
+                </div>
             </div>
 
             {error && (
@@ -234,7 +241,7 @@ const StudentPage = () => {
                                 onClick={resetForm}
                                 className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                             >
-                                <FaTimes />
+                                <FiX className="w-5 h-5" />
                             </button>
                         </div>
                         <form onSubmit={formMode === 'create' ? handleCreate : handleUpdate} className="p-4">
@@ -312,7 +319,7 @@ const StudentPage = () => {
                                         onClick={() => setShowPassword(!showPassword)}
                                         className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                                     >
-                                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                        {showPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
                                     </button>
                                 </div>
                                 {formMode === 'create' && (
@@ -339,7 +346,7 @@ const StudentPage = () => {
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                         className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                                     >
-                                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                                        {showConfirmPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
                                     </button>
                                 </div>
                             </div>
@@ -350,15 +357,15 @@ const StudentPage = () => {
                                     className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
                                     disabled={isCreating || isUpdating}
                                 >
-                                    <FaTimes /> Cancel
+                                    <FiX className="w-4 h-4" /> Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-brand-500 text-white rounded-md hover:bg-brand-600 flex items-center gap-2 disabled:opacity-50"
+                                    className="px-4 py-2 bg-[#F97316] text-white rounded-md hover:bg-orange-600 flex items-center gap-2 shadow-sm disabled:opacity-50"
                                     disabled={isCreating || isUpdating}
                                 >
                                     {(isCreating || isUpdating) && <Spinner />}
-                                    <FaSave />
+                                    <FiSave className="w-4 h-4" />
                                     {formMode === 'create' ? (isCreating ? 'Creating...' : 'Create') : (isUpdating ? 'Updating...' : 'Update')}
                                 </button>
                             </div>
@@ -367,59 +374,96 @@ const StudentPage = () => {
                 </div>
             )}
 
-            {/* Students Table */}
-            {loading ? (
-                <div className="flex justify-center items-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
+            {/* Action Bar / Search Container */}
+            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
+                <div className="relative w-full">
+                    <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5 pointer-events-none" />
+                    <input 
+                        type="text"
+                        placeholder="Search by name, student ID, or course..."
+                        className="w-full h-10 pl-11 pr-4 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                    />
                 </div>
-            ) : students.length === 0 ? (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">No students found.</div>
-            ) : (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-                        <thead className="bg-gray-100 dark:bg-gray-700">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                            {students.map((student) => (
-                                <tr key={student.id} className="dark:bg-gray-800 dark:hover:bg-gray-700">
-                                    <td className="px-6 py-4 whitespace-nowrap dark:text-gray-200">
-                                        {[student.firstname, student.middlename, student.lastname].filter(Boolean).join(' ')}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap dark:text-gray-200">{student.user_id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap dark:text-gray-200">{student.email}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <button
-                                                onClick={() => handleEdit(student)}
-                                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1"
-                                                disabled={isDeleting}
-                                                title="Edit"
-                                            >
-                                                <FaEdit size={18} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(student.id)}
-                                                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1"
-                                                disabled={isDeleting}
-                                                title="Delete"
-                                            >
-                                                {isDeleting && <Spinner />}
-                                                {!isDeleting && <FaTrash size={18} />}
-                                            </button>
-                                        </div>
-                                    </td>
+            </div>
+
+            {/* Students Table Container */}
+            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
+                {loading ? (
+                    <div className="flex justify-center items-center py-16">
+                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#F97316]"></div>
+                    </div>
+                ) : students.length === 0 ? (
+                    <div className="text-center py-16 text-sm text-gray-500 dark:text-gray-400 flex flex-col items-center">
+                        <FiUsers className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-3" />
+                        <p>No students found in the database.</p>
+                    </div>
+                ) : (
+                    <div className="p-6 overflow-x-auto">
+                        <table className="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr className="border-b border-gray-200 dark:border-gray-700">
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Photo</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Student ID</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Name</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Course</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Year Level</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Section</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Status</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide text-left">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+                            </thead>
+                            <tbody className="divide-y divide-gray-100 dark:divide-gray-800/60">
+                                {students.map((student) => {
+                                    const fullName = [student.firstname, student.middlename, student.lastname].filter(Boolean).join(' ');
+                                    const initials = student.firstname?.[0] || 'S';
+                                    return (
+                                        <tr key={student.id} className="hover:bg-gray-50/50 dark:hover:bg-[#252525] transition-colors h-[60px]">
+                                            <td className="py-2 pr-4 whitespace-nowrap">
+                                                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center text-[12px] font-bold shadow-inner">
+                                                    {initials}
+                                                </div>
+                                            </td>
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-900 dark:text-gray-100 font-medium">
+                                                {student.user_id}
+                                            </td>
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-gray-300">
+                                                {fullName}
+                                            </td>
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-500 dark:text-gray-400">
+                                                BS Computer Science
+                                            </td>
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-500 dark:text-gray-400">
+                                                1st Year
+                                            </td>
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-500 dark:text-gray-400">
+                                                A
+                                            </td>
+                                            <td className="py-2 pr-4 whitespace-nowrap">
+                                                <span className="inline-flex items-center px-3 py-1 rounded-[9px] text-[12px] font-medium bg-[#00C950] dark:bg-[#00C950] text-[#fff] dark:text-[#171717] border border-green-500/10">
+                                                    Active
+                                                </span>
+                                            </td>
+                                            <td className="py-2 whitespace-nowrap text-left">
+                                                <div className="flex justify-start gap-3 items-center">
+                                                    <button className="text-[#F97316] hover:text-orange-600 p-1.5 rounded-md" title="View Logs">
+                                                        <FiEye className="w-[18px] h-[18px] stroke-[1.5]" />
+                                                    </button>
+                                                    <button onClick={() => handleEdit(student)} className="text-blue-500 hover:text-blue-600 transition-colors p-1.5 rounded-md" title="Edit Student" disabled={isDeleting}>
+                                                        <FiEdit2 className="w-[18px] h-[18px] stroke-[1.5]" />
+                                                    </button>
+                                                    <button onClick={() => handleDelete(student.id)} className="text-red-500 hover:text-red-600 transition-colors p-1.5 rounded-md" title="Delete Student" disabled={isDeleting}>
+                                                        {isDeleting ? <Spinner /> : <FiTrash2 className="w-[18px] h-[18px] stroke-[1.5]" />}
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
