@@ -429,13 +429,13 @@ const StudentPage = () => {
                                             <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-gray-300">
                                                 {fullName}
                                             </td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-500 dark:text-gray-400">
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-gray-300">
                                                 BS Computer Science
                                             </td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-500 dark:text-gray-400">
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-gray-300">
                                                 1st Year
                                             </td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-500 dark:text-gray-400">
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-gray-300">
                                                 A
                                             </td>
                                             <td className="py-2 pr-4 whitespace-nowrap">

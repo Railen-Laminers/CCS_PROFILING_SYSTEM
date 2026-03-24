@@ -41,8 +41,8 @@ const Sidebar = () => {
                   {({ isActive }) => (
                     <div className={`flex items-center gap-3 px-4 h-12 text-sm rounded-lg transition-all duration-200 ${
                       isActive
-                        ? 'bg-[#F97316] text-white font-medium'
-                        : 'text-gray-700 dark:text-gray-300 font-normal hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                        ? 'bg-[#F97316] text-white font-semibold'
+                        : 'text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                     }`}>
                       <item.icon className="w-5 h-5 flex-shrink-0" />
                       <span>{item.name}</span>
