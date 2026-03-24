@@ -231,145 +231,180 @@ const StudentPage = () => {
 
             {/* Modal */}
             {showForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-                        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-4 flex justify-between items-center">
-                            <h2 className="text-xl font-bold dark:text-white">
-                                {formMode === 'create' ? 'Add Student' : 'Edit Student'}
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl w-full max-w-lg shadow-2xl border border-gray-200 dark:border-gray-800 flex flex-col max-h-[90vh] overflow-hidden">
+                        {/* Modal Header */}
+                        <div className="bg-white dark:bg-[#1E1E1E] border-b border-gray-200 dark:border-gray-800 px-6 py-5 flex justify-between items-center z-10 shrink-0">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+                                {formMode === 'create' ? 'Add New Student' : 'Edit Student Record'}
                             </h2>
                             <button
                                 onClick={resetForm}
-                                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full transition-colors"
                             >
                                 <FiX className="w-5 h-5" />
                             </button>
                         </div>
-                        <form onSubmit={formMode === 'create' ? handleCreate : handleUpdate} className="p-4">
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name *</label>
-                                <input
-                                    type="text"
-                                    name="firstname"
-                                    value={formData.firstname}
-                                    onChange={handleInputChange}
-                                    required
-                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Middle Name</label>
-                                <input
-                                    type="text"
-                                    name="middlename"
-                                    value={formData.middlename}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name *</label>
-                                <input
-                                    type="text"
-                                    name="lastname"
-                                    value={formData.lastname}
-                                    onChange={handleInputChange}
-                                    required
-                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">User ID (7 digits) *</label>
-                                <input
-                                    type="text"
-                                    name="user_id"
-                                    value={formData.user_id}
-                                    onChange={handleInputChange}
-                                    required
-                                    pattern="\d{7}"
-                                    title="Must be exactly 7 digits"
-                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email *</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    required
-                                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:text-white"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Password {formMode === 'create' ? '*' : '(leave blank to keep current)'}
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleInputChange}
-                                        required={formMode === 'create'}
-                                        className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 pr-10 dark:bg-gray-700 dark:text-white"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                                    >
-                                        {showPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
-                                    </button>
+
+                        {/* Modal Body */}
+                        <div className="overflow-y-auto w-full p-6">
+                            <form id="student-form" onSubmit={formMode === 'create' ? handleCreate : handleUpdate} className="space-y-5">
+                                {/* Modal Body Form Content Contrast Overhaul */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div className="col-span-1 border-none outline-none">
+                                        <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">First Name *</label>
+                                        <input
+                                            type="text"
+                                            name="firstname"
+                                            value={formData.firstname}
+                                            onChange={handleInputChange}
+                                            required
+                                            placeholder="Juan"
+                                            className="w-full h-11 px-4 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-700 shadow-sm rounded-lg text-[14px] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 hover:border-gray-400 dark:hover:border-gray-600 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                                        />
+                                    </div>
+                                    <div className="col-span-1">
+                                        <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">Middle Name</label>
+                                        <input
+                                            type="text"
+                                            name="middlename"
+                                            value={formData.middlename}
+                                            onChange={handleInputChange}
+                                            placeholder="Dela"
+                                            className="w-full h-11 px-4 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-700 shadow-sm rounded-lg text-[14px] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 hover:border-gray-400 dark:hover:border-gray-600 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                                        />
+                                    </div>
                                 </div>
-                                {formMode === 'create' && (
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                        Must be at least 8 characters, contain uppercase, lowercase, and number.
-                                    </p>
+                                
+                                <div>
+                                    <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">Last Name *</label>
+                                    <input
+                                        type="text"
+                                        name="lastname"
+                                        value={formData.lastname}
+                                        onChange={handleInputChange}
+                                        required
+                                        placeholder="Cruz"
+                                        className="w-full h-11 px-4 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-700 shadow-sm rounded-lg text-[14px] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 hover:border-gray-400 dark:hover:border-gray-600 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">Student ID *</label>
+                                        <input
+                                            type="text"
+                                            name="user_id"
+                                            value={formData.user_id}
+                                            onChange={handleInputChange}
+                                            required
+                                            pattern="\d{7}"
+                                            title="Must be exactly 7 digits"
+                                            placeholder="e.g. 2101234"
+                                            className="w-full h-11 px-4 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-700 shadow-sm rounded-lg text-[14px] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 hover:border-gray-400 dark:hover:border-gray-600 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">Email Address *</label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            required
+                                            placeholder="juan@university.edu"
+                                            className="w-full h-11 px-4 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-700 shadow-sm rounded-lg text-[14px] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 hover:border-gray-400 dark:hover:border-gray-600 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="pt-2 border-t border-gray-200 dark:border-gray-800/60">
+                                    <div className="mb-5 mt-2">
+                                        <label className="flex justify-between items-center text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">
+                                            Password {formMode === 'create' ? '*' : ''}
+                                            {formMode !== 'create' && <span className="font-normal text-xs text-gray-500 dark:text-gray-500">(Leave blank to keep current)</span>}
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type={showPassword ? 'text' : 'password'}
+                                                name="password"
+                                                value={formData.password}
+                                                onChange={handleInputChange}
+                                                required={formMode === 'create'}
+                                                placeholder={formMode === 'create' ? "Create a strong password" : "New password (optional)"}
+                                                className="w-full h-11 pl-4 pr-11 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-700 shadow-sm rounded-lg text-[14px] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 hover:border-gray-400 dark:hover:border-gray-600 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                                            >
+                                                {showPassword ? <FiEyeOff className="w-[18px] h-[18px]" /> : <FiEye className="w-[18px] h-[18px]" />}
+                                            </button>
+                                        </div>
+                                        {formMode === 'create' && (
+                                            <p className="text-[12px] text-gray-500 dark:text-gray-500 mt-2 ml-1 leading-snug">
+                                                Must be at least 8 characters, containing uppercase, lowercase, and numbers.
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">
+                                            Confirm Password {formMode === 'create' ? '*' : ''}
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type={showConfirmPassword ? 'text' : 'password'}
+                                                name="password_confirmation"
+                                                value={formData.password_confirmation}
+                                                onChange={handleInputChange}
+                                                required={formMode === 'create'}
+                                                placeholder={formMode === 'create' ? "Retype your password" : "Confirm new password"}
+                                                className="w-full h-11 pl-4 pr-11 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-700 shadow-sm rounded-lg text-[14px] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 hover:border-gray-400 dark:hover:border-gray-600 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                                            >
+                                                {showConfirmPassword ? <FiEyeOff className="w-[18px] h-[18px]" /> : <FiEye className="w-[18px] h-[18px]" />}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="bg-gray-50 dark:bg-[#181818] border-t border-gray-200 dark:border-gray-800 px-6 py-4 flex justify-end gap-3 shrink-0">
+                            <button
+                                type="button"
+                                onClick={resetForm}
+                                className="px-5 py-2.5 bg-white dark:bg-[#252525] border border-gray-300 dark:border-gray-700 rounded-lg text-[14px] font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] transition-colors flex items-center shadow-sm"
+                                disabled={isCreating || isUpdating}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                form="student-form"
+                                className="px-5 py-2.5 bg-[#F97316] text-white rounded-lg text-[14px] font-medium hover:bg-orange-600 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                                disabled={isCreating || isUpdating}
+                            >
+                                {(isCreating || isUpdating) ? (
+                                    <>
+                                        <Spinner />
+                                        <span>Saving...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FiSave className="w-4 h-4" />
+                                        <span>{formMode === 'create' ? 'Create Student' : 'Save Changes'}</span>
+                                    </>
                                 )}
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Confirm Password {formMode === 'create' ? '*' : '(if changing)'}
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        type={showConfirmPassword ? 'text' : 'password'}
-                                        name="password_confirmation"
-                                        value={formData.password_confirmation}
-                                        onChange={handleInputChange}
-                                        required={formMode === 'create'}
-                                        className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 pr-10 dark:bg-gray-700 dark:text-white"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                                    >
-                                        {showConfirmPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="flex justify-end gap-2 mt-6">
-                                <button
-                                    type="button"
-                                    onClick={resetForm}
-                                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
-                                    disabled={isCreating || isUpdating}
-                                >
-                                    <FiX className="w-4 h-4" /> Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-[#F97316] text-white rounded-md hover:bg-orange-600 flex items-center gap-2 shadow-sm disabled:opacity-50"
-                                    disabled={isCreating || isUpdating}
-                                >
-                                    {(isCreating || isUpdating) && <Spinner />}
-                                    <FiSave className="w-4 h-4" />
-                                    {formMode === 'create' ? (isCreating ? 'Creating...' : 'Create') : (isUpdating ? 'Updating...' : 'Update')}
-                                </button>
-                            </div>
-                        </form>
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
