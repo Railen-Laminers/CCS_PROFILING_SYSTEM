@@ -439,12 +439,12 @@ const StudentPage = () => {
                                 <tr className="border-b border-gray-200 dark:border-gray-700">
                                     <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[5%]">Photo</th>
                                     <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[12%]">Student ID</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[25%]">Name</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[25%]">Course</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[23%]">Name</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[17%]">Course</th>
                                     <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[10%]">Year Level</th>
                                     <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[8%]">Section</th>
                                     <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[10%]">Status</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide text-left w-[5%]">Actions</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide text-left w-[14%]">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -478,15 +478,15 @@ const StudentPage = () => {
                                                     Active
                                                 </span>
                                             </td>
-                                            <td className="py-2 whitespace-nowrap text-left">
+                                            <td className="py-2 px-1 whitespace-nowrap text-left">
                                                 <div className="flex justify-start gap-3 items-center">
-                                                    <button className="text-[#F97316] hover:text-orange-600 p-1.5 rounded-md" title="View Logs">
+                                                    <button className="text-[#F97316] hover:bg-orange-200 dark:hover:bg-orange-500/10 p-1.5 rounded-md" title="View Logs">
                                                         <FiEye className="w-[18px] h-[18px] stroke-[1.5]" />
                                                     </button>
-                                                    <button onClick={() => handleEdit(student)} className="text-blue-500 hover:text-blue-600 transition-colors p-1.5 rounded-md" title="Edit Student" disabled={isDeleting}>
+                                                    <button onClick={() => handleEdit(student)} className="text-blue-500 hover:bg-blue-200 dark:hover:bg-blue-500/10 transition-colors p-1.5 rounded-md" title="Edit Student" disabled={isDeleting}>
                                                         <FiEdit2 className="w-[18px] h-[18px] stroke-[1.5]" />
                                                     </button>
-                                                    <button onClick={() => handleDelete(student.id)} className="text-red-500 hover:text-red-600 transition-colors p-1.5 rounded-md" title="Delete Student" disabled={isDeleting}>
+                                                    <button onClick={() => handleDelete(student.id)} className="text-red-500 hover:bg-red-200 dark:hover:bg-red-500/10 transition-colors p-1.5 rounded-md" title="Delete Student" disabled={isDeleting}>
                                                         {isDeleting ? <Spinner /> : <FiTrash2 className="w-[18px] h-[18px] stroke-[1.5]" />}
                                                     </button>
                                                 </div>
