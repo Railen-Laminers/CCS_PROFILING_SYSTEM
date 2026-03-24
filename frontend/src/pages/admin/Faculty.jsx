@@ -13,7 +13,7 @@ import {
 
 // Spinner component
 const Spinner = () => (
-    <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+    <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-[#F97316] border-t-transparent"></div>
 );
 
 const FacultyPage = () => {
@@ -199,17 +199,23 @@ const FacultyPage = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this faculty member?')) return;
-        setIsDeleting(true);
+        const selectedMember = faculty.find(m => m.id === id);
+        const memberName = `${selectedMember?.firstname} ${selectedMember?.lastname}`;
+        
+        if (!window.confirm(`Are you sure you want to delete ${memberName}?`)) {
+            return;
+        }
+        
+        setDeletingUserId(id);
         setError('');
+        
         try {
             await userAPI.deleteUser(id);
             setFaculty((prev) => prev.filter((m) => m.id !== id));
         } catch (err) {
             setError(getErrorMessage(err) || 'Failed to delete faculty.');
-            console.error(err);
         } finally {
-            setIsDeleting(false);
+            setDeletingUserId(null);
         }
     };
 
@@ -410,7 +416,7 @@ const FacultyPage = () => {
                                             <button
                                                 onClick={() => handleEdit(member)}
                                                 className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1"
-                                                disabled={isDeleting}
+                                                disabled={deletingUserId !== null}
                                                 title="Edit"
                                             >
                                                 <FaEdit size={18} />
@@ -418,11 +424,11 @@ const FacultyPage = () => {
                                             <button
                                                 onClick={() => handleDelete(member.id)}
                                                 className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1"
-                                                disabled={isDeleting}
+                                                disabled={deletingUserId !== null}
                                                 title="Delete"
                                             >
-                                                {isDeleting && <Spinner />}
-                                                {!isDeleting && <FaTrash size={18} />}
+                                                {deletingUserId === member.id && <Spinner />}
+                                                {deletingUserId !== member.id && <FaTrash size={18} />}
                                             </button>
                                         </div>
                                     </td>

@@ -14,7 +14,7 @@ import {
 } from 'react-icons/fi';
 
 const Spinner = () => (
-    <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+    <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-[#F97316] border-t-transparent"></div>
 );
 
 const StudentPage = () => {
@@ -39,7 +39,7 @@ const StudentPage = () => {
 
     const [isCreating, setIsCreating] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
+    const [deletingUserId, setDeletingUserId] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -189,17 +189,23 @@ const StudentPage = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this student?')) return;
-        setIsDeleting(true);
+        const selectedStudent = students.find(s => s.id === id);
+        const studentName = `${selectedStudent?.firstname} ${selectedStudent?.lastname}`;
+        
+        if (!window.confirm(`Are you sure you want to delete ${studentName}?`)) {
+            return;
+        }
+        
+        setDeletingUserId(id);
         setError('');
+        
         try {
             await userAPI.deleteUser(id);
             setStudents((prev) => prev.filter((s) => s.id !== id));
         } catch (err) {
             setError(getErrorMessage(err) || 'Failed to delete student.');
-            console.error(err);
         } finally {
-            setIsDeleting(false);
+            setDeletingUserId(null);
         }
     };
 
@@ -483,11 +489,11 @@ const StudentPage = () => {
                                                     <button className="text-[#F97316] hover:bg-orange-200 dark:hover:bg-orange-500/10 p-1.5 rounded-md" title="View Logs">
                                                         <FiEye className="w-[18px] h-[18px] stroke-[1.5]" />
                                                     </button>
-                                                    <button onClick={() => handleEdit(student)} className="text-blue-500 hover:bg-blue-200 dark:hover:bg-blue-500/10 transition-colors p-1.5 rounded-md" title="Edit Student" disabled={isDeleting}>
+                                                    <button onClick={() => handleEdit(student)} className="text-blue-500 hover:bg-blue-200 dark:hover:bg-blue-500/10 transition-colors p-1.5 rounded-md" title="Edit Student" disabled={deletingUserId !== null}>
                                                         <FiEdit2 className="w-[18px] h-[18px] stroke-[1.5]" />
                                                     </button>
-                                                    <button onClick={() => handleDelete(student.id)} className="text-red-500 hover:bg-red-200 dark:hover:bg-red-500/10 transition-colors p-1.5 rounded-md" title="Delete Student" disabled={isDeleting}>
-                                                        {isDeleting ? <Spinner /> : <FiTrash2 className="w-[18px] h-[18px] stroke-[1.5]" />}
+                                                    <button onClick={() => handleDelete(student.id)} className="text-red-500 hover:bg-red-200 dark:hover:bg-red-500/10 transition-colors p-1.5 rounded-md" title="Delete Student" disabled={deletingUserId !== null}>
+                                                        {deletingUserId === student.id ? <Spinner /> : <FiTrash2 className="w-[18px] h-[18px] stroke-[1.5]" />}
                                                     </button>
                                                 </div>
                                             </td>
