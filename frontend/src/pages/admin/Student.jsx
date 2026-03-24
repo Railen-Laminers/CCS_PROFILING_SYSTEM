@@ -402,23 +402,23 @@ const StudentPage = () => {
                         <table className="w-full text-left border-collapse min-w-[800px]">
                             <thead>
                                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Photo</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Student ID</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Name</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Course</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Year Level</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Section</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide">Status</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide text-left">Actions</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[5%]">Photo</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[12%]">Student ID</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[25%]">Name</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[25%]">Course</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[10%]">Year Level</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[8%]">Section</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[10%]">Status</th>
+                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide text-left w-[5%]">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100 dark:divide-gray-800/60">
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                 {students.map((student) => {
                                     const fullName = [student.firstname, student.middlename, student.lastname].filter(Boolean).join(' ');
                                     const initials = student.firstname?.[0] || 'S';
                                     return (
-                                        <tr key={student.id} className="hover:bg-gray-50/50 dark:hover:bg-[#252525] transition-colors h-[60px]">
-                                            <td className="py-2 pr-4 whitespace-nowrap">
+                                        <tr key={student.id} className="hover:bg-gray-100 dark:hover:bg-[#333333] transition-colors h-[60px]">
+                                            <td className="py-2 px-1 pr-4 whitespace-nowrap">
                                                 <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center text-[12px] font-bold shadow-inner">
                                                     {initials}
                                                 </div>
