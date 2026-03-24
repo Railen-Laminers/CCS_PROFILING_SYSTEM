@@ -33,7 +33,7 @@ export const Header = () => {
   return (
     <header className="bg-white dark:bg-[#1E1E1E] border-b border-gray-200 dark:border-gray-700 px-6 h-[80px] flex justify-between items-center">
       <div className="flex items-center gap-2">
-        <h1 className="text-[18px] font-bold text-gray-800 dark:text-gray-100 tracking-tight">
+        <h1 className="text-[21px] font-semibold text-gray-800 dark:text-gray-100 tracking-tight">
           CCS Comprehensive Profiling System
         </h1>
       </div>
