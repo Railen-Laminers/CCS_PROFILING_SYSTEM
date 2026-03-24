@@ -5,18 +5,18 @@ import { useAuth } from '../contexts/AuthContext';
 import { 
   FiGrid, 
   FiUsers, 
-  FiBriefcase, 
   FiBookOpen, 
   FiClock, 
   FiCalendar, 
   FiFileText, 
   FiSettings 
 } from 'react-icons/fi';
+import { HiOutlineAcademicCap } from 'react-icons/hi';
 
 const menuItems = [
   { name: 'Dashboard', path: '/dashboard', icon: FiGrid },
   { name: 'Students', path: '/students', icon: FiUsers },
-  { name: 'Faculty', path: '/faculty', icon: FiBriefcase },
+  { name: 'Faculty', path: '/faculty', icon: HiOutlineAcademicCap },
   { name: 'Instruction', path: '/instruction', icon: FiBookOpen },
   { name: 'Scheduling', path: '/scheduling', icon: FiClock },
   { name: 'Events', path: '/events', icon: FiCalendar },
@@ -28,8 +28,8 @@ const Sidebar = () => {
   const { user } = useAuth();
 
   return (
-    <aside className="w-[260px] bg-white dark:bg-[#1E1E1E] border-r border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-200 flex flex-col transition-all duration-300">
-      <nav className="flex-1 pt-8 pb-4">
+    <aside className="w-64 bg-white dark:bg-[#1E1E1E] border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300">
+      <nav className="flex-1 pt-6 pb-4">
         <ul className="space-y-2 px-4">
           {menuItems.map((item, index) => {
             // Keep existing admin-only logic for items beyond Dashboard
@@ -37,18 +37,17 @@ const Sidebar = () => {
 
             return (
               <li key={item.name}>
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `flex items-center gap-4 px-4 py-3 text-[15px] font-medium rounded-xl transition-all duration-200 ${
+                <NavLink to={item.path}>
+                  {({ isActive }) => (
+                    <div className={`flex items-center gap-3 px-4 h-12 text-sm rounded-lg transition-all duration-200 ${
                       isActive
-                        ? 'bg-orange-500 text-white shadow-md'
-                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`
-                  }
-                >
-                  <item.icon className="w-5 h-5 stroke-[1.5]" />
-                  <span>{item.name}</span>
+                        ? 'bg-[#F97316] text-white font-medium'
+                        : 'text-gray-700 dark:text-gray-300 font-normal hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                    }`}>
+                      <item.icon className="w-5 h-5 flex-shrink-0" />
+                      <span>{item.name}</span>
+                    </div>
+                  )}
                 </NavLink>
               </li>
             );
