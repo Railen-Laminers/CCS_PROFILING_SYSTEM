@@ -39,7 +39,7 @@ export const authAPI = {
   login: async (identifier, password) => {
     const response = await axiosInstance.post('/auth/login', { identifier, password });
     setAuthToken(response.data.token);
-    return response.data.user;
+    return response.data.user; // already includes profile for student/faculty
   },
   logout: async () => {
     await axiosInstance.post('/auth/logout');
@@ -47,7 +47,7 @@ export const authAPI = {
   },
   getMe: async () => {
     const response = await axiosInstance.get('/auth/me');
-    return response.data.user;
+    return response.data.user; // includes profile for student/faculty
   },
   isAuthenticated,
   getAuthToken,
@@ -55,10 +55,10 @@ export const authAPI = {
 
 // User Management API (admin only)
 export const userAPI = {
-  // Create a new user
+  // Create a new user (student or faculty)
   createUser: async (userData) => {
     const response = await axiosInstance.post('/users', userData);
-    return response.data.user;
+    return response.data; // returns { message, user, student/faculty }
   },
 
   // Get all users
@@ -76,7 +76,7 @@ export const userAPI = {
   // Update a user
   updateUser: async (id, userData) => {
     const response = await axiosInstance.put(`/users/${id}`, userData);
-    return response.data.user;
+    return response.data; // returns { message, user, student/faculty }
   },
 
   // Delete a user
@@ -87,13 +87,13 @@ export const userAPI = {
   // Get all students
   getStudents: async () => {
     const response = await axiosInstance.get('/students');
-    return response.data.students;
+    return response.data.students; // array of { user, student }
   },
 
   // Get all faculty
   getFaculty: async () => {
     const response = await axiosInstance.get('/faculty');
-    return response.data.faculty;
+    return response.data.faculty; // array of { user, faculty }
   },
 
   // Get all courses

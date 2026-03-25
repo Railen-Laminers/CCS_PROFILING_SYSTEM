@@ -15,38 +15,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create an admin user
         User::create([
             'firstname' => 'Admin',
             'middlename' => 'Test',
             'lastname' => 'User',
             'user_id' => '1234567',
             'email' => 'admin@gmail.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'role' => 'admin',
+            'birth_date' => '2000-01-01',
+            'contact_number' => '09123456789',
+            'gender' => 'male',
+            'address' => 'Admin Address',
+            'profile_picture' => null,
+            'is_active' => true,
+            'last_login_at' => null,
         ]);
 
-        // Create a faculty user
-        User::create([
-            'firstname' => 'Faculty',
-            'middlename' => 'Test',
-            'lastname' => 'User',
-            'user_id' => '2345678',
-            'email' => 'faculty@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'faculty',
-        ]);
-
-        // Create a student user
-        User::create([
-            'firstname' => 'Student',
-            'middlename' => 'Test',
-            'lastname' => 'User',
-            'user_id' => '3456789',
-            'email' => 'student@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'student',
-        ]);
 
         // Create IT-related courses
         Course::create([
