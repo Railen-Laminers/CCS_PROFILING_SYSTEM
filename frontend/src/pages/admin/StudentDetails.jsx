@@ -179,9 +179,9 @@ const StudentDetails = () => {
 
             {/* Profile Overview Card */}
             <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex items-start gap-8">
-                        <div className="w-[115px] h-[115px] rounded-xl bg-blue-100 dark:bg-[#1C2B4B] text-blue-700 dark:text-[#93Bbf3] flex items-center justify-center text-5xl font-bold shadow-inner flex-shrink-0">
+                <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6">
+                    <div className="flex items-start gap-6">
+                        <div className="w-[123px] h-[123px] rounded-xl bg-blue-100 dark:bg-[#1C2B4B] text-blue-700 dark:text-[#93Bbf3] flex items-center justify-center text-5xl font-bold shadow-inner flex-shrink-0">
                             {initials}
                         </div>
                         <div>
@@ -206,7 +206,7 @@ const StudentDetails = () => {
                                     {isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
-                            <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-5 text-[14px] text-gray-600 dark:text-gray-400 font-medium">
+                            <div className="flex items-center flex-wrap gap-x-40 gap-y-3 mt-5 text-[14px] text-gray-600 dark:text-gray-400 font-medium">
                                 <div className="flex items-center gap-2.5">
                                     <FiMail className="w-4 h-4 text-[#F97316]" /> 
                                     <span>{student.email}</span>
