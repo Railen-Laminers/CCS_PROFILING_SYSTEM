@@ -5,3 +5,35 @@
 * {
     transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
+
+/* Custom Advanced Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5); /* gray-400 */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(107, 114, 128, 0.8); /* gray-500 */
+}
+
+/* Dark mode scrollbar integration */
+.dark ::-webkit-scrollbar-thumb {
+    background-color: rgba(75, 85, 99, 0.5); /* gray-600 */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(107, 114, 128, 0.8);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
