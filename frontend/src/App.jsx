@@ -7,6 +7,7 @@ import { ProtectedRoute, RoleBasedRoute, PublicRoute } from './components/Protec
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import StudentPage from './pages/admin/Student';
+import StudentDetails from './pages/admin/StudentDetails';
 import FacultyPage from './pages/admin/Faculty';
 import CoursesPage from './pages/admin/Courses';
 import EventsPage from './pages/admin/Events';
@@ -59,6 +60,16 @@ function AppContent() {
           <ProtectedRoute>
             <DashboardLayout>
               <StudentPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/students/:id"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <StudentDetails />
             </DashboardLayout>
           </ProtectedRoute>
         }

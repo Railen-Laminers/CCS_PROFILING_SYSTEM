@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { userAPI } from '../../services/api';
 import {
@@ -10,7 +11,8 @@ import {
     FiSave,
     FiX,
     FiDownload,
-    FiSearch
+    FiSearch,
+    FiUsers
 } from 'react-icons/fi';
 
 const Spinner = () => (
@@ -19,6 +21,7 @@ const Spinner = () => (
 
 const StudentPage = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -458,7 +461,11 @@ const StudentPage = () => {
                                     const fullName = [student.firstname, student.middlename, student.lastname].filter(Boolean).join(' ');
                                     const initials = student.firstname?.[0] || 'S';
                                     return (
-                                        <tr key={student.id} className="hover:bg-gray-100 dark:hover:bg-[#333333] transition-colors h-[60px]">
+                                        <tr 
+                                            key={student.id} 
+                                            onClick={() => navigate(`/students/${student.id}`)}
+                                            className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors h-[60px] cursor-pointer group"
+                                        >
                                             <td className="py-2 px-1 pr-4 whitespace-nowrap">
                                                 <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center text-[12px] font-bold shadow-inner">
                                                     {initials}
@@ -484,11 +491,8 @@ const StudentPage = () => {
                                                     Active
                                                 </span>
                                             </td>
-                                            <td className="py-2 px-1 whitespace-nowrap text-left">
+                                            <td className="py-2 px-1 whitespace-nowrap text-left" onClick={(e) => e.stopPropagation()}>
                                                 <div className="flex justify-start gap-3 items-center">
-                                                    <button className="text-[#F97316] hover:bg-orange-200 dark:hover:bg-orange-500/10 p-1.5 rounded-md" title="View Logs">
-                                                        <FiEye className="w-[18px] h-[18px] stroke-[1.5]" />
-                                                    </button>
                                                     <button onClick={() => handleEdit(student)} className="text-blue-500 hover:bg-blue-200 dark:hover:bg-blue-500/10 transition-colors p-1.5 rounded-md" title="Edit Student" disabled={deletingUserId !== null}>
                                                         <FiEdit2 className="w-[18px] h-[18px] stroke-[1.5]" />
                                                     </button>

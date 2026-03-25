@@ -28,7 +28,7 @@ const Sidebar = () => {
   const { user } = useAuth();
 
   return (
-    <aside className="w-64 bg-white dark:bg-[#1E1E1E] border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300">
+    <aside className="w-[272px] bg-white dark:bg-[#1E1E1E] border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300">
       <nav className="flex-1 pt-6 pb-4">
         <ul className="space-y-2 px-4">
           {menuItems.map((item, index) => {
@@ -39,12 +39,12 @@ const Sidebar = () => {
               <li key={item.name}>
                 <NavLink to={item.path}>
                   {({ isActive }) => (
-                    <div className={`flex items-center gap-3 px-4 h-12 text-sm rounded-lg transition-all duration-200 ${
+                    <div className={`flex items-center gap-3.5 px-4 h-[52px] text-[15px] rounded-lg transition-all duration-200 ${
                       isActive
                         ? 'bg-[#F97316] text-white font-semibold'
                         : 'text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                     }`}>
-                      <item.icon className="w-5 h-5 flex-shrink-0" />
+                      <item.icon className="w-[22px] h-[22px] flex-shrink-0" />
                       <span>{item.name}</span>
                     </div>
                   )}

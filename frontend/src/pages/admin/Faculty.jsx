@@ -40,6 +40,7 @@ const FacultyPage = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [deletingUserId, setIsDeletingUserId] = useState(null);
 
     // Password visibility toggle states
     const [showPassword, setShowPassword] = useState(false);
