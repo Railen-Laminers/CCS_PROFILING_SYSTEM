@@ -28,7 +28,7 @@ const Sidebar = () => {
   const { user } = useAuth();
 
   return (
-    <aside className="w-64 bg-white dark:bg-[#1E1E1E] border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300">
+    <aside className="w-64 bg-white dark:bg-[#1E1E1E] border-r border-gray-200 dark:border-gray-800 flex flex-col">
       <nav className="flex-1 pt-6 pb-4">
         <ul className="space-y-2 px-4">
           {menuItems.map((item, index) => {
