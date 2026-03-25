@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiAlertCircle,
-    FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText
+    FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser
 } from 'react-icons/fi';
 import { userAPI } from '../../services/api';
 
@@ -60,18 +60,18 @@ const Badge = ({ children, color = 'gray' }) => {
         gray: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border border-transparent'
     };
     return (
-        <span className={`px-3 py-1 text-[12px] font-medium rounded-full ${variants[color]}`}>
+        <span className={`px-3.5 py-1 text-[13px] font-medium rounded-full ${variants[color]}`}>
             {children}
         </span>
     );
 };
 
 const BulletList = ({ items }) => {
-    if (!items || items.length === 0) return <p className="text-[14px] text-gray-500">None recorded</p>;
+    if (!items || items.length === 0) return <p className="text-[15px] text-gray-500">None recorded</p>;
     return (
         <ul className="space-y-1.5">
             {items.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-[14px] text-gray-800 dark:text-gray-200 font-medium">
+                <li key={idx} className="flex items-start gap-2 text-[15px] text-gray-800 dark:text-gray-200 font-medium">
                     <span className="text-gray-400 dark:text-gray-600 mt-0.5">•</span>
                     <span>{item}</span>
                 </li>
@@ -81,7 +81,7 @@ const BulletList = ({ items }) => {
 };
 
 const SectionSubhead = ({ children }) => (
-    <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">{children}</p>
+    <p className="text-[13px] font-semibold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">{children}</p>
 );
 
 const StudentDetails = () => {
@@ -171,22 +171,22 @@ const StudentDetails = () => {
             {/* Header / Back */}
             <button 
                 onClick={() => navigate('/students')}
-                className="flex items-center gap-2 text-[14px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-6 transition-colors"
+                className="flex items-center gap-2 text-[15px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-4 transition-colors"
             >
                 <FiArrowLeft className="w-5 h-5" />
                 Back to Students
             </button>
 
             {/* Profile Overview Card */}
-            <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
+            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div className="flex items-start gap-8">
-                        <div className="w-[115px] h-[115px] rounded-3xl bg-blue-100 dark:bg-[#1C2B4B] text-blue-700 dark:text-[#93Bbf3] flex items-center justify-center text-5xl font-bold shadow-inner flex-shrink-0">
+                        <div className="w-[115px] h-[115px] rounded-xl bg-blue-100 dark:bg-[#1C2B4B] text-blue-700 dark:text-[#93Bbf3] flex items-center justify-center text-5xl font-bold shadow-inner flex-shrink-0">
                             {initials}
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1 tracking-tight">{fullName}</h1>
-                            <p className="text-[15px] font-medium text-gray-500 dark:text-gray-400 mb-4">{student.user_id}</p>
+                            <p className="text-[17px] font-medium text-gray-500 dark:text-gray-400 mb-4">{student.user_id}</p>
                             <div className="flex flex-wrap items-center gap-3 mb-4">
                                 {profile?.program && (
                                     <span className="bg-[#F97316] text-white px-3.5 py-1 rounded-lg text-[12px] font-semibold shadow-sm">
@@ -231,7 +231,7 @@ const StudentDetails = () => {
             </div>
 
             {/* Tabs Navigation */}
-            <div className="flex space-x-1 mb-6 overflow-x-auto p-1.5 bg-gray-100/80 dark:bg-[#1E1E1E] border border-gray-200/50 dark:border-gray-800 rounded-2xl scrollbar-hide">
+            <div className="flex space-x-1 mb-6 overflow-x-auto p-1.5 bg-gray-100/80 dark:bg-[#2A2A2A] border border-gray-200/50 dark:border-gray-800 rounded-2xl scrollbar-hide">
                 {['Student Information', 'Academic Record', 'Medical Record', 'Sports & Activities', 'Organizations', 'Behavior & Discipline', 'Events & Competitions'].map(tab => (
                     <button
                         key={tab}
@@ -248,7 +248,7 @@ const StudentDetails = () => {
             </div>
 
             {/* Tab Content Rendering */}
-            <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-7 min-h-[400px]">
+            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 min-h-[400px]">
                 {isTabLoading ? (
                     <div className="flex justify-center items-center h-[300px]">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
@@ -259,18 +259,21 @@ const StudentDetails = () => {
                         {/* 1. STUDENT INFORMATION (Dynamic DB Data) */}
                         {activeTab === 'Student Information' && (
                             <div>
-                                <h3 className="text-[17px] font-bold text-gray-900 dark:text-white mb-6">Personal Information</h3>
+                                <div className="flex items-center gap-2 mb-6 text-[#F97316]">
+                                    <FiUser className="w-5 h-5" />
+                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Personal Information</h3>
+                                </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                                    <div><SectionSubhead>Full Name</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{fullName}</p></div>
-                                    <div><SectionSubhead>Student ID</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.user_id}</p></div>
-                                    <div><SectionSubhead>Gender</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100 capitalize">{student.gender || 'Not Specified'}</p></div>
-                                    <div><SectionSubhead>Birthdate</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.birth_date || 'Not Specified'}</p></div>
-                                    <div><SectionSubhead>Contact Number</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.contact_number || 'Not Provided'}</p></div>
-                                    <div><SectionSubhead>Email</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.email}</p></div>
-                                    <div><SectionSubhead>Address</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.address || 'Not Provided'}</p></div>
+                                    <div><SectionSubhead>Full Name</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{fullName}</p></div>
+                                    <div><SectionSubhead>Student ID</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.user_id}</p></div>
+                                    <div><SectionSubhead>Gender</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100 capitalize">{student.gender || 'Not Specified'}</p></div>
+                                    <div><SectionSubhead>Birthdate</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.birth_date || 'Not Specified'}</p></div>
+                                    <div><SectionSubhead>Contact Number</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.contact_number || 'Not Provided'}</p></div>
+                                    <div><SectionSubhead>Email</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.email}</p></div>
+                                    <div><SectionSubhead>Address</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.address || 'Not Provided'}</p></div>
                                     <div className="hidden md:block"></div> {/* Spacer */}
-                                    <div><SectionSubhead>Parent/Guardian</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{profile?.parent_guardian_name ? `${profile.parent_guardian_name} - ${profile.emergency_contact || 'No Contact'}` : 'Not Provided'}</p></div>
-                                    <div><SectionSubhead>Emergency Contact</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{profile?.emergency_contact || 'Not Provided'}</p></div>
+                                    <div><SectionSubhead>Parent/Guardian</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.parent_guardian_name ? `${profile.parent_guardian_name} - ${profile.emergency_contact || 'No Contact'}` : 'Not Provided'}</p></div>
+                                    <div><SectionSubhead>Emergency Contact</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.emergency_contact || 'Not Provided'}</p></div>
                                 </div>
                             </div>
                         )}
@@ -280,11 +283,11 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiAward className="w-5 h-5" />
-                                    <h3 className="text-[17px] font-bold text-gray-900 dark:text-white">Academic Performance</h3>
+                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Academic Performance</h3>
                                 </div>
                                 <div className="grid grid-cols-3 gap-6 mb-8">
-                                    <div><SectionSubhead>Course</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.academic.course}</p></div>
-                                    <div><SectionSubhead>Year Level</SectionSubhead><p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.academic.yearLevel}</p></div>
+                                    <div><SectionSubhead>Course</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.academic.course}</p></div>
+                                    <div><SectionSubhead>Year Level</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.academic.yearLevel}</p></div>
                                     <div><SectionSubhead>GPA</SectionSubhead><p className="text-3xl font-bold text-[#F97316]">{MOCK_DATA.academic.gpa}</p></div>
                                 </div>
                                 <div className="space-y-6">
@@ -315,8 +318,9 @@ const StudentDetails = () => {
                         {/* 3. MEDICAL RECORD (Mock Data) */}
                         {activeTab === 'Medical Record' && (
                             <div>
-                                <div className="flex items-center gap-2 mb-6">
-                                    <h3 className="text-[17px] font-bold text-gray-900 dark:text-white">Medical Information</h3>
+                                <div className="flex items-center gap-2 mb-6 text-[#F97316]">
+                                    <FiActivity className="w-5 h-5" />
+                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Medical Information</h3>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                     <div>
@@ -331,11 +335,11 @@ const StudentDetails = () => {
                                     </div>
                                     <div>
                                         <SectionSubhead>Medical Conditions</SectionSubhead>
-                                        <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.medical.medicalConditions}</p>
+                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.medical.medicalConditions}</p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Disabilities</SectionSubhead>
-                                        <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.medical.disabilities}</p>
+                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.medical.disabilities}</p>
                                     </div>
                                 </div>
                             </div>
@@ -346,7 +350,7 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiAward className="w-5 h-5" />
-                                    <h3 className="text-[17px] font-bold text-gray-900 dark:text-white">Sports and Athletic Activities</h3>
+                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Sports and Athletic Activities</h3>
                                 </div>
                                 <div className="space-y-6">
                                     <div>
@@ -378,7 +382,7 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiUsers className="w-5 h-5" />
-                                    <h3 className="text-[17px] font-bold text-gray-900 dark:text-white">Organizations and Leadership</h3>
+                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Organizations and Leadership</h3>
                                 </div>
                                 <div className="space-y-6">
                                     <div>
@@ -389,7 +393,7 @@ const StudentDetails = () => {
                                     </div>
                                     <div>
                                         <SectionSubhead>Fraternities</SectionSubhead>
-                                        <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.organizations.fraternities}</p>
+                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.organizations.fraternities}</p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Student Council</SectionSubhead>
@@ -410,30 +414,30 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiAlertTriangle className="w-5 h-5" />
-                                    <h3 className="text-[17px] font-bold text-gray-900 dark:text-white">Behavior and Disciplinary Records</h3>
+                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Behavior and Disciplinary Records</h3>
                                 </div>
                                 <div className="grid grid-cols-3 gap-6 mb-8 pt-2">
                                     <div>
-                                        <h4 className="text-[14px] font-medium text-gray-600 dark:text-gray-400 mb-1">Warnings</h4>
+                                        <h4 className="text-[15px] font-medium text-gray-600 dark:text-gray-400 mb-1">Warnings</h4>
                                         <p className="text-3xl font-bold text-yellow-500">{MOCK_DATA.behavior.warnings}</p>
                                     </div>
                                     <div>
-                                        <h4 className="text-[14px] font-medium text-gray-600 dark:text-gray-400 mb-1">Suspensions</h4>
+                                        <h4 className="text-[15px] font-medium text-gray-600 dark:text-gray-400 mb-1">Suspensions</h4>
                                         <p className="text-3xl font-bold text-red-500">{MOCK_DATA.behavior.suspensions}</p>
                                     </div>
                                     <div>
-                                        <h4 className="text-[14px] font-medium text-gray-600 dark:text-gray-400 mb-1">Counseling Sessions</h4>
+                                        <h4 className="text-[15px] font-medium text-gray-600 dark:text-gray-400 mb-1">Counseling Sessions</h4>
                                         <p className="text-3xl font-bold text-blue-500">{MOCK_DATA.behavior.counseling}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-6">
                                     <div>
                                         <SectionSubhead>Incidents</SectionSubhead>
-                                        <p className="text-[14px] font-medium text-green-600 dark:text-green-400">{MOCK_DATA.behavior.incidents}</p>
+                                        <p className="text-[15px] font-medium text-green-600 dark:text-green-400">{MOCK_DATA.behavior.incidents}</p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Counseling Records</SectionSubhead>
-                                        <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.behavior.counselingRecords}</p>
+                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.behavior.counselingRecords}</p>
                                     </div>
                                 </div>
                             </div>
@@ -442,12 +446,15 @@ const StudentDetails = () => {
                         {/* 7. EVENTS & COMPETITIONS (Mock Data) */}
                         {activeTab === 'Events & Competitions' && (
                             <div>
-                                <h3 className="text-[17px] font-bold text-gray-900 dark:text-white mb-6">Events and Competitions</h3>
+                                <div className="flex items-center gap-2 mb-6 text-[#F97316]">
+                                    <FiCalendar className="w-5 h-5" />
+                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Events and Competitions</h3>
+                                </div>
                                 <div className="space-y-6">
                                     <div>
                                         <SectionSubhead>Quiz Bee Competitions</SectionSubhead>
                                         {MOCK_DATA.events.quizBee.map(evt => (
-                                            <div key={evt} className="p-4 bg-purple-50 dark:bg-purple-900/10 text-gray-800 dark:text-gray-200 text-[14px] font-medium rounded-xl mb-2">
+                                            <div key={evt} className="p-4 bg-purple-50 dark:bg-purple-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
                                                 {evt}
                                             </div>
                                         ))}
@@ -455,7 +462,7 @@ const StudentDetails = () => {
                                     <div>
                                         <SectionSubhead>Programming Contests</SectionSubhead>
                                         {MOCK_DATA.events.programming.map(evt => (
-                                            <div key={evt} className="p-4 bg-blue-50 dark:bg-blue-900/10 text-gray-800 dark:text-gray-200 text-[14px] font-medium rounded-xl mb-2">
+                                            <div key={evt} className="p-4 bg-blue-50 dark:bg-blue-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
                                                 {evt}
                                             </div>
                                         ))}
@@ -463,7 +470,7 @@ const StudentDetails = () => {
                                     <div>
                                         <SectionSubhead>Athletic Competitions</SectionSubhead>
                                         {MOCK_DATA.events.athletic.map(evt => (
-                                            <div key={evt} className="p-4 bg-green-50 dark:bg-green-900/10 text-gray-800 dark:text-gray-200 text-[14px] font-medium rounded-xl mb-2">
+                                            <div key={evt} className="p-4 bg-green-50 dark:bg-green-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
                                                 {evt}
                                             </div>
                                         ))}

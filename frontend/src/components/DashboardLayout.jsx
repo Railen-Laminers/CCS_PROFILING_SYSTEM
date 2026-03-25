@@ -11,7 +11,7 @@ export const DashboardLayout = ({ children }) => {
       {/* Sidebar and main content row */}
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto p-8 bg-[#F9FAFB] dark:bg-[#121212]">
+        <main className="flex-1 overflow-y-auto p-6 bg-[#F9FAFB] dark:bg-[#121212]">
           {children}
         </main>
       </div>
