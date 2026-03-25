@@ -8,7 +8,7 @@ const StudentDetails = () => {
     const navigate = useNavigate();
     const [student, setStudent] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('Personal Information');
+    const [activeTab, setActiveTab] = useState('Student Information');
 
     useEffect(() => {
         const fetchStudent = async () => {
@@ -63,13 +63,13 @@ const StudentDetails = () => {
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">{fullName}</h1>
                             <div className="flex flex-wrap items-center gap-3 mb-4">
-                                <span className="bg-[#F97316] text-white px-3.5 py-1 rounded-full text-[12px] font-semibold shadow-sm">
+                                <span className="bg-[#F97316] text-white px-3.5 py-1 rounded-lg text-[12px] font-semibold shadow-sm">
                                     BS Computer Science
                                 </span>
-                                <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3.5 py-1 rounded-full text-[12px] font-bold">
-                                    1st Year • Section A
+                                <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3.5 py-1 rounded-lg text-[12px] font-bold">
+                                    1st Year - Section A
                                 </span>
-                                <span className="bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 px-3.5 py-1 rounded-full text-[12px] font-bold border border-green-200 dark:border-green-500/20">
+                                <span className="bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 px-3.5 py-1 rounded-lg text-[12px] font-bold border border-green-200 dark:border-green-500/20">
                                     Active
                                 </span>
                             </div>
@@ -96,15 +96,15 @@ const StudentDetails = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex space-x-2 mb-6 overflow-x-auto pb-2 border-b border-gray-200 dark:border-gray-800">
-                {['Personal Information', 'Academic Record', 'Requirements', 'Account Settings'].map(tab => (
+            <div className="flex space-x-1 mb-8 overflow-x-auto p-1.5 bg-gray-100/80 dark:bg-[#1E1E1E] border border-gray-200/50 dark:border-gray-800 rounded-2xl scrollbar-hide">
+                {['Student Information', 'Academic Record', 'Medical Record', 'Sports & Activities', 'Organizations', 'Behavior & Discipline', 'Events & Competition'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`px-5 py-3 text-[14px] font-bold whitespace-nowrap transition-all border-b-2 ${
+                        className={`px-5 py-2.5 text-[14px] font-semibold whitespace-nowrap transition-all rounded-full ${
                             activeTab === tab 
-                                ? 'border-[#F97316] text-[#F97316]' 
-                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                                ? 'bg-[#F97316] text-white shadow-sm' 
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-white dark:hover:bg-[#2A2A2A]'
                         }`}
                     >
                         {tab}
@@ -114,35 +114,35 @@ const StudentDetails = () => {
 
             {/* Tab Content */}
             <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-8">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-8">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">
                     {activeTab}
                 </h3>
                 
-                {activeTab === 'Personal Information' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                {activeTab === 'Student Information' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-7">
                         <div>
-                            <p className="text-[13px] font-bold text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">First Name</p>
-                            <p className="text-[16px] font-semibold text-gray-900 dark:text-gray-100">{student.firstname}</p>
+                            <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">First Name</p>
+                            <p className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">{student.firstname}</p>
                         </div>
                         <div>
-                            <p className="text-[13px] font-bold text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">Last Name</p>
-                            <p className="text-[16px] font-semibold text-gray-900 dark:text-gray-100">{student.lastname}</p>
+                            <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Last Name</p>
+                            <p className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">{student.lastname}</p>
                         </div>
                         <div>
-                            <p className="text-[13px] font-bold text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">Middle Name</p>
-                            <p className="text-[16px] font-semibold text-gray-900 dark:text-gray-100">{student.middlename || 'N/A'}</p>
+                            <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Middle Name</p>
+                            <p className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">{student.middlename || 'N/A'}</p>
                         </div>
                         <div>
-                            <p className="text-[13px] font-bold text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">Email Address</p>
-                            <p className="text-[16px] font-semibold text-gray-900 dark:text-gray-100">{student.email}</p>
+                            <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Email Address</p>
+                            <p className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">{student.email}</p>
                         </div>
                         <div>
-                            <p className="text-[13px] font-bold text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">Student Role ID</p>
-                            <p className="text-[16px] font-semibold text-gray-900 dark:text-gray-100">{student.role_id || 'Student'}</p>
+                            <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Student Role ID</p>
+                            <p className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">{student.role_id || 'Student'}</p>
                         </div>
                         <div>
-                            <p className="text-[13px] font-bold text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">Account Created</p>
-                            <p className="text-[16px] font-semibold text-gray-900 dark:text-gray-100">
+                            <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Account Created</p>
+                            <p className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">
                                 {new Date(student.created_at).toLocaleDateString('en-US', {
                                     year: 'numeric', month: 'long', day: 'numeric'
                                 })}
@@ -151,12 +151,13 @@ const StudentDetails = () => {
                     </div>
                 )}
                 
-                {activeTab !== 'Personal Information' && (
-                    <div className="text-center py-16 text-gray-500 dark:text-gray-400">
-                        <div className="w-16 h-16 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                {activeTab !== 'Student Information' && (
+                    <div className="text-center py-16 text-gray-500 dark:text-gray-400 animate-in fade-in duration-300">
+                        <div className="w-16 h-16 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 bg-gray-50 dark:bg-[#252525]">
                             <FiArrowLeft className="w-6 h-6 text-gray-400" />
                         </div>
-                        <p className="font-medium">This module is currently under development.</p>
+                        <p className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Module Under Development</p>
+                        <p className="text-[14px]">The {activeTab} section is currently being integrated UI.</p>
                     </div>
                 )}
             </div>
