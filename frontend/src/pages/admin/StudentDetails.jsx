@@ -126,32 +126,56 @@ const StudentDetails = () => {
                 
                 {activeTab === 'Student Information' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                        {/* Row 1 */}
                         <div>
-                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">First Name</p>
-                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.firstname}</p>
+                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Full Name</p>
+                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{fullName}</p>
                         </div>
                         <div>
-                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Last Name</p>
-                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.lastname}</p>
+                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Student ID</p>
+                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.user_id}</p>
+                        </div>
+
+                        {/* Row 2 */}
+                        <div>
+                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Gender</p>
+                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.gender || 'Not Specified'}</p>
                         </div>
                         <div>
-                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Middle Name</p>
-                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.middlename || 'N/A'}</p>
+                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Birthdate</p>
+                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.birthdate || 'Not Specified'}</p>
+                        </div>
+
+                        {/* Row 3 */}
+                        <div>
+                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Contact Number</p>
+                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.contact_number || 'Not Provided'}</p>
                         </div>
                         <div>
-                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Email Address</p>
+                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Email</p>
                             <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.email}</p>
                         </div>
+
+                        {/* Row 4 */}
                         <div>
-                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Student Role ID</p>
-                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.role_id || 'Student'}</p>
+                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Address</p>
+                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.address || 'Not Provided'}</p>
+                        </div>
+                        <div className="hidden md:block">
+                            {/* Empty right column offset for Address span layout */}
+                        </div>
+
+                        {/* Row 5 */}
+                        <div>
+                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Parent/Guardian</p>
+                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">
+                                {student.guardian_name ? `${student.guardian_name} - ${student.guardian_contact || 'No Contact'}` : 'Not Provided'}
+                            </p>
                         </div>
                         <div>
-                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Account Created</p>
+                            <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Emergency Contact</p>
                             <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">
-                                {new Date(student.created_at).toLocaleDateString('en-US', {
-                                    year: 'numeric', month: 'long', day: 'numeric'
-                                })}
+                                {student.emergency_name ? `${student.emergency_name} - ${student.emergency_contact || 'No Contact'}` : 'Not Provided'}
                             </p>
                         </div>
                     </div>
