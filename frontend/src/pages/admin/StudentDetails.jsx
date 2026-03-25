@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiHash } from 'react-icons/fi';
+import { FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiHash, FiAlertCircle } from 'react-icons/fi';
 import { userAPI } from '../../services/api';
 
 const StudentDetails = () => {
@@ -8,16 +8,19 @@ const StudentDetails = () => {
     const navigate = useNavigate();
     const [student, setStudent] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [activeTab, setActiveTab] = useState('Student Information');
 
     useEffect(() => {
         const fetchStudent = async () => {
+            setLoading(true);
+            setError('');
             try {
-                const response = await userAPI.getUsers();
-                const found = response.find(s => s.id.toString() === id.toString());
-                setStudent(found);
+                const data = await userAPI.getUser(id);
+                setStudent(data);
             } catch (err) {
                 console.error(err);
+                setError(err.response?.data?.message || 'Failed to load student details.');
             } finally {
                 setLoading(false);
             }
@@ -33,14 +36,47 @@ const StudentDetails = () => {
         );
     }
 
+    if (error) {
+        return (
+            <div className="max-w-7xl mx-auto py-12">
+                <button 
+                    onClick={() => navigate('/students')}
+                    className="flex items-center gap-2 text-[14px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-6 transition-colors"
+                >
+                    <FiArrowLeft className="w-5 h-5" />
+                    Back to Students
+                </button>
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 text-center">
+                    <FiAlertCircle className="w-10 h-10 text-red-400 mx-auto mb-3" />
+                    <p className="text-red-700 dark:text-red-300 font-semibold mb-1">Error Loading Student</p>
+                    <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>
+                </div>
+            </div>
+        );
+    }
+
     if (!student) {
         return (
             <div className="text-center py-20 text-gray-500">Student not found.</div>
         );
     }
 
+    // Derive display values from database fields
     const fullName = [student.firstname, student.middlename, student.lastname].filter(Boolean).join(' ');
     const initials = student.firstname?.[0] || 'S';
+    const profile = student.student; // nested student profile from the API
+    const isActive = student.is_active;
+
+    // Helper to format year level
+    const formatYearLevel = (level) => {
+        if (!level) return null;
+        const suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
+        const suffix = suffixes[level] || 'th';
+        return `${level}${suffix} Year`;
+    };
+
+    // Build year/section label dynamically
+    const yearSection = [formatYearLevel(profile?.year_level), profile?.section ? `Section ${profile.section}` : null].filter(Boolean).join(' - ');
 
     return (
         <div className="max-w-7xl mx-auto pb-12 animate-in fade-in duration-300">
@@ -63,14 +99,22 @@ const StudentDetails = () => {
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">{fullName}</h1>
                             <div className="flex flex-wrap items-center gap-3 mb-4">
-                                <span className="bg-[#F97316] text-white px-3.5 py-1 rounded-lg text-[12px] font-semibold shadow-sm">
-                                    BS Computer Science
-                                </span>
-                                <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3.5 py-1 rounded-lg text-[12px] font-bold">
-                                    1st Year - Section A
-                                </span>
-                                <span className="bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 px-3.5 py-1 rounded-lg text-[12px] font-bold border border-green-200 dark:border-green-500/20">
-                                    Active
+                                {profile?.program && (
+                                    <span className="bg-[#F97316] text-white px-3.5 py-1 rounded-lg text-[12px] font-semibold shadow-sm">
+                                        {profile.program}
+                                    </span>
+                                )}
+                                {yearSection && (
+                                    <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3.5 py-1 rounded-lg text-[12px] font-bold">
+                                        {yearSection}
+                                    </span>
+                                )}
+                                <span className={`px-3.5 py-1 rounded-lg text-[12px] font-bold border ${
+                                    isActive
+                                        ? 'bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/20'
+                                        : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'
+                                }`}>
+                                    {isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
                             <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-5 text-[14px] text-gray-600 dark:text-gray-400 font-medium">
@@ -84,7 +128,7 @@ const StudentDetails = () => {
                                 </div>
                                 <div className="flex items-center gap-2.5">
                                     <FiPhone className="w-4 h-4 text-[#F97316]" /> 
-                                    <span>{student.contact_number || '+63 900 000 0000'}</span>
+                                    <span>{student.contact_number || 'Not Provided'}</span>
                                 </div>
                             </div>
                         </div>
@@ -143,7 +187,7 @@ const StudentDetails = () => {
                         </div>
                         <div>
                             <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Birthdate</p>
-                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.birthdate || 'Not Specified'}</p>
+                            <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">{student.birth_date || 'Not Specified'}</p>
                         </div>
 
                         {/* Row 3 */}
@@ -169,13 +213,13 @@ const StudentDetails = () => {
                         <div>
                             <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Parent/Guardian</p>
                             <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">
-                                {student.guardian_name ? `${student.guardian_name} - ${student.guardian_contact || 'No Contact'}` : 'Not Provided'}
+                                {profile?.parent_guardian_name ? `${profile.parent_guardian_name} - ${profile.emergency_contact || 'No Contact'}` : 'Not Provided'}
                             </p>
                         </div>
                         <div>
                             <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">Emergency Contact</p>
                             <p className="text-[14px] font-medium text-gray-900 dark:text-gray-100">
-                                {student.emergency_name ? `${student.emergency_name} - ${student.emergency_contact || 'No Contact'}` : 'Not Provided'}
+                                {profile?.emergency_contact || 'Not Provided'}
                             </p>
                         </div>
                     </div>
