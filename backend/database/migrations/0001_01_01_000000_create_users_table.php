@@ -5,21 +5,29 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();                               // auto-increment primary key
+            $table->id();
             $table->string('firstname');
-            $table->string('middlename')->nullable();   // optional
+            $table->string('middlename')->nullable();
             $table->string('lastname');
-            $table->string('user_id', 7)->unique();     // 7-digit unique identifier for login
+            $table->string('user_id', 7)->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['admin', 'student', 'faculty'])->default('student');
+
+            // Common personal fields
+            $table->date('birth_date')->nullable();
+            $table->string('contact_number', 20)->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->text('address')->nullable();
+
+            $table->string('profile_picture')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->timestamp('last_login_at')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
@@ -40,9 +48,6 @@ return new class extends Migration {
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
