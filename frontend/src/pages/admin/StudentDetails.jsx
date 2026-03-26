@@ -518,7 +518,7 @@ const StudentDetails = () => {
                             </div>
                         )}
 
-                        {/* 7. EVENTS & COMPETITIONS (Mock Data) */}
+                        {/* 7. EVENTS & COMPETITIONS (Dynamic Data) */}
                         {activeTab === 'Events & Competitions' && (
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
@@ -528,27 +528,33 @@ const StudentDetails = () => {
                                 <div className="space-y-6">
                                     <div>
                                         <SectionSubhead>Quiz Bee Competitions</SectionSubhead>
-                                        {MOCK_DATA.events.quizBee.map(evt => (
-                                            <div key={evt} className="p-4 bg-purple-50 dark:bg-purple-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
-                                                {evt}
-                                            </div>
-                                        ))}
+                                        {profile?.events_participated?.quizBee?.length > 0 ? (
+                                            profile.events_participated.quizBee.map((evt, i) => (
+                                                <div key={i} className="p-4 bg-purple-50 dark:bg-purple-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
+                                                    {evt}
+                                                </div>
+                                            ))
+                                        ) : <p className="text-[15px] text-gray-500">No records found</p>}
                                     </div>
                                     <div>
                                         <SectionSubhead>Programming Contests</SectionSubhead>
-                                        {MOCK_DATA.events.programming.map(evt => (
-                                            <div key={evt} className="p-4 bg-blue-50 dark:bg-blue-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
-                                                {evt}
-                                            </div>
-                                        ))}
+                                        {profile?.events_participated?.programming?.length > 0 ? (
+                                            profile.events_participated.programming.map((evt, i) => (
+                                                <div key={i} className="p-4 bg-blue-50 dark:bg-blue-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
+                                                    {evt}
+                                                </div>
+                                            ))
+                                        ) : <p className="text-[15px] text-gray-500">No records found</p>}
                                     </div>
                                     <div>
                                         <SectionSubhead>Athletic Competitions</SectionSubhead>
-                                        {MOCK_DATA.events.athletic.map(evt => (
-                                            <div key={evt} className="p-4 bg-green-50 dark:bg-green-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
-                                                {evt}
-                                            </div>
-                                        ))}
+                                        {profile?.events_participated?.athletic?.length > 0 ? (
+                                            profile.events_participated.athletic.map((evt, i) => (
+                                                <div key={i} className="p-4 bg-green-50 dark:bg-green-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
+                                                    {evt}
+                                                </div>
+                                            ))
+                                        ) : <p className="text-[15px] text-gray-500">No records found</p>}
                                     </div>
                                 </div>
                             </div>
