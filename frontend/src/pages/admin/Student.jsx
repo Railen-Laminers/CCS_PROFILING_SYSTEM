@@ -268,12 +268,12 @@ const StudentPage = () => {
                 disabilities: formData.disabilities,
                 medical_condition: formData.medical_condition,
                 allergies: formData.allergies,
-                sports_activities: formData.sports_activities,
-                organizations: formData.organizations,
-                behavior_discipline_records: formData.behavior_discipline_records,
-                current_subjects: formData.current_subjects ? formData.current_subjects.split(',').map(s => s.trim()) : null,
-                academic_awards: formData.academic_awards ? formData.academic_awards.split(',').map(s => s.trim()) : null,
-                events_participated: formData.events_participated ? formData.events_participated.split(',').map(s => s.trim()) : null,
+                sports_activities: formData.sports_activities ? formData.sports_activities.split(',').map(s => s.trim()).filter(Boolean) : null,
+                organizations: formData.organizations ? formData.organizations.split(',').map(s => s.trim()).filter(Boolean) : null,
+                behavior_discipline_records: formData.behavior_discipline_records ? formData.behavior_discipline_records.split(',').map(s => s.trim()).filter(Boolean) : null,
+                current_subjects: formData.current_subjects ? formData.current_subjects.split(',').map(s => s.trim()).filter(Boolean) : null,
+                academic_awards: formData.academic_awards ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : null,
+                events_participated: formData.events_participated ? formData.events_participated.split(',').map(s => s.trim()).filter(Boolean) : null,
             };
             await userAPI.createUser(studentData);
             await fetchStudents();
@@ -315,9 +315,9 @@ const StudentPage = () => {
             disabilities: s?.disabilities || '',
             medical_condition: s?.medical_condition || '',
             allergies: s?.allergies || '',
-            sports_activities: s?.sports_activities || '',
-            organizations: s?.organizations || '',
-            behavior_discipline_records: s?.behavior_discipline_records || '',
+            sports_activities: Array.isArray(s?.sports_activities) ? s.sports_activities.join(', ') : s?.sports_activities || '',
+            organizations: Array.isArray(s?.organizations) ? s.organizations.join(', ') : s?.organizations || '',
+            behavior_discipline_records: Array.isArray(s?.behavior_discipline_records) ? s.behavior_discipline_records.join(', ') : s?.behavior_discipline_records || '',
             current_subjects: Array.isArray(s?.current_subjects) ? s.current_subjects.join(', ') : '',
             academic_awards: Array.isArray(s?.academic_awards) ? s.academic_awards.join(', ') : '',
             events_participated: Array.isArray(s?.events_participated) ? s.events_participated.join(', ') : '',
@@ -354,12 +354,12 @@ const StudentPage = () => {
                 disabilities: formData.disabilities,
                 medical_condition: formData.medical_condition,
                 allergies: formData.allergies,
-                sports_activities: formData.sports_activities,
-                organizations: formData.organizations,
-                behavior_discipline_records: formData.behavior_discipline_records,
-                current_subjects: formData.current_subjects ? formData.current_subjects.split(',').map(s => s.trim()) : null,
-                academic_awards: formData.academic_awards ? formData.academic_awards.split(',').map(s => s.trim()) : null,
-                events_participated: formData.events_participated ? formData.events_participated.split(',').map(s => s.trim()) : null,
+                sports_activities: formData.sports_activities ? formData.sports_activities.split(',').map(s => s.trim()).filter(Boolean) : null,
+                organizations: formData.organizations ? formData.organizations.split(',').map(s => s.trim()).filter(Boolean) : null,
+                behavior_discipline_records: formData.behavior_discipline_records ? formData.behavior_discipline_records.split(',').map(s => s.trim()).filter(Boolean) : null,
+                current_subjects: formData.current_subjects ? formData.current_subjects.split(',').map(s => s.trim()).filter(Boolean) : null,
+                academic_awards: formData.academic_awards ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : null,
+                events_participated: formData.events_participated ? formData.events_participated.split(',').map(s => s.trim()).filter(Boolean) : null,
             };
             if (formData.password) updateData.password = formData.password;
             await userAPI.updateUser(editingId, updateData);
@@ -411,11 +411,13 @@ const StudentPage = () => {
         }
     };
 
-    // Helper to render a field with error, help text, and onBlur
-    const renderField = (label, name, type = 'text', required = false, options = null, helpText = null) => {
+    const renderField = (label, name, type = 'text', required = false, options = null, helpText = null, placeholder = null) => {
         const value = formData[name];
         const error = fieldErrors[name];
         const showError = touched[name] || error;
+
+        const baseInputClass = `w-full h-11 px-4 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-500`;
+        const textareaClass = `w-full px-4 py-2.5 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none`;
 
         return (
             <div className="mb-4">
@@ -428,7 +430,7 @@ const StudentPage = () => {
                         value={value}
                         onChange={handleInputChange}
                         onBlur={() => handleBlur(name)}
-                        className={`w-full h-11 px-4 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500`}
+                        className={baseInputClass}
                     >
                         <option value="">Select {label}</option>
                         {options.map(opt => (
@@ -442,7 +444,8 @@ const StudentPage = () => {
                         onChange={handleInputChange}
                         onBlur={() => handleBlur(name)}
                         rows="2"
-                        className={`w-full px-4 py-2 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500`}
+                        placeholder={placeholder || ''}
+                        className={textareaClass}
                     />
                 ) : type === 'checkbox' ? (
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -451,7 +454,7 @@ const StudentPage = () => {
                             name={name}
                             checked={value}
                             onChange={handleInputChange}
-                            className="w-4 h-4 text-orange-500"
+                            className="w-4 h-4 text-orange-500 rounded accent-orange-500"
                         />
                         <span className="text-[13px] text-gray-700 dark:text-gray-300">Active</span>
                     </label>
@@ -462,7 +465,8 @@ const StudentPage = () => {
                         value={value}
                         onChange={handleInputChange}
                         onBlur={() => handleBlur(name)}
-                        className={`w-full h-11 px-4 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500`}
+                        placeholder={placeholder || ''}
+                        className={baseInputClass}
                     />
                 )}
                 {helpText && !error && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{helpText}</p>}
@@ -512,23 +516,23 @@ const StudentPage = () => {
                             <form id="student-form" onSubmit={formMode === 'create' ? handleCreate : handleUpdate} className="space-y-5">
                                 {/* Basic Info */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    {renderField('First Name', 'firstname', 'text', true, null, 'Maximum 255 characters')}
-                                    {renderField('Middle Name', 'middlename', 'text', false, null, 'Maximum 255 characters')}
-                                    {renderField('Last Name', 'lastname', 'text', true, null, 'Maximum 255 characters')}
-                                    {renderField('Student ID', 'user_id', 'text', true, null, 'Exactly 7 digits (e.g., 2024001)')}
-                                    {renderField('Email', 'email', 'email', true, null, 'Valid email address')}
+                                    {renderField('First Name', 'firstname', 'text', true, null, 'Maximum 255 characters', 'Enter first name')}
+                                    {renderField('Middle Name', 'middlename', 'text', false, null, 'Maximum 255 characters', 'Enter middle name')}
+                                    {renderField('Last Name', 'lastname', 'text', true, null, 'Maximum 255 characters', 'Enter last name')}
+                                    {renderField('Student ID', 'user_id', 'text', true, null, 'Exactly 7 digits (e.g., 2024001)', 'e.g., 2024001')}
+                                    {renderField('Email', 'email', 'email', true, null, 'Valid email address', 'student@example.com')}
                                 </div>
 
                                 {/* Personal Details */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-gray-200 dark:border-gray-800">
                                     {renderField('Birth Date', 'birth_date', 'date')}
-                                    {renderField('Contact Number', 'contact_number')}
+                                    {renderField('Contact Number', 'contact_number', 'tel', false, null, '11-digit mobile number', '09XXXXXXXXX')}
                                     {renderField('Gender', 'gender', 'select', false, [
                                         { value: 'male', label: 'Male' },
                                         { value: 'female', label: 'Female' },
                                         { value: 'other', label: 'Other' }
                                     ])}
-                                    {renderField('Address', 'address', 'textarea')}
+                                    {renderField('Address', 'address', 'textarea', false, null, null, 'Full address')}
                                     {renderField('Active', 'is_active', 'checkbox')}
                                 </div>
 
@@ -545,7 +549,8 @@ const StudentPage = () => {
                                                 value={formData.password}
                                                 onChange={handleInputChange}
                                                 onBlur={() => handleBlur('password')}
-                                                className={`w-full h-11 pl-4 pr-11 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${fieldErrors.password && (touched.password || fieldErrors.password) ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 rounded-lg`}
+                                                placeholder="Minimum 8 characters"
+                                                className={`w-full h-11 pl-4 pr-11 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${fieldErrors.password && (touched.password || fieldErrors.password) ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 rounded-lg transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-500`}
                                             />
                                             <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400">
                                                 {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -571,7 +576,8 @@ const StudentPage = () => {
                                                 value={formData.password_confirmation}
                                                 onChange={handleInputChange}
                                                 onBlur={() => handleBlur('password_confirmation')}
-                                                className={`w-full h-11 pl-4 pr-11 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${fieldErrors.password_confirmation && (touched.password_confirmation || fieldErrors.password_confirmation) ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 rounded-lg`}
+                                                placeholder="Re-enter password"
+                                                className={`w-full h-11 pl-4 pr-11 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${fieldErrors.password_confirmation && (touched.password_confirmation || fieldErrors.password_confirmation) ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 rounded-lg transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-500`}
                                             />
                                             <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400">
                                                 {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
@@ -587,22 +593,27 @@ const StudentPage = () => {
                                 <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
                                     <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-4">Student Details</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                        {renderField('Parent/Guardian Name', 'parent_guardian_name')}
-                                        {renderField('Emergency Contact', 'emergency_contact')}
-                                        {renderField('Program', 'program')}
-                                        {renderField('Section', 'section')}
+                                        {renderField('Parent/Guardian Name', 'parent_guardian_name', 'text', false, null, null, 'Full name of guardian')}
+                                        {renderField('Emergency Contact', 'emergency_contact', 'tel', false, null, null, '09XXXXXXXXX')}
+                                        {renderField('Program', 'program', 'text', false, null, null, 'e.g., BS Information Technology')}
+                                        {renderField('Section', 'section', 'text', false, null, null, 'e.g., IT-A')}
                                         {renderField('Year Level', 'year_level', 'number', false, null, 'Between 1 and 6')}
                                         {renderField('GPA', 'gpa', 'number', false, null, 'Between 0 and 4')}
-                                        {renderField('Blood Type', 'blood_type')}
-                                        {renderField('Disabilities', 'disabilities', 'textarea')}
-                                        {renderField('Medical Condition', 'medical_condition', 'textarea')}
-                                        {renderField('Allergies', 'allergies', 'textarea')}
-                                        {renderField('Sports & Activities', 'sports_activities', 'textarea')}
-                                        {renderField('Organizations', 'organizations', 'textarea')}
+                                        {renderField('Blood Type', 'blood_type', 'select', false, [
+                                            { value: 'A+', label: 'A+' }, { value: 'A-', label: 'A-' },
+                                            { value: 'B+', label: 'B+' }, { value: 'B-', label: 'B-' },
+                                            { value: 'AB+', label: 'AB+' }, { value: 'AB-', label: 'AB-' },
+                                            { value: 'O+', label: 'O+' }, { value: 'O-', label: 'O-' }
+                                        ])}
+                                        {renderField('Disabilities', 'disabilities', 'textarea', false, null, null, 'Describe any disabilities')}
+                                        {renderField('Medical Condition', 'medical_condition', 'textarea', false, null, null, 'Describe any conditions')}
+                                        {renderField('Allergies', 'allergies', 'textarea', false, null, null, 'List known allergies')}
+                                        {renderField('Sports & Activities', 'sports_activities', 'textarea', false, null, null, 'List sports and activities')}
+                                        {renderField('Organizations', 'organizations', 'textarea', false, null, null, 'List organizations')}
                                         {renderField('Behavior/Discipline Records', 'behavior_discipline_records', 'textarea')}
-                                        {renderField('Current Subjects (comma separated)', 'current_subjects', 'text', false, null, 'Separate with commas')}
-                                        {renderField('Academic Awards (comma separated)', 'academic_awards', 'text', false, null, 'Separate with commas')}
-                                        {renderField('Events Participated (comma separated)', 'events_participated', 'text', false, null, 'Separate with commas')}
+                                        {renderField('Current Subjects', 'current_subjects', 'text', false, null, 'Separate with commas', 'e.g., Math, Science, English')}
+                                        {renderField('Academic Awards', 'academic_awards', 'text', false, null, 'Separate with commas', 'e.g., Dean\'s Lister, Honor Roll')}
+                                        {renderField('Events Participated', 'events_participated', 'text', false, null, 'Separate with commas', 'e.g., Quiz Bee, Hackathon')}
                                     </div>
                                 </div>
                             </form>
