@@ -130,6 +130,26 @@ export const userAPI = {
     const response = await axiosInstance.get('/events');
     return response.data.events;
   },
+
+  // Academic Records
+  getAcademicRecords: async (userId) => {
+    const response = await axiosInstance.get(`/users/${userId}/academic-records`);
+    return response.data.academic_records;
+  },
+
+  createAcademicRecord: async (userId, recordData) => {
+    const response = await axiosInstance.post(`/users/${userId}/academic-records`, recordData);
+    return response.data.academic_record;
+  },
+
+  updateAcademicRecord: async (recordId, recordData) => {
+    const response = await axiosInstance.put(`/academic-records/${recordId}`, recordData);
+    return response.data.academic_record;
+  },
+
+  deleteAcademicRecord: async (recordId) => {
+    await axiosInstance.delete(`/academic-records/${recordId}`);
+  },
 };
 
 export default authAPI;

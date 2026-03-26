@@ -5,7 +5,6 @@ import {
     FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin
 } from 'react-icons/fi';
 import { userAPI } from '../../services/api';
-import { academicRecordAPI } from '../../services/academicRecordAPI';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -118,7 +117,7 @@ const StudentDetails = () => {
             setIsAcademicLoading(true);
             setAcademicError('');
             try {
-                const records = await academicRecordAPI.getRecords(id);
+                const records = await userAPI.getAcademicRecords(id);
                 setAcademicRecords(records);
             } catch (err) {
                 console.error(err);
