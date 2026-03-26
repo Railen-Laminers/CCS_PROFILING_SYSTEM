@@ -5,6 +5,7 @@ import {
     FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin
 } from 'react-icons/fi';
 import { userAPI } from '../../services/api';
+import { academicRecordAPI } from '../../services/academicRecordAPI';
 
 // MOCK DATA: Matching the structural and visual Figma prototype specifications
 const MOCK_DATA = {
@@ -94,6 +95,11 @@ const StudentDetails = () => {
     const [activeTab, setActiveTab] = useState('Student Information');
     const [isTabLoading, setIsTabLoading] = useState(false);
 
+    // Academic Record States
+    const [academicRecords, setAcademicRecords] = useState([]);
+    const [isAcademicLoading, setIsAcademicLoading] = useState(false);
+    const [academicError, setAcademicError] = useState('');
+
     useEffect(() => {
         const fetchStudent = async () => {
             setLoading(true);
@@ -111,10 +117,26 @@ const StudentDetails = () => {
         fetchStudent();
     }, [id]);
 
-    const handleTabChange = (tab) => {
+    const handleTabChange = async (tab) => {
         if (tab === activeTab) return;
         setIsTabLoading(true);
         setActiveTab(tab);
+        
+        // Fetch academic records when clicking the tab if not already fetched
+        if (tab === 'Academic Record' && academicRecords.length === 0) {
+            setIsAcademicLoading(true);
+            setAcademicError('');
+            try {
+                const records = await academicRecordAPI.getRecords(id);
+                setAcademicRecords(records);
+            } catch (err) {
+                console.error(err);
+                setAcademicError('Failed to load academic records.');
+            } finally {
+                setIsAcademicLoading(false);
+            }
+        }
+
         // Simulate loading state (per user instructions)
         setTimeout(() => setIsTabLoading(false), 300);
     };
@@ -282,40 +304,71 @@ const StudentDetails = () => {
                             </div>
                         )}
 
-                        {/* 2. ACADEMIC RECORD (Mock Data) */}
+                        {/* 2. ACADEMIC RECORD (Dynamic Data) */}
                         {activeTab === 'Academic Record' && (
                             <div>
-                                <div className="flex items-center gap-2 mb-6 text-[#F97316]">
-                                    <FiAward className="w-5 h-5" />
-                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Academic Performance</h3>
-                                </div>
-                                <div className="grid grid-cols-3 gap-6 mb-8">
-                                    <div><SectionSubhead>Course</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.academic.course}</p></div>
-                                    <div><SectionSubhead>Year Level</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.academic.yearLevel}</p></div>
-                                    <div><SectionSubhead>GPA</SectionSubhead><p className="text-3xl font-bold text-[#F97316]">{MOCK_DATA.academic.gpa}</p></div>
-                                </div>
-                                <div className="space-y-6">
-                                    <div>
-                                        <SectionSubhead>Current Subjects</SectionSubhead>
-                                        <div className="flex flex-wrap gap-2">
-                                            {MOCK_DATA.academic.currentSubjects.map(sub => <Badge key={sub} color="white">{sub}</Badge>)}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <SectionSubhead>Academic Awards</SectionSubhead>
-                                        <div className="flex flex-wrap gap-2">
-                                            {MOCK_DATA.academic.academicAwards.map(award => <Badge key={award} color="yellow">{award}</Badge>)}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <SectionSubhead>Quiz Bee Participation</SectionSubhead>
-                                        <BulletList items={MOCK_DATA.academic.quizBee} />
-                                    </div>
-                                    <div>
-                                        <SectionSubhead>Programming Contests</SectionSubhead>
-                                        <BulletList items={MOCK_DATA.academic.programming} />
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center gap-2 text-[#F97316]">
+                                        <FiAward className="w-5 h-5" />
+                                        <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Academic Performance</h3>
                                     </div>
                                 </div>
+
+                                {isAcademicLoading ? (
+                                    <div className="flex justify-center items-center py-20">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
+                                    </div>
+                                ) : academicError ? (
+                                    <div className="text-center py-12 text-red-500 font-medium bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-200 dark:border-red-800">
+                                        <FiAlertTriangle className="w-8 h-8 mx-auto mb-2 text-red-400" />
+                                        {academicError}
+                                    </div>
+                                ) : academicRecords.length === 0 ? (
+                                    <div className="text-center py-16 bg-gray-50 dark:bg-[#1E1E1E] rounded-2xl border border-dashed border-gray-300 dark:border-gray-700">
+                                        <FiFileText className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
+                                        <h4 className="text-[16px] font-semibold text-gray-900 dark:text-gray-100 mb-1">No Academic Records</h4>
+                                        <p className="text-[14px] text-gray-500">There are no academic records on file for this student.</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-12">
+                                        {academicRecords.map((record, index) => (
+                                            <div key={record.id} className={index > 0 ? "pt-8 border-t border-gray-100 dark:border-gray-800" : ""}>
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                                                    <div><SectionSubhead>Course</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{record.course_name || 'N/A'}</p></div>
+                                                    <div><SectionSubhead>Year Level</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{record.year_level || 'N/A'}</p></div>
+                                                    <div><SectionSubhead>Semester</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{record.semester || 'N/A'}</p></div>
+                                                    <div><SectionSubhead>GPA</SectionSubhead><p className="text-3xl font-bold text-[#F97316]">{record.gpa ? Number(record.gpa).toFixed(2) : 'N/A'}</p></div>
+                                                </div>
+                                                <div className="space-y-6">
+                                                    <div>
+                                                        <SectionSubhead>Current Subjects</SectionSubhead>
+                                                        {record.current_subjects?.length > 0 ? (
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {record.current_subjects.map((sub, i) => <Badge key={i} color="white">{sub}</Badge>)}
+                                                            </div>
+                                                        ) : <p className="text-[15px] text-gray-500">None recorded</p>}
+                                                    </div>
+                                                    <div>
+                                                        <SectionSubhead>Academic Awards</SectionSubhead>
+                                                        {record.academic_awards?.length > 0 ? (
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {record.academic_awards.map((award, i) => <Badge key={i} color="yellow">{award}</Badge>)}
+                                                            </div>
+                                                        ) : <p className="text-[15px] text-gray-500">None recorded</p>}
+                                                    </div>
+                                                    <div>
+                                                        <SectionSubhead>Quiz Bee Participation</SectionSubhead>
+                                                        <BulletList items={record.quiz_bee_participations} />
+                                                    </div>
+                                                    <div>
+                                                        <SectionSubhead>Programming Contests</SectionSubhead>
+                                                        <BulletList items={record.programming_contests} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
 

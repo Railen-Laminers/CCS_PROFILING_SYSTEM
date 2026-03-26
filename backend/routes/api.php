@@ -29,5 +29,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Event management
         Route::apiResource('events', EventController::class)->except(['edit', 'create']);
+
+        // Academic Records for a user/student
+        Route::get('/users/{id}/academic-records', [\App\Http\Controllers\AcademicRecordController::class, 'index']);
+        Route::post('/users/{id}/academic-records', [\App\Http\Controllers\AcademicRecordController::class, 'store']);
+        Route::apiResource('academic-records', \App\Http\Controllers\AcademicRecordController::class)->except(['index', 'store', 'edit', 'create']);
     });
 });
