@@ -480,7 +480,7 @@ const StudentDetails = () => {
                             </div>
                         )}
 
-                        {/* 6. BEHAVIOR & DISCIPLINE (Mock Data) */}
+                        {/* 6. BEHAVIOR & DISCIPLINE (Dynamic Data) */}
                         {activeTab === 'Behavior & Discipline' && (
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
@@ -490,25 +490,29 @@ const StudentDetails = () => {
                                 <div className="grid grid-cols-3 gap-6 mb-8 pt-2">
                                     <div>
                                         <h4 className="text-[15px] font-medium text-gray-600 dark:text-gray-400 mb-1">Warnings</h4>
-                                        <p className="text-3xl font-bold text-yellow-500">{MOCK_DATA.behavior.warnings}</p>
+                                        <p className="text-3xl font-bold text-yellow-500">{profile?.behavior_discipline_records?.warnings || 0}</p>
                                     </div>
                                     <div>
                                         <h4 className="text-[15px] font-medium text-gray-600 dark:text-gray-400 mb-1">Suspensions</h4>
-                                        <p className="text-3xl font-bold text-red-500">{MOCK_DATA.behavior.suspensions}</p>
+                                        <p className="text-3xl font-bold text-red-500">{profile?.behavior_discipline_records?.suspensions || 0}</p>
                                     </div>
                                     <div>
                                         <h4 className="text-[15px] font-medium text-gray-600 dark:text-gray-400 mb-1">Counseling Sessions</h4>
-                                        <p className="text-3xl font-bold text-blue-500">{MOCK_DATA.behavior.counseling}</p>
+                                        <p className="text-3xl font-bold text-blue-500">{profile?.behavior_discipline_records?.counseling || 0}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-6">
                                     <div>
                                         <SectionSubhead>Incidents</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-green-600 dark:text-green-400">{MOCK_DATA.behavior.incidents}</p>
+                                        <p className={`text-[15px] font-medium ${profile?.behavior_discipline_records?.incidents ? 'text-gray-900 dark:text-gray-100' : 'text-green-600 dark:text-green-400'}`}>
+                                            {profile?.behavior_discipline_records?.incidents || 'No incidents recorded'}
+                                        </p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Counseling Records</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.behavior.counselingRecords}</p>
+                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">
+                                            {profile?.behavior_discipline_records?.counselingRecords || 'No counseling records'}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
