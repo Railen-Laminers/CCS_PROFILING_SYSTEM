@@ -372,7 +372,7 @@ const StudentDetails = () => {
                             </div>
                         )}
 
-                        {/* 3. MEDICAL RECORD (Mock Data) */}
+                        {/* 3. MEDICAL RECORD (Dynamic Data) */}
                         {activeTab === 'Medical Record' && (
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
@@ -382,21 +382,27 @@ const StudentDetails = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                     <div>
                                         <SectionSubhead>Blood Type</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.medical.bloodType}</p>
+                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.blood_type || 'Not Provided'}</p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Allergies</SectionSubhead>
                                         <div className="flex flex-wrap gap-2">
-                                            {MOCK_DATA.medical.allergies.map(alg => <Badge key={alg} color="red">{alg}</Badge>)}
+                                            {profile?.allergies ? (
+                                                profile.allergies.split(',').map(alg => alg.trim()).filter(Boolean).map((alg, index) => (
+                                                    <Badge key={index} color="red">{alg}</Badge>
+                                                ))
+                                            ) : (
+                                                <p className="text-[15px] text-gray-500">None recorded</p>
+                                            )}
                                         </div>
                                     </div>
                                     <div>
                                         <SectionSubhead>Medical Conditions</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.medical.medicalConditions}</p>
+                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.medical_condition || 'None reported'}</p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Disabilities</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.medical.disabilities}</p>
+                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.disabilities || 'None reported'}</p>
                                     </div>
                                 </div>
                             </div>
