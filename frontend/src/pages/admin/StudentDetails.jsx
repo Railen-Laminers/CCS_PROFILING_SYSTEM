@@ -444,7 +444,7 @@ const StudentDetails = () => {
                             </div>
                         )}
 
-                        {/* 5. ORGANIZATIONS (Mock Data) */}
+                        {/* 5. ORGANIZATIONS (Dynamic Data) */}
                         {activeTab === 'Organizations' && (
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
@@ -455,22 +455,26 @@ const StudentDetails = () => {
                                     <div>
                                         <SectionSubhead>Clubs Joined</SectionSubhead>
                                         <div className="flex flex-wrap gap-2">
-                                            {MOCK_DATA.organizations.clubs.map(club => <Badge key={club} color="purple">{club}</Badge>)}
+                                            {profile?.organizations?.clubs?.length > 0 ? (
+                                                profile.organizations.clubs.map((club, i) => <Badge key={i} color="purple">{club}</Badge>)
+                                            ) : <p className="text-[15px] text-gray-500">None recorded</p>}
                                         </div>
                                     </div>
                                     <div>
                                         <SectionSubhead>Fraternities</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{MOCK_DATA.organizations.fraternities}</p>
+                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.organizations?.fraternities || 'None recorded'}</p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Student Council</SectionSubhead>
                                         <div className="flex flex-wrap gap-2">
-                                            {MOCK_DATA.organizations.studentCouncil.map(ro => <Badge key={ro} color="orange">{ro}</Badge>)}
+                                            {profile?.organizations?.studentCouncil?.length > 0 ? (
+                                                profile.organizations.studentCouncil.map((ro, i) => <Badge key={i} color="orange">{ro}</Badge>)
+                                            ) : <p className="text-[15px] text-gray-500">None recorded</p>}
                                         </div>
                                     </div>
                                     <div>
                                         <SectionSubhead>Leadership Roles</SectionSubhead>
-                                        <BulletList items={MOCK_DATA.organizations.roles} />
+                                        <BulletList items={profile?.organizations?.roles} />
                                     </div>
                                 </div>
                             </div>
