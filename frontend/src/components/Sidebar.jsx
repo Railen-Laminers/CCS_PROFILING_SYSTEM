@@ -44,7 +44,7 @@ const Sidebar = () => {
                         ? 'bg-[#F97316] text-white font-semibold'
                         : 'text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                     }`}>
-                      <item.icon className="w-[22px] h-[22px] flex-shrink-0" />
+                      <item.icon className="w-[20px] h-[20px] flex-shrink-0" />
                       <span>{item.name}</span>
                     </div>
                   )}
