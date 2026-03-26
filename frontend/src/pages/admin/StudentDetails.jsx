@@ -189,24 +189,24 @@ const StudentDetails = () => {
                             <p className="text-[17px] font-medium text-gray-500 dark:text-gray-400 mb-4">{student.user_id}</p>
                             <div className="flex flex-wrap items-center gap-3 mb-4">
                                 {profile?.program && (
-                                    <span className="bg-[#F97316] text-white px-3.5 py-1 rounded-lg text-[12px] font-semibold shadow-sm">
+                                    <span className="bg-[#F97316] text-white px-2.5 py-1 rounded-md text-[13px] font-semibold shadow-sm">
                                         {profile.program}
                                     </span>
                                 )}
                                 {yearSection && (
-                                    <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3.5 py-1 rounded-lg text-[12px] font-bold">
+                                    <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-md text-[13px] font-bold">
                                         {yearSection}
                                     </span>
                                 )}
-                                <span className={`px-3.5 py-1 rounded-lg text-[12px] font-bold border ${
+                                <span className={`px-2.5 py-1 rounded-md text-[13px] font-bold border ${
                                     isActive
-                                        ? 'bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/20'
+                                        ? 'bg-[#00C950] dark:bg-green-500/10 text-[#fff] dark:text-green-400 border-green-200 dark:border-green-500/20'
                                         : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'
                                 }`}>
                                     {isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
-                            <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-5 text-[14px] text-gray-600 dark:text-gray-400 font-medium">
+                            <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-6 text-[14px] text-gray-600 dark:text-gray-400 font-normal">
                                 <div className="flex items-center gap-2.5">
                                     <FiMail className="w-4 h-4 text-[#F97316]" /> 
                                     <span>{student.email}</span>
@@ -220,10 +220,10 @@ const StudentDetails = () => {
                     </div>
                     
                     <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
-                        <button className="flex-1 md:flex-none flex justify-center items-center gap-2 px-5 py-2.5 bg-white dark:bg-[#252525] border border-gray-300 dark:border-gray-700 rounded-xl text-[14px] font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] transition-colors shadow-sm">
+                        <button className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#252525] border border-gray-300 dark:border-gray-700 rounded-xl text-[14px] font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] transition-colors shadow-sm">
                             <FiPrinter className="w-4 h-4" /> Print
                         </button>
-                        <button className="flex-1 md:flex-none flex justify-center items-center gap-2 px-5 py-2.5 bg-[#F97316] hover:bg-orange-600 text-white rounded-xl text-[14px] font-semibold transition-colors shadow-sm">
+                        <button className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2.5 bg-[#F97316] hover:bg-orange-600 text-white rounded-xl text-[14px] font-semibold transition-colors shadow-sm">
                             <FiEdit2 className="w-4 h-4" /> Edit Profile
                         </button>
                     </div>
@@ -236,7 +236,7 @@ const StudentDetails = () => {
                     <button
                         key={tab}
                         onClick={() => handleTabChange(tab)}
-                        className={`flex-1 px-4 py-1.5 text-[14px] font-semibold text-center whitespace-nowrap transition-all rounded-full ${
+                        className={`flex-1 px-4 py-1 text-[14px] font-semibold text-center whitespace-nowrap transition-all rounded-full ${
                             activeTab === tab 
                                 ? 'bg-[#F97316] text-white shadow-sm' 
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-white dark:hover:bg-[#2A2A2A]'
