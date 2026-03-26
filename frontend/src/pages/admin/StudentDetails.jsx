@@ -206,7 +206,7 @@ const StudentDetails = () => {
                                     {isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
-                            <div className="flex items-center flex-wrap gap-x-40 gap-y-3 mt-5 text-[14px] text-gray-600 dark:text-gray-400 font-medium">
+                            <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-5 text-[14px] text-gray-600 dark:text-gray-400 font-medium">
                                 <div className="flex items-center gap-2.5">
                                     <FiMail className="w-4 h-4 text-[#F97316]" /> 
                                     <span>{student.email}</span>
