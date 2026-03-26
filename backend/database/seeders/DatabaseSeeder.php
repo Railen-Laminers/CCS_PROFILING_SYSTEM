@@ -15,22 +15,52 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'firstname' => 'Admin',
-            'middlename' => 'Test',
-            'lastname' => 'User',
-            'user_id' => '1234567',
-            'email' => 'admin@gmail.com',
-            'password' => 'password',
-            'role' => 'admin',
-            'birth_date' => '2000-01-01',
-            'contact_number' => '09123456789',
-            'gender' => 'male',
-            'address' => 'Admin Address',
-            'profile_picture' => null,
-            'is_active' => true,
-            'last_login_at' => null,
-        ]);
+        // Safely create Admin User without duplicates
+        User::firstOrCreate(
+            ['user_id' => '1234567'],
+            [
+                'firstname' => 'Admin',
+                'middlename' => 'Test',
+                'lastname' => 'User',
+                'email' => 'admin@gmail.com',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'birth_date' => '2000-01-01',
+                'contact_number' => '09123456789',
+                'gender' => 'male',
+                'address' => 'Admin Address',
+                'profile_picture' => null,
+                'is_active' => true,
+                'last_login_at' => null,
+            ]
+        );
+
+        // Generate 5 dummy students if none exist
+        if (User::where('role', 'student')->count() === 0) {
+            $faker = \Faker\Factory::create();
+            for ($i = 0; $i < 5; $i++) {
+                $user = User::create([
+                    'firstname' => $faker->firstName,
+                    'middlename' => $faker->lastName,
+                    'lastname' => $faker->lastName,
+                    'user_id' => 'ST' . $faker->unique()->numerify('#####'),
+                    'email' => $faker->unique()->safeEmail,
+                    'password' => Hash::make('password'),
+                    'role' => 'student',
+                    'birth_date' => $faker->dateTimeBetween('-24 years', '-18 years')->format('Y-m-d'),
+                    'contact_number' => $faker->numerify('09#########'),
+                    'gender' => $faker->randomElement(['male', 'female']),
+                    'address' => $faker->address,
+                    'is_active' => true,
+                ]);
+
+                \App\Models\Student::create([
+                    'user_id' => $user->id,
+                    'program' => 'BS Information Technology',
+                    'section' => 'IT-' . $faker->randomElement(['A', 'B', 'C']),
+                ]);
+            }
+        }
 
 
         // Create IT-related courses
@@ -84,5 +114,8 @@ class DatabaseSeeder extends Seeder
             'start_datetime' => '2026-07-20 08:00:00',
             'end_datetime' => '2026-07-22 20:00:00',
         ]);
+
+        // Dynamically seed profiles and academic records for the generated students
+        $this->call(StudentProfileDataSeeder::class);
     }
 }
