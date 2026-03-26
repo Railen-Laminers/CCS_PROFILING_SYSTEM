@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiBell, FiSun, FiMoon, FiUser } from 'react-icons/fi';
+import { Button } from '@/components/ui/Button';
 
 export const Header = () => {
   const { user, logout } = useAuth();
@@ -33,32 +34,36 @@ export const Header = () => {
   return (
     <header className="bg-white dark:bg-[#1E1E1E] border-b border-gray-200 dark:border-gray-700 px-6 h-[80px] flex justify-between items-center">
       <div className="flex items-center gap-2">
-        <h1 className="text-[21px] font-semibold text-gray-800 dark:text-gray-100 tracking-tight">
+        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
           CCS Comprehensive Profiling System
         </h1>
       </div>
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-4">
         {/* Search Button */}
-        <button 
-          className="text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors duration-200 focus:outline-none p-2 w-[40px] h-[40px] flex justify-center items-center rounded-full"
+        <Button 
+          variant="ghost"
+          size="icon"
+          className="text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl"
           aria-label="Search"
         >
-          <FiSearch className="w-[20px] h-[20px] stroke-[2]" />
-        </button>
+          <FiSearch className="w-5 h-5 stroke-[2]" />
+        </Button>
 
         {/* Notifications Button */}
-        <button 
-          className="relative text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors duration-200 focus:outline-none p-2 w-[40px] h-[40px] flex justify-center items-center rounded-full"
+        <Button 
+          variant="ghost"
+          size="icon"
+          className="relative text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl"
           aria-label="Notifications"
         >
-          <FiBell className="w-[20px] h-[20px] stroke-[2]" />
+          <FiBell className="w-5 h-5 stroke-[2]" />
           {/* Notification Badge */}
           <span className="absolute top-2 right-2 block w-[6px] h-[6px] bg-orange-500 rounded-full border-[1.5px] border-white dark:border-gray-800"></span>
-        </button>
+        </Button>
 
         {/* Theme Toggle Switch */}
         <div className="flex items-center gap-2">
-          <FiSun className={`w-[18px] h-[18px] transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+          <FiSun className={`w-5 h-5 transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
           <button
             onClick={toggleTheme}
             className="relative flex items-center w-[32px] h-[18px] bg-gray-200 dark:bg-gray-700 rounded-full p-[2px] transition-colors duration-300 focus:outline-none hover:bg-gray-300 dark:hover:bg-gray-600 shadow-inner"
@@ -72,18 +77,20 @@ export const Header = () => {
               }`}
             />
           </button>
-          <FiMoon className={`w-[18px] h-[18px] transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
+          <FiMoon className={`w-5 h-5 transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
         </div>
 
         {/* User Profile Dropdown */}
         <div className="relative pl-1 sm:pl-0" ref={dropdownRef}>
-          <div
-            className="flex items-center justify-center w-[32px] h-[32px] bg-orange-500 text-white rounded-full cursor-pointer hover:bg-orange-600 transition-colors duration-200 shadow-sm"
+          <Button
+            variant="primary"
+            size="icon"
+            className="w-8 h-8 rounded-full shadow-sm"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             {/* Person silhouette avatar */}
-            <FiUser className="w-[16px] h-[16px] stroke-[2.5]" />
-          </div>
+            <FiUser className="w-4 h-4 stroke-[2.5]" />
+          </Button>
           {dropdownOpen && (
             <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-1 z-50 overflow-hidden text-left origin-top-right transition-all">
               <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">

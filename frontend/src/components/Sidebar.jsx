@@ -2,6 +2,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { cn } from '@/lib/utils';
 import { 
   FiGrid, 
   FiUsers, 
@@ -39,12 +40,13 @@ const Sidebar = () => {
               <li key={item.name}>
                 <NavLink to={item.path}>
                   {({ isActive }) => (
-                    <div className={`flex items-center gap-3.5 px-4 h-12 text-[16px] rounded-lg transition-all duration-200 ${
+                    <div className={cn(
+                      "flex items-center gap-4 px-4 h-12 text-base rounded-xl transition-all duration-200",
                       isActive
-                        ? 'bg-[#F97316] text-white font-semibold'
-                        : 'text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
-                    }`}>
-                      <item.icon className="w-[20px] h-[20px] flex-shrink-0" />
+                        ? "bg-[#F97316] text-white font-semibold"
+                        : "text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                    )}>
+                      <item.icon className="w-5 h-5 flex-shrink-0" />
                       <span>{item.name}</span>
                     </div>
                   )}

@@ -9,10 +9,20 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          500: "#F47A20",
-          400: "#F68B3C",
-          300: "#F9A86C",
+          DEFAULT: "#F97316",
+          500: "#F97316",
+          400: "#FB923C",
+          300: "#FDBA74",
         },
+        surface: {
+          DEFAULT: "#ffffff",
+          dark: "#1E1E1E",
+          secondary: "#252525"
+        },
+        border: {
+          DEFAULT: "#e5e7eb", // gray-200
+          dark: "#1f2937" // gray-800
+        }
       },
     },
   },

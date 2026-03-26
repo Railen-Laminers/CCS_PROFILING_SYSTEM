@@ -1,23 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { userAPI } from '../../services/api';
-import {
-    FiPlus,
-    FiEdit2,
-    FiTrash2,
-    FiEye,
-    FiEyeOff,
-    FiSave,
-    FiX,
-    FiDownload,
-    FiSearch,
-    FiUsers,
-    FiPower,
-} from 'react-icons/fi';
-
-const Spinner = () => (
-    <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-[#F97316] border-t-transparent"></div>
-);
+import { FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff, FiSave, FiX, FiDownload, FiSearch, FiUsers, FiPower } from 'react-icons/fi';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Input, Select, Textarea } from '@/components/ui/Input';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { Skeleton, Spinner } from '@/components/ui/Skeleton';
 
 const formatDateForInput = (dateString) => {
     if (!dateString) return '';
@@ -349,54 +340,53 @@ const FacultyPage = () => {
 
         return (
             <div className="mb-4">
-                <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">
+                <label className="block text-xs font-bold text-gray-900 dark:text-gray-300 mb-1.5">
                     {label} {required && <span className="text-red-500">*</span>}
                 </label>
                 {type === 'select' ? (
-                    <select
+                    <Select
                         name={name}
                         value={value}
                         onChange={handleInputChange}
                         onBlur={() => handleBlur(name)}
-                        className={`w-full h-11 px-4 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500`}
+                        error={showError ? error : undefined}
                     >
                         <option value="">Select {label}</option>
                         {options.map(opt => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>
                         ))}
-                    </select>
+                    </Select>
                 ) : type === 'textarea' ? (
-                    <textarea
+                    <Textarea
                         name={name}
                         value={value}
                         onChange={handleInputChange}
                         onBlur={() => handleBlur(name)}
                         rows="2"
-                        className={`w-full px-4 py-2 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500`}
+                        error={showError ? error : undefined}
                     />
                 ) : type === 'checkbox' ? (
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2 cursor-pointer mt-2">
                         <input
                             type="checkbox"
                             name={name}
                             checked={value}
                             onChange={handleInputChange}
-                            className="w-4 h-4 text-orange-500"
+                            className="w-4 h-4 text-orange-500 rounded border-gray-300 focus:ring-orange-500"
                         />
-                        <span className="text-[13px] text-gray-700 dark:text-gray-300">Active</span>
+                        <span className="text-xs text-gray-700 dark:text-gray-300">Active</span>
                     </label>
                 ) : (
-                    <input
+                    <Input
                         type={type}
                         name={name}
                         value={value}
                         onChange={handleInputChange}
                         onBlur={() => handleBlur(name)}
-                        className={`w-full h-11 px-4 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500`}
+                        error={showError ? error : undefined}
                     />
                 )}
-                {helpText && !error && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{helpText}</p>}
-                {error && showError && <p className="mt-1 text-xs text-red-500">{error}</p>}
+                {helpText && !error && <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">{helpText}</p>}
             </div>
         );
     };
@@ -406,18 +396,19 @@ const FacultyPage = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Faculty Management</h1>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <Button variant="secondary" className="gap-2">
                         <FiDownload className="w-4 h-4" /> Export Data
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                        variant="primary"
                         onClick={() => {
                             resetForm();
                             setShowForm(true);
                         }}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#F97316] text-white rounded-md text-sm font-medium hover:bg-orange-600 transition-colors shadow-sm"
+                        className="gap-2"
                     >
                         <FiPlus className="w-4 h-4" /> Add Faculty
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -465,7 +456,7 @@ const FacultyPage = () => {
                                 {/* Password */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-gray-200 dark:border-gray-800">
                                     <div>
-                                        <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">
+                                        <label className="block text-xs font-bold text-gray-900 dark:text-gray-300 mb-1.5">
                                             Password {formMode === 'create' && <span className="text-red-500">*</span>}
                                         </label>
                                         <div className="relative">
@@ -475,7 +466,7 @@ const FacultyPage = () => {
                                                 value={formData.password}
                                                 onChange={handleInputChange}
                                                 onBlur={() => handleBlur('password')}
-                                                className={`w-full h-11 pl-4 pr-11 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${fieldErrors.password && (touched.password || fieldErrors.password) ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 rounded-lg`}
+                                                className={`w-full h-11 pl-4 pr-11 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${fieldErrors.password && (touched.password || fieldErrors.password) ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 rounded-lg`}
                                             />
                                             <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400">
                                                 {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -491,7 +482,7 @@ const FacultyPage = () => {
                                         )}
                                     </div>
                                     <div>
-                                        <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5">
+                                        <label className="block text-xs font-bold text-gray-900 dark:text-gray-300 mb-1.5">
                                             Confirm Password {formMode === 'create' && <span className="text-red-500">*</span>}
                                         </label>
                                         <div className="relative">
@@ -501,7 +492,7 @@ const FacultyPage = () => {
                                                 value={formData.password_confirmation}
                                                 onChange={handleInputChange}
                                                 onBlur={() => handleBlur('password_confirmation')}
-                                                className={`w-full h-11 pl-4 pr-11 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${fieldErrors.password_confirmation && (touched.password_confirmation || fieldErrors.password_confirmation) ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 rounded-lg`}
+                                                className={`w-full h-11 pl-4 pr-11 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${fieldErrors.password_confirmation && (touched.password_confirmation || fieldErrors.password_confirmation) ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 rounded-lg`}
                                             />
                                             <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400">
                                                 {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
@@ -515,7 +506,7 @@ const FacultyPage = () => {
 
                                 {/* Faculty Details */}
                                 <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
-                                    <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-4">Faculty Details</h3>
+                                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Faculty Details</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         {renderField('Department', 'department')}
                                         {renderField('Specialization', 'specialization')}
@@ -527,97 +518,107 @@ const FacultyPage = () => {
                             </form>
                         </div>
                         <div className="bg-gray-50 dark:bg-[#181818] border-t border-gray-200 dark:border-gray-800 px-6 py-4 flex justify-end gap-3 shrink-0">
-                            <button type="button" onClick={resetForm} className="px-5 py-2.5 bg-white dark:bg-[#252525] border border-gray-300 dark:border-gray-700 rounded-lg text-[14px] font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] transition-colors flex items-center shadow-sm" disabled={isCreating || isUpdating}>Cancel</button>
-                            <button type="submit" form="faculty-form" className="px-5 py-2.5 bg-[#F97316] text-white rounded-lg text-[14px] font-medium hover:bg-orange-600 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-60" disabled={isCreating || isUpdating}>
+                            <Button variant="secondary" type="button" onClick={resetForm} disabled={isCreating || isUpdating}>Cancel</Button>
+                            <Button variant="primary" type="submit" form="faculty-form" className="gap-2" disabled={isCreating || isUpdating}>
                                 {(isCreating || isUpdating) ? <Spinner /> : <FiSave />}
                                 <span>{formMode === 'create' ? 'Create Faculty' : 'Save Changes'}</span>
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
             )}
 
             {/* Search Bar */}
-            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
+            <Card className="p-6 mb-6">
                 <div className="relative w-full">
                     <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5 pointer-events-none" />
-                    <input type="text" placeholder="Search by name, faculty ID, or department..." className="w-full h-10 pl-11 pr-4 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" />
+                    <Input type="text" placeholder="Search by name, faculty ID, or department..." className="pl-11 h-10" />
                 </div>
-            </div>
+            </Card>
 
             {/* Faculty Table */}
-            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
+            <Card>
                 {loading ? (
                     <div className="flex justify-center items-center py-16"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#F97316]"></div></div>
                 ) : faculty.length === 0 ? (
-                    <div className="text-center py-16 text-sm text-gray-500 dark:text-gray-400 flex flex-col items-center"><FiUsers className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-3" /><p>No faculty found in the database.</p></div>
+                    <EmptyState
+                        icon={<FiUsers />}
+                        title="No Faculty Found"
+                        description="No faculty found in the database."
+                    />
                 ) : (
                     <div className="p-6 overflow-x-auto">
-                        <table className="w-full text-left border-collapse min-w-[800px]">
-                            <thead>
-                                <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200">Photo</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200">Faculty ID</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200">Name</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200">Department</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200">Specialization</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200">Status</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Photo</TableHead>
+                                    <TableHead>Faculty ID</TableHead>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Department</TableHead>
+                                    <TableHead>Specialization</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
                                 {faculty.map((member) => {
                                     const fullName = [member.user.firstname, member.user.middlename, member.user.lastname].filter(Boolean).join(' ');
                                     const initials = member.user.firstname?.[0] || 'F';
                                     const isActive = member.user.is_active;
                                     return (
-                                        <tr key={member.user.id} className="hover:bg-gray-100 dark:hover:bg-[#333333] transition-colors h-[60px]">
-                                            <td className="py-2 pr-4 whitespace-nowrap"><div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 flex items-center justify-center text-[12px] font-bold">{initials}</div></td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] font-medium">{member.user.user_id}</td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px]">{fullName}</td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px]">{member.faculty?.department || 'N/A'}</td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px]">{member.faculty?.specialization || 'N/A'}</td>
-                                            <td className="py-2 pr-4 whitespace-nowrap">
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-[9px] text-[12px] font-medium ${isActive ? 'bg-[#00C950] text-[#fff]' : 'bg-gray-300 text-gray-700'}`}>
+                                        <TableRow key={member.user.id}>
+                                            <TableCell><div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 flex items-center justify-center text-xs font-bold">{initials}</div></TableCell>
+                                            <TableCell className="font-medium">{member.user.user_id}</TableCell>
+                                            <TableCell>{fullName}</TableCell>
+                                            <TableCell>{member.faculty?.department || 'N/A'}</TableCell>
+                                            <TableCell>{member.faculty?.specialization || 'N/A'}</TableCell>
+                                            <TableCell>
+                                                <Badge variant={isActive ? 'green' : 'gray'}>
                                                     {isActive ? 'Active' : 'Inactive'}
-                                                </span>
-                                            </td>
-                                            <td className="py-2 pr-4 whitespace-nowrap">
-                                                <div className="flex gap-3">
-                                                    <button
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
                                                         onClick={() => handleToggleStatus(member)}
-                                                        className={`p-1.5 rounded-md transition-colors ${isActive ? 'text-yellow-600 hover:bg-yellow-100 dark:hover:bg-yellow-900/20' : 'text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20'}`}
+                                                        className={isActive ? 'text-yellow-600 hover:text-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-900/20' : 'text-green-600 hover:text-green-700 hover:bg-green-100 dark:hover:bg-green-900/20'}
                                                         title={isActive ? 'Deactivate' : 'Activate'}
                                                         disabled={togglingUserId !== null}
                                                     >
-                                                        {togglingUserId === member.user.id ? <Spinner /> : <FiPower className="w-[18px] h-[18px]" />}
-                                                    </button>
-                                                    <button
+                                                        {togglingUserId === member.user.id ? <Spinner /> : <FiPower className="w-4 h-4" />}
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
                                                         onClick={() => handleEdit(member)}
-                                                        className="text-blue-500 hover:bg-blue-200 dark:hover:bg-blue-500/10 transition-colors p-1.5 rounded-md"
+                                                        className="text-blue-500 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20"
                                                         title="Edit Faculty"
                                                         disabled={togglingUserId !== null || deletingUserId !== null}
                                                     >
-                                                        <FiEdit2 className="w-[18px] h-[18px]" />
-                                                    </button>
-                                                    <button
+                                                        <FiEdit2 className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
                                                         onClick={() => handleDelete(member.user.id)}
-                                                        className={`p-1.5 rounded-md transition-colors ${isActive ? 'text-gray-400 cursor-not-allowed' : 'text-red-500 hover:bg-red-100 dark:hover:bg-red-900/20'}`}
+                                                        className={isActive ? 'text-gray-400 cursor-not-allowed' : 'text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20'}
                                                         title={isActive ? 'Must deactivate before deletion' : 'Delete Faculty'}
                                                         disabled={isActive || deletingUserId !== null || togglingUserId !== null}
                                                     >
-                                                        {deletingUserId === member.user.id ? <Spinner /> : <FiTrash2 className="w-[18px] h-[18px]" />}
-                                                    </button>
+                                                        {deletingUserId === member.user.id ? <Spinner /> : <FiTrash2 className="w-4 h-4" />}
+                                                    </Button>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </TableCell>
+                                        </TableRow>
                                     );
                                 })}
-                            </tbody>
-                        </table>
+                            </TableBody>
+                        </Table>
                     </div>
                 )}
-            </div>
+            </Card>
         </div>
     );
 };

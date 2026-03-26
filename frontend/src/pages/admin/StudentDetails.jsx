@@ -6,6 +6,11 @@ import {
 } from 'react-icons/fi';
 import { userAPI } from '../../services/api';
 import { academicRecordAPI } from '../../services/academicRecordAPI';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton, Spinner } from '@/components/ui/Skeleton';
 
 // MOCK DATA: Matching the structural and visual Figma prototype specifications
 const MOCK_DATA = {
@@ -50,29 +55,14 @@ const MOCK_DATA = {
     }
 };
 
-// Reusable UI Components for Tab Content
-const Badge = ({ children, color = 'gray' }) => {
-    const variants = {
-        white: 'bg-white border border-gray-200 text-gray-700 dark:bg-[#252525] dark:border-gray-700 dark:text-gray-300 shadow-sm',
-        orange: 'bg-[#F97316] text-white border border-[#F97316] shadow-sm',
-        yellow: 'bg-yellow-500 text-white border border-yellow-500 shadow-sm',
-        red: 'bg-red-500 text-white border border-red-500 shadow-sm',
-        purple: 'bg-[#a855f7] text-white border border-[#a855f7] shadow-sm',
-        gray: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border border-transparent'
-    };
-    return (
-        <span className={`px-3.5 py-1 text-[13px] font-medium rounded-full ${variants[color]}`}>
-            {children}
-        </span>
-    );
-};
+// Local Components
 
 const BulletList = ({ items }) => {
-    if (!items || items.length === 0) return <p className="text-[15px] text-gray-500">None recorded</p>;
+    if (!items || items.length === 0) return <p className="text-sm text-gray-500">None recorded</p>;
     return (
         <ul className="space-y-1.5">
             {items.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-[15px] text-gray-800 dark:text-gray-200 font-medium">
+                <li key={idx} className="flex items-start gap-2 text-sm text-gray-800 dark:text-gray-200 font-medium">
                     <span className="text-gray-400 dark:text-gray-600 mt-0.5">•</span>
                     <span>{item}</span>
                 </li>
@@ -82,7 +72,7 @@ const BulletList = ({ items }) => {
 };
 
 const SectionSubhead = ({ children }) => (
-    <p className="text-[13px] font-semibold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">{children}</p>
+    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">{children}</p>
 );
 
 const StudentDetails = () => {
@@ -154,7 +144,7 @@ const StudentDetails = () => {
             <div className="max-w-7xl mx-auto py-12">
                 <button 
                     onClick={() => navigate('/students')}
-                    className="flex items-center gap-2 text-[14px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-2 transition-colors"
+                    className="flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-2 transition-colors"
                 >
                     <FiArrowLeft className="w-5 h-5" />
                     Back to Students
@@ -193,14 +183,14 @@ const StudentDetails = () => {
             {/* Header / Back */}
             <button 
                 onClick={() => navigate('/students')}
-                className="flex items-center gap-2 text-[15px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-4 transition-colors"
+                className="flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-4 transition-colors"
             >
                 <FiArrowLeft className="w-5 h-5" />
                 Back to Students
             </button>
 
             {/* Profile Overview Card */}
-            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
+            <Card className="p-6 mb-6">
                 <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6">
                     <div className="flex items-start gap-6">
                         <div className="w-[123px] h-[123px] rounded-xl bg-blue-100 dark:bg-[#1C2B4B] text-blue-700 dark:text-[#93Bbf3] flex items-center justify-center text-5xl font-bold shadow-inner flex-shrink-0">
@@ -208,19 +198,19 @@ const StudentDetails = () => {
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1 tracking-tight">{fullName}</h1>
-                            <p className="text-[17px] font-medium text-gray-500 dark:text-gray-400 mb-4">{student.user_id}</p>
+                            <p className="text-base font-medium text-gray-500 dark:text-gray-400 mb-4">{student.user_id}</p>
                             <div className="flex flex-wrap items-center gap-3 mb-4">
                                 {profile?.program && (
-                                    <span className="bg-[#F97316] text-white px-2.5 py-1 rounded-md text-[13px] font-semibold shadow-sm">
+                                    <span className="bg-[#F97316] text-white px-2.5 py-1 rounded-md text-xs font-semibold shadow-sm">
                                         {profile.program}
                                     </span>
                                 )}
                                 {yearSection && (
-                                    <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-md text-[13px] font-bold">
+                                    <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-md text-xs font-bold">
                                         {yearSection}
                                     </span>
                                 )}
-                                <span className={`px-2.5 py-1 rounded-md text-[13px] font-bold border ${
+                                <span className={`px-2.5 py-1 rounded-md text-xs font-bold border ${
                                     isActive
                                         ? 'bg-[#00C950] dark:bg-green-500/10 text-[#fff] dark:text-green-400 border-green-200 dark:border-green-500/20'
                                         : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'
@@ -228,7 +218,7 @@ const StudentDetails = () => {
                                     {isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
-                            <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-6 text-[14px] text-gray-600 dark:text-gray-400 font-normal">
+                            <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-6 text-sm text-gray-600 dark:text-gray-400 font-normal">
                                 <div className="flex items-center gap-2.5">
                                     <FiMail className="w-4 h-4 text-[#F97316]" /> 
                                     <span>{student.email}</span>
@@ -246,26 +236,26 @@ const StudentDetails = () => {
                     </div>
                     
                     <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
-                        <button className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#252525] border border-gray-300 dark:border-gray-700 rounded-xl text-[14px] font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] transition-colors shadow-sm">
+                        <Button variant="secondary" className="flex-1 md:flex-none gap-2">
                             <FiPrinter className="w-4 h-4" /> Print
-                        </button>
-                        <button className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2.5 bg-[#F97316] hover:bg-orange-600 text-white rounded-xl text-[14px] font-semibold transition-colors shadow-sm">
+                        </Button>
+                        <Button variant="primary" className="flex-1 md:flex-none gap-2">
                             <FiEdit2 className="w-4 h-4" /> Edit Profile
-                        </button>
+                        </Button>
                     </div>
                 </div>
-            </div>
+            </Card>
 
             {/* Tabs Navigation */}
-            <div className="flex space-x-1 mb-6 overflow-x-auto p-1.5 bg-gray-100/80 dark:bg-[#2A2A2A] border border-gray-200/50 dark:border-gray-800 rounded-2xl scrollbar-hide">
+            <div className="flex space-x-1 mb-6 overflow-x-auto p-1.5 bg-gray-100/80 dark:bg-[#252525] border border-gray-200/50 dark:border-gray-800 rounded-2xl scrollbar-hide">
                 {['Student Information', 'Academic Record', 'Medical Record', 'Sports & Activities', 'Organizations', 'Behavior & Discipline', 'Events & Competitions'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => handleTabChange(tab)}
-                        className={`flex-1 px-4 py-1 text-[14px] font-semibold text-center whitespace-nowrap transition-all rounded-full ${
+                        className={`flex-1 px-4 py-1 text-sm font-semibold text-center whitespace-nowrap transition-all rounded-full ${
                             activeTab === tab 
                                 ? 'bg-[#F97316] text-white shadow-sm' 
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-white dark:hover:bg-[#2A2A2A]'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-white dark:hover:bg-[#1E1E1E]'
                         }`}
                     >
                         {tab}
@@ -274,7 +264,7 @@ const StudentDetails = () => {
             </div>
 
             {/* Tab Content Rendering */}
-            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 min-h-[400px]">
+            <Card className="p-6 min-h-[400px]">
                 {isTabLoading ? (
                     <div className="flex justify-center items-center h-[300px]">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
@@ -287,19 +277,19 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiUser className="w-5 h-5" />
-                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Personal Information</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                                    <div><SectionSubhead>Full Name</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{fullName}</p></div>
-                                    <div><SectionSubhead>Student ID</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.user_id}</p></div>
-                                    <div><SectionSubhead>Gender</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100 capitalize">{student.gender || 'Not Specified'}</p></div>
-                                    <div><SectionSubhead>Birthdate</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.birth_date || 'Not Specified'}</p></div>
-                                    <div><SectionSubhead>Contact Number</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.contact_number || 'Not Provided'}</p></div>
-                                    <div><SectionSubhead>Email</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.email}</p></div>
-                                    <div><SectionSubhead>Address</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{student.address || 'Not Provided'}</p></div>
+                                    <div><SectionSubhead>Full Name</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{fullName}</p></div>
+                                    <div><SectionSubhead>Student ID</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{student.user_id}</p></div>
+                                    <div><SectionSubhead>Gender</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100 capitalize">{student.gender || 'Not Specified'}</p></div>
+                                    <div><SectionSubhead>Birthdate</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{student.birth_date || 'Not Specified'}</p></div>
+                                    <div><SectionSubhead>Contact Number</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{student.contact_number || 'Not Provided'}</p></div>
+                                    <div><SectionSubhead>Email</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{student.email}</p></div>
+                                    <div><SectionSubhead>Address</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{student.address || 'Not Provided'}</p></div>
                                     <div className="hidden md:block"></div> {/* Spacer */}
-                                    <div><SectionSubhead>Parent/Guardian</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.parent_guardian_name ? `${profile.parent_guardian_name} - ${profile.emergency_contact || 'No Contact'}` : 'Not Provided'}</p></div>
-                                    <div><SectionSubhead>Emergency Contact</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.emergency_contact || 'Not Provided'}</p></div>
+                                    <div><SectionSubhead>Parent/Guardian</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{profile?.parent_guardian_name ? `${profile.parent_guardian_name} - ${profile.emergency_contact || 'No Contact'}` : 'Not Provided'}</p></div>
+                                    <div><SectionSubhead>Emergency Contact</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{profile?.emergency_contact || 'Not Provided'}</p></div>
                                 </div>
                             </div>
                         )}
@@ -310,7 +300,7 @@ const StudentDetails = () => {
                                 <div className="flex items-center justify-between mb-6">
                                     <div className="flex items-center gap-2 text-[#F97316]">
                                         <FiAward className="w-5 h-5" />
-                                        <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Academic Performance</h3>
+                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Academic Performance</h3>
                                     </div>
                                 </div>
 
@@ -324,19 +314,19 @@ const StudentDetails = () => {
                                         {academicError}
                                     </div>
                                 ) : academicRecords.length === 0 ? (
-                                    <div className="text-center py-16 bg-gray-50 dark:bg-[#1E1E1E] rounded-2xl border border-dashed border-gray-300 dark:border-gray-700">
-                                        <FiFileText className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
-                                        <h4 className="text-[16px] font-semibold text-gray-900 dark:text-gray-100 mb-1">No Academic Records</h4>
-                                        <p className="text-[14px] text-gray-500">There are no academic records on file for this student.</p>
-                                    </div>
+                                    <EmptyState
+                                        icon={<FiFileText />}
+                                        title="No Academic Records"
+                                        description="There are no academic records on file for this student."
+                                    />
                                 ) : (
                                     <div className="space-y-12">
                                         {academicRecords.map((record, index) => (
                                             <div key={record.id} className={index > 0 ? "pt-8 border-t border-gray-100 dark:border-gray-800" : ""}>
                                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                                                    <div><SectionSubhead>Course</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{record.course_name || 'N/A'}</p></div>
-                                                    <div><SectionSubhead>Year Level</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{record.year_level || 'N/A'}</p></div>
-                                                    <div><SectionSubhead>Semester</SectionSubhead><p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{record.semester || 'N/A'}</p></div>
+                                                    <div><SectionSubhead>Course</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{record.course_name || 'N/A'}</p></div>
+                                                    <div><SectionSubhead>Year Level</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{record.year_level || 'N/A'}</p></div>
+                                                    <div><SectionSubhead>Semester</SectionSubhead><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{record.semester || 'N/A'}</p></div>
                                                     <div><SectionSubhead>GPA</SectionSubhead><p className="text-3xl font-bold text-[#F97316]">{record.gpa ? Number(record.gpa).toFixed(2) : 'N/A'}</p></div>
                                                 </div>
                                                 <div className="space-y-6">
@@ -346,7 +336,7 @@ const StudentDetails = () => {
                                                             <div className="flex flex-wrap gap-2">
                                                                 {record.current_subjects.map((sub, i) => <Badge key={i} color="white">{sub}</Badge>)}
                                                             </div>
-                                                        ) : <p className="text-[15px] text-gray-500">None recorded</p>}
+                                                        ) : <p className="text-sm text-gray-500">None recorded</p>}
                                                     </div>
                                                     <div>
                                                         <SectionSubhead>Academic Awards</SectionSubhead>
@@ -354,7 +344,7 @@ const StudentDetails = () => {
                                                             <div className="flex flex-wrap gap-2">
                                                                 {record.academic_awards.map((award, i) => <Badge key={i} color="yellow">{award}</Badge>)}
                                                             </div>
-                                                        ) : <p className="text-[15px] text-gray-500">None recorded</p>}
+                                                        ) : <p className="text-sm text-gray-500">None recorded</p>}
                                                     </div>
                                                     <div>
                                                         <SectionSubhead>Quiz Bee Participation</SectionSubhead>
@@ -377,12 +367,12 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiActivity className="w-5 h-5" />
-                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Medical Information</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Medical Information</h3>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                     <div>
                                         <SectionSubhead>Blood Type</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.blood_type || 'Not Provided'}</p>
+                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{profile?.blood_type || 'Not Provided'}</p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Allergies</SectionSubhead>
@@ -392,17 +382,17 @@ const StudentDetails = () => {
                                                     <Badge key={index} color="red">{alg}</Badge>
                                                 ))
                                             ) : (
-                                                <p className="text-[15px] text-gray-500">None recorded</p>
+                                                <p className="text-sm text-gray-500">None recorded</p>
                                             )}
                                         </div>
                                     </div>
                                     <div>
                                         <SectionSubhead>Medical Conditions</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.medical_condition || 'None reported'}</p>
+                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{profile?.medical_condition || 'None reported'}</p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Disabilities</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.disabilities || 'None reported'}</p>
+                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{profile?.disabilities || 'None reported'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -413,7 +403,7 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiAward className="w-5 h-5" />
-                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Sports and Athletic Activities</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Sports and Athletic Activities</h3>
                                 </div>
                                 <div className="space-y-6">
                                     <div>
@@ -421,7 +411,7 @@ const StudentDetails = () => {
                                         <div className="flex flex-wrap gap-2">
                                             {profile?.sports_activities?.sportsPlayed?.length > 0 ? (
                                                 profile.sports_activities.sportsPlayed.map((sport, i) => <Badge key={i} color="orange">{sport}</Badge>)
-                                            ) : <p className="text-[15px] text-gray-500">None recorded</p>}
+                                            ) : <p className="text-sm text-gray-500">None recorded</p>}
                                         </div>
                                     </div>
                                     <div>
@@ -437,7 +427,7 @@ const StudentDetails = () => {
                                         <div className="flex flex-wrap gap-2">
                                             {profile?.sports_activities?.achievements?.length > 0 ? (
                                                 profile.sports_activities.achievements.map((ach, i) => <Badge key={i} color="yellow">{ach}</Badge>)
-                                            ) : <p className="text-[15px] text-gray-500">None recorded</p>}
+                                            ) : <p className="text-sm text-gray-500">None recorded</p>}
                                         </div>
                                     </div>
                                 </div>
@@ -449,7 +439,7 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiUsers className="w-5 h-5" />
-                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Organizations and Leadership</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Organizations and Leadership</h3>
                                 </div>
                                 <div className="space-y-6">
                                     <div>
@@ -457,19 +447,19 @@ const StudentDetails = () => {
                                         <div className="flex flex-wrap gap-2">
                                             {profile?.organizations?.clubs?.length > 0 ? (
                                                 profile.organizations.clubs.map((club, i) => <Badge key={i} color="purple">{club}</Badge>)
-                                            ) : <p className="text-[15px] text-gray-500">None recorded</p>}
+                                            ) : <p className="text-sm text-gray-500">None recorded</p>}
                                         </div>
                                     </div>
                                     <div>
                                         <SectionSubhead>Fraternities</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">{profile?.organizations?.fraternities || 'None recorded'}</p>
+                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{profile?.organizations?.fraternities || 'None recorded'}</p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Student Council</SectionSubhead>
                                         <div className="flex flex-wrap gap-2">
                                             {profile?.organizations?.studentCouncil?.length > 0 ? (
                                                 profile.organizations.studentCouncil.map((ro, i) => <Badge key={i} color="orange">{ro}</Badge>)
-                                            ) : <p className="text-[15px] text-gray-500">None recorded</p>}
+                                            ) : <p className="text-sm text-gray-500">None recorded</p>}
                                         </div>
                                     </div>
                                     <div>
@@ -485,32 +475,32 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiAlertTriangle className="w-5 h-5" />
-                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Behavior and Disciplinary Records</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Behavior and Disciplinary Records</h3>
                                 </div>
                                 <div className="grid grid-cols-3 gap-6 mb-8 pt-2">
                                     <div>
-                                        <h4 className="text-[15px] font-medium text-gray-600 dark:text-gray-400 mb-1">Warnings</h4>
+                                        <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Warnings</h4>
                                         <p className="text-3xl font-bold text-yellow-500">{profile?.behavior_discipline_records?.warnings || 0}</p>
                                     </div>
                                     <div>
-                                        <h4 className="text-[15px] font-medium text-gray-600 dark:text-gray-400 mb-1">Suspensions</h4>
+                                        <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Suspensions</h4>
                                         <p className="text-3xl font-bold text-red-500">{profile?.behavior_discipline_records?.suspensions || 0}</p>
                                     </div>
                                     <div>
-                                        <h4 className="text-[15px] font-medium text-gray-600 dark:text-gray-400 mb-1">Counseling Sessions</h4>
+                                        <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Counseling Sessions</h4>
                                         <p className="text-3xl font-bold text-blue-500">{profile?.behavior_discipline_records?.counseling || 0}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-6">
                                     <div>
                                         <SectionSubhead>Incidents</SectionSubhead>
-                                        <p className={`text-[15px] font-medium ${profile?.behavior_discipline_records?.incidents ? 'text-gray-900 dark:text-gray-100' : 'text-green-600 dark:text-green-400'}`}>
+                                        <p className={`text-sm font-medium ${profile?.behavior_discipline_records?.incidents ? 'text-gray-900 dark:text-gray-100' : 'text-green-600 dark:text-green-400'}`}>
                                             {profile?.behavior_discipline_records?.incidents || 'No incidents recorded'}
                                         </p>
                                     </div>
                                     <div>
                                         <SectionSubhead>Counseling Records</SectionSubhead>
-                                        <p className="text-[15px] font-medium text-gray-900 dark:text-gray-100">
+                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                             {profile?.behavior_discipline_records?.counselingRecords || 'No counseling records'}
                                         </p>
                                     </div>
@@ -523,38 +513,38 @@ const StudentDetails = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                     <FiCalendar className="w-5 h-5" />
-                                    <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">Events and Competitions</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Events and Competitions</h3>
                                 </div>
                                 <div className="space-y-6">
                                     <div>
                                         <SectionSubhead>Quiz Bee Competitions</SectionSubhead>
                                         {profile?.events_participated?.quizBee?.length > 0 ? (
                                             profile.events_participated.quizBee.map((evt, i) => (
-                                                <div key={i} className="p-4 bg-purple-50 dark:bg-purple-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
+                                                <div key={i} className="p-4 bg-purple-50 dark:bg-purple-900/10 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-xl mb-2">
                                                     {evt}
                                                 </div>
                                             ))
-                                        ) : <p className="text-[15px] text-gray-500">No records found</p>}
+                                        ) : <p className="text-sm text-gray-500">No records found</p>}
                                     </div>
                                     <div>
                                         <SectionSubhead>Programming Contests</SectionSubhead>
                                         {profile?.events_participated?.programming?.length > 0 ? (
                                             profile.events_participated.programming.map((evt, i) => (
-                                                <div key={i} className="p-4 bg-blue-50 dark:bg-blue-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
+                                                <div key={i} className="p-4 bg-blue-50 dark:bg-blue-900/10 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-xl mb-2">
                                                     {evt}
                                                 </div>
                                             ))
-                                        ) : <p className="text-[15px] text-gray-500">No records found</p>}
+                                        ) : <p className="text-sm text-gray-500">No records found</p>}
                                     </div>
                                     <div>
                                         <SectionSubhead>Athletic Competitions</SectionSubhead>
                                         {profile?.events_participated?.athletic?.length > 0 ? (
                                             profile.events_participated.athletic.map((evt, i) => (
-                                                <div key={i} className="p-4 bg-green-50 dark:bg-green-900/10 text-gray-800 dark:text-gray-200 text-[15px] font-medium rounded-xl mb-2">
+                                                <div key={i} className="p-4 bg-green-50 dark:bg-green-900/10 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-xl mb-2">
                                                     {evt}
                                                 </div>
                                             ))
-                                        ) : <p className="text-[15px] text-gray-500">No records found</p>}
+                                        ) : <p className="text-sm text-gray-500">No records found</p>}
                                     </div>
                                 </div>
                             </div>
@@ -562,7 +552,7 @@ const StudentDetails = () => {
 
                     </div>
                 )}
-            </div>
+            </Card>
         </div>
     );
 };

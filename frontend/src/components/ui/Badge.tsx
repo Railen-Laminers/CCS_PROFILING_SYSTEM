@@ -1,0 +1,33 @@
+import React from "react"
+import { cn } from "@/lib/utils"
+
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  variant?: "gray" | "orange" | "yellow" | "red" | "purple" | "white" | "green"
+}
+
+const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ className, variant = "gray", ...props }, ref) => {
+    return (
+      <span
+        ref={ref}
+        className={cn(
+          "inline-flex items-center px-3 py-1 text-xs font-medium rounded-lg shadow-sm w-fit",
+          {
+            "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border border-transparent shadow-none": variant === "gray",
+            "bg-[#F97316] text-white border border-[#F97316]": variant === "orange",
+            "bg-yellow-500 text-white border border-yellow-500": variant === "yellow",
+            "bg-red-500 text-white border border-red-500": variant === "red",
+            "bg-[#a855f7] text-white border border-[#a855f7]": variant === "purple",
+            "bg-[#00C950] text-[#fff] border-transparent": variant === "green",
+            "bg-white border border-gray-200 text-gray-700 dark:bg-[#252525] dark:border-gray-700 dark:text-gray-300": variant === "white",
+          },
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+)
+Badge.displayName = "Badge"
+
+export { Badge }
