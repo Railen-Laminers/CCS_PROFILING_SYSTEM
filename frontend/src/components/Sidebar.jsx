@@ -39,7 +39,7 @@ const Sidebar = () => {
               <li key={item.name}>
                 <NavLink to={item.path}>
                   {({ isActive }) => (
-                    <div className={`flex items-center gap-3.5 px-4 h-12 text-[15px] rounded-lg transition-all duration-200 ${
+                    <div className={`flex items-center gap-3.5 px-4 h-12 text-[16px] rounded-lg transition-all duration-200 ${
                       isActive
                         ? 'bg-[#F97316] text-white font-semibold'
                         : 'text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiAlertCircle,
-    FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser
+    FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin
 } from 'react-icons/fi';
 import { userAPI } from '../../services/api';
 
@@ -214,6 +214,10 @@ const StudentDetails = () => {
                                 <div className="flex items-center gap-2.5">
                                     <FiPhone className="w-4 h-4 text-[#F97316]" /> 
                                     <span>{student.contact_number || 'Not Provided'}</span>
+                                </div>
+                                <div className="flex items-center gap-2.5">
+                                    <FiMapPin className="w-4 h-4 text-[#F97316]" /> 
+                                    <span>{student.address || 'Not Provided'}</span>
                                 </div>
                             </div>
                         </div>
