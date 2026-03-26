@@ -408,7 +408,7 @@ const StudentDetails = () => {
                             </div>
                         )}
 
-                        {/* 4. SPORTS & ACTIVITIES (Mock Data) */}
+                        {/* 4. SPORTS & ACTIVITIES (Dynamic Data) */}
                         {activeTab === 'Sports & Activities' && (
                             <div>
                                 <div className="flex items-center gap-2 mb-6 text-[#F97316]">
@@ -419,21 +419,25 @@ const StudentDetails = () => {
                                     <div>
                                         <SectionSubhead>Sports Played</SectionSubhead>
                                         <div className="flex flex-wrap gap-2">
-                                            {MOCK_DATA.sports.sportsPlayed.map(sport => <Badge key={sport} color="orange">{sport}</Badge>)}
+                                            {profile?.sports_activities?.sportsPlayed?.length > 0 ? (
+                                                profile.sports_activities.sportsPlayed.map((sport, i) => <Badge key={i} color="orange">{sport}</Badge>)
+                                            ) : <p className="text-[15px] text-gray-500">None recorded</p>}
                                         </div>
                                     </div>
                                     <div>
                                         <SectionSubhead>School Team Membership</SectionSubhead>
-                                        <BulletList items={MOCK_DATA.sports.schoolTeam} />
+                                        <BulletList items={profile?.sports_activities?.schoolTeam} />
                                     </div>
                                     <div>
                                         <SectionSubhead>Competitions Joined</SectionSubhead>
-                                        <BulletList items={MOCK_DATA.sports.competitions} />
+                                        <BulletList items={profile?.sports_activities?.competitions} />
                                     </div>
                                     <div>
                                         <SectionSubhead>Athletic Achievements</SectionSubhead>
                                         <div className="flex flex-wrap gap-2">
-                                            {MOCK_DATA.sports.achievements.map(ach => <Badge key={ach} color="yellow">{ach}</Badge>)}
+                                            {profile?.sports_activities?.achievements?.length > 0 ? (
+                                                profile.sports_activities.achievements.map((ach, i) => <Badge key={i} color="yellow">{ach}</Badge>)
+                                            ) : <p className="text-[15px] text-gray-500">None recorded</p>}
                                         </div>
                                     </div>
                                 </div>

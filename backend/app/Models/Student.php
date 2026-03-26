@@ -33,6 +33,9 @@ class Student extends Model
         'current_subjects' => 'array',
         'academic_awards' => 'array',
         'events_participated' => 'array',
+        'sports_activities' => 'array',
+        'organizations' => 'array',
+        'behavior_discipline_records' => 'array',
         'year_level' => 'integer',
         'gpa' => 'float',
     ];

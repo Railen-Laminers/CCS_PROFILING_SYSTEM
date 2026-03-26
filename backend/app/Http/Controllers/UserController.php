@@ -186,9 +186,9 @@ class UserController extends Controller
                 'disabilities' => 'nullable|string',
                 'medical_condition' => 'nullable|string',
                 'allergies' => 'nullable|string',
-                'sports_activities' => 'nullable|string',
-                'organizations' => 'nullable|string',
-                'behavior_discipline_records' => 'nullable|string',
+                'sports_activities' => 'nullable|array',
+                'organizations' => 'nullable|array',
+                'behavior_discipline_records' => 'nullable|array',
             ];
             $validated = array_merge($validated, $request->validate($studentRules));
         }
@@ -329,9 +329,9 @@ class UserController extends Controller
                 'disabilities' => 'nullable|string',
                 'medical_condition' => 'nullable|string',
                 'allergies' => 'nullable|string',
-                'sports_activities' => 'nullable|string',
-                'organizations' => 'nullable|string',
-                'behavior_discipline_records' => 'nullable|string',
+                'sports_activities' => 'nullable|array',
+                'organizations' => 'nullable|array',
+                'behavior_discipline_records' => 'nullable|array',
             ]);
         } elseif ($user->role === 'faculty') {
             $rules = array_merge($rules, [
