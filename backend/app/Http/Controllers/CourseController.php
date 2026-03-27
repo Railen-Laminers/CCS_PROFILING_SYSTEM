@@ -12,19 +12,25 @@ class CourseController extends Controller
         private readonly CourseService $courseService
     ) {}
 
-    // List all courses
+    /**
+     * List all courses.
+     */
     public function index()
     {
         return response()->json(['courses' => $this->courseService->getAll()], 200);
     }
 
-    // Show a single course based on course_id or course_code
+    /**
+     * Show a single course based on course_id or course_code.
+     */
     public function show($id)
     {
         return response()->json(['course' => $this->courseService->findByIdentifier($id)], 200);
     }
 
-    // Create a new course
+    /**
+     * Create a new course.
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -41,7 +47,9 @@ class CourseController extends Controller
         ], 201);
     }
 
-    // Update an existing course
+    /**
+     * Update an existing course.
+     */
     public function update(Request $request, $id)
     {
         $course = \App\Models\Course::findOrFail($id);
@@ -66,7 +74,9 @@ class CourseController extends Controller
         ], 200);
     }
 
-    // Delete a course
+    /**
+     * Delete a course.
+     */
     public function destroy($id)
     {
         $this->courseService->delete($id);

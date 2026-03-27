@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\AcademicRecordService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class AcademicRecordController extends Controller
 {
@@ -31,7 +30,7 @@ class AcademicRecordController extends Controller
      */
     public function store(Request $request, $userId)
     {
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'course_name'             => 'nullable|string|max:255',
             'year_level'              => 'nullable|string|max:50',
             'semester'                => 'nullable|string|max:50',
@@ -42,11 +41,7 @@ class AcademicRecordController extends Controller
             'programming_contests'    => 'nullable|array',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $result = $this->academicRecordService->create($userId, $validator->validated());
+        $result = $this->academicRecordService->create($userId, $validated);
 
         if (!$result['found']) {
             return response()->json(['message' => 'Student profile not found.'], 404);
@@ -77,7 +72,7 @@ class AcademicRecordController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'course_name'             => 'nullable|string|max:255',
             'year_level'              => 'nullable|string|max:50',
             'semester'                => 'nullable|string|max:50',
@@ -88,11 +83,7 @@ class AcademicRecordController extends Controller
             'programming_contests'    => 'nullable|array',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $record = $this->academicRecordService->update($id, $validator->validated());
+        $record = $this->academicRecordService->update($id, $validated);
 
         if (!$record) {
             return response()->json(['message' => 'Record not found.'], 404);
