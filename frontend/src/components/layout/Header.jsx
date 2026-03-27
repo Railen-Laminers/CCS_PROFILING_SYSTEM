@@ -32,9 +32,10 @@ export const Header = () => {
   }, []);
 
   return (
-    <header className="bg-white dark:bg-[#1E1E1E] border-b border-gray-200 dark:border-gray-700 px-6 h-[80px] flex justify-between items-center">
+    <header className="bg-white/70 dark:bg-surface-secondary/30 backdrop-blur-md border-b border-gray-200/50 dark:border-white/10 px-6 h-[76px] flex justify-between items-center sticky top-0 z-40 transition-colors duration-300 shadow-sm relative flex-shrink-0">
+      {/* Decorative subtle top border/glow if needed, but no inner ring since it's flat now */}
       <div className="flex items-center gap-2">
-        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
+        <h1 className="text-xl font-bold text-gray-800 dark:text-zinc-100 tracking-tight">
           CCS Comprehensive Profiling System
         </h1>
       </div>
@@ -53,12 +54,12 @@ export const Header = () => {
         <Button 
           variant="ghost"
           size="icon"
-          className="relative text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl"
+          className="relative text-gray-500 dark:text-zinc-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl transition-colors"
           aria-label="Notifications"
         >
           <FiBell className="w-5 h-5 stroke-[2]" />
           {/* Notification Badge */}
-          <span className="absolute top-2 right-2 block w-[6px] h-[6px] bg-orange-500 rounded-full border-[1.5px] border-white dark:border-gray-800"></span>
+          <span className="absolute top-2 right-2 block w-[6px] h-[6px] bg-brand-500 rounded-full border-[1.5px] border-white dark:border-surface-dark shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></span>
         </Button>
 
         {/* Theme Toggle Switch */}
@@ -92,12 +93,12 @@ export const Header = () => {
             <FiUser className="w-4 h-4 stroke-[2.5]" />
           </Button>
           {dropdownOpen && (
-            <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-1 z-50 overflow-hidden text-left origin-top-right transition-all">
-              <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-surface-secondary shadow-xl border border-gray-100 dark:border-border-dark py-1 z-50 overflow-hidden rounded-2xl ring-1 ring-black ring-opacity-5 origin-top-right transition-all animate-in fade-in zoom-in-95 duration-200">
+              <div className="px-4 py-3 border-b border-gray-100 dark:border-border-dark bg-gray-50/50 dark:bg-surface-dark/50">
+                <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 truncate">
                   {user?.firstname} {user?.lastname}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 capitalize">
+                <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5 capitalize">
                   {user?.role || 'User'}
                 </p>
               </div>

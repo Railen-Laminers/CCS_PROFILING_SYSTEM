@@ -16,12 +16,15 @@ module.exports = {
         },
         surface: {
           DEFAULT: "#ffffff",
-          dark: "#1E1E1E",
-          secondary: "#252525"
+          dark: "#18181B", 
+          secondary: "#27272A"
         },
         border: {
-          DEFAULT: "#e5e7eb", // gray-200
-          dark: "#1f2937" // gray-800
+          DEFAULT: "#e5e7eb", 
+          dark: "#27272A" 
+        },
+        background: {
+          dark: "#09090B"
         }
       },
     },

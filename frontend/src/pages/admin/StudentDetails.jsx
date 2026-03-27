@@ -238,17 +238,18 @@ const StudentDetails = () => {
                 onClick={() => navigate('/students')}
                 className="group flex items-center gap-2.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-6 transition-all duration-200"
             >
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-[#1E1E1E] shadow-sm border border-gray-200 dark:border-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-[#252525] group-hover:-translate-x-1 transition-all duration-200 flex-shrink-0">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-surface-dark shadow-sm border border-gray-200 dark:border-border-dark group-hover:bg-gray-50 dark:group-hover:bg-[#252525] group-hover:-translate-x-1 transition-all duration-200 flex-shrink-0">
                     <FiArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                 </div>
                 <span className="group-hover:underline decoration-gray-300 dark:decoration-gray-600 underline-offset-4">Back to Students</span>
             </button>
 
             {/* Profile Overview Card */}
-            <Card className="p-6 mb-6">
-                <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6">
+            <Card className="p-6 mb-6 bg-white/60 dark:bg-surface-secondary/40 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 transition-all overflow-hidden relative">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
+                <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6 relative z-10">
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                        <div className="w-[120px] h-[120px] rounded-full bg-gradient-to-br from-violet-500 to-orange-400 text-white flex items-center justify-center text-5xl font-bold shadow-lg flex-shrink-0 ring-4 ring-white dark:ring-[#1E1E1E]">
+                        <div className="w-[120px] h-[120px] rounded-[32px] bg-gradient-to-br from-violet-500 to-brand-400 text-white flex items-center justify-center text-5xl font-bold shadow-xl flex-shrink-0 ring-4 ring-white dark:ring-surface-secondary hover:rotate-3 transition-transform duration-300">
                             {initials}
                         </div>
                         <div>
@@ -302,15 +303,16 @@ const StudentDetails = () => {
             </Card>
 
             {/* Tabs Navigation */}
-            <div className="flex space-x-8 mb-6 overflow-x-auto border-b border-gray-200 dark:border-gray-800 scrollbar-hide">
+            <div className="flex space-x-2 mb-6 overflow-x-auto p-2 bg-white/40 dark:bg-surface-secondary/30 backdrop-blur-3xl rounded-[2rem] border border-gray-200/50 dark:border-white/10 scrollbar-hide shadow-inner relative overflow-hidden">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
                 {['Student Information', 'Academic Record', 'Medical Record', 'Sports & Activities', 'Organizations', 'Behavior & Discipline', 'Events & Competitions'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => handleTabChange(tab)}
-                        className={`py-4 text-sm font-semibold whitespace-nowrap transition-all border-b-2 ${
+                        className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-[1.25rem] relative z-10 ${
                             activeTab === tab 
-                                ? 'border-[#F97316] text-[#F97316]' 
-                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-700'
+                                ? 'bg-white/80 dark:bg-surface-dark/80 text-brand-500 shadow-md ring-1 ring-gray-200/50 dark:ring-white/10 backdrop-blur-md' 
+                                : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-surface-secondary/50'
                         }`}
                     >
                         {tab}
@@ -319,7 +321,8 @@ const StudentDetails = () => {
             </div>
 
             {/* Tab Content Rendering */}
-            <Card className="p-6 min-h-[400px]">
+            <Card className="p-6 min-h-[400px] bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 relative overflow-hidden">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
                 {isTabLoading ? (
                     <div className="flex justify-center items-center h-[300px]">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
@@ -330,7 +333,7 @@ const StudentDetails = () => {
                         {activeTab === 'Student Information' && (
                             <div className="space-y-6">
                                 {/* Personal Info Block */}
-                                <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#252525] border border-gray-100 dark:border-gray-800">
+                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
                                     <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                         <FiUser className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
@@ -344,7 +347,7 @@ const StudentDetails = () => {
                                 </div>
 
                                 {/* Contact & Emergency Block */}
-                                <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#252525] border border-gray-100 dark:border-gray-800">
+                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
                                     <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                         <FiPhone className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact & Emergency Details</h3>
@@ -390,7 +393,7 @@ const StudentDetails = () => {
                                 ) : (
                                     <div className="space-y-6">
                                         {academicRecords.map((record, index) => (
-                                            <div key={record.id} className="p-6 rounded-2xl bg-gray-50 dark:bg-[#252525] border border-gray-100 dark:border-gray-800">
+                                            <div key={record.id} className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
                                                 <div className="flex justify-between items-start mb-6">
                                                     <div>
                                                         <p className="text-xl font-bold text-gray-900 dark:text-white">{record.course_name || 'N/A'}</p>
@@ -444,7 +447,7 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Medical Information</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#252525] border border-gray-100 dark:border-gray-800">
+                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div>
                                             <SectionSubhead>Blood Type</SectionSubhead>
@@ -484,7 +487,7 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Sports and Athletic Activities</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#252525] border border-gray-100 dark:border-gray-800">
+                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div>
                                             <SectionSubhead>Sports Played</SectionSubhead>
@@ -524,7 +527,7 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Organizations and Leadership</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#252525] border border-gray-100 dark:border-gray-800">
+                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div>
                                             <SectionSubhead>Clubs Joined</SectionSubhead>
@@ -564,7 +567,7 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Behavior and Disciplinary Records</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#252525] border border-gray-100 dark:border-gray-800">
+                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                                         <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
                                             <h4 className="text-sm font-medium text-gray-500 mb-2">Warnings</h4>
@@ -606,7 +609,7 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Events and Competitions</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#252525] border border-gray-100 dark:border-gray-800">
+                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                         <div>
                                             <SectionSubhead>Quiz Bee Competitions</SectionSubhead>

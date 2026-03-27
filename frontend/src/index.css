@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply text-gray-900 dark:text-zinc-100 font-sans antialiased bg-transparent min-h-screen relative;
+  }
+}
+
+::selection {
+  background-color: rgba(249, 115, 22, 0.3);
+  color: #fed7aa;
+}
+/* Ambient Background Setting */
+:root {
+  background-color: #F8FAFC;
+  background-image: radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+.dark {
+  background-color: #09090b;
+  background-image: radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+  background-attachment: fixed;
+}
 
 /* Custom Advanced Scrollbar */
 ::-webkit-scrollbar {

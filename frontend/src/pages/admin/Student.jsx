@@ -588,7 +588,7 @@ const StudentPage = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Student Management</h1>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary shadow-sm transition-all active:scale-95">
                         <FiDownload className="w-4 h-4" /> Export Data
                     </button>
                     <button
@@ -596,9 +596,12 @@ const StudentPage = () => {
                             resetForm();
                             setShowForm(true);
                         }}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#F97316] text-white rounded-md text-sm font-medium hover:bg-orange-600 transition-colors shadow-sm"
+                        className="relative group overflow-hidden rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
                     >
-                        <FiPlus className="w-4 h-4" /> Add Student
+                        <span className="relative z-10 flex items-center gap-2">
+                            <FiPlus className="w-4 h-4" /> Add Student
+                        </span>
+                        <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100 group-active:duration-75"></div>
                     </button>
                 </div>
             </div>
@@ -731,32 +734,33 @@ const StudentPage = () => {
             )}
 
             {/* Search Bar and Filters */}
-            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-5 mb-5">
-                <div className="flex flex-col lg:flex-row gap-4">
-                    <div className="relative flex-1">
-                        <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5 pointer-events-none" />
+            <div className="bg-white/60 dark:bg-surface-secondary/40 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 p-5 mb-6 relative overflow-hidden">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
+                <div className="flex flex-col lg:flex-row gap-4 relative z-10">
+                    <div className="relative w-full max-w-md">
+                        <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-zinc-500 w-5 h-5 pointer-events-none" />
                         <input 
                             type="text" 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                             placeholder="Search by name or student ID..." 
-                            className="w-full h-[38px] pl-11 pr-4 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" 
+                            className="w-full h-10 pl-11 pr-4 bg-gray-50 dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 shadow-sm transition-colors" 
                         />
                     </div>
                     <button
                         onClick={handleSearch}
                         disabled={isSearching}
-                        className="flex items-center justify-center min-w-[100px] h-[38px] px-4 py-2 bg-[#F97316] text-white rounded-md text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-60"
+                        className="flex items-center justify-center min-w-[100px] h-10 px-4 bg-brand-500 text-white rounded-xl text-sm font-medium transition-all hover:bg-brand-400 active:scale-95 disabled:opacity-60 shadow-sm"
                     >
                         {isSearching ? <Spinner /> : <span>Search</span>}
                     </button>
                     <button
                         onClick={() => setShowFilters(!showFilters)}
-                        className={`flex items-center gap-2 h-[38px] px-4 border rounded-md text-sm font-medium transition-colors ${
+                        className={`flex items-center gap-2 h-10 px-4 border rounded-xl text-sm font-medium transition-all active:scale-95 shadow-sm ${
                             showFilters 
-                                ? 'bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-300' 
-                                : 'bg-white dark:bg-[#1E1E1E] border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                ? 'bg-brand-50 dark:bg-brand-500/10 border-brand-300 dark:border-brand-500/30 text-brand-700 dark:text-brand-400' 
+                                : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-border-dark text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary'
                         }`}
                     >
                         <FiFilter className="w-5 h-5" />
@@ -891,24 +895,25 @@ const StudentPage = () => {
             </div>
 
             {/* Students Table */}
-            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
+            <div className="bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 overflow-hidden relative">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
                 {loading ? (
-                    <div className="flex justify-center items-center py-16"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#F97316]"></div></div>
+                    <div className="flex justify-center items-center py-16"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-500"></div></div>
                 ) : students.length === 0 ? (
-                    <div className="text-center py-16 text-sm text-gray-500 dark:text-gray-400 flex flex-col items-center"><FiUsers className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-3" /><p>No students found in the database.</p></div>
+                    <div className="text-center py-16 text-sm text-gray-500 dark:text-zinc-400 flex flex-col items-center"><FiUsers className="w-12 h-12 text-gray-300 dark:text-zinc-700 mb-3" /><p>No students found in the database.</p></div>
                 ) : (
                     <div className="p-6 overflow-x-auto">
                         <table className="w-full text-left border-collapse min-w-[800px]">
                             <thead>
-                                <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[7%]">Photo</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[12%]">Student ID</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[18%]">Name</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[18%]">Program</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[10%]">Year Level</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[10%]">Section</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide w-[10%]">Status</th>
-                                    <th className="pb-4 text-[14px] font-bold text-gray-800 dark:text-gray-200 tracking-wide text-left w-[15%]">Actions</th>
+                                <tr className="border-b border-gray-200 dark:border-border-dark">
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[7%]">Photo</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[12%]">Student ID</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[18%]">Name</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[18%]">Program</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[10%]">Year Level</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[10%]">Section</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[10%]">Status</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 text-left w-[15%]">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -920,20 +925,21 @@ const StudentPage = () => {
                                         <tr 
                                             key={student.user.id} 
                                             onClick={() => navigate(`/students/${student.user.id}`)}
-                                            className="hover:bg-gray-100 dark:hover:bg-[#333333] transition-colors h-[60px] cursor-pointer group"
+                                            className="hover:bg-brand-500/10 transition-all duration-200 h-[64px] cursor-pointer group hover:shadow-[inset_0_0_20px_rgba(249,115,22,0.05)] relative z-10"
                                         >
-                                            <td className="py-2 px-1 pr-4 whitespace-nowrap">
-                                                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center text-[12px] font-bold shadow-inner">
+                                            <td className="py-2 px-1 pr-4 whitespace-nowrap pl-2">
+                                                <div className="w-9 h-9 rounded-[10px] bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-[13px] font-bold border border-brand-200 dark:border-brand-500/20 shadow-sm">
                                                     {initials}
                                                 </div>
                                             </td>
                                             <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-900 dark:text-gray-100 font-medium">{student.user.user_id}</td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-gray-300">{fullName}</td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-gray-300">{student.student?.program || 'N/A'}</td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-gray-300">{student.student?.year_level ? `${student.student.year_level} Year` : 'N/A'}</td>
-                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-gray-300">{student.student?.section || 'N/A'}</td>
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-300 group-hover:text-gray-900 dark:group-hover:text-zinc-100 transition-colors">{fullName}</td>
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.program || 'N/A'}</td>
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.year_level ? `${student.student.year_level} Year` : 'N/A'}</td>
+                                            <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.section || 'N/A'}</td>
                                             <td className="py-2 pr-4 whitespace-nowrap">
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-[9px] text-[12px] font-medium ${isActive ? 'bg-[#00C950] text-[#fff]' : 'bg-gray-300 text-gray-700'}`}>
+                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${isActive ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20' : 'bg-gray-100 dark:bg-zinc-500/10 text-gray-600 dark:text-zinc-400 border-gray-200 dark:border-zinc-500/20'}`}>
+                                                    {isActive && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>}
                                                     {isActive ? 'Active' : 'Inactive'}
                                                 </span>
                                             </td>
@@ -986,7 +992,7 @@ const StudentPage = () => {
                         <button
                             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                             disabled={pagination.current_page <= 1}
-                            className="px-3 py-1.5 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="px-3 py-1.5 text-sm font-medium rounded-xl border border-gray-300 dark:border-border-dark bg-white dark:bg-surface-dark text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                         >
                             Previous
                         </button>
@@ -1005,10 +1011,10 @@ const StudentPage = () => {
                                 <button
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
-                                    className={`w-9 h-9 text-sm font-medium rounded-md transition-colors ${
+                                    className={`w-9 h-9 text-sm font-medium rounded-xl transition-colors ${
                                         page === pagination.current_page
-                                            ? 'bg-[#F97316] text-white shadow-sm'
-                                            : 'border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                            ? 'bg-brand-500 text-white shadow-sm'
+                                            : 'border border-gray-300 dark:border-border-dark bg-white dark:bg-surface-dark text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary'
                                     }`}
                                 >
                                     {page}
@@ -1018,7 +1024,7 @@ const StudentPage = () => {
                         <button
                             onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.last_page))}
                             disabled={pagination.current_page >= pagination.last_page}
-                            className="px-3 py-1.5 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="px-3 py-1.5 text-sm font-medium rounded-xl border border-gray-300 dark:border-border-dark bg-white dark:bg-surface-dark text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                         >
                             Next
                         </button>
