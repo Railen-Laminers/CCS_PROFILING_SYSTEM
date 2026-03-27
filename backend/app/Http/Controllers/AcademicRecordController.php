@@ -2,29 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AcademicRecord;
-use App\Models\Student;
+use App\Services\AcademicRecordService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class AcademicRecordController extends Controller
 {
+    public function __construct(
+        private readonly AcademicRecordService $academicRecordService
+    ) {}
+
     /**
      * Fetch all academic records for a given student (by user_id/student_id).
-     * Since the frontend uses the User ID (/users/{id}) for the Student details page,
-     * we will get the student based on the user_id.
      */
     public function index($userId)
     {
-        $student = Student::where('user_id', $userId)->first();
+        $result = $this->academicRecordService->getByUserId($userId);
 
-        if (!$student) {
+        if (!$result['found']) {
             return response()->json(['message' => 'Student profile not found.'], 404);
         }
 
-        $records = $student->academicRecords()->latest()->get();
-
-        return response()->json(['academic_records' => $records], 200);
+        return response()->json(['academic_records' => $result['records']], 200);
     }
 
     /**
@@ -32,30 +31,31 @@ class AcademicRecordController extends Controller
      */
     public function store(Request $request, $userId)
     {
-        $student = Student::where('user_id', $userId)->first();
-
-        if (!$student) {
-            return response()->json(['message' => 'Student profile not found.'], 404);
-        }
-
         $validator = Validator::make($request->all(), [
-            'course_name' => 'nullable|string|max:255',
-            'year_level' => 'nullable|string|max:50',
-            'semester' => 'nullable|string|max:50',
-            'gpa' => 'nullable|numeric|min:0|max:5',
-            'current_subjects' => 'nullable|array',
-            'academic_awards' => 'nullable|array',
+            'course_name'             => 'nullable|string|max:255',
+            'year_level'              => 'nullable|string|max:50',
+            'semester'                => 'nullable|string|max:50',
+            'gpa'                     => 'nullable|numeric|min:0|max:5',
+            'current_subjects'        => 'nullable|array',
+            'academic_awards'         => 'nullable|array',
             'quiz_bee_participations' => 'nullable|array',
-            'programming_contests' => 'nullable|array',
+            'programming_contests'    => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $record = $student->academicRecords()->create($validator->validated());
+        $result = $this->academicRecordService->create($userId, $validator->validated());
 
-        return response()->json(['message' => 'Academic record created.', 'academic_record' => $record], 201);
+        if (!$result['found']) {
+            return response()->json(['message' => 'Student profile not found.'], 404);
+        }
+
+        return response()->json([
+            'message'         => 'Academic record created.',
+            'academic_record' => $result['record'],
+        ], 201);
     }
 
     /**
@@ -63,7 +63,7 @@ class AcademicRecordController extends Controller
      */
     public function show(string $id)
     {
-        $record = AcademicRecord::find($id);
+        $record = $this->academicRecordService->findById($id);
 
         if (!$record) {
             return response()->json(['message' => 'Record not found.'], 404);
@@ -77,30 +77,31 @@ class AcademicRecordController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $record = AcademicRecord::find($id);
-
-        if (!$record) {
-            return response()->json(['message' => 'Record not found.'], 404);
-        }
-
         $validator = Validator::make($request->all(), [
-            'course_name' => 'nullable|string|max:255',
-            'year_level' => 'nullable|string|max:50',
-            'semester' => 'nullable|string|max:50',
-            'gpa' => 'nullable|numeric|min:0|max:5',
-            'current_subjects' => 'nullable|array',
-            'academic_awards' => 'nullable|array',
+            'course_name'             => 'nullable|string|max:255',
+            'year_level'              => 'nullable|string|max:50',
+            'semester'                => 'nullable|string|max:50',
+            'gpa'                     => 'nullable|numeric|min:0|max:5',
+            'current_subjects'        => 'nullable|array',
+            'academic_awards'         => 'nullable|array',
             'quiz_bee_participations' => 'nullable|array',
-            'programming_contests' => 'nullable|array',
+            'programming_contests'    => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $record->update($validator->validated());
+        $record = $this->academicRecordService->update($id, $validator->validated());
 
-        return response()->json(['message' => 'Academic record updated.', 'academic_record' => $record], 200);
+        if (!$record) {
+            return response()->json(['message' => 'Record not found.'], 404);
+        }
+
+        return response()->json([
+            'message'         => 'Academic record updated.',
+            'academic_record' => $record,
+        ], 200);
     }
 
     /**
@@ -108,13 +109,11 @@ class AcademicRecordController extends Controller
      */
     public function destroy(string $id)
     {
-        $record = AcademicRecord::find($id);
+        $deleted = $this->academicRecordService->delete($id);
 
-        if (!$record) {
+        if (!$deleted) {
             return response()->json(['message' => 'Record not found.'], 404);
         }
-
-        $record->delete();
 
         return response()->json(['message' => 'Academic record deleted.'], 200);
     }
