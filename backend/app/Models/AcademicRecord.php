@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class AcademicRecord extends Model
 {
@@ -22,11 +22,11 @@ class AcademicRecord extends Model
     ];
 
     protected $casts = [
-        'gpa' => 'decimal:2',
-        'current_subjects' => 'array',
-        'academic_awards' => 'array',
+        'gpa'                     => 'decimal:2',
+        'current_subjects'        => 'array',
+        'academic_awards'         => 'array',
         'quiz_bee_participations' => 'array',
-        'programming_contests' => 'array',
+        'programming_contests'    => 'array',
     ];
 
     public function student()
