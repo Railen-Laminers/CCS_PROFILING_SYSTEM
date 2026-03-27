@@ -8,10 +8,6 @@
   }
 }
 
-::selection {
-  background-color: rgba(249, 115, 22, 0.3);
-  color: #fed7aa;
-}
 /* Ambient Background Setting */
 :root {
   background-color: #F8FAFC;

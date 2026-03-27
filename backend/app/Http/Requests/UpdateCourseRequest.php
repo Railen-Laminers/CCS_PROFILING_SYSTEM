@@ -15,7 +15,7 @@ class UpdateCourseRequest extends FormRequest
 
     public function rules(): array
     {
-        $course = Course::findOrFail($this->route('id'));
+        $course = Course::findOrFail($this->route('course'));
 
         return [
             'credits' => 'sometimes|integer|min:1|max:6',

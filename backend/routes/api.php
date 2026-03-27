@@ -16,10 +16,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:admin')->group(function () {
         // User management
         Route::get('/users', [UserController::class, 'index']);
-        Route::get('/users/{id}', [UserController::class, 'show']);
+        Route::get('/users/{identifier}', [UserController::class, 'show']);
         Route::post('/users', [UserController::class, 'store']);
-        Route::put('/users/{id}', [UserController::class, 'update']);
-        Route::delete('/users/{id}', [UserController::class, 'destroy']);
+        Route::put('/users/{identifier}', [UserController::class, 'update']);
+        Route::delete('/users/{identifier}', [UserController::class, 'destroy']);
 
         // Student search & filter (must be before /students to avoid route conflicts)
         Route::get('/students/search', [StudentSearchController::class, 'search']);
@@ -37,8 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('events', EventController::class)->except(['edit', 'create']);
 
         // Academic Records for a user/student
-        Route::get('/users/{id}/academic-records', [\App\Http\Controllers\AcademicRecordController::class, 'index']);
-        Route::post('/users/{id}/academic-records', [\App\Http\Controllers\AcademicRecordController::class, 'store']);
+        Route::get('/users/{identifier}/academic-records', [\App\Http\Controllers\AcademicRecordController::class, 'index']);
+        Route::post('/users/{identifier}/academic-records', [\App\Http\Controllers\AcademicRecordController::class, 'store']);
         Route::apiResource('academic-records', \App\Http\Controllers\AcademicRecordController::class)->except(['index', 'store', 'edit', 'create']);
     });
 });
