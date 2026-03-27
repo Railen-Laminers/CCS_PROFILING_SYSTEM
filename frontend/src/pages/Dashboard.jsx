@@ -1,49 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { userAPI, courseAPI, eventAPI } from '../services/api';
+import useDashboardStats from '../hooks/useDashboardStats';
 import { FaUsers, FaChalkboardTeacher, FaBook, FaCalendarAlt } from 'react-icons/fa';
 
 export const Dashboard = () => {
   const { user } = useAuth();
-  const [studentCount, setStudentCount] = useState(null);
-  const [facultyCount, setFacultyCount] = useState(null);
-  const [courseCount, setCourseCount] = useState(null);
-  const [eventCount, setEventCount] = useState(null);
-  const [countsLoading, setCountsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchCounts = async () => {
-      if (user?.role !== 'admin') return;
-
-      setCountsLoading(true);
-      try {
-        // Fetch full lists and extract lengths
-        const students = await userAPI.getStudents();
-        const faculty = await userAPI.getFaculty();
-        const courses = await courseAPI.getCourses();
-        const events = await eventAPI.getEvents();
-        setStudentCount(students.length);
-        setFacultyCount(faculty.length);
-        setCourseCount(courses.length);
-        setEventCount(events.length);
-      } catch (error) {
-        console.error('Failed to fetch counts:', error);
-      } finally {
-        setCountsLoading(false);
-      }
-    };
-
-    fetchCounts();
-  }, [user]);
+  const { studentCount, facultyCount, courseCount, eventCount, loading: countsLoading } = useDashboardStats(user?.role);
 
   if (!user) {
     return <div className="p-6 text-gray-600 dark:text-gray-400">Loading...</div>;
   }
-
-  const fullName = [user.firstname, user.middlename, user.lastname]
-    .filter(Boolean)
-    .join(' ');
 
   return (
     <div className="max-w-5xl">

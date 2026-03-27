@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiX, FiSave, FiEye, FiEyeOff } from 'react-icons/fi';
-import { userAPI } from '../services/api';
+import { userAPI } from '../../services/api';
 
 const Spinner = () => (
     <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-[#F97316] border-t-transparent"></div>

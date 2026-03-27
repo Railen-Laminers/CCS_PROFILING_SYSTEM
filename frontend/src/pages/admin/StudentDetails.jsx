@@ -4,7 +4,7 @@ import {
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiAlertCircle,
     FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin
 } from 'react-icons/fi';
-import StudentFormModal from '../../components/StudentFormModal';
+import StudentFormModal from '../../components/forms/StudentFormModal';
 import { userAPI, academicRecordAPI } from '../../services/api';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
