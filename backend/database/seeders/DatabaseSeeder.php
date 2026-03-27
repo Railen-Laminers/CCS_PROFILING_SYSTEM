@@ -54,10 +54,13 @@ class DatabaseSeeder extends Seeder
                     'is_active' => true,
                 ]);
 
+                $program = $faker->randomElement(['BSIT', 'BSCS']);
+                $sectionPrefix = $program === 'BSIT' ? 'IT' : 'CS';
+
                 \App\Models\Student::create([
                     'user_id' => $user->id,
-                    'program' => 'BS Information Technology',
-                    'section' => 'IT-' . $faker->randomElement(['A', 'B', 'C']),
+                    'program' => $program,
+                    'section' => $sectionPrefix . '-' . $faker->randomElement(['A', 'B', 'C']),
                 ]);
             }
         }

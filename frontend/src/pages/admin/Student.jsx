@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { userAPI, studentProfileAPI } from '../../services/api';
 import {
@@ -83,20 +83,24 @@ const StudentPage = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     // Search and filter states
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [filters, setFilters] = useState({
-        skills: [],
-        organizations: [],
-        year_level: '',
-        program: '',
-        gender: '',
-        gpa_min: '',
-        gpa_max: '',
+        sports: searchParams.getAll('sports') || [],
+        organizations: searchParams.getAll('organizations') || [],
+        year_level: searchParams.get('year_level') || '',
+        program: searchParams.get('program') || '',
+        gender: searchParams.get('gender') || '',
+        gpa_min: searchParams.get('gpa_min') || '',
+        gpa_max: searchParams.get('gpa_max') || '',
     });
-    const [skills, setSkills] = useState([]);
+    const [sports, setSports] = useState([]);
     const [organizations, setOrganizations] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
+    const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, per_page: 15, total: 0 });
+    const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page')) || 1);
+    const debounceTimer = useRef(null);
 
     if (user?.role !== 'admin') {
         return <div className="p-6 text-red-500 dark:text-red-400">You do not have permission to view this page.</div>;
@@ -189,71 +193,80 @@ const StudentPage = () => {
         return {};
     };
 
-    const fetchStudents = async () => {
+    const fetchStudents = async (page = 1) => {
         try {
             setLoading(true);
-            const data = await userAPI.getStudents();
-            setStudents(data);
+            const filterParams = {
+                search: searchQuery || undefined,
+                sports: filters.sports.length > 0 ? filters.sports : undefined,
+                organizations: filters.organizations.length > 0 ? filters.organizations : undefined,
+                year_level: filters.year_level ? parseInt(filters.year_level) : undefined,
+                program: filters.program || undefined,
+                gender: filters.gender || undefined,
+                gpa_min: filters.gpa_min ? parseFloat(filters.gpa_min) : undefined,
+                gpa_max: filters.gpa_max ? parseFloat(filters.gpa_max) : undefined,
+                page,
+            };
+            // Remove undefined values
+            Object.keys(filterParams).forEach(key => {
+                if (filterParams[key] === undefined) delete filterParams[key];
+            });
+            const result = await studentProfileAPI.searchStudents(filterParams);
+            setStudents(result.students || []);
+            if (result.meta) setPagination(result.meta);
             setError('');
         } catch (err) {
             setError('Failed to fetch students.');
             console.error(err);
         } finally {
             setLoading(false);
+            setIsSearching(false);
         }
     };
 
-    const fetchSkills = async () => {
+    const fetchSports = async () => {
         try {
-            const data = await studentProfileAPI.getSkills();
-            setSkills(data.skills || data || []);
+            const data = await studentProfileAPI.getSports();
+            setSports(data.sports || []);
         } catch (err) {
-            console.error('Failed to fetch skills:', err);
+            console.error('Failed to fetch sports:', err);
         }
     };
 
     const fetchOrganizations = async () => {
         try {
             const data = await studentProfileAPI.getOrganizations();
-            setOrganizations(data.organizations || data || []);
+            setOrganizations(data.organizations || []);
         } catch (err) {
             console.error('Failed to fetch organizations:', err);
         }
     };
 
-    const handleSearch = async () => {
+    const handleSearch = () => {
         setIsSearching(true);
-        try {
-            const filterParams = {
-                search: searchQuery,
-                skill_names: filters.skills,
-                org_names: filters.organizations,
-                year_level: filters.year_level ? parseInt(filters.year_level) : null,
-                program: filters.program,
-                gender: filters.gender,
-                gpa_min: filters.gpa_min ? parseFloat(filters.gpa_min) : null,
-                gpa_max: filters.gpa_max ? parseFloat(filters.gpa_max) : null,
-            };
-            // Remove empty values
-            Object.keys(filterParams).forEach(key => {
-                if (filterParams[key] === '' || filterParams[key] === null || (Array.isArray(filterParams[key]) && filterParams[key].length === 0)) {
-                    delete filterParams[key];
-                }
-            });
-            const result = await studentProfileAPI.searchStudents(filterParams);
-            setStudents(result.students || []);
-        } catch (err) {
-            setError('Failed to search students.');
-            console.error(err);
-        } finally {
-            setIsSearching(false);
-        }
+        setCurrentPage(1);
+        fetchStudents(1);
+        syncUrlParams(1);
+    };
+
+    const syncUrlParams = (page = currentPage) => {
+        const params = new URLSearchParams();
+        if (searchQuery) params.set('search', searchQuery);
+        if (filters.program) params.set('program', filters.program);
+        if (filters.year_level) params.set('year_level', filters.year_level);
+        if (filters.gender) params.set('gender', filters.gender);
+        if (filters.gpa_min) params.set('gpa_min', filters.gpa_min);
+        if (filters.gpa_max) params.set('gpa_max', filters.gpa_max);
+        filters.sports.forEach(s => params.append('sports', s));
+        filters.organizations.forEach(o => params.append('organizations', o));
+        if (page > 1) params.set('page', page.toString());
+        setSearchParams(params, { replace: true });
     };
 
     const clearFilters = () => {
         setSearchQuery('');
         setFilters({
-            skills: [],
+            sports: [],
             organizations: [],
             year_level: '',
             program: '',
@@ -261,12 +274,30 @@ const StudentPage = () => {
             gpa_min: '',
             gpa_max: '',
         });
-        fetchStudents();
+        setCurrentPage(1);
+        setSearchParams({}, { replace: true });
     };
 
+    // Debounced search: auto-search 300ms after typing stops
     useEffect(() => {
-        fetchStudents();
-        fetchSkills();
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(() => {
+            setCurrentPage(1);
+            fetchStudents(1);
+            syncUrlParams(1);
+        }, 300);
+        return () => clearTimeout(debounceTimer.current);
+    }, [searchQuery, filters]);
+
+    // Page change
+    useEffect(() => {
+        fetchStudents(currentPage);
+        syncUrlParams(currentPage);
+    }, [currentPage]);
+
+    // Load filter options on mount
+    useEffect(() => {
+        fetchSports();
         fetchOrganizations();
     }, []);
 
@@ -709,7 +740,7 @@ const StudentPage = () => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                            placeholder="Search by name, student ID, program..." 
+                            placeholder="Search by name or student ID..." 
                             className="w-full h-[38px] pl-11 pr-4 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" 
                         />
                     </div>
@@ -730,13 +761,13 @@ const StudentPage = () => {
                     >
                         <FiFilter className="w-5 h-5" />
                         <span>Filters</span>
-                        {(filters.skills.length > 0 || filters.organizations.length > 0 || filters.year_level || filters.program || filters.gender || filters.gpa_min || filters.gpa_max) && (
+                        {(filters.sports.length > 0 || filters.organizations.length > 0 || filters.year_level || filters.program || filters.gender || filters.gpa_min || filters.gpa_max) && (
                             <span className="ml-1 px-1.5 py-0.5 bg-orange-500 text-white text-xs rounded-full">
-                                {(filters.skills.length || 0) + (filters.organizations.length || 0) + (filters.year_level ? 1 : 0) + (filters.program ? 1 : 0) + (filters.gender ? 1 : 0) + (filters.gpa_min ? 1 : 0) + (filters.gpa_max ? 1 : 0)}
+                                {(filters.sports.length || 0) + (filters.organizations.length || 0) + (filters.year_level ? 1 : 0) + (filters.program ? 1 : 0) + (filters.gender ? 1 : 0) + (filters.gpa_min ? 1 : 0) + (filters.gpa_max ? 1 : 0)}
                             </span>
                         )}
                     </button>
-                    {(searchQuery || filters.skills.length > 0 || filters.organizations.length > 0 || filters.year_level || filters.program || filters.gender || filters.gpa_min || filters.gpa_max) && (
+                    {(searchQuery || filters.sports.length > 0 || filters.organizations.length > 0 || filters.year_level || filters.program || filters.gender || filters.gpa_min || filters.gpa_max) && (
                         <button
                             onClick={clearFilters}
                             className="flex items-center gap-2 h-[38px] px-4 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md text-sm font-medium transition-colors"
@@ -751,17 +782,17 @@ const StudentPage = () => {
                 {showFilters && (
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {/* Skills Filter */}
+                            {/* Sports Filter */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Skills</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sports</label>
                                 <select 
                                     multiple
-                                    value={filters.skills}
-                                    onChange={(e) => setFilters({...filters, skills: Array.from(e.target.selectedOptions, option => option.value)})}
+                                    value={filters.sports}
+                                    onChange={(e) => setFilters({...filters, sports: Array.from(e.target.selectedOptions, option => option.value)})}
                                     className="w-full h-[80px] px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                 >
-                                    {skills.map(skill => (
-                                        <option key={skill.id} value={skill.name}>{skill.name}</option>
+                                    {sports.map((sport, idx) => (
+                                        <option key={idx} value={sport}>{sport}</option>
                                     ))}
                                 </select>
                                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Hold Ctrl/Cmd to select multiple</p>
@@ -776,8 +807,8 @@ const StudentPage = () => {
                                     onChange={(e) => setFilters({...filters, organizations: Array.from(e.target.selectedOptions, option => option.value)})}
                                     className="w-full h-[80px] px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                 >
-                                    {organizations.map(org => (
-                                        <option key={org.id} value={org.name}>{org.name}</option>
+                                    {organizations.map((org, idx) => (
+                                        <option key={idx} value={org}>{org}</option>
                                     ))}
                                 </select>
                                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Hold Ctrl/Cmd to select multiple</p>
@@ -796,8 +827,6 @@ const StudentPage = () => {
                                     <option value="2">2nd Year</option>
                                     <option value="3">3rd Year</option>
                                     <option value="4">4th Year</option>
-                                    <option value="5">5th Year</option>
-                                    <option value="6">6th Year</option>
                                 </select>
                             </div>
 
@@ -812,10 +841,6 @@ const StudentPage = () => {
                                     <option value="">All Programs</option>
                                     <option value="BSCS">BS Computer Science</option>
                                     <option value="BSIT">BS Information Technology</option>
-                                    <option value="BSBA">BS Business Administration</option>
-                                    <option value="BSED">BS Education</option>
-                                    <option value="AB">AB Liberal Arts</option>
-                                    <option value="BSN">BS Nursing</option>
                                 </select>
                             </div>
 
@@ -828,9 +853,9 @@ const StudentPage = () => {
                                     className="w-full h-[38px] px-3 py-1.5 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                 >
                                     <option value="">All Genders</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
                                 </select>
                             </div>
 
@@ -948,6 +973,67 @@ const StudentPage = () => {
                     </div>
                 )}
             </div>
+
+            {/* Pagination */}
+            {!loading && students.length > 0 && pagination.last_page > 1 && (
+                <div className="flex items-center justify-between mt-5 px-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Showing <span className="font-semibold text-gray-800 dark:text-gray-200">{((pagination.current_page - 1) * pagination.per_page) + 1}</span>
+                        –<span className="font-semibold text-gray-800 dark:text-gray-200">{Math.min(pagination.current_page * pagination.per_page, pagination.total)}</span> of{' '}
+                        <span className="font-semibold text-gray-800 dark:text-gray-200">{pagination.total}</span> students
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                            disabled={pagination.current_page <= 1}
+                            className="px-3 py-1.5 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Previous
+                        </button>
+                        {Array.from({ length: Math.min(pagination.last_page, 5) }, (_, i) => {
+                            let page;
+                            if (pagination.last_page <= 5) {
+                                page = i + 1;
+                            } else if (pagination.current_page <= 3) {
+                                page = i + 1;
+                            } else if (pagination.current_page >= pagination.last_page - 2) {
+                                page = pagination.last_page - 4 + i;
+                            } else {
+                                page = pagination.current_page - 2 + i;
+                            }
+                            return (
+                                <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`w-9 h-9 text-sm font-medium rounded-md transition-colors ${
+                                        page === pagination.current_page
+                                            ? 'bg-[#F97316] text-white shadow-sm'
+                                            : 'border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                    }`}
+                                >
+                                    {page}
+                                </button>
+                            );
+                        })}
+                        <button
+                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.last_page))}
+                            disabled={pagination.current_page >= pagination.last_page}
+                            className="px-3 py-1.5 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Total count when not paginated */}
+            {!loading && students.length > 0 && pagination.last_page <= 1 && (
+                <div className="mt-4 px-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Showing <span className="font-semibold text-gray-800 dark:text-gray-200">{pagination.total}</span> student{pagination.total !== 1 ? 's' : ''}
+                    </p>
+                </div>
+            )}
         </div>
     );
 };

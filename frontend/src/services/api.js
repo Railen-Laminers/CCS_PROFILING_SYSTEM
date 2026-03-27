@@ -152,11 +152,20 @@ export const userAPI = {
   },
 };
 
-// Student Profile API (UI stubs — not functional yet)
+// Student Profile API (Search & Filter)
 export const studentProfileAPI = {
-  getSkills: async () => ({ skills: [] }),
-  getOrganizations: async () => ({ organizations: [] }),
-  searchStudents: async () => ({ students: [] }),
+  getSports: async () => {
+    const response = await axiosInstance.get('/students/sports');
+    return response.data;
+  },
+  getOrganizations: async () => {
+    const response = await axiosInstance.get('/students/organizations');
+    return response.data;
+  },
+  searchStudents: async (params) => {
+    const response = await axiosInstance.get('/students/search', { params });
+    return response.data;
+  },
 };
 
 export default authAPI;

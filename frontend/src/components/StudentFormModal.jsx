@@ -89,7 +89,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 if (value && value !== formData.password) return 'Passwords do not match.';
                 break;
             case 'year_level':
-                if (value && (value < 1 || value > 6)) return 'Year level must be between 1 and 6.';
+                if (value && (value < 1 || value > 4)) return 'Year level must be between 1 and 4.';
                 break;
             case 'gpa':
                 if (value && (value < 0 || value > 4)) return 'GPA must be between 0 and 4.';
@@ -381,9 +381,17 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 {renderField('Parent/Guardian Name', 'parent_guardian_name', 'text', false, null, null, 'Full name of guardian')}
                                 {renderField('Emergency Contact', 'emergency_contact', 'tel', false, null, null, '09XXXXXXXXX')}
-                                {renderField('Program', 'program', 'text', false, null, null, 'e.g., BS Information Technology')}
+                                {renderField('Program', 'program', 'select', false, [
+                                    { value: 'BSIT', label: 'BS Information Technology' },
+                                    { value: 'BSCS', label: 'BS Computer Science' }
+                                ])}
                                 {renderField('Section', 'section', 'text', false, null, null, 'e.g., IT-A')}
-                                {renderField('Year Level', 'year_level', 'number', false, null, 'Between 1 and 6')}
+                                {renderField('Year Level', 'year_level', 'select', false, [
+                                    { value: '1', label: '1st Year' },
+                                    { value: '2', label: '2nd Year' },
+                                    { value: '3', label: '3rd Year' },
+                                    { value: '4', label: '4th Year' }
+                                ])}
                                 {renderField('GPA', 'gpa', 'number', false, null, 'Between 0 and 4')}
                                 {renderField('Blood Type', 'blood_type', 'select', false, [
                                     { value: 'A+', label: 'A+' }, { value: 'A-', label: 'A-' },

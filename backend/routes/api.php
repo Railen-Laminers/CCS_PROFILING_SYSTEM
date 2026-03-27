@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\StudentSearchController;
 
 Route::post('/auth/login', [AuthController::class, 'login']);
 
@@ -19,6 +20,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/users', [UserController::class, 'store']);
         Route::put('/users/{id}', [UserController::class, 'update']);
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+        // Student search & filter (must be before /students to avoid route conflicts)
+        Route::get('/students/search', [StudentSearchController::class, 'search']);
+        Route::get('/students/sports', [StudentSearchController::class, 'sports']);
+        Route::get('/students/organizations', [StudentSearchController::class, 'organizations']);
 
         // Specific lists for frontend
         Route::get('/students', [UserController::class, 'getStudents']);
