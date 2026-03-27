@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCourseRequest;
+use App\Http\Requests\UpdateCourseRequest;
 use App\Services\CourseService;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class CourseController extends Controller
 {
@@ -31,15 +31,9 @@ class CourseController extends Controller
     /**
      * Create a new course.
      */
-    public function store(Request $request)
+    public function store(StoreCourseRequest $request)
     {
-        $request->validate([
-            'credits'      => 'required|integer|min:1|max:6',
-            'course_code'  => 'required|string|max:20|unique:courses,course_code',
-            'course_title' => 'required|string|max:100|unique:courses,course_title',
-        ]);
-
-        $course = $this->courseService->create($request->only(['credits', 'course_code', 'course_title']));
+        $course = $this->courseService->create($request->validated());
 
         return response()->json([
             'message' => 'Course created successfully',
@@ -50,23 +44,9 @@ class CourseController extends Controller
     /**
      * Update an existing course.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCourseRequest $request, $id)
     {
-        $course = \App\Models\Course::findOrFail($id);
-
-        $request->validate([
-            'credits' => 'sometimes|integer|min:1|max:6',
-            'course_code' => [
-                'sometimes', 'string', 'max:20',
-                Rule::unique('courses', 'course_code')->ignore($course->course_id, 'course_id'),
-            ],
-            'course_title' => [
-                'sometimes', 'string', 'max:100',
-                Rule::unique('courses', 'course_title')->ignore($course->course_id, 'course_id'),
-            ],
-        ]);
-
-        $updated = $this->courseService->update($id, $request->only(['credits', 'course_code', 'course_title']));
+        $updated = $this->courseService->update($id, $request->validated());
 
         return response()->json([
             'message' => 'Course updated successfully',

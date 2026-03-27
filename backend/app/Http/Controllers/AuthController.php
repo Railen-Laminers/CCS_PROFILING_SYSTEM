@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 
@@ -11,13 +12,11 @@ class AuthController extends Controller
         private readonly AuthService $authService
     ) {}
 
-    public function login(Request $request)
+    /**
+     * Login with identifier (user_id or email) and password.
+     */
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'identifier' => 'required|string',
-            'password'   => 'required|string|min:6',
-        ]);
-
         $result = $this->authService->login($request->identifier, $request->password);
 
         return response()->json([
@@ -27,6 +26,9 @@ class AuthController extends Controller
         ], 200);
     }
 
+    /**
+     * Get the authenticated user's profile.
+     */
     public function me(Request $request)
     {
         return response()->json([
@@ -34,6 +36,9 @@ class AuthController extends Controller
         ], 200);
     }
 
+    /**
+     * Logout the authenticated user.
+     */
     public function logout(Request $request)
     {
         $this->authService->logout($request->user());

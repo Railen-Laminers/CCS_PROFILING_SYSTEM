@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAcademicRecordRequest;
+use App\Http\Requests\UpdateAcademicRecordRequest;
 use App\Services\AcademicRecordService;
-use Illuminate\Http\Request;
 
 class AcademicRecordController extends Controller
 {
@@ -28,20 +29,9 @@ class AcademicRecordController extends Controller
     /**
      * Store a newly created academic record.
      */
-    public function store(Request $request, $userId)
+    public function store(StoreAcademicRecordRequest $request, $userId)
     {
-        $validated = $request->validate([
-            'course_name'             => 'nullable|string|max:255',
-            'year_level'              => 'nullable|string|max:50',
-            'semester'                => 'nullable|string|max:50',
-            'gpa'                     => 'nullable|numeric|min:0|max:5',
-            'current_subjects'        => 'nullable|array',
-            'academic_awards'         => 'nullable|array',
-            'quiz_bee_participations' => 'nullable|array',
-            'programming_contests'    => 'nullable|array',
-        ]);
-
-        $result = $this->academicRecordService->create($userId, $validated);
+        $result = $this->academicRecordService->create($userId, $request->validated());
 
         if (!$result['found']) {
             return response()->json(['message' => 'Student profile not found.'], 404);
@@ -70,20 +60,9 @@ class AcademicRecordController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateAcademicRecordRequest $request, string $id)
     {
-        $validated = $request->validate([
-            'course_name'             => 'nullable|string|max:255',
-            'year_level'              => 'nullable|string|max:50',
-            'semester'                => 'nullable|string|max:50',
-            'gpa'                     => 'nullable|numeric|min:0|max:5',
-            'current_subjects'        => 'nullable|array',
-            'academic_awards'         => 'nullable|array',
-            'quiz_bee_participations' => 'nullable|array',
-            'programming_contests'    => 'nullable|array',
-        ]);
-
-        $record = $this->academicRecordService->update($id, $validated);
+        $record = $this->academicRecordService->update($id, $request->validated());
 
         if (!$record) {
             return response()->json(['message' => 'Record not found.'], 404);

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\UpdateEventRequest;
 use App\Services\EventService;
-use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
@@ -30,16 +31,9 @@ class EventController extends Controller
     /**
      * Store a newly created event.
      */
-    public function store(Request $request)
+    public function store(StoreEventRequest $request)
     {
-        $request->validate([
-            'title'          => 'required|string|max:200',
-            'description'    => 'required|string',
-            'start_datetime' => 'required|date|before:end_datetime',
-            'end_datetime'   => 'required|date|after:start_datetime',
-        ]);
-
-        $event = $this->eventService->create($request->only(['title', 'description', 'start_datetime', 'end_datetime']));
+        $event = $this->eventService->create($request->validated());
 
         return response()->json([
             'message' => 'Event created successfully',
@@ -50,16 +44,9 @@ class EventController extends Controller
     /**
      * Update the specified event.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateEventRequest $request, $id)
     {
-        $request->validate([
-            'title'          => 'sometimes|string|max:200',
-            'description'    => 'sometimes|string',
-            'start_datetime' => 'sometimes|date|before:end_datetime',
-            'end_datetime'   => 'sometimes|date|after:start_datetime',
-        ]);
-
-        $event = $this->eventService->update($id, $request->only(['title', 'description', 'start_datetime', 'end_datetime']));
+        $event = $this->eventService->update($id, $request->validated());
 
         return response()->json([
             'message' => 'Event updated successfully',
