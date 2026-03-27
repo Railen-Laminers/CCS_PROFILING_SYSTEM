@@ -35,10 +35,10 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Generate 5 dummy students if none exist
+        // Generate 16 dummy students if none exist
         if (User::where('role', 'student')->count() === 0) {
             $faker = \Faker\Factory::create();
-            for ($i = 0; $i < 5; $i++) {
+            for ($i = 0; $i < 16; $i++) {
                 $user = User::create([
                     'firstname' => $faker->firstName,
                     'middlename' => $faker->lastName,
