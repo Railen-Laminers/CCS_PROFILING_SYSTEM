@@ -152,4 +152,11 @@ export const userAPI = {
   },
 };
 
+// Student Profile API (UI stubs — not functional yet)
+export const studentProfileAPI = {
+  getSkills: async () => ({ skills: [] }),
+  getOrganizations: async () => ({ organizations: [] }),
+  searchStudents: async () => ({ students: [] }),
+};
+
 export default authAPI;

@@ -700,7 +700,7 @@ const StudentPage = () => {
             )}
 
             {/* Search Bar and Filters */}
-            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
+            <div className="bg-white dark:bg-[#2A2A2A] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-5 mb-5">
                 <div className="flex flex-col lg:flex-row gap-4">
                     <div className="relative flex-1">
                         <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5 pointer-events-none" />
@@ -710,26 +710,25 @@ const StudentPage = () => {
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                             placeholder="Search by name, student ID, program..." 
-                            className="w-full h-10 pl-11 pr-4 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" 
+                            className="w-full h-[38px] pl-11 pr-4 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" 
                         />
                     </div>
                     <button
                         onClick={handleSearch}
                         disabled={isSearching}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#F97316] text-white rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-60"
+                        className="flex items-center justify-center min-w-[100px] h-[38px] px-4 py-2 bg-[#F97316] text-white rounded-md text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-60"
                     >
-                        {isSearching ? <Spinner /> : <FiSearch />}
-                        <span>Search</span>
+                        {isSearching ? <Spinner /> : <span>Search</span>}
                     </button>
                     <button
                         onClick={() => setShowFilters(!showFilters)}
-                        className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-colors ${
+                        className={`flex items-center gap-2 h-[38px] px-4 border rounded-md text-sm font-medium transition-colors ${
                             showFilters 
                                 ? 'bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-300' 
                                 : 'bg-white dark:bg-[#1E1E1E] border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                         }`}
                     >
-                        <FiFilter className="w-4 h-4" />
+                        <FiFilter className="w-5 h-5" />
                         <span>Filters</span>
                         {(filters.skills.length > 0 || filters.organizations.length > 0 || filters.year_level || filters.program || filters.gender || filters.gpa_min || filters.gpa_max) && (
                             <span className="ml-1 px-1.5 py-0.5 bg-orange-500 text-white text-xs rounded-full">
@@ -740,9 +739,9 @@ const StudentPage = () => {
                     {(searchQuery || filters.skills.length > 0 || filters.organizations.length > 0 || filters.year_level || filters.program || filters.gender || filters.gpa_min || filters.gpa_max) && (
                         <button
                             onClick={clearFilters}
-                            className="flex items-center gap-2 px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-sm font-medium transition-colors"
+                            className="flex items-center gap-2 h-[38px] px-4 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md text-sm font-medium transition-colors"
                         >
-                            <FiX className="w-4 h-4" />
+                            <FiX className="w-5 h-5" />
                             <span>Clear</span>
                         </button>
                     )}
@@ -759,7 +758,7 @@ const StudentPage = () => {
                                     multiple
                                     value={filters.skills}
                                     onChange={(e) => setFilters({...filters, skills: Array.from(e.target.selectedOptions, option => option.value)})}
-                                    className="w-full h-24 px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                                    className="w-full h-[80px] px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                 >
                                     {skills.map(skill => (
                                         <option key={skill.id} value={skill.name}>{skill.name}</option>
@@ -775,7 +774,7 @@ const StudentPage = () => {
                                     multiple
                                     value={filters.organizations}
                                     onChange={(e) => setFilters({...filters, organizations: Array.from(e.target.selectedOptions, option => option.value)})}
-                                    className="w-full h-24 px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                                    className="w-full h-[80px] px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                 >
                                     {organizations.map(org => (
                                         <option key={org.id} value={org.name}>{org.name}</option>
@@ -790,7 +789,7 @@ const StudentPage = () => {
                                 <select 
                                     value={filters.year_level}
                                     onChange={(e) => setFilters({...filters, year_level: e.target.value})}
-                                    className="w-full h-10 px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                                    className="w-full h-[38px] px-3 py-1.5 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                 >
                                     <option value="">All Years</option>
                                     <option value="1">1st Year</option>
@@ -808,7 +807,7 @@ const StudentPage = () => {
                                 <select 
                                     value={filters.program}
                                     onChange={(e) => setFilters({...filters, program: e.target.value})}
-                                    className="w-full h-10 px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                                    className="w-full h-[38px] px-3 py-1.5 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                 >
                                     <option value="">All Programs</option>
                                     <option value="BSCS">BS Computer Science</option>
@@ -826,7 +825,7 @@ const StudentPage = () => {
                                 <select 
                                     value={filters.gender}
                                     onChange={(e) => setFilters({...filters, gender: e.target.value})}
-                                    className="w-full h-10 px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                                    className="w-full h-[38px] px-3 py-1.5 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                 >
                                     <option value="">All Genders</option>
                                     <option value="Male">Male</option>
@@ -847,7 +846,7 @@ const StudentPage = () => {
                                         value={filters.gpa_min}
                                         onChange={(e) => setFilters({...filters, gpa_min: e.target.value})}
                                         placeholder="Min"
-                                        className="w-1/2 h-10 px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                                        className="w-1/2 h-[38px] px-3 py-1.5 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                     />
                                     <input 
                                         type="number" 
@@ -857,7 +856,7 @@ const StudentPage = () => {
                                         value={filters.gpa_max}
                                         onChange={(e) => setFilters({...filters, gpa_max: e.target.value})}
                                         placeholder="Max"
-                                        className="w-1/2 h-10 px-3 py-2 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                                        className="w-1/2 h-[38px] px-3 py-1.5 bg-[#F3F3F5] dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                                     />
                                 </div>
                             </div>
