@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { userAPI } from '../../services/api';
+import { eventAPI } from '../../services/api';
 import { FaPlus, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
 
 const EventsPage = () => {
@@ -24,7 +24,7 @@ const EventsPage = () => {
     const fetchEvents = async () => {
         setLoading(true);
         try {
-            const data = await userAPI.getEvents();
+            const data = await eventAPI.getEvents();
             setEvents(data);
         } catch (err) {
             setError('Failed to load events. Please try again later.');

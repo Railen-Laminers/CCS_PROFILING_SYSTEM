@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { userAPI } from '../services/api';
+import { userAPI, courseAPI, eventAPI } from '../services/api';
 import { FaUsers, FaChalkboardTeacher, FaBook, FaCalendarAlt } from 'react-icons/fa';
 
 export const Dashboard = () => {
@@ -21,8 +21,8 @@ export const Dashboard = () => {
         // Fetch full lists and extract lengths
         const students = await userAPI.getStudents();
         const faculty = await userAPI.getFaculty();
-        const courses = await userAPI.getCourses();
-        const events = await userAPI.getEvents();
+        const courses = await courseAPI.getCourses();
+        const events = await eventAPI.getEvents();
         setStudentCount(students.length);
         setFacultyCount(faculty.length);
         setCourseCount(courses.length);

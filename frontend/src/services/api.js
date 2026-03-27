@@ -1,4 +1,3 @@
-// api.js (extended)
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
@@ -34,12 +33,13 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-// Auth API
+// ─── Auth API ────────────────────────────────────────────────────────────────
+
 export const authAPI = {
   login: async (identifier, password) => {
     const response = await axiosInstance.post('/auth/login', { identifier, password });
     setAuthToken(response.data.token);
-    return response.data.user; // already includes profile for student/faculty
+    return response.data.user;
   },
   logout: async () => {
     await axiosInstance.post('/auth/logout');
@@ -47,112 +47,99 @@ export const authAPI = {
   },
   getMe: async () => {
     const response = await axiosInstance.get('/auth/me');
-    return response.data.user; // includes profile for student/faculty
+    return response.data.user;
   },
   isAuthenticated,
   getAuthToken,
 };
 
-// User Management API (admin only)
-export const userAPI = {
-  // Create a new user (student or faculty)
-  createUser: async (userData) => {
-    const response = await axiosInstance.post('/users', userData);
-    return response.data; // returns { message, user, student/faculty }
-  },
+// ─── User API ────────────────────────────────────────────────────────────────
 
-  // Get all users
+export const userAPI = {
   getUsers: async () => {
     const response = await axiosInstance.get('/users');
     return response.data.users;
   },
-
-  // Get single user by ID or their username
   getUser: async (id) => {
     const response = await axiosInstance.get(`/users/${id}`);
     return response.data.user;
   },
-
-  // Update a user
+  createUser: async (userData) => {
+    const response = await axiosInstance.post('/users', userData);
+    return response.data;
+  },
   updateUser: async (id, userData) => {
     const response = await axiosInstance.put(`/users/${id}`, userData);
-    return response.data; // returns { message, user, student/faculty }
+    return response.data;
   },
-
-  // Delete a user
   deleteUser: async (id) => {
     await axiosInstance.delete(`/users/${id}`);
   },
-
-  // Get all students
   getStudents: async () => {
     const response = await axiosInstance.get('/students');
-    return response.data.students; // array of { user, student }
+    return response.data.students;
   },
-
-  // Get all faculty
   getFaculty: async () => {
     const response = await axiosInstance.get('/faculty');
-    return response.data.faculty; // array of { user, faculty }
+    return response.data.faculty;
   },
+};
 
-  // Get all courses
+// ─── Course API ──────────────────────────────────────────────────────────────
+
+export const courseAPI = {
   getCourses: async () => {
     const response = await axiosInstance.get('/courses');
     return response.data.courses;
   },
-
-  // Get a single course by ID or code
   getCourse: async (id) => {
     const response = await axiosInstance.get(`/courses/${id}`);
     return response.data.course;
   },
-
-  // Create a new course
   createCourse: async (courseData) => {
     const response = await axiosInstance.post('/courses', courseData);
     return response.data.course;
   },
-
-  // Update an existing course
   updateCourse: async (id, courseData) => {
     const response = await axiosInstance.put(`/courses/${id}`, courseData);
     return response.data.course;
   },
-
-  // Delete a course
   deleteCourse: async (id) => {
     await axiosInstance.delete(`/courses/${id}`);
   },
+};
 
-  // Get all events
+// ─── Event API ───────────────────────────────────────────────────────────────
+
+export const eventAPI = {
   getEvents: async () => {
     const response = await axiosInstance.get('/events');
     return response.data.events;
   },
+};
 
-  // Academic Records
+// ─── Academic Record API ─────────────────────────────────────────────────────
+
+export const academicRecordAPI = {
   getAcademicRecords: async (userId) => {
     const response = await axiosInstance.get(`/users/${userId}/academic-records`);
     return response.data.academic_records;
   },
-
   createAcademicRecord: async (userId, recordData) => {
     const response = await axiosInstance.post(`/users/${userId}/academic-records`, recordData);
     return response.data.academic_record;
   },
-
   updateAcademicRecord: async (recordId, recordData) => {
     const response = await axiosInstance.put(`/academic-records/${recordId}`, recordData);
     return response.data.academic_record;
   },
-
   deleteAcademicRecord: async (recordId) => {
     await axiosInstance.delete(`/academic-records/${recordId}`);
   },
 };
 
-// Student Profile API (Search & Filter)
+// ─── Student Profile API (Search & Filter) ───────────────────────────────────
+
 export const studentProfileAPI = {
   getSports: async () => {
     const response = await axiosInstance.get('/students/sports');

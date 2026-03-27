@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { userAPI } from '../../services/api';
+import { courseAPI } from '../../services/api';
 import { FaPlus, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
 
 const CoursesPage = () => {
@@ -23,7 +23,7 @@ const CoursesPage = () => {
     const fetchCourses = async () => {
         setLoading(true);
         try {
-            const data = await userAPI.getCourses();
+            const data = await courseAPI.getCourses();
             setCourses(data);
         } catch (err) {
             setError('Failed to load courses. Please try again later.');
@@ -86,9 +86,9 @@ const CoursesPage = () => {
         setSubmitLoading(true);
         try {
             if (editingCourse) {
-                await userAPI.updateCourse(editingCourse.course_id, formData);
+                await courseAPI.updateCourse(editingCourse.course_id, formData);
             } else {
-                await userAPI.createCourse(formData);
+                await courseAPI.createCourse(formData);
             }
             await fetchCourses();
             closeModal();
@@ -112,7 +112,7 @@ const CoursesPage = () => {
     const handleDelete = async (courseId) => {
         if (!window.confirm('Are you sure you want to delete this course?')) return;
         try {
-            await userAPI.deleteCourse(courseId);
+            await courseAPI.deleteCourse(courseId);
             await fetchCourses();
         } catch (err) {
             setError('Failed to delete course. Please try again.');
