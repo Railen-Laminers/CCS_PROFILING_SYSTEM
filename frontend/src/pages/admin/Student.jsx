@@ -734,8 +734,8 @@ const StudentPage = () => {
             )}
 
             {/* Search Bar and Filters */}
-            <div className="bg-white/60 dark:bg-surface-secondary/40 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 p-5 mb-6 relative overflow-hidden">
-                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
+            <div className="bg-white/60 dark:bg-surface-secondary/40 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-zinc-200/50 dark:border-white/5 p-5 mb-6 relative overflow-hidden">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
                 <div className="flex flex-col lg:flex-row gap-4 relative z-10">
                     <div className="relative w-full max-w-md">
                         <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-zinc-500 w-5 h-5 pointer-events-none" />
@@ -895,8 +895,8 @@ const StudentPage = () => {
             </div>
 
             {/* Students Table */}
-            <div className="bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 overflow-hidden relative">
-                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
+            <div className="bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-zinc-200/50 dark:border-white/5 overflow-hidden relative">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
                 {loading ? (
                     <div className="flex justify-center items-center py-16"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-500"></div></div>
                 ) : students.length === 0 ? (
@@ -906,14 +906,14 @@ const StudentPage = () => {
                         <table className="w-full text-left border-collapse min-w-[800px]">
                             <thead>
                                 <tr className="border-b border-gray-200 dark:border-border-dark">
-                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[7%]">Photo</th>
-                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[12%]">Student ID</th>
-                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[18%]">Name</th>
-                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[18%]">Program</th>
-                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[10%]">Year Level</th>
-                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[10%]">Section</th>
-                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-[10%]">Status</th>
-                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 text-left w-[15%]">Actions</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[7%]">Photo</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[12%]">Student ID</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[18%]">Name</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[18%]">Program</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[10%]">Year Level</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[10%]">Section</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[10%]">Status</th>
+                                    <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 text-left w-[15%]">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">

@@ -68,7 +68,7 @@ const MOCK_DATA = {
 // Local Components
 
 const BulletList = ({ items }) => {
-    if (!items || items.length === 0) return <p className="text-sm text-gray-500">None recorded</p>;
+    if (!items || items.length === 0) return <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>;
     return (
         <ul className="space-y-1.5">
             {items.map((item, idx) => (
@@ -82,7 +82,7 @@ const BulletList = ({ items }) => {
 };
 
 const SectionSubhead = ({ children }) => (
-    <p className="text-sm font-medium text-gray-400 mb-1">{children}</p>
+    <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">{children}</p>
 );
 
 const StudentDetails = () => {
@@ -245,8 +245,8 @@ const StudentDetails = () => {
             </button>
 
             {/* Profile Overview Card */}
-            <Card className="p-6 mb-6 bg-white/60 dark:bg-surface-secondary/40 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 transition-all overflow-hidden relative">
-                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
+            <Card className="p-6 mb-6 bg-white/60 dark:bg-surface-secondary/40 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-zinc-200/50 dark:border-white/5 transition-all overflow-hidden relative">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
                 <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6 relative z-10">
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                         <div className="w-[120px] h-[120px] rounded-[32px] bg-gradient-to-br from-violet-500 to-brand-400 text-white flex items-center justify-center text-5xl font-bold shadow-xl flex-shrink-0 ring-4 ring-white dark:ring-surface-secondary hover:rotate-3 transition-transform duration-300">
@@ -303,16 +303,16 @@ const StudentDetails = () => {
             </Card>
 
             {/* Tabs Navigation */}
-            <div className="flex space-x-2 mb-6 overflow-x-auto p-2 bg-white/40 dark:bg-surface-secondary/30 backdrop-blur-3xl rounded-[2rem] border border-gray-200/50 dark:border-white/10 scrollbar-hide shadow-inner relative overflow-hidden">
-                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
+            <div className="flex space-x-2 mb-6 overflow-x-auto p-2 bg-gray-100/60 dark:bg-surface-secondary/30 backdrop-blur-3xl rounded-[2rem] border border-zinc-300/50 dark:border-white/10 scrollbar-hide shadow-inner relative overflow-hidden">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
                 {['Student Information', 'Academic Record', 'Medical Record', 'Sports & Activities', 'Organizations', 'Behavior & Discipline', 'Events & Competitions'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => handleTabChange(tab)}
                         className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-[1.25rem] relative z-10 ${
                             activeTab === tab 
-                                ? 'bg-white/80 dark:bg-surface-dark/80 text-brand-500 shadow-md ring-1 ring-gray-200/50 dark:ring-white/10 backdrop-blur-md' 
-                                : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-surface-secondary/50'
+                                ? 'bg-white dark:bg-surface-dark/80 text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10 backdrop-blur-md' 
+                                : 'text-zinc-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-surface-secondary/50'
                         }`}
                     >
                         {tab}
@@ -321,8 +321,8 @@ const StudentDetails = () => {
             </div>
 
             {/* Tab Content Rendering */}
-            <Card className="p-6 min-h-[400px] bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 relative overflow-hidden">
-                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none"></div>
+            <Card className="p-6 min-h-[400px] bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-zinc-200/50 dark:border-white/5 relative overflow-hidden">
+                <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
                 {isTabLoading ? (
                     <div className="flex justify-center items-center h-[300px]">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
@@ -333,7 +333,7 @@ const StudentDetails = () => {
                         {activeTab === 'Student Information' && (
                             <div className="space-y-6">
                                 {/* Personal Info Block */}
-                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
+                                <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                         <FiUser className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
@@ -347,7 +347,7 @@ const StudentDetails = () => {
                                 </div>
 
                                 {/* Contact & Emergency Block */}
-                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
+                                <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                         <FiPhone className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact & Emergency Details</h3>
@@ -393,14 +393,14 @@ const StudentDetails = () => {
                                 ) : (
                                     <div className="space-y-6">
                                         {academicRecords.map((record, index) => (
-                                            <div key={record.id} className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
+                                            <div key={record.id} className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                                 <div className="flex justify-between items-start mb-6">
                                                     <div>
                                                         <p className="text-xl font-bold text-gray-900 dark:text-white">{record.course_name || 'N/A'}</p>
-                                                        <p className="text-sm font-medium text-gray-500 mt-1">{record.year_level || 'N/A'} • {record.semester || 'N/A'}</p>
+                                                        <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mt-1">{record.year_level || 'N/A'} • {record.semester || 'N/A'}</p>
                                                     </div>
                                                     <div className="text-right">
-                                                        <p className="text-sm font-medium text-gray-500 mb-1">GPA</p>
+                                                        <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">GPA</p>
                                                         <p className="text-3xl font-extrabold text-[#F97316] leading-none">{record.gpa ? Number(record.gpa).toFixed(2) : 'N/A'}</p>
                                                     </div>
                                                 </div>
@@ -410,7 +410,7 @@ const StudentDetails = () => {
                                                         <SectionSubhead>Current Subjects</SectionSubhead>
                                                         {record.current_subjects?.length > 0 ? (
                                                             <div className="flex flex-wrap gap-2 mt-2">
-                                                                {record.current_subjects.map((sub, i) => <Badge key={i} color="white">{sub}</Badge>)}
+                                                                {record.current_subjects.map((sub, i) => <Badge key={i} variant="white">{sub}</Badge>)}
                                                             </div>
                                                         ) : <p className="text-sm text-gray-500">None recorded</p>}
                                                     </div>
@@ -447,7 +447,7 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Medical Information</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
+                                <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div>
                                             <SectionSubhead>Blood Type</SectionSubhead>
@@ -461,7 +461,7 @@ const StudentDetails = () => {
                                                         <Badge key={index} color="red">{alg}</Badge>
                                                     ))
                                                 ) : (
-                                                    <p className="text-sm text-gray-500">None recorded</p>
+                                                    <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>
                                                 )}
                                             </div>
                                         </div>
@@ -487,14 +487,14 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Sports and Athletic Activities</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
+                                <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div>
                                             <SectionSubhead>Sports Played</SectionSubhead>
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {profile?.sports_activities?.sportsPlayed?.length > 0 ? (
                                                     profile.sports_activities.sportsPlayed.map((sport, i) => <Badge key={i} color="orange">{sport}</Badge>)
-                                                ) : <p className="text-sm text-gray-500">None recorded</p>}
+                                                ) : <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>}
                                             </div>
                                         </div>
                                         <div>
@@ -502,7 +502,7 @@ const StudentDetails = () => {
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {profile?.sports_activities?.achievements?.length > 0 ? (
                                                     profile.sports_activities.achievements.map((ach, i) => <Badge key={i} color="yellow">{ach}</Badge>)
-                                                ) : <p className="text-sm text-gray-500">None recorded</p>}
+                                                ) : <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>}
                                             </div>
                                         </div>
                                         <div>
@@ -527,14 +527,14 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Organizations and Leadership</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
+                                <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div>
                                             <SectionSubhead>Clubs Joined</SectionSubhead>
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {profile?.organizations?.clubs?.length > 0 ? (
                                                     profile.organizations.clubs.map((club, i) => <Badge key={i} color="purple">{club}</Badge>)
-                                                ) : <p className="text-sm text-gray-500">None recorded</p>}
+                                                ) : <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>}
                                             </div>
                                         </div>
                                         <div>
@@ -542,7 +542,7 @@ const StudentDetails = () => {
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {profile?.organizations?.studentCouncil?.length > 0 ? (
                                                     profile.organizations.studentCouncil.map((ro, i) => <Badge key={i} color="orange">{ro}</Badge>)
-                                                ) : <p className="text-sm text-gray-500">None recorded</p>}
+                                                ) : <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>}
                                             </div>
                                         </div>
                                         <div>
@@ -567,18 +567,18 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Behavior and Disciplinary Records</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
+                                <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                                         <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">Warnings</h4>
+                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-2">Warnings</h4>
                                             <p className="text-4xl font-extrabold text-yellow-500">{profile?.behavior_discipline_records?.warnings || 0}</p>
                                         </div>
                                         <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">Suspensions</h4>
+                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-2">Suspensions</h4>
                                             <p className="text-4xl font-extrabold text-red-500">{profile?.behavior_discipline_records?.suspensions || 0}</p>
                                         </div>
                                         <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">Counseling Sessions</h4>
+                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-2">Counseling Sessions</h4>
                                             <p className="text-4xl font-extrabold text-blue-500">{profile?.behavior_discipline_records?.counseling || 0}</p>
                                         </div>
                                     </div>
@@ -609,7 +609,7 @@ const StudentDetails = () => {
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Events and Competitions</h3>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-md relative">
+                                <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200/50 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                         <div>
                                             <SectionSubhead>Quiz Bee Competitions</SectionSubhead>
