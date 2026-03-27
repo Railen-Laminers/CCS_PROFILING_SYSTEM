@@ -4,6 +4,7 @@ import {
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiAlertCircle,
     FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin
 } from 'react-icons/fi';
+import StudentFormModal from '../../components/StudentFormModal';
 import { userAPI } from '../../services/api';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -11,6 +12,15 @@ import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton, Spinner } from '@/components/ui/Skeleton';
 import { formatDate } from '@/lib/utils';
+
+// Helper to format any date string into YYYY-MM-DD for date input
+const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    return date.toISOString().split('T')[0];
+};
 
 // MOCK DATA: Matching the structural and visual Figma prototype specifications
 const MOCK_DATA = {
@@ -90,22 +100,65 @@ const StudentDetails = () => {
     const [isAcademicLoading, setIsAcademicLoading] = useState(false);
     const [academicError, setAcademicError] = useState('');
 
+    const fetchStudent = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const data = await userAPI.getUser(id);
+            setStudent(data);
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.message || 'Failed to load student details.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchStudent = async () => {
-            setLoading(true);
-            setError('');
-            try {
-                const data = await userAPI.getUser(id);
-                setStudent(data);
-            } catch (err) {
-                console.error(err);
-                setError(err.response?.data?.message || 'Failed to load student details.');
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchStudent();
     }, [id]);
+
+    // Modal state
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalData, setModalData] = useState(null);
+
+    const handleEdit = () => {
+        if (!student) return;
+        const s = student.student;
+        setModalData({
+            firstname: student.firstname,
+            middlename: student.middlename || '',
+            lastname: student.lastname,
+            user_id: student.user_id,
+            email: student.email,
+            password: '',
+            password_confirmation: '',
+            birth_date: formatDateForInput(student.birth_date),
+            contact_number: student.contact_number || '',
+            gender: student.gender || '',
+            address: student.address || '',
+            is_active: student.is_active,
+            parent_guardian_name: s?.parent_guardian_name || '',
+            emergency_contact: s?.emergency_contact || '',
+            section: s?.section || '',
+            program: s?.program || '',
+            year_level: s?.year_level || '',
+            gpa: s?.gpa || '',
+            blood_type: s?.blood_type || '',
+            disabilities: s?.disabilities || '',
+            medical_condition: s?.medical_condition || '',
+            allergies: s?.allergies || '',
+            sports_activities: Array.isArray(s?.sports_activities) ? s.sports_activities.join(', ') : s?.sports_activities || '',
+            organizations: Array.isArray(s?.organizations) ? s.organizations.join(', ') : s?.organizations || '',
+            behavior_discipline_records: Array.isArray(s?.behavior_discipline_records) ? s.behavior_discipline_records.join(', ') : s?.behavior_discipline_records || '',
+            current_subjects: Array.isArray(s?.current_subjects) ? s.current_subjects.join(', ') : '',
+            academic_awards: Array.isArray(s?.academic_awards) ? s.academic_awards.join(', ') : '',
+            events_participated: Array.isArray(s?.events_participated) ? s.events_participated.join(', ') : '',
+        });
+        setModalOpen(true);
+    };
+
+
 
     const handleTabChange = async (tab) => {
         if (tab === activeTab) return;
@@ -241,7 +294,7 @@ const StudentDetails = () => {
                         <Button variant="secondary" className="flex-1 md:flex-none gap-2">
                             <FiPrinter className="w-4 h-4" /> Print
                         </Button>
-                        <Button variant="primary" className="flex-1 md:flex-none gap-2">
+                        <Button variant="primary" className="flex-1 md:flex-none gap-2" onClick={handleEdit}>
                             <FiEdit2 className="w-4 h-4" /> Edit Profile
                         </Button>
                     </div>
@@ -599,6 +652,16 @@ const StudentDetails = () => {
                     </div>
                 )}
             </Card>
+
+            {/* Edit Profile Modal */}
+            <StudentFormModal 
+                isOpen={modalOpen} 
+                onClose={() => setModalOpen(false)} 
+                mode="edit" 
+                initialData={modalData}
+                userId={student.id}
+                onSuccess={fetchStudent} 
+            />
         </div>
     );
 };
