@@ -17,10 +17,7 @@ import {
     FiFilter,
     FiPower,
 } from 'react-icons/fi';
-
-const Spinner = () => (
-    <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-[#F97316] border-t-transparent"></div>
-);
+import { Spinner } from '@/components/ui/Skeleton';
 
 // Helper to format any date string into YYYY-MM-DD for date input
 const formatDateForInput = (dateString) => {
@@ -85,6 +82,7 @@ const StudentPage = () => {
     // Search and filter states
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+    const [tempSearchQuery, setTempSearchQuery] = useState(searchParams.get('search') || ''); // Local buffer for typing
     const [filters, setFilters] = useState({
         sports: searchParams.getAll('sports') || [],
         organizations: searchParams.getAll('organizations') || [],
@@ -193,11 +191,11 @@ const StudentPage = () => {
         return {};
     };
 
-    const fetchStudents = async (page = 1) => {
+    const fetchStudents = async (page = 1, query = searchQuery) => {
+        setLoading(true);
         try {
-            setLoading(true);
             const filterParams = {
-                search: searchQuery || undefined,
+                search: query || undefined,
                 sports: filters.sports.length > 0 ? filters.sports : undefined,
                 organizations: filters.organizations.length > 0 ? filters.organizations : undefined,
                 year_level: filters.year_level ? parseInt(filters.year_level) : undefined,
@@ -243,15 +241,16 @@ const StudentPage = () => {
     };
 
     const handleSearch = () => {
+        setSearchQuery(tempSearchQuery);
         setIsSearching(true);
         setCurrentPage(1);
-        fetchStudents(1);
-        syncUrlParams(1);
+        fetchStudents(1, tempSearchQuery);
+        syncUrlParams(1, tempSearchQuery);
     };
 
-    const syncUrlParams = (page = currentPage) => {
+    const syncUrlParams = (page = currentPage, query = searchQuery) => {
         const params = new URLSearchParams();
-        if (searchQuery) params.set('search', searchQuery);
+        if (query) params.set('search', query);
         if (filters.program) params.set('program', filters.program);
         if (filters.year_level) params.set('year_level', filters.year_level);
         if (filters.gender) params.set('gender', filters.gender);
@@ -265,6 +264,7 @@ const StudentPage = () => {
 
     const clearFilters = () => {
         setSearchQuery('');
+        setTempSearchQuery('');
         setFilters({
             sports: [],
             organizations: [],
@@ -278,7 +278,7 @@ const StudentPage = () => {
         setSearchParams({}, { replace: true });
     };
 
-    // Debounced search: auto-search 300ms after typing stops
+    // Live filters: auto-search when dropdowns change
     useEffect(() => {
         if (debounceTimer.current) clearTimeout(debounceTimer.current);
         debounceTimer.current = setTimeout(() => {
@@ -287,7 +287,7 @@ const StudentPage = () => {
             syncUrlParams(1);
         }, 300);
         return () => clearTimeout(debounceTimer.current);
-    }, [searchQuery, filters]);
+    }, [filters]); 
 
     // Page change
     useEffect(() => {
@@ -725,7 +725,7 @@ const StudentPage = () => {
                         <div className="bg-gray-50 dark:bg-[#181818] border-t border-gray-200 dark:border-gray-800 px-6 py-4 flex justify-end gap-3 shrink-0">
                             <button type="button" onClick={resetForm} className="px-5 py-2.5 bg-white dark:bg-[#252525] border border-gray-300 dark:border-gray-700 rounded-lg text-[14px] font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] transition-colors flex items-center shadow-sm" disabled={isCreating || isUpdating}>Cancel</button>
                             <button type="submit" form="student-form" className="px-5 py-2.5 bg-[#F97316] text-white rounded-lg text-[14px] font-medium hover:bg-orange-600 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-60" disabled={isCreating || isUpdating}>
-                                {(isCreating || isUpdating) ? <Spinner /> : <FiSave />}
+                                {(isCreating || isUpdating) ? <Spinner className="border-white" /> : <FiSave />}
                                 <span>{formMode === 'create' ? 'Create Student' : 'Save Changes'}</span>
                             </button>
                         </div>
@@ -741,8 +741,8 @@ const StudentPage = () => {
                         <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-zinc-500 w-5 h-5 pointer-events-none" />
                         <input 
                             type="text" 
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            value={tempSearchQuery}
+                            onChange={(e) => setTempSearchQuery(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                             placeholder="Search by name or student ID..." 
                             className="w-full h-10 pl-11 pr-4 bg-gray-50 dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 shadow-sm transition-colors" 
@@ -753,7 +753,7 @@ const StudentPage = () => {
                         disabled={isSearching}
                         className="flex items-center justify-center min-w-[100px] h-10 px-4 bg-brand-500 text-white rounded-xl text-sm font-medium transition-all hover:bg-brand-400 active:scale-95 disabled:opacity-60 shadow-sm"
                     >
-                        {isSearching ? <Spinner /> : <span>Search</span>}
+                        {isSearching ? <Spinner className="border-white" /> : <span>Search</span>}
                     </button>
                     <button
                         onClick={() => setShowFilters(!showFilters)}

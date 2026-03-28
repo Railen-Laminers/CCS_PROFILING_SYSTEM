@@ -16,7 +16,7 @@ function Skeleton({
 function Spinner({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div 
-      className={cn("inline-block animate-spin rounded-full h-4 w-4 border-2 border-brand-500 border-t-transparent border-[#F97316]", className)} 
+      className={cn("inline-block animate-spin rounded-full h-4 w-4 border-2 border-brand-500 border-t-transparent", className)} 
       {...props} 
     />
   )
