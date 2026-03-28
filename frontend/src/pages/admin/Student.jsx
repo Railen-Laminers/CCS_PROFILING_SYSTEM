@@ -554,7 +554,7 @@ const StudentPage = () => {
                         onChange={handleInputChange}
                         onBlur={() => handleBlur(name)}
                         rows="2"
-                        className={`w-full px-4 py-2 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500`}
+                        className={`w-full px-4 py-2 bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 border ${error && showError ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 !resize-none min-h-[100px]`}
                     />
                 ) : type === 'checkbox' ? (
                     <label className="flex items-center gap-2 cursor-pointer">
