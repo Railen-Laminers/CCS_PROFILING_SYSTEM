@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiAlertCircle,
-    FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin
+    FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin, FiX
 } from 'react-icons/fi';
+import { useReactToPrint } from 'react-to-print';
+import StudentReport from '../../components/reports/StudentReport';
 import StudentFormModal from '../../components/forms/StudentFormModal';
 import { userAPI, academicRecordAPI } from '../../services/api';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -85,6 +87,36 @@ const SectionSubhead = ({ children }) => (
     <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">{children}</p>
 );
 
+// Unified tag renderer to avoid "Objects as children" React error
+const renderTags = (data, keyIfObject = null, badgeColor = "orange") => {
+    if (!data) return <p className="text-sm text-zinc-500 dark:text-gray-400 font-medium">None recorded</p>;
+    
+    let list = [];
+    if (Array.isArray(data)) {
+        list = data;
+    } else if (typeof data === 'string') {
+        list = data.split(',').map(s => s.trim()).filter(Boolean);
+    } else if (typeof data === 'object') {
+        // Handle mock/legacy structures like { sportsPlayed: [...] }
+        if (keyIfObject && Array.isArray(data[keyIfObject])) {
+            list = data[keyIfObject];
+        } else {
+            // Last resort: extract any array or string values
+            list = Object.values(data).find(v => Array.isArray(v)) || [];
+        }
+    }
+
+    if (list.length === 0) return <p className="text-sm text-zinc-500 dark:text-gray-400 font-medium font-medium">None recorded</p>;
+    
+    return (
+        <div className="flex flex-wrap gap-2 mt-1">
+            {list.map((item, idx) => (
+                <Badge key={idx} color={badgeColor}>{item}</Badge>
+            ))}
+        </div>
+    );
+};
+
 const StudentDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -100,15 +132,35 @@ const StudentDetails = () => {
     const [isAcademicLoading, setIsAcademicLoading] = useState(false);
     const [academicError, setAcademicError] = useState('');
 
+    // Printing Ref
+    const componentRef = React.useRef(null);
+    const handlePrint = useReactToPrint({
+        contentRef: componentRef,
+        documentTitle: `Student_Profile_${student?.user_id || 'Report'}`,
+    });
+
+    const handlePrintRequest = () => {
+        if (!student) return;
+        handlePrint();
+    };
+
     const fetchStudent = async () => {
         setLoading(true);
         setError('');
         try {
             const data = await userAPI.getUser(id);
             setStudent(data);
+
+            // Pre-fetch academic records for the printable report
+            try {
+                const records = await academicRecordAPI.getAcademicRecords(id);
+                setAcademicRecords(records);
+            } catch (err) {
+                console.warn('Background fetch of academic records failed:', err);
+            }
         } catch (err) {
             console.error(err);
-            setError(err.response?.data?.message || 'Failed to load student details.');
+            setError('Failed to fetch student details. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -292,7 +344,11 @@ const StudentDetails = () => {
                     </div>
                     
                     <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
-                        <Button variant="secondary" className="flex-1 md:flex-none gap-2">
+                        <Button 
+                            variant="secondary" 
+                            className="flex-1 md:flex-none gap-2"
+                            onClick={handlePrintRequest}
+                        >
                             <FiPrinter className="w-4 h-4" /> Print
                         </Button>
                         <Button variant="primary" className="flex-1 md:flex-none gap-2" onClick={handleEdit}>
@@ -455,15 +511,7 @@ const StudentDetails = () => {
                                         </div>
                                         <div>
                                             <SectionSubhead>Allergies</SectionSubhead>
-                                            <div className="flex flex-wrap gap-2 mt-1">
-                                                {profile?.allergies ? (
-                                                    profile.allergies.split(',').map(alg => alg.trim()).filter(Boolean).map((alg, index) => (
-                                                        <Badge key={index} color="red">{alg}</Badge>
-                                                    ))
-                                                ) : (
-                                                    <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>
-                                                )}
-                                            </div>
+                                            {renderTags(profile?.allergies, null, "red")}
                                         </div>
                                         <div>
                                             <SectionSubhead>Medical Conditions</SectionSubhead>
@@ -491,19 +539,11 @@ const StudentDetails = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div>
                                             <SectionSubhead>Sports Played</SectionSubhead>
-                                            <div className="flex flex-wrap gap-2 mt-1">
-                                                {profile?.sports_activities?.sportsPlayed?.length > 0 ? (
-                                                    profile.sports_activities.sportsPlayed.map((sport, i) => <Badge key={i} color="orange">{sport}</Badge>)
-                                                ) : <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>}
-                                            </div>
+                                            {renderTags(profile?.sports_activities, "sportsPlayed", "orange")}
                                         </div>
                                         <div>
                                             <SectionSubhead>Athletic Achievements</SectionSubhead>
-                                            <div className="flex flex-wrap gap-2 mt-1">
-                                                {profile?.sports_activities?.achievements?.length > 0 ? (
-                                                    profile.sports_activities.achievements.map((ach, i) => <Badge key={i} color="yellow">{ach}</Badge>)
-                                                ) : <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>}
-                                            </div>
+                                            {renderTags(profile?.sports_activities, "achievements", "yellow")}
                                         </div>
                                         <div>
                                             <SectionSubhead>School Team Membership</SectionSubhead>
@@ -531,19 +571,11 @@ const StudentDetails = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div>
                                             <SectionSubhead>Clubs Joined</SectionSubhead>
-                                            <div className="flex flex-wrap gap-2 mt-1">
-                                                {profile?.organizations?.clubs?.length > 0 ? (
-                                                    profile.organizations.clubs.map((club, i) => <Badge key={i} color="purple">{club}</Badge>)
-                                                ) : <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>}
-                                            </div>
+                                            {renderTags(profile?.organizations, "clubs", "purple")}
                                         </div>
                                         <div>
                                             <SectionSubhead>Student Council</SectionSubhead>
-                                            <div className="flex flex-wrap gap-2 mt-1">
-                                                {profile?.organizations?.studentCouncil?.length > 0 ? (
-                                                    profile.organizations.studentCouncil.map((ro, i) => <Badge key={i} color="orange">{ro}</Badge>)
-                                                ) : <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>}
-                                            </div>
+                                            {renderTags(profile?.organizations, "studentCouncil", "orange")}
                                         </div>
                                         <div>
                                             <SectionSubhead>Fraternities</SectionSubhead>
@@ -665,6 +697,15 @@ const StudentDetails = () => {
                 userId={student.id}
                 onSuccess={fetchStudent} 
             />
+
+            {/* Hidden Printable Component */}
+            <div className="print:block hidden overflow-hidden h-0 w-0 absolute left-0 top-0">
+                <StudentReport 
+                    ref={componentRef} 
+                    student={student} 
+                    academicRecords={academicRecords}
+                />
+            </div>
         </div>
     );
 };
