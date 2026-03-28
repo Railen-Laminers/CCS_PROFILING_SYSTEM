@@ -217,7 +217,10 @@ const FacultyPage = () => {
                                 <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
                                     <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Faculty Details</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                        {renderField('Department', 'department')}
+                                        {renderField('Department', 'department', 'select', true, [
+                                            { value: 'BSIT', label: 'BS Information Technology' },
+                                            { value: 'BSCS', label: 'BS Computer Science' }
+                                        ])}
                                         {renderField('Specialization', 'specialization')}
                                         {renderField('Subjects Handled (comma separated)', 'subjects_handled', 'text', false, null, 'Separate with commas')}
                                         {renderField('Teaching Schedule (comma separated)', 'teaching_schedule', 'text', false, null, 'Separate with commas')}

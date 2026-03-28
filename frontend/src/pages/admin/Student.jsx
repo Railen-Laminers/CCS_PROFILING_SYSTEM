@@ -704,9 +704,12 @@ const StudentPage = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         {renderField('Parent/Guardian Name', 'parent_guardian_name')}
                                         {renderField('Emergency Contact', 'emergency_contact')}
-                                        {renderField('Program', 'program')}
+                                        {renderField('Program', 'program', 'select', false, [
+                                            { value: 'BSIT', label: 'BS Information Technology' },
+                                            { value: 'BSCS', label: 'BS Computer Science' }
+                                        ])}
                                         {renderField('Section', 'section')}
-                                        {renderField('Year Level', 'year_level', 'number', false, null, 'Between 1 and 6')}
+                                        {renderField('Year Level', 'year_level', 'number', false, null, 'Between 1 and 4')}
                                         {renderField('GPA', 'gpa', 'number', false, null, 'Between 0 and 4')}
                                         {renderField('Blood Type', 'blood_type')}
                                         {renderField('Disabilities', 'disabilities', 'textarea')}
