@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { userAPI, studentProfileAPI } from '../../services/api';
+import { exportToExcel } from '../../lib/excelHelper';
 import {
     FiPlus,
     FiEdit2,
@@ -523,6 +524,29 @@ const StudentPage = () => {
         }
     };
 
+    const handleExport = () => {
+        if (!students.length) return;
+
+        const exportData = students.map(s => ({
+            'Student ID': s.user.user_id,
+            'Full Name': `${s.user.firstname} ${s.user.middlename ? s.user.middlename + ' ' : ''}${s.user.lastname}`,
+            'Email': s.user.email,
+            'Gender': s.user.gender || 'N/A',
+            'Birth Date': s.user.birth_date ? s.user.birth_date.split('T')[0] : 'N/A',
+            'Contact Number': s.user.contact_number ? `'${s.user.contact_number}` : 'N/A',
+            'Address': s.user.address || 'N/A',
+            'Program': s.student?.program || 'N/A',
+            'Year Level': s.student?.year_level || 'N/A',
+            'Section': s.student?.section || 'N/A',
+            'GPA': s.student?.gpa || 'N/A',
+            'Blood Type': s.student?.blood_type || 'N/A',
+            'Status': s.user.is_active ? 'Active' : 'Inactive'
+        }));
+
+        const date = new Date().toISOString().split('T')[0];
+        exportToExcel(exportData, `Student_Management_Report_${date}.xlsx`);
+    };
+
     // Helper to render a field with error, help text, and onBlur
     const renderField = (label, name, type = 'text', required = false, options = null, helpText = null) => {
         const value = formData[name];
@@ -588,7 +612,10 @@ const StudentPage = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Student Management</h1>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary shadow-sm transition-all active:scale-95">
+                    <button 
+                        onClick={handleExport}
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary shadow-sm transition-all active:scale-95 scroll-smooth"
+                    >
                         <FiDownload className="w-4 h-4" /> Export Data
                     </button>
                     <button
