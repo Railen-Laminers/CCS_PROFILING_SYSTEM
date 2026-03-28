@@ -9,27 +9,43 @@ const useDashboardStats = (userRole) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         const fetchCounts = async () => {
             if (userRole !== 'admin') return;
 
             setLoading(true);
             try {
-                const students = await userAPI.getStudents();
-                const faculty = await userAPI.getFaculty();
-                const courses = await courseAPI.getCourses();
-                const events = await eventAPI.getEvents();
+                const [students, faculty, courses, events] = await Promise.all([
+                    userAPI.getStudents(signal),
+                    userAPI.getFaculty(signal),
+                    courseAPI.getCourses(signal),
+                    eventAPI.getEvents(signal)
+                ]);
+
                 setStudentCount(students.length);
                 setFacultyCount(faculty.length);
                 setCourseCount(courses.length);
                 setEventCount(events.length);
             } catch (error) {
+                if (error.name === 'CanceledError' || error.name === 'AbortError') {
+                    // Ignore cancellation errors
+                    return;
+                }
                 console.error('Failed to fetch counts:', error);
             } finally {
-                setLoading(false);
+                if (!signal.aborted) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchCounts();
+
+        return () => {
+            controller.abort();
+        };
     }, [userRole]);
 
     return {

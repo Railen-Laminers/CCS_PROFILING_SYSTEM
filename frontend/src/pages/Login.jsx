@@ -4,13 +4,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
-  const { login, error: authError, loading: authLoading } = useAuth();
+  const { login, error: authError, loading: authLoading, isProcessing } = useAuth();
   const navigate = useNavigate();
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [identifierError, setIdentifierError] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -55,7 +54,6 @@ const LoginPage = () => {
     e.preventDefault();
     if (!validate()) return;
 
-    setIsSubmitting(true);
     setServerError('');
 
     try {
@@ -64,8 +62,6 @@ const LoginPage = () => {
     } catch (err) {
       setServerError('Incorrect username/email or password');
       console.error('Login failed:', err);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -191,13 +187,13 @@ const LoginPage = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isSubmitting || authLoading}
+                disabled={isProcessing || authLoading}
                 className="w-full bg-brand-500 hover:bg-brand-400 disabled:opacity-70 disabled:cursor-not-allowed 
                            text-white font-semibold py-3 px-4 rounded-xl transition duration-200 
                            transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-brand-500 
                            focus:ring-offset-2 shadow-md"
               >
-                {isSubmitting ? (
+                {isProcessing ? (
                   <span className="flex items-center justify-center">
                     <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

@@ -45,8 +45,8 @@ export const authAPI = {
     await axiosInstance.post('/auth/logout');
     removeAuthToken();
   },
-  getMe: async () => {
-    const response = await axiosInstance.get('/auth/me');
+  getMe: async (signal) => {
+    const response = await axiosInstance.get('/auth/me', { signal });
     return response.data.user;
   },
   isAuthenticated,
@@ -56,12 +56,12 @@ export const authAPI = {
 // ─── User API ────────────────────────────────────────────────────────────────
 
 export const userAPI = {
-  getUsers: async () => {
-    const response = await axiosInstance.get('/users');
+  getUsers: async (signal) => {
+    const response = await axiosInstance.get('/users', { signal });
     return response.data.users;
   },
-  getUser: async (id) => {
-    const response = await axiosInstance.get(`/users/${id}`);
+  getUser: async (id, signal) => {
+    const response = await axiosInstance.get(`/users/${id}`, { signal });
     return response.data.user;
   },
   createUser: async (userData) => {
@@ -75,12 +75,12 @@ export const userAPI = {
   deleteUser: async (id) => {
     await axiosInstance.delete(`/users/${id}`);
   },
-  getStudents: async () => {
-    const response = await axiosInstance.get('/students');
+  getStudents: async (signal) => {
+    const response = await axiosInstance.get('/students', { signal });
     return response.data.students;
   },
-  getFaculty: async () => {
-    const response = await axiosInstance.get('/faculty');
+  getFaculty: async (signal) => {
+    const response = await axiosInstance.get('/faculty', { signal });
     return response.data.faculty;
   },
 };
@@ -88,12 +88,12 @@ export const userAPI = {
 // ─── Course API ──────────────────────────────────────────────────────────────
 
 export const courseAPI = {
-  getCourses: async () => {
-    const response = await axiosInstance.get('/courses');
+  getCourses: async (signal) => {
+    const response = await axiosInstance.get('/courses', { signal });
     return response.data.courses;
   },
-  getCourse: async (id) => {
-    const response = await axiosInstance.get(`/courses/${id}`);
+  getCourse: async (id, signal) => {
+    const response = await axiosInstance.get(`/courses/${id}`, { signal });
     return response.data.course;
   },
   createCourse: async (courseData) => {
@@ -112,8 +112,8 @@ export const courseAPI = {
 // ─── Event API ───────────────────────────────────────────────────────────────
 
 export const eventAPI = {
-  getEvents: async () => {
-    const response = await axiosInstance.get('/events');
+  getEvents: async (signal) => {
+    const response = await axiosInstance.get('/events', { signal });
     return response.data.events;
   },
 };
@@ -121,8 +121,8 @@ export const eventAPI = {
 // ─── Academic Record API ─────────────────────────────────────────────────────
 
 export const academicRecordAPI = {
-  getAcademicRecords: async (userId) => {
-    const response = await axiosInstance.get(`/users/${userId}/academic-records`);
+  getAcademicRecords: async (userId, signal) => {
+    const response = await axiosInstance.get(`/users/${userId}/academic-records`, { signal });
     return response.data.academic_records;
   },
   createAcademicRecord: async (userId, recordData) => {

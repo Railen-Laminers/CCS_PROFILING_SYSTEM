@@ -6,28 +6,35 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
 
   // Check if user is already authenticated on mount
   useEffect(() => {
+    const controller = new AbortController();
     const checkAuth = async () => {
       try {
         if (authAPI.isAuthenticated()) {
-          const currentUser = await authAPI.getMe();
+          const currentUser = await authAPI.getMe(controller.signal);
           setUser(currentUser);
         }
       } catch (err) {
-        console.error('Auth check failed:', err);
-        setError('Session expired or invalid');
+        if (err.name !== 'AbortError' && err.name !== 'CanceledError') {
+          console.error('Auth check failed:', err);
+          setError('Session expired or invalid');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
+    return () => controller.abort();
   }, []);
 
   const login = async (identifier, password) => {
+    if (isProcessing) return;
+    setIsProcessing(true);
     try {
       setError(null);
       const userData = await authAPI.login(identifier, password);
@@ -37,10 +44,14 @@ export const AuthProvider = ({ children }) => {
       const errorMsg = err.data?.message || 'Login failed';
       setError(errorMsg);
       throw err;
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const logout = async () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
     try {
       await authAPI.logout();
       setUser(null);
@@ -49,6 +60,8 @@ export const AuthProvider = ({ children }) => {
       console.error('Logout failed:', err);
       setError('Logout failed');
       throw err;
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -57,6 +70,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         loading,
+        isProcessing,
         error,
         login,
         logout,

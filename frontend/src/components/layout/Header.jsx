@@ -6,7 +6,7 @@ import { FiSearch, FiBell, FiSun, FiMoon, FiUser } from 'react-icons/fi';
 import { Button } from '@/components/ui/Button';
 
 export const Header = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isProcessing } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -105,9 +105,17 @@ export const Header = () => {
               <div className="py-1">
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors duration-150"
+                  disabled={isProcessing}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors duration-150 flex items-center gap-2 disabled:opacity-50"
                 >
-                  Logout
+                  {isProcessing ? (
+                    <>
+                      <div className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                      Logging out...
+                    </>
+                  ) : (
+                    'Logout'
+                  )}
                 </button>
               </div>
             </div>
