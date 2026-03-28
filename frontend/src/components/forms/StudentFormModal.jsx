@@ -46,7 +46,18 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
 
     useEffect(() => {
         if (isOpen) {
-            setFormData(mode === 'edit' && initialData ? initialData : DEFAULT_FORM_DATA);
+            if (mode === 'edit' && initialData) {
+                const formattedData = { ...initialData };
+                const arrayFields = ['sports_activities', 'organizations', 'behavior_discipline_records', 'current_subjects', 'academic_awards', 'events_participated'];
+                arrayFields.forEach(field => {
+                    if (Array.isArray(formattedData[field])) {
+                        formattedData[field] = formattedData[field].join(', ');
+                    }
+                });
+                setFormData(formattedData);
+            } else {
+                setFormData(DEFAULT_FORM_DATA);
+            }
             setFieldErrors({});
             setTouched({});
             setError('');
@@ -181,12 +192,12 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 disabilities: formData.disabilities,
                 medical_condition: formData.medical_condition,
                 allergies: formData.allergies,
-                sports_activities: formData.sports_activities ? formData.sports_activities.split(',').map(s => s.trim()).filter(Boolean) : null,
-                organizations: formData.organizations ? formData.organizations.split(',').map(s => s.trim()).filter(Boolean) : null,
-                behavior_discipline_records: formData.behavior_discipline_records ? formData.behavior_discipline_records.split(',').map(s => s.trim()).filter(Boolean) : null,
-                current_subjects: formData.current_subjects ? formData.current_subjects.split(',').map(s => s.trim()).filter(Boolean) : null,
-                academic_awards: formData.academic_awards ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : null,
-                events_participated: formData.events_participated ? formData.events_participated.split(',').map(s => s.trim()).filter(Boolean) : null,
+                sports_activities: formData.sports_activities ? (typeof formData.sports_activities === 'string' ? formData.sports_activities.split(',').map(s => s.trim()).filter(Boolean) : formData.sports_activities) : [],
+                organizations: formData.organizations ? (typeof formData.organizations === 'string' ? formData.organizations.split(',').map(s => s.trim()).filter(Boolean) : formData.organizations) : [],
+                behavior_discipline_records: formData.behavior_discipline_records ? (typeof formData.behavior_discipline_records === 'string' ? formData.behavior_discipline_records.split(',').map(s => s.trim()).filter(Boolean) : formData.behavior_discipline_records) : [],
+                current_subjects: formData.current_subjects ? (typeof formData.current_subjects === 'string' ? formData.current_subjects.split(',').map(s => s.trim()).filter(Boolean) : formData.current_subjects) : [],
+                academic_awards: formData.academic_awards ? (typeof formData.academic_awards === 'string' ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : formData.academic_awards) : [],
+                events_participated: formData.events_participated ? (typeof formData.events_participated === 'string' ? formData.events_participated.split(',').map(s => s.trim()).filter(Boolean) : formData.events_participated) : [],
             };
 
             if (mode === 'create') {
