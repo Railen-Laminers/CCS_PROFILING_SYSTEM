@@ -22,7 +22,6 @@ class FacultySearchService {
           { firstname: searchRegex },
           { lastname: searchRegex },
           { user_id: searchRegex },
-          { email: searchRegex },
           { $expr: { $regexMatch: { input: { $concat: ['$firstname', ' ', '$lastname'] }, regex: filters.search, options: 'i' } } }
         ]
       }).select('_id');

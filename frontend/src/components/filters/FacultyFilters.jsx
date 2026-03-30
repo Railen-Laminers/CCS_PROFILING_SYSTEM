@@ -36,7 +36,7 @@ const FacultyFilters = ({
                         value={tempSearchQuery}
                         onChange={(e) => setTempSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        placeholder="Search by name, email or faculty ID..." 
+                        placeholder="Search by name or faculty ID..." 
                         className="w-full h-10 pl-11 pr-4 bg-gray-50 dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 shadow-sm transition-colors" 
                     />
                 </div>
