@@ -7,6 +7,7 @@ import Toast from './components/ui/Toast';
 import DashboardLayout from './components/layout/DashboardLayout';
 import { ProtectedRoute, RoleBasedRoute, PublicRoute } from './components/ProtectedRoute';
 import Login from './pages/public/Login';
+import ResetPassword from './pages/public/ResetPassword';
 import Dashboard from './pages/private/Dashboard';
 import StudentPage from './pages/private/admin/Student';
 import StudentDetails from './pages/private/admin/StudentDetails';
@@ -40,6 +41,14 @@ function AppContent() {
         element={
           <PublicRoute>
             <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          <PublicRoute>
+            <ResetPassword />
           </PublicRoute>
         }
       />
