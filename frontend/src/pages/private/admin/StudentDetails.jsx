@@ -169,17 +169,15 @@ const StudentDetails = () => {
             </Card>
 
             {/* Tabs Navigation */}
-            <div className="flex space-x-2 mb-6 overflow-x-auto p-2 bg-gray-100 dark:bg-[#252525] rounded-[1rem] border border-gray-200 dark:border-gray-800 scrollbar-hide shadow-inner relative overflow-hidden">
-                <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/5 pointer-events-none"></div>
+            <div className="flex space-x-2 mb-6 overflow-x-auto p-2 bg-gray-100 dark:bg-[#252525] rounded-[1.25rem] border border-gray-200 dark:border-gray-800 scrollbar-hide shadow-inner relative overflow-hidden">
                 {TAB_LIST.map(tab => (
                     <button
                         key={tab}
                         onClick={() => handleTabChange(tab)}
-                        className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-[1.25rem] relative z-10 ${
-                            activeTab === tab 
-                                ? 'bg-white dark:bg-[#1E1E1E] text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10 backdrop-blur-md' 
+                        className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-[1.25rem] relative z-10 focus:outline-none ${activeTab === tab
+                                ? 'bg-white dark:bg-[#1E1E1E] text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10 backdrop-blur-md'
                                 : 'text-zinc-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-[#2C2C2C]'
-                        }`}
+                            }`}
                     >
                         {tab}
                     </button>
