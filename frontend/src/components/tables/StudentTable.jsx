@@ -34,8 +34,8 @@ const StudentTable = ({
     }
 
     return (
-        <div className="bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-zinc-200/50 dark:border-white/5 overflow-hidden relative">
-            <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
+        <div className="bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[1rem] shadow-sm border border-zinc-200/50 dark:border-white/5 overflow-hidden relative">
+            <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
             <div className="p-6 overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[800px]">
                     <thead>

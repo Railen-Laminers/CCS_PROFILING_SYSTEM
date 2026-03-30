@@ -34,8 +34,8 @@ const StudentFilters = ({
         (filters.gpa_max ? 1 : 0);
 
     return (
-        <div className="bg-white/60 dark:bg-surface-secondary/40 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-zinc-200/50 dark:border-white/5 p-5 mb-6 relative overflow-hidden">
-            <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
+        <div className="bg-white/60 dark:bg-surface-secondary/40 backdrop-blur-2xl rounded-[1rem] shadow-sm border border-zinc-200/50 dark:border-white/5 p-5 mb-6 relative overflow-hidden">
+            <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
             <div className="flex flex-col lg:flex-row gap-4 relative z-10">
                 <div className="relative w-full max-w-md">
                     <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-zinc-500 w-5 h-5 pointer-events-none" />
