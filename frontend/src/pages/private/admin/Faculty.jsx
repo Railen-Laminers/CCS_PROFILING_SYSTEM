@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import useFaculty from '@/hooks/useFaculty';
+import { userAPI } from '@/services/api';
 import { exportToExcel } from '@/lib/excelHelper';
-import { FiPlus, FiDownload, FiUsers } from 'react-icons/fi';
+import { FiPlus, FiDownload } from 'react-icons/fi';
 import FacultyFilters from '@/components/filters/FacultyFilters';
 import Pagination from '@/components/ui/Pagination';
 import FacultyFormModal from '@/components/forms/FacultyFormModal';
@@ -32,34 +33,52 @@ const FacultyPage = () => {
         clearFilters,
         searchQuery,
         fetchAllFaculty,
-        formMode,
-        formData,
-        fieldErrors,
-        touched,
-        showForm,
-        isCreating,
-        isUpdating,
         deletingUserId,
-        showPassword,
-        showConfirmPassword,
-        setShowPassword,
-        setShowConfirmPassword,
-        handleInputChange,
-        handleBlur,
-        resetForm,
-        handleCreate,
-        handleEdit,
-        handleUpdate,
-        handleDelete,
-        openCreateForm,
+        setDeletingUserId,
         refresh,
     } = useFaculty();
 
+    // Modal and Action state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalMode, setModalMode] = useState('create');
+    const [modalData, setModalData] = useState(null);
+    const [editingId, setEditingId] = useState(null);
     const [isExporting, setIsExporting] = useState(false);
 
     if (user?.role !== 'admin') {
         return <div className="p-6 text-red-500 dark:text-red-400">You do not have permission to view this page.</div>;
     }
+
+    const handleAdd = () => {
+        setModalMode('create');
+        setModalData(null);
+        setEditingId(null);
+        setIsModalOpen(true);
+    };
+
+    const handleEdit = (member) => {
+        setModalData(member);
+        setEditingId(member.user.id);
+        setModalMode('edit');
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = async (userId) => {
+        const selected = faculty.find(f => f.user.id === userId);
+        const name = `${selected?.user.firstname} ${selected?.user.lastname}`;
+        if (!window.confirm(`Are you sure you want to delete ${name}?`)) return;
+
+        setDeletingUserId(userId);
+        try {
+            await userAPI.deleteUser(userId);
+            refresh();
+            showToast(`${name} deleted successfully.`, 'success');
+        } catch (err) {
+            showToast(err.response?.data?.message || 'Failed to delete faculty.', 'error');
+        } finally {
+            setDeletingUserId(null);
+        }
+    };
 
     const handleExport = async () => {
         setIsExporting(true);
@@ -105,7 +124,7 @@ const FacultyPage = () => {
                         {isExporting ? 'Exporting...' : 'Export Data'}
                     </button>
                     <button
-                        onClick={openCreateForm}
+                        onClick={handleAdd}
                         className="relative group overflow-hidden rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
                     >
                         <span className="relative z-10 flex items-center gap-2">
@@ -131,29 +150,22 @@ const FacultyPage = () => {
             />
 
             {error && (
-                <div className="bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg mb-6 backdrop-blur-sm">
+                <div className="bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg mb-6 backdrop-blur-sm shadow-sm ring-1 ring-red-500/10">
                     {error}
                 </div>
             )}
 
             {/* Form Modal */}
             <FacultyFormModal 
-                showForm={showForm}
-                resetForm={resetForm}
-                formMode={formMode}
-                formData={formData}
-                fieldErrors={fieldErrors}
-                touched={touched}
-                handleInputChange={handleInputChange}
-                handleBlur={handleBlur}
-                handleCreate={handleCreate}
-                handleUpdate={handleUpdate}
-                isCreating={isCreating}
-                isUpdating={isUpdating}
-                showPassword={showPassword}
-                setShowPassword={setShowPassword}
-                showConfirmPassword={showConfirmPassword}
-                setShowConfirmPassword={setShowConfirmPassword}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                mode={modalMode}
+                initialData={modalData}
+                userId={editingId}
+                onSuccess={() => {
+                    refresh();
+                    showToast(`Faculty member ${modalMode === 'create' ? 'created' : 'updated'} successfully.`, 'success');
+                }}
                 departments={departments}
                 positions={positions}
             />
