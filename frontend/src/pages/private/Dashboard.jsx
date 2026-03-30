@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import useDashboardStats from '../hooks/useDashboardStats';
+import { useAuth } from '../../contexts/AuthContext';
+import useDashboardStats from '../../hooks/useDashboardStats';
 import { FaUsers, FaChalkboardTeacher, FaBook, FaCalendarAlt } from 'react-icons/fa';
 
 export const Dashboard = () => {
@@ -36,7 +36,7 @@ export const Dashboard = () => {
                     <div className="h-10 w-16 bg-blue-200 dark:bg-gray-600 animate-pulse rounded mt-2"></div>
                   ) : (
                     <p className="text-4xl font-bold text-blue-900 dark:text-blue-100 mt-2">
-                      {studentCount !== null ? studentCount.toLocaleString() : '—'}
+                      {studentCount !== null ? studentCount.toLocaleString() : 'ΓÇö'}
                     </p>
                   )}
                 </div>
@@ -58,7 +58,7 @@ export const Dashboard = () => {
                     <div className="h-10 w-16 bg-green-200 dark:bg-gray-600 animate-pulse rounded mt-2"></div>
                   ) : (
                     <p className="text-4xl font-bold text-green-900 dark:text-green-100 mt-2">
-                      {facultyCount !== null ? facultyCount.toLocaleString() : '—'}
+                      {facultyCount !== null ? facultyCount.toLocaleString() : 'ΓÇö'}
                     </p>
                   )}
                 </div>
@@ -80,7 +80,7 @@ export const Dashboard = () => {
                     <div className="h-10 w-16 bg-purple-200 dark:bg-gray-600 animate-pulse rounded mt-2"></div>
                   ) : (
                     <p className="text-4xl font-bold text-purple-900 dark:text-purple-100 mt-2">
-                      {courseCount !== null ? courseCount.toLocaleString() : '—'}
+                      {courseCount !== null ? courseCount.toLocaleString() : 'ΓÇö'}
                     </p>
                   )}
                 </div>
@@ -102,7 +102,7 @@ export const Dashboard = () => {
                     <div className="h-10 w-16 bg-orange-200 dark:bg-gray-600 animate-pulse rounded mt-2"></div>
                   ) : (
                     <p className="text-4xl font-bold text-orange-900 dark:text-orange-100 mt-2">
-                      {eventCount !== null ? eventCount.toLocaleString() : '—'}
+                      {eventCount !== null ? eventCount.toLocaleString() : 'ΓÇö'}
                     </p>
                   )}
                 </div>

@@ -4,14 +4,14 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import DashboardLayout from './components/layout/DashboardLayout';
 import { ProtectedRoute, RoleBasedRoute, PublicRoute } from './components/ProtectedRoute';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import StudentPage from './pages/admin/Student';
-import StudentDetails from './pages/admin/StudentDetails';
-import FacultyPage from './pages/admin/Faculty';
-import FacultyDetails from './pages/admin/FacultyDetails';
-import CoursesPage from './pages/admin/Courses';
-import EventsPage from './pages/admin/Events';
+import Login from './pages/public/Login';
+import Dashboard from './pages/private/Dashboard';
+import StudentPage from './pages/private/admin/Student';
+import StudentDetails from './pages/private/admin/StudentDetails';
+import FacultyPage from './pages/private/admin/Faculty';
+import FacultyDetails from './pages/private/admin/FacultyDetails';
+import CoursesPage from './pages/private/admin/Courses';
+import EventsPage from './pages/private/admin/Events';
 
 // Loading component using the accent color
 const LoadingSpinner = () => (

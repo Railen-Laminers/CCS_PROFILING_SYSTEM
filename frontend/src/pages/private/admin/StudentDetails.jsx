@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useToast } from '../../../contexts/ToastContext';
 import { 
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiAlertCircle,
     FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin, FiX
 } from 'react-icons/fi';
 import { useReactToPrint } from 'react-to-print';
-import StudentReport from '../../components/reports/StudentReport';
-import StudentFormModal from '../../components/forms/StudentFormModal';
-import { userAPI, academicRecordAPI } from '../../services/api';
+import StudentReport from '../../../components/reports/StudentReport';
+import StudentFormModal from '../../../components/forms/StudentFormModal';
+import { userAPI, academicRecordAPI } from '../../../services/api';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -75,7 +76,7 @@ const BulletList = ({ items }) => {
         <ul className="space-y-1.5">
             {items.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2 text-sm text-gray-800 dark:text-gray-200 font-medium">
-                    <span className="text-gray-400 dark:text-gray-600 mt-0.5">•</span>
+                    <span className="text-gray-400 dark:text-gray-600 mt-0.5">ΓÇó</span>
                     <span>{item}</span>
                 </li>
             ))}
@@ -120,6 +121,7 @@ const renderTags = (data, keyIfObject = null, badgeColor = "orange") => {
 const StudentDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const [student, setStudent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -160,6 +162,7 @@ const StudentDetails = () => {
             }
         } catch (err) {
             console.error(err);
+            showToast('Failed to fetch student details.', 'error');
             setError('Failed to fetch student details. Please try again.');
         } finally {
             setLoading(false);
@@ -226,6 +229,7 @@ const StudentDetails = () => {
                 setAcademicRecords(records);
             } catch (err) {
                 console.error(err);
+                showToast('Failed to load academic records.', 'error');
                 setAcademicError('Failed to load academic records.');
             } finally {
                 setIsAcademicLoading(false);
@@ -453,7 +457,7 @@ const StudentDetails = () => {
                                                 <div className="flex justify-between items-start mb-6">
                                                     <div>
                                                         <p className="text-xl font-bold text-gray-900 dark:text-white">{record.course_name || 'N/A'}</p>
-                                                        <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mt-1">{record.year_level || 'N/A'} • {record.semester || 'N/A'}</p>
+                                                        <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mt-1">{record.year_level || 'N/A'} ΓÇó {record.semester || 'N/A'}</p>
                                                     </div>
                                                     <div className="text-right">
                                                         <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">GPA</p>
@@ -695,7 +699,10 @@ const StudentDetails = () => {
                 mode="edit" 
                 initialData={modalData}
                 userId={student.id}
-                onSuccess={fetchStudent} 
+                onSuccess={() => {
+                    fetchStudent();
+                    showToast('Student profile updated successfully.', 'success');
+                }} 
             />
 
             {/* Hidden Printable Component */}

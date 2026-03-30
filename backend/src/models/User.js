@@ -72,6 +72,14 @@ const userSchema = new mongoose.Schema({
   last_login_at: {
     type: Date,
     default: null
+  },
+  password_reset_token: {
+    type: String,
+    default: null
+  },
+  password_reset_expires: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true,

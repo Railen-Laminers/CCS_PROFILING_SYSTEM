@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { userAPI, studentProfileAPI } from '../../services/api';
-import { exportToExcel } from '../../lib/excelHelper';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useToast } from '../../../contexts/ToastContext';
+import { userAPI, studentProfileAPI } from '../../../services/api';
+import { exportToExcel } from '../../../lib/excelHelper';
 import {
     FiPlus,
     FiEdit2,
@@ -19,7 +20,7 @@ import {
     FiPower,
 } from 'react-icons/fi';
 import { Spinner } from '@/components/ui/Skeleton';
-import StudentFormModal from '../../components/forms/StudentFormModal';
+import StudentFormModal from '../../../components/forms/StudentFormModal';
 
 // Helper to format any date string into YYYY-MM-DD for date input
 const formatDateForInput = (dateString) => {
@@ -32,6 +33,7 @@ const formatDateForInput = (dateString) => {
 
 const StudentPage = () => {
     const { user } = useAuth();
+    const { showToast } = useToast();
     const navigate = useNavigate();
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -43,7 +45,7 @@ const StudentPage = () => {
     const [modalData, setModalData] = useState(null);
     const [editingId, setEditingId] = useState(null);
     const [deletingUserId, setDeletingUserId] = useState(null);
-    const [togglingUserId, setTogglingUserId] = useState(null);   // ✅ For status toggle
+    const [togglingUserId, setTogglingUserId] = useState(null);   // Γ£à For status toggle
 
     // Search and filter states
     const [searchParams, setSearchParams] = useSearchParams();
@@ -93,7 +95,7 @@ const StudentPage = () => {
             if (result.meta) setPagination(result.meta);
             setError('');
         } catch (err) {
-            setError('Failed to fetch students.');
+            showToast('Failed to fetch students.', 'error');
             console.error(err);
         } finally {
             setLoading(false);
@@ -237,9 +239,12 @@ const StudentPage = () => {
         setError('');
         try {
             await userAPI.deleteUser(userId);
-            await fetchStudents();
+            await fetchStudents(currentPage);
+            await fetchSports();
+            await fetchOrganizations();
+            showToast(`${studentName} deleted successfully.`, 'success');
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to delete student.');
+            showToast(err.response?.data?.message || 'Failed to delete student.', 'error');
         } finally {
             setDeletingUserId(null);
         }
@@ -254,9 +259,12 @@ const StudentPage = () => {
         setError('');
         try {
             await userAPI.updateUser(student.user.id, { is_active: newStatus });
-            await fetchStudents();
+            await fetchStudents(currentPage);
+            await fetchSports();
+            await fetchOrganizations();
+            showToast(`${student.user.firstname}'s status updated to ${newStatus ? 'Active' : 'Inactive'}.`, 'success');
         } catch (err) {
-            setError(err.response?.data?.message || `Failed to ${action} student.`);
+            showToast(err.response?.data?.message || `Failed to ${action} student.`, 'error');
         } finally {
             setTogglingUserId(null);
         }
@@ -320,7 +328,12 @@ const StudentPage = () => {
                 mode={modalMode}
                 initialData={modalData}
                 userId={editingId}
-                onSuccess={() => fetchStudents(currentPage)}
+                onSuccess={() => {
+                    fetchStudents(currentPage);
+                    fetchSports();
+                    fetchOrganizations();
+                    showToast(`Student ${modalMode === 'create' ? 'created' : 'updated'} successfully.`, 'success');
+                }}
             />
 
             {/* Search Bar and Filters */}
@@ -575,7 +588,7 @@ const StudentPage = () => {
                 <div className="flex items-center justify-between mt-5 px-1">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                         Showing <span className="font-semibold text-gray-800 dark:text-gray-200">{((pagination.current_page - 1) * pagination.per_page) + 1}</span>
-                        –<span className="font-semibold text-gray-800 dark:text-gray-200">{Math.min(pagination.current_page * pagination.per_page, pagination.total)}</span> of{' '}
+                        ΓÇô<span className="font-semibold text-gray-800 dark:text-gray-200">{Math.min(pagination.current_page * pagination.per_page, pagination.total)}</span> of{' '}
                         <span className="font-semibold text-gray-800 dark:text-gray-200">{pagination.total}</span> students
                     </p>
                     <div className="flex items-center gap-2">

@@ -51,10 +51,48 @@ class AuthController {
    */
   static async logout(req, res, next) {
     try {
-      // In JWT, we don't need to do anything server-side
-      // The client should remove the token
       res.status(200).json({
         message: 'Logout successful'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Send password reset token to email
+   */
+  static async forgotPassword(req, res, next) {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ message: 'Please provide an email' });
+      }
+
+      await AuthService.forgotPassword(email);
+
+      res.status(200).json({
+        message: 'Password reset email sent'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Reset password with token
+   */
+  static async resetPassword(req, res, next) {
+    try {
+      const { token, email, password } = req.body;
+      if (!token || !email || !password) {
+        return res.status(400).json({ message: 'Please provide token, email, and password' });
+      }
+
+      await AuthService.resetPassword(token, email, password);
+
+      res.status(200).json({
+        message: 'Password reset successfully'
       });
     } catch (error) {
       next(error);

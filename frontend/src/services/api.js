@@ -49,6 +49,14 @@ export const authAPI = {
     const response = await axiosInstance.get('/auth/me', { signal });
     return response.data.user;
   },
+  forgotPassword: async (email) => {
+    const response = await axiosInstance.post('/auth/forgot-password', { email });
+    return response.data;
+  },
+  resetPassword: async (resetData) => {
+    const response = await axiosInstance.post('/auth/reset-password', resetData);
+    return response.data;
+  },
   isAuthenticated,
   getAuthToken,
 };
@@ -162,6 +170,15 @@ export const studentProfileAPI = {
   },
   searchStudents: async (params) => {
     const response = await axiosInstance.get('/students/search', { params });
+    return response.data;
+  },
+};
+
+// ─── Contact API ─────────────────────────────────────────────────────────────
+
+export const contactAPI = {
+  sendInquiry: async (contactData) => {
+    const response = await axiosInstance.post('/contact', contactData);
     return response.data;
   },
 };
