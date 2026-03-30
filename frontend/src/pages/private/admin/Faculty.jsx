@@ -250,11 +250,11 @@ const FacultyPage = () => {
                     {/* Contact Info — Icons */}
                     <div className="pt-3 border-t border-gray-100 dark:border-gray-800 space-y-2.5">
                         <div className="flex items-center gap-2.5 text-[14px]">
-                            <FiMail className="w-4 h-4 shrink-0 text-gray-400 dark:text-zinc-500" />
+                            <FiMail className="w-4 h-4 shrink-0 text-brand-500" />
                             <span className="text-gray-700 dark:text-zinc-300 truncate">{member.user.email}</span>
                         </div>
                         <div className="flex items-center gap-2.5 text-[14px]">
-                            <FiPhone className="w-4 h-4 shrink-0 text-gray-400 dark:text-zinc-500" />
+                            <FiPhone className="w-4 h-4 shrink-0 text-brand-500" />
                             {member.user.contact_number ? (
                                 <span className="text-gray-700 dark:text-zinc-300">{member.user.contact_number}</span>
                             ) : (
@@ -262,7 +262,7 @@ const FacultyPage = () => {
                             )}
                         </div>
                         <div className="flex items-center gap-2.5 text-[14px]">
-                            <FiMapPin className="w-4 h-4 shrink-0 text-gray-400 dark:text-zinc-500" />
+                            <FiMapPin className="w-4 h-4 shrink-0 text-brand-500" />
                             {member.user.address ? (
                                 <span className="text-gray-700 dark:text-zinc-300 truncate">{member.user.address}</span>
                             ) : (

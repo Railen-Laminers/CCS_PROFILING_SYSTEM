@@ -153,8 +153,8 @@ const FacultyDetails = () => {
                 </button>
 
                 {/* Profile Overview Card */}
-                <Card className="p-6 mb-6 bg-white/80 dark:bg-[#1E1E1E]/40 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 transition-all overflow-hidden relative">
-                    <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-gray-200/50 dark:ring-white/10 pointer-events-none"></div>
+                <Card className="p-6 mb-6 bg-white/80 dark:bg-[#1E1E1E]/40 backdrop-blur-2xl rounded-[1rem] shadow-sm border border-gray-200/50 dark:border-white/5 transition-all overflow-hidden relative">
+                    <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-gray-200/50 dark:ring-white/10 pointer-events-none"></div>
                     <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6 relative z-10">
                         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                             <div className="w-[120px] h-[120px] rounded-[32px] bg-gradient-to-br from-orange-500 to-orange-600 text-white flex items-center justify-center text-5xl font-bold shadow-xl flex-shrink-0 ring-4 ring-white dark:ring-[#1E1E1E] hover:rotate-3 transition-transform duration-300">
@@ -214,8 +214,8 @@ const FacultyDetails = () => {
                 </Card>
 
                 {/* Tabs Navigation */}
-                <div className="flex space-x-2 mb-6 overflow-x-auto p-2 bg-white/50 dark:bg-[#1E1E1E]/30 backdrop-blur-3xl rounded-[2rem] border border-gray-200/50 dark:border-white/10 scrollbar-hide shadow-inner relative overflow-hidden">
-                    <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-gray-200/50 dark:ring-white/10 pointer-events-none"></div>
+                <div className="flex space-x-2 mb-6 overflow-x-auto p-2 bg-white/50 dark:bg-[#1E1E1E]/30 backdrop-blur-3xl rounded-[1rem] border border-gray-200/50 dark:border-white/10 scrollbar-hide shadow-inner relative overflow-hidden">
+                    <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-gray-200/50 dark:ring-white/10 pointer-events-none"></div>
                     {['Personal Information', 'Teaching Schedule', 'Research Projects', 'Subjects Handled'].map(tab => (
                         <button
                             key={tab}
@@ -232,8 +232,8 @@ const FacultyDetails = () => {
                 </div>
 
                 {/* Tab Content Rendering */}
-                <Card className="p-6 min-h-[400px] bg-white/50 dark:bg-[#1E1E1E]/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-gray-200/50 dark:border-white/5 relative overflow-hidden">
-                    <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-gray-200/50 dark:ring-white/10 pointer-events-none"></div>
+                <Card className="p-6 min-h-[400px] bg-white/50 dark:bg-[#1E1E1E]/30 backdrop-blur-2xl rounded-[1rem] shadow-sm border border-gray-200/50 dark:border-white/5 relative overflow-hidden">
+                    <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-gray-200/50 dark:ring-white/10 pointer-events-none"></div>
                     {isTabLoading ? (
                         <div className="flex justify-center items-center h-[300px]">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF8C00]"></div>
@@ -244,7 +244,7 @@ const FacultyDetails = () => {
                             {activeTab === 'Personal Information' && (
                                 <div className="space-y-6">
                                     {/* Personal Info Block */}
-                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                    <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiUser className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
@@ -278,7 +278,7 @@ const FacultyDetails = () => {
                                     </div>
 
                                     {/* Contact Info Block */}
-                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                    <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiPhone className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact Information</h3>
@@ -303,7 +303,7 @@ const FacultyDetails = () => {
 
                             {activeTab === 'Teaching Schedule' && (
                                 <div className="space-y-6">
-                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                    <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiClock className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
@@ -328,7 +328,7 @@ const FacultyDetails = () => {
 
                             {activeTab === 'Research Projects' && (
                                 <div className="space-y-6">
-                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                    <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiBookOpen className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Research Projects</h3>
@@ -353,7 +353,7 @@ const FacultyDetails = () => {
 
                             {activeTab === 'Subjects Handled' && (
                                 <div className="space-y-6">
-                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                    <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiBookOpen className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>
