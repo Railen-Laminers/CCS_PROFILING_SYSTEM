@@ -99,7 +99,7 @@ class UserController {
 
       // User fields
       const userFields = [
-        'firstname', 'middlename', 'lastname', 'email', 'password',
+        'firstname', 'middlename', 'lastname', 'user_id', 'email', 'password',
         'birth_date', 'contact_number', 'gender', 'address',
         'profile_picture', 'is_active'
       ];
@@ -154,6 +154,12 @@ class UserController {
       if (error.message === 'User not found') {
         return res.status(404).json({
           message: error.message
+        });
+      }
+      if (error.code === 11000) {
+        const field = Object.keys(error.keyValue)[0];
+        return res.status(400).json({
+          message: `Duplicate value for field: ${field}`
         });
       }
       next(error);
