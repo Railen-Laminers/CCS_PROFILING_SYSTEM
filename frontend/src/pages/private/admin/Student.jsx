@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
@@ -45,7 +45,7 @@ const StudentPage = () => {
     const [modalData, setModalData] = useState(null);
     const [editingId, setEditingId] = useState(null);
     const [deletingUserId, setDeletingUserId] = useState(null);
-    const [togglingUserId, setTogglingUserId] = useState(null);   // Γ£à For status toggle
+    const [togglingUserId, setTogglingUserId] = useState(null);   // For status toggle
 
     // Search and filter states
     const [searchParams, setSearchParams] = useSearchParams();
@@ -588,7 +588,7 @@ const StudentPage = () => {
                 <div className="flex items-center justify-between mt-5 px-1">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                         Showing <span className="font-semibold text-gray-800 dark:text-gray-200">{((pagination.current_page - 1) * pagination.per_page) + 1}</span>
-                        ΓÇô<span className="font-semibold text-gray-800 dark:text-gray-200">{Math.min(pagination.current_page * pagination.per_page, pagination.total)}</span> of{' '}
+                        -<span className="font-semibold text-gray-800 dark:text-gray-200">{Math.min(pagination.current_page * pagination.per_page, pagination.total)}</span> of{' '}
                         <span className="font-semibold text-gray-800 dark:text-gray-200">{pagination.total}</span> students
                     </p>
                     <div className="flex items-center gap-2">

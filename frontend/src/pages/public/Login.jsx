@@ -146,16 +146,11 @@ const LoginPage = () => {
 
       <div className="max-w-6xl w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-3xl shadow-2xl dark:shadow-black/60 overflow-hidden flex flex-col md:flex-row border border-white/20 dark:border-white/10 z-10 transition-all duration-500">
 
-        {/* LEFT SIDE - Branding with background image */}
+        {/* LEFT SIDE - Branding with solid color */}
         <div 
           className="md:w-1/2 bg-brand-500 p-8 md:p-12 flex flex-col justify-between text-white relative overflow-hidden"
         >
-          {/* Internal background image for the branding side */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-20 transition-opacity duration-700"
-            style={{ backgroundImage: `url(${loginBg})` }}
-          ></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-brand-600/60 to-brand-400/60 z-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-600 to-brand-500 z-0"></div>
           
           <div className="space-y-6 relative z-10">
             <div className="flex items-center gap-3">
