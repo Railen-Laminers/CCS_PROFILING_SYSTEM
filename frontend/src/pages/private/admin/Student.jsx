@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
 import { userAPI } from '../../../services/api';
 import { exportToExcel } from '../../../lib/excelHelper';

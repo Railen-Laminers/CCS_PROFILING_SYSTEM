@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import useFaculty from '../../../hooks/useFaculty';
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff, FiSave, FiX, FiDownload, FiSearch, FiUsers, FiPower } from 'react-icons/fi';
 import { Card, CardContent } from '@/components/ui/Card';
