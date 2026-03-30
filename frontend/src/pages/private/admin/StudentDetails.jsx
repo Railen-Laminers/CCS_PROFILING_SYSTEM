@@ -1,245 +1,59 @@
-﻿import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useToast } from '../../../contexts/ToastContext';
-import { 
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiAlertCircle,
-    FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin, FiX
+    FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin
 } from 'react-icons/fi';
-import { useReactToPrint } from 'react-to-print';
-import StudentReport from '../../../components/reports/StudentReport';
 import StudentFormModal from '../../../components/forms/StudentFormModal';
-import { userAPI, academicRecordAPI } from '../../../services/api';
-import { Card, CardContent } from '@/components/ui/Card';
+import StudentReport from '../../../components/reports/StudentReport';
+import { useStudentDetails } from '../../../hooks/useStudentDetails';
+import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Skeleton, Spinner } from '@/components/ui/Skeleton';
 import { formatDate } from '@/lib/utils';
+import { BulletList, SectionSubhead, renderTags } from '@/lib/studentHelpers';
 
-// Helper to format any date string into YYYY-MM-DD for date input
-const formatDateForInput = (dateString) => {
-    if (!dateString) return '';
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return '';
-    return date.toISOString().split('T')[0];
-};
+const TAB_LIST = [
+    'Student Information',
+    'Academic Record',
+    'Medical Record',
+    'Sports & Activities',
+    'Organizations',
+    'Behavior & Discipline',
+    'Events & Competitions'
+];
 
-// MOCK DATA: Matching the structural and visual Figma prototype specifications
-const MOCK_DATA = {
-    academic: {
-        course: "BS Computer Science",
-        yearLevel: "3rd Year",
-        gpa: "3.80",
-        currentSubjects: ["Data Structures", "Web Development", "Database Systems", "Software Engineering"],
-        academicAwards: ["Dean's Lister - 2023", "Academic Excellence Award"],
-        quizBee: ["National IT Quiz Bee 2024 - 2nd Place"],
-        programming: ["ACM ICPC Regional 2024", "Google Code Jam 2024"]
-    },
-    medical: {
-        bloodType: "O+",
-        allergies: ["Peanuts"],
-        medicalConditions: "None",
-        disabilities: "None"
-    },
-    sports: {
-        sportsPlayed: ["Basketball", "Volleyball"],
-        schoolTeam: ["Women's Basketball Team"],
-        competitions: ["UAAP Basketball 2024"],
-        achievements: ["MVP - Inter-college Basketball 2023"]
-    },
-    organizations: {
-        clubs: ["CS Society", "Women in Tech"],
-        fraternities: "None",
-        studentCouncil: ["Student Council Member"],
-        roles: ["CS Society - Vice President"]
-    },
-    behavior: {
-        warnings: 0,
-        suspensions: 0,
-        counseling: 0,
-        incidents: "No incidents recorded",
-        counselingRecords: "No counseling records"
-    },
-    events: {
-        quizBee: ["National IT Quiz Bee 2024 - 2nd Place"],
-        programming: ["ACM ICPC Regional 2024", "Google Code Jam 2024"],
-        athletic: ["UAAP Basketball 2024"]
-    }
-};
-
-// Local Components
-
-const BulletList = ({ items }) => {
-    if (!items || items.length === 0) return <p className="text-sm text-zinc-500 dark:text-gray-400">None recorded</p>;
-    return (
-        <ul className="space-y-1.5">
-            {items.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-sm text-gray-800 dark:text-gray-200 font-medium">
-                    <span className="text-gray-400 dark:text-gray-600 mt-0.5">ΓÇó</span>
-                    <span>{item}</span>
-                </li>
-            ))}
-        </ul>
-    );
-};
-
-const SectionSubhead = ({ children }) => (
-    <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">{children}</p>
-);
-
-// Unified tag renderer to avoid "Objects as children" React error
-const renderTags = (data, keyIfObject = null, badgeColor = "orange") => {
-    if (!data) return <p className="text-sm text-zinc-500 dark:text-gray-400 font-medium">None recorded</p>;
-    
-    let list = [];
-    if (Array.isArray(data)) {
-        list = data;
-    } else if (typeof data === 'string') {
-        list = data.split(',').map(s => s.trim()).filter(Boolean);
-    } else if (typeof data === 'object') {
-        // Handle mock/legacy structures like { sportsPlayed: [...] }
-        if (keyIfObject && Array.isArray(data[keyIfObject])) {
-            list = data[keyIfObject];
-        } else {
-            // Last resort: extract any array or string values
-            list = Object.values(data).find(v => Array.isArray(v)) || [];
-        }
-    }
-
-    if (list.length === 0) return <p className="text-sm text-zinc-500 dark:text-gray-400 font-medium font-medium">None recorded</p>;
-    
-    return (
-        <div className="flex flex-wrap gap-2 mt-1">
-            {list.map((item, idx) => (
-                <Badge key={idx} color={badgeColor}>{item}</Badge>
-            ))}
-        </div>
-    );
+const formatYearLevel = (level) => {
+    if (!level) return null;
+    const suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
+    const suffix = suffixes[level] || 'th';
+    return `${level}${suffix} Year`;
 };
 
 const StudentDetails = () => {
-    const { id } = useParams();
     const navigate = useNavigate();
-    const { showToast } = useToast();
-    const [student, setStudent] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-    
-    const [activeTab, setActiveTab] = useState('Student Information');
-    const [isTabLoading, setIsTabLoading] = useState(false);
+    const {
+        student,
+        loading,
+        error,
+        activeTab,
+        isTabLoading,
+        academicRecords,
+        isAcademicLoading,
+        academicError,
+        modalOpen,
+        setModalOpen,
+        modalData,
+        componentRef,
+        handlePrintRequest,
+        handleEdit,
+        handleTabChange,
+        fetchStudent,
+        showToast,
+    } = useStudentDetails();
 
-    // Academic Record States
-    const [academicRecords, setAcademicRecords] = useState([]);
-    const [isAcademicLoading, setIsAcademicLoading] = useState(false);
-    const [academicError, setAcademicError] = useState('');
-
-    // Printing Ref
-    const componentRef = React.useRef(null);
-    const handlePrint = useReactToPrint({
-        contentRef: componentRef,
-        documentTitle: `Student_Profile_${student?.user_id || 'Report'}`,
-    });
-
-    const handlePrintRequest = () => {
-        if (!student) return;
-        handlePrint();
-    };
-
-    const fetchStudent = async () => {
-        setLoading(true);
-        setError('');
-        try {
-            const data = await userAPI.getUser(id);
-            setStudent(data);
-
-            // Pre-fetch academic records for the printable report
-            try {
-                const records = await academicRecordAPI.getAcademicRecords(id);
-                setAcademicRecords(records);
-            } catch (err) {
-                console.warn('Background fetch of academic records failed:', err);
-            }
-        } catch (err) {
-            console.error(err);
-            showToast('Failed to fetch student details.', 'error');
-            setError('Failed to fetch student details. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchStudent();
-    }, [id]);
-
-    // Modal state
-    const [modalOpen, setModalOpen] = useState(false);
-    const [modalData, setModalData] = useState(null);
-
-    const handleEdit = () => {
-        if (!student) return;
-        const s = student.student;
-        setModalData({
-            firstname: student.firstname,
-            middlename: student.middlename || '',
-            lastname: student.lastname,
-            user_id: student.user_id,
-            email: student.email,
-            password: '',
-            password_confirmation: '',
-            birth_date: formatDateForInput(student.birth_date),
-            contact_number: student.contact_number || '',
-            gender: student.gender || '',
-            address: student.address || '',
-            is_active: student.is_active,
-            parent_guardian_name: s?.parent_guardian_name || '',
-            emergency_contact: s?.emergency_contact || '',
-            section: s?.section || '',
-            program: s?.program || '',
-            year_level: s?.year_level || '',
-            gpa: s?.gpa || '',
-            blood_type: s?.blood_type || '',
-            disabilities: s?.disabilities || '',
-            medical_condition: s?.medical_condition || '',
-            allergies: s?.allergies || '',
-            sports_activities: Array.isArray(s?.sports_activities) ? s.sports_activities.join(', ') : s?.sports_activities || '',
-            organizations: Array.isArray(s?.organizations) ? s.organizations.join(', ') : s?.organizations || '',
-            behavior_discipline_records: Array.isArray(s?.behavior_discipline_records) ? s.behavior_discipline_records.join(', ') : s?.behavior_discipline_records || '',
-            current_subjects: Array.isArray(s?.current_subjects) ? s.current_subjects.join(', ') : '',
-            academic_awards: Array.isArray(s?.academic_awards) ? s.academic_awards.join(', ') : '',
-            events_participated: Array.isArray(s?.events_participated) ? s.events_participated.join(', ') : '',
-        });
-        setModalOpen(true);
-    };
-
-
-
-    const handleTabChange = async (tab) => {
-        if (tab === activeTab) return;
-        setIsTabLoading(true);
-        setActiveTab(tab);
-        
-        // Fetch academic records when clicking the tab if not already fetched
-        if (tab === 'Academic Record' && academicRecords.length === 0) {
-            setIsAcademicLoading(true);
-            setAcademicError('');
-            try {
-                const records = await academicRecordAPI.getAcademicRecords(id);
-                setAcademicRecords(records);
-            } catch (err) {
-                console.error(err);
-                showToast('Failed to load academic records.', 'error');
-                setAcademicError('Failed to load academic records.');
-            } finally {
-                setIsAcademicLoading(false);
-            }
-        }
-
-        // Simulate loading state (per user instructions)
-        setTimeout(() => setIsTabLoading(false), 300);
-    };
-
+    // ── Loading State ────────────────────────────────────────────
     if (loading) {
         return (
             <div className="flex justify-center items-center py-20">
@@ -248,6 +62,7 @@ const StudentDetails = () => {
         );
     }
 
+    // ── Error State ──────────────────────────────────────────────
     if (error) {
         return (
             <div className="max-w-7xl mx-auto py-12">
@@ -267,24 +82,15 @@ const StudentDetails = () => {
         );
     }
 
+    // ── Not Found State ──────────────────────────────────────────
     if (!student) {
-        return (
-            <div className="text-center py-20 text-gray-500">Student not found.</div>
-        );
+        return <div className="text-center py-20 text-gray-500">Student not found.</div>;
     }
 
     const fullName = [student.firstname, student.middlename, student.lastname].filter(Boolean).join(' ');
     const initials = student.firstname?.[0] || 'S';
     const profile = student.student;
     const isActive = student.is_active;
-
-    const formatYearLevel = (level) => {
-        if (!level) return null;
-        const suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
-        const suffix = suffixes[level] || 'th';
-        return `${level}${suffix} Year`;
-    };
-
     const yearSection = [formatYearLevel(profile?.year_level), profile?.section ? `Section ${profile.section}` : null].filter(Boolean).join(' - ');
 
     return (
@@ -365,7 +171,7 @@ const StudentDetails = () => {
             {/* Tabs Navigation */}
             <div className="flex space-x-2 mb-6 overflow-x-auto p-2 bg-gray-100/60 dark:bg-surface-secondary/30 backdrop-blur-3xl rounded-[2rem] border border-zinc-300/50 dark:border-white/10 scrollbar-hide shadow-inner relative overflow-hidden">
                 <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
-                {['Student Information', 'Academic Record', 'Medical Record', 'Sports & Activities', 'Organizations', 'Behavior & Discipline', 'Events & Competitions'].map(tab => (
+                {TAB_LIST.map(tab => (
                     <button
                         key={tab}
                         onClick={() => handleTabChange(tab)}
@@ -380,7 +186,7 @@ const StudentDetails = () => {
                 ))}
             </div>
 
-            {/* Tab Content Rendering */}
+            {/* Tab Content */}
             <Card className="p-6 min-h-[400px] bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-zinc-200/50 dark:border-white/5 relative overflow-hidden">
                 <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
                 {isTabLoading ? (
@@ -389,10 +195,10 @@ const StudentDetails = () => {
                     </div>
                 ) : (
                     <div className="animate-in fade-in duration-300">
-                        
+
+                        {/* 1. Student Information */}
                         {activeTab === 'Student Information' && (
                             <div className="space-y-6">
-                                {/* Personal Info Block */}
                                 <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                         <FiUser className="w-5 h-5" />
@@ -406,7 +212,6 @@ const StudentDetails = () => {
                                     </div>
                                 </div>
 
-                                {/* Contact & Emergency Block */}
                                 <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-[#F97316]">
                                         <FiPhone className="w-5 h-5" />
@@ -425,16 +230,13 @@ const StudentDetails = () => {
                             </div>
                         )}
 
-                        {/* 2. ACADEMIC RECORD (Dynamic Data) */}
+                        {/* 2. Academic Record */}
                         {activeTab === 'Academic Record' && (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-[#F97316]">
-                                        <FiAward className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Academic Performance</h3>
-                                    </div>
+                                <div className="flex items-center gap-2 text-[#F97316]">
+                                    <FiAward className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Academic Performance</h3>
                                 </div>
-
                                 {isAcademicLoading ? (
                                     <div className="flex justify-center items-center py-20">
                                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
@@ -445,51 +247,36 @@ const StudentDetails = () => {
                                         {academicError}
                                     </div>
                                 ) : academicRecords.length === 0 ? (
-                                    <EmptyState
-                                        icon={<FiFileText />}
-                                        title="No Academic Records"
-                                        description="There are no academic records on file for this student."
-                                    />
+                                    <EmptyState icon={<FiFileText />} title="No Academic Records" description="There are no academic records on file for this student." />
                                 ) : (
                                     <div className="space-y-6">
-                                        {academicRecords.map((record, index) => (
+                                        {academicRecords.map((record) => (
                                             <div key={record.id} className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                                 <div className="flex justify-between items-start mb-6">
                                                     <div>
                                                         <p className="text-xl font-bold text-gray-900 dark:text-white">{record.course_name || 'N/A'}</p>
-                                                        <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mt-1">{record.year_level || 'N/A'} ΓÇó {record.semester || 'N/A'}</p>
+                                                        <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mt-1">{record.year_level || 'N/A'} &middot; {record.semester || 'N/A'}</p>
                                                     </div>
                                                     <div className="text-right">
                                                         <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">GPA</p>
                                                         <p className="text-3xl font-extrabold text-[#F97316] leading-none">{record.gpa ? Number(record.gpa).toFixed(2) : 'N/A'}</p>
                                                     </div>
                                                 </div>
-                                                
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                                                     <div>
                                                         <SectionSubhead>Current Subjects</SectionSubhead>
                                                         {record.current_subjects?.length > 0 ? (
-                                                            <div className="flex flex-wrap gap-2 mt-2">
-                                                                {record.current_subjects.map((sub, i) => <Badge key={i} variant="white">{sub}</Badge>)}
-                                                            </div>
+                                                            <div className="flex flex-wrap gap-2 mt-2">{record.current_subjects.map((sub, i) => <Badge key={i} variant="white">{sub}</Badge>)}</div>
                                                         ) : <p className="text-sm text-gray-500">None recorded</p>}
                                                     </div>
                                                     <div>
                                                         <SectionSubhead>Academic Awards</SectionSubhead>
                                                         {record.academic_awards?.length > 0 ? (
-                                                            <div className="flex flex-wrap gap-2 mt-2">
-                                                                {record.academic_awards.map((award, i) => <Badge key={i} color="yellow">{award}</Badge>)}
-                                                            </div>
+                                                            <div className="flex flex-wrap gap-2 mt-2">{record.academic_awards.map((award, i) => <Badge key={i} color="yellow">{award}</Badge>)}</div>
                                                         ) : <p className="text-sm text-gray-500">None recorded</p>}
                                                     </div>
-                                                    <div>
-                                                        <SectionSubhead>Quiz Bee Participation</SectionSubhead>
-                                                        <BulletList items={record.quiz_bee_participations} />
-                                                    </div>
-                                                    <div>
-                                                        <SectionSubhead>Programming Contests</SectionSubhead>
-                                                        <BulletList items={record.programming_contests} />
-                                                    </div>
+                                                    <div><SectionSubhead>Quiz Bee Participation</SectionSubhead><BulletList items={record.quiz_bee_participations} /></div>
+                                                    <div><SectionSubhead>Programming Contests</SectionSubhead><BulletList items={record.programming_contests} /></div>
                                                 </div>
                                             </div>
                                         ))}
@@ -498,110 +285,66 @@ const StudentDetails = () => {
                             </div>
                         )}
 
-                        {/* 3. MEDICAL RECORD (Dynamic Data) */}
+                        {/* 3. Medical Record */}
                         {activeTab === 'Medical Record' && (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-[#F97316]">
-                                        <FiActivity className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Medical Information</h3>
-                                    </div>
+                                <div className="flex items-center gap-2 text-[#F97316]">
+                                    <FiActivity className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Medical Information</h3>
                                 </div>
                                 <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                                        <div>
-                                            <SectionSubhead>Blood Type</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.blood_type || 'Not Provided'}</p>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Allergies</SectionSubhead>
-                                            {renderTags(profile?.allergies, null, "red")}
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Medical Conditions</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.medical_condition || 'None reported'}</p>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Disabilities</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.disabilities || 'None reported'}</p>
-                                        </div>
+                                        <div><SectionSubhead>Blood Type</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.blood_type || 'Not Provided'}</p></div>
+                                        <div><SectionSubhead>Allergies</SectionSubhead>{renderTags(profile?.allergies, null, "red")}</div>
+                                        <div><SectionSubhead>Medical Conditions</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.medical_condition || 'None reported'}</p></div>
+                                        <div><SectionSubhead>Disabilities</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.disabilities || 'None reported'}</p></div>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* 4. SPORTS & ACTIVITIES (Dynamic Data) */}
+                        {/* 4. Sports & Activities */}
                         {activeTab === 'Sports & Activities' && (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-[#F97316]">
-                                        <FiAward className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Sports and Athletic Activities</h3>
-                                    </div>
+                                <div className="flex items-center gap-2 text-[#F97316]">
+                                    <FiAward className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Sports and Athletic Activities</h3>
                                 </div>
                                 <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                                        <div>
-                                            <SectionSubhead>Sports Played</SectionSubhead>
-                                            {renderTags(profile?.sports_activities, "sportsPlayed", "orange")}
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Athletic Achievements</SectionSubhead>
-                                            {renderTags(profile?.sports_activities, "achievements", "yellow")}
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>School Team Membership</SectionSubhead>
-                                            <div className="mt-1"><BulletList items={profile?.sports_activities?.schoolTeam} /></div>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Competitions Joined</SectionSubhead>
-                                            <div className="mt-1"><BulletList items={profile?.sports_activities?.competitions} /></div>
-                                        </div>
+                                        <div><SectionSubhead>Sports Played</SectionSubhead>{renderTags(profile?.sports_activities, "sportsPlayed", "orange")}</div>
+                                        <div><SectionSubhead>Athletic Achievements</SectionSubhead>{renderTags(profile?.sports_activities, "achievements", "yellow")}</div>
+                                        <div><SectionSubhead>School Team Membership</SectionSubhead><div className="mt-1"><BulletList items={profile?.sports_activities?.schoolTeam} /></div></div>
+                                        <div><SectionSubhead>Competitions Joined</SectionSubhead><div className="mt-1"><BulletList items={profile?.sports_activities?.competitions} /></div></div>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* 5. ORGANIZATIONS (Dynamic Data) */}
+                        {/* 5. Organizations */}
                         {activeTab === 'Organizations' && (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-[#F97316]">
-                                        <FiUsers className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Organizations and Leadership</h3>
-                                    </div>
+                                <div className="flex items-center gap-2 text-[#F97316]">
+                                    <FiUsers className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Organizations and Leadership</h3>
                                 </div>
                                 <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                                        <div>
-                                            <SectionSubhead>Clubs Joined</SectionSubhead>
-                                            {renderTags(profile?.organizations, "clubs", "purple")}
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Student Council</SectionSubhead>
-                                            {renderTags(profile?.organizations, "studentCouncil", "orange")}
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Fraternities</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100 mt-1">{profile?.organizations?.fraternities || 'None recorded'}</p>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Leadership Roles</SectionSubhead>
-                                            <div className="mt-1"><BulletList items={profile?.organizations?.roles} /></div>
-                                        </div>
+                                        <div><SectionSubhead>Clubs Joined</SectionSubhead>{renderTags(profile?.organizations, "clubs", "purple")}</div>
+                                        <div><SectionSubhead>Student Council</SectionSubhead>{renderTags(profile?.organizations, "studentCouncil", "orange")}</div>
+                                        <div><SectionSubhead>Fraternities</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100 mt-1">{profile?.organizations?.fraternities || 'None recorded'}</p></div>
+                                        <div><SectionSubhead>Leadership Roles</SectionSubhead><div className="mt-1"><BulletList items={profile?.organizations?.roles} /></div></div>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* 6. BEHAVIOR & DISCIPLINE (Dynamic Data) */}
+                        {/* 6. Behavior & Discipline */}
                         {activeTab === 'Behavior & Discipline' && (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-[#F97316]">
-                                        <FiAlertTriangle className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Behavior and Disciplinary Records</h3>
-                                    </div>
+                                <div className="flex items-center gap-2 text-[#F97316]">
+                                    <FiAlertTriangle className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Behavior and Disciplinary Records</h3>
                                 </div>
                                 <div className="p-6 rounded-[2rem] bg-slate-50/50 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -636,14 +379,12 @@ const StudentDetails = () => {
                             </div>
                         )}
 
-                        {/* 7. EVENTS & COMPETITIONS (Dynamic Data) */}
+                        {/* 7. Events & Competitions */}
                         {activeTab === 'Events & Competitions' && (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-[#F97316]">
-                                        <FiCalendar className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Events and Competitions</h3>
-                                    </div>
+                                <div className="flex items-center gap-2 text-[#F97316]">
+                                    <FiCalendar className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Events and Competitions</h3>
                                 </div>
                                 <div className="p-6 rounded-[2rem] bg-white/40 dark:bg-surface-dark/40 backdrop-blur-xl border border-zinc-200/50 dark:border-white/5 shadow-sm relative">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -652,9 +393,7 @@ const StudentDetails = () => {
                                             <div className="mt-2 space-y-2">
                                                 {profile?.events_participated?.quizBee?.length > 0 ? (
                                                     profile.events_participated.quizBee.map((evt, i) => (
-                                                        <div key={i} className="p-3 bg-white dark:bg-[#1E1E1E] border border-purple-100 dark:border-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-semibold rounded-xl shadow-sm">
-                                                            {evt}
-                                                        </div>
+                                                        <div key={i} className="p-3 bg-white dark:bg-[#1E1E1E] border border-purple-100 dark:border-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-semibold rounded-xl shadow-sm">{evt}</div>
                                                     ))
                                                 ) : <p className="text-sm text-gray-500">No records</p>}
                                             </div>
@@ -664,9 +403,7 @@ const StudentDetails = () => {
                                             <div className="mt-2 space-y-2">
                                                 {profile?.events_participated?.programming?.length > 0 ? (
                                                     profile.events_participated.programming.map((evt, i) => (
-                                                        <div key={i} className="p-3 bg-white dark:bg-[#1E1E1E] border border-blue-100 dark:border-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-semibold rounded-xl shadow-sm">
-                                                            {evt}
-                                                        </div>
+                                                        <div key={i} className="p-3 bg-white dark:bg-[#1E1E1E] border border-blue-100 dark:border-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-semibold rounded-xl shadow-sm">{evt}</div>
                                                     ))
                                                 ) : <p className="text-sm text-gray-500">No records</p>}
                                             </div>
@@ -676,9 +413,7 @@ const StudentDetails = () => {
                                             <div className="mt-2 space-y-2">
                                                 {profile?.events_participated?.athletic?.length > 0 ? (
                                                     profile.events_participated.athletic.map((evt, i) => (
-                                                        <div key={i} className="p-3 bg-white dark:bg-[#1E1E1E] border border-green-100 dark:border-green-900/30 text-green-700 dark:text-green-300 text-sm font-semibold rounded-xl shadow-sm">
-                                                            {evt}
-                                                        </div>
+                                                        <div key={i} className="p-3 bg-white dark:bg-[#1E1E1E] border border-green-100 dark:border-green-900/30 text-green-700 dark:text-green-300 text-sm font-semibold rounded-xl shadow-sm">{evt}</div>
                                                     ))
                                                 ) : <p className="text-sm text-gray-500">No records</p>}
                                             </div>
