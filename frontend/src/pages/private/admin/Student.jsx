@@ -217,11 +217,13 @@ const StudentPage = () => {
                 deletingUserId={deletingUserId}
             />
 
-            <Pagination 
-                pagination={pagination}
-                currentPage={currentPage}
-                onPageChange={setCurrentPage}
-            />
+            {!loading && students.length > 0 && (
+                <Pagination 
+                    pagination={pagination}
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                />
+            )}
         </div>
     );
 };

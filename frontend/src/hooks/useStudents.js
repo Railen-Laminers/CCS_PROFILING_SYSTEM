@@ -27,43 +27,15 @@ export const useStudents = () => {
         gpa_max: searchParams.get('gpa_max') || '',
     });
 
+    // Debounced states for single-effect fetching
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+
     const [sports, setSports] = useState([]);
     const [organizations, setOrganizations] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
-    const debounceTimer = useRef(null);
-
-    const fetchStudents = useCallback(async (page = 1, query = searchQuery) => {
-        setLoading(true);
-        try {
-            const filterParams = {
-                search: query || undefined,
-                sports: filters.sports.length > 0 ? filters.sports : undefined,
-                organizations: filters.organizations.length > 0 ? filters.organizations : undefined,
-                year_level: filters.year_level ? parseInt(filters.year_level) : undefined,
-                program: filters.program || undefined,
-                gender: filters.gender || undefined,
-                gpa_min: filters.gpa_min ? parseFloat(filters.gpa_min) : undefined,
-                gpa_max: filters.gpa_max ? parseFloat(filters.gpa_max) : undefined,
-                page,
-            };
-
-            // Remove undefined values
-            Object.keys(filterParams).forEach(key => {
-                if (filterParams[key] === undefined) delete filterParams[key];
-            });
-
-            const result = await studentProfileAPI.searchStudents(filterParams);
-            setStudents(result.students || []);
-            if (result.meta) setPagination(result.meta);
-            setError('');
-        } catch (err) {
-            showToast('Failed to fetch students.', 'error');
-            console.error(err);
-        } finally {
-            setLoading(false);
-            setIsSearching(false);
-        }
-    }, [filters, searchQuery, showToast]);
+    const abortControllerRef = useRef(null);
+    const isFirstMount = useRef(true);
 
     const fetchSports = async () => {
         try {
@@ -83,19 +55,95 @@ export const useStudents = () => {
         }
     };
 
-    const syncUrlParams = useCallback((page = currentPage, query = searchQuery) => {
+    const syncUrlParams = useCallback((page, query, currentFilters) => {
         const params = new URLSearchParams();
         if (query) params.set('search', query);
-        if (filters.program) params.set('program', filters.program);
-        if (filters.year_level) params.set('year_level', filters.year_level);
-        if (filters.gender) params.set('gender', filters.gender);
-        if (filters.gpa_min) params.set('gpa_min', filters.gpa_min);
-        if (filters.gpa_max) params.set('gpa_max', filters.gpa_max);
-        filters.sports.forEach(s => params.append('sports', s));
-        filters.organizations.forEach(o => params.append('organizations', o));
+        if (currentFilters.program) params.set('program', currentFilters.program);
+        if (currentFilters.year_level) params.set('year_level', currentFilters.year_level);
+        if (currentFilters.gender) params.set('gender', currentFilters.gender);
+        if (currentFilters.gpa_min) params.set('gpa_min', currentFilters.gpa_min);
+        if (currentFilters.gpa_max) params.set('gpa_max', currentFilters.gpa_max);
+        currentFilters.sports.forEach(s => params.append('sports', s));
+        currentFilters.organizations.forEach(o => params.append('organizations', o));
         if (page > 1) params.set('page', page.toString());
         setSearchParams(params, { replace: true });
-    }, [currentPage, searchQuery, filters, setSearchParams]);
+    }, [setSearchParams]);
+
+    const fetchStudents = useCallback(async (page, query, currentFilters, signal) => {
+        setLoading(true);
+        try {
+            const filterParams = {
+                search: query || undefined,
+                sports: currentFilters.sports.length > 0 ? currentFilters.sports : undefined,
+                organizations: currentFilters.organizations.length > 0 ? currentFilters.organizations : undefined,
+                year_level: currentFilters.year_level ? parseInt(currentFilters.year_level) : undefined,
+                program: currentFilters.program || undefined,
+                gender: currentFilters.gender || undefined,
+                gpa_min: currentFilters.gpa_min ? parseFloat(currentFilters.gpa_min) : undefined,
+                gpa_max: currentFilters.gpa_max ? parseFloat(currentFilters.gpa_max) : undefined,
+                page,
+            };
+
+            // Remove undefined values
+            Object.keys(filterParams).forEach(key => {
+                if (filterParams[key] === undefined) delete filterParams[key];
+            });
+
+            const result = await studentProfileAPI.searchStudents(filterParams, signal);
+            setStudents(result.students || []);
+            if (result.meta) setPagination(result.meta);
+            setError('');
+        } catch (err) {
+            if (err.name !== 'AbortError' && err.name !== 'CanceledError') {
+                showToast('Failed to fetch students.', 'error');
+                console.error(err);
+            }
+        } finally {
+            if (!signal.aborted) {
+                setLoading(false);
+                setIsSearching(false);
+            }
+        }
+    }, [showToast]);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            if (searchQuery !== debouncedSearchQuery) {
+                setDebouncedSearchQuery(searchQuery);
+                setCurrentPage(1); 
+            }
+            if (JSON.stringify(filters) !== JSON.stringify(debouncedFilters)) {
+                setDebouncedFilters(filters);
+                setCurrentPage(1);
+            }
+        }, isFirstMount.current ? 0 : 300);
+
+        return () => clearTimeout(handler);
+    }, [searchQuery, filters]);
+
+    useEffect(() => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
+        const signal = abortControllerRef.current.signal;
+
+        fetchStudents(currentPage, debouncedSearchQuery, debouncedFilters, signal);
+        syncUrlParams(currentPage, debouncedSearchQuery, debouncedFilters);
+        
+        isFirstMount.current = false;
+
+        return () => {
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+        };
+    }, [currentPage, debouncedSearchQuery, debouncedFilters]);
+
+    useEffect(() => {
+        fetchSports();
+        fetchOrganizations();
+    }, []);
 
     const handleSearch = () => {
         setSearchQuery(tempSearchQuery);
@@ -119,29 +167,6 @@ export const useStudents = () => {
         setSearchParams({}, { replace: true });
     };
 
-    // Live filters: auto-search when dropdowns change
-    useEffect(() => {
-        if (debounceTimer.current) clearTimeout(debounceTimer.current);
-        debounceTimer.current = setTimeout(() => {
-            setCurrentPage(1);
-            fetchStudents(1);
-            syncUrlParams(1);
-        }, 300);
-        return () => clearTimeout(debounceTimer.current);
-    }, [filters]);
-
-    // Page change
-    useEffect(() => {
-        fetchStudents(currentPage);
-        syncUrlParams(currentPage);
-    }, [currentPage]);
-
-    // Load filter options on mount
-    useEffect(() => {
-        fetchSports();
-        fetchOrganizations();
-    }, []);
-
     return {
         students,
         loading,
@@ -159,8 +184,10 @@ export const useStudents = () => {
         isSearching,
         handleSearch,
         clearFilters,
-        refresh: () => fetchStudents(currentPage),
+        refresh: () => fetchStudents(currentPage, debouncedSearchQuery, debouncedFilters, new AbortController().signal),
         fetchSports,
         fetchOrganizations
     };
 };
+
+export default useStudents;
