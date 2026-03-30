@@ -49,8 +49,8 @@ const seedData = async () => {
     console.log('Admin user created...');
 
     // Generate 16 dummy students
-    const firstNames = ['John', 'Jane', 'Michael', 'Emily', 'David', 'Sarah', 'James', 'Emma', 'Robert', 'Olivia', 'William', 'Sophia', 'Richard', 'Ava', 'Joseph', 'Mia'];
-    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas'];
+    const firstNames = ['John Carlo', 'Jane', 'Michael', 'Emily', 'David', 'Sarah', 'James', 'Emma', 'Robert', 'Olivia', 'William', 'Sophia', 'Richard', 'Ava', 'Joseph', 'Mia'];
+    const lastNames = ['Abigania', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas'];
     const programs = ['BSIT', 'BSCS'];
     const sections = ['A', 'B', 'C'];
 
@@ -63,10 +63,10 @@ const seedData = async () => {
 
       const user = await User.create({
         firstname: firstName,
-        middlename: lastName,
+        middlename: '',
         lastname: lastName,
         user_id: `ST${String(Math.floor(10000 + Math.random() * 90000))}`,
-        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
+        email: `${firstName.toLowerCase().replace(/\s+/g, '')}.${lastName.toLowerCase().replace(/\s+/g, '')}@example.com`,
         password: 'password',
         role: 'student',
         birth_date: new Date(1998 + Math.floor(Math.random() * 6), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
