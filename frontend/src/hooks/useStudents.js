@@ -90,7 +90,14 @@ export const useStudents = () => {
             });
 
             const result = await studentProfileAPI.searchStudents(filterParams, signal);
-            setStudents(result.students || []);
+            const freshStudents = result.students || [];
+            
+            if (freshStudents.length === 0 && page > 1 && result.meta?.total > 0) {
+                setCurrentPage(prev => prev - 1);
+                return;
+            }
+
+            setStudents(freshStudents);
             if (result.meta) setPagination(result.meta);
             setError('');
         } catch (err) {

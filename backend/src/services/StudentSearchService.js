@@ -75,7 +75,22 @@ class StudentSearchService {
     }
 
     // Execute query with pagination
-    const total = await Student.countDocuments(query);
+    // Instead of simple countDocuments, we use an aggregation to ensure we only count students with valid users
+    const countResult = await Student.aggregate([
+      { $match: query },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      { $unwind: '$user' },
+      { $count: 'total' }
+    ]);
+    
+    const total = countResult.length > 0 ? countResult[0].total : 0;
     const students = await Student.find(query)
       .populate('user_id')
       .sort({ _id: -1 })

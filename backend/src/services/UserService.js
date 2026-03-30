@@ -266,6 +266,12 @@ class UserService {
       throw new Error('User must be deactivated before deletion.');
     }
 
+    if (user.role === 'student') {
+      await Student.deleteOne({ user_id: user._id });
+    } else if (user.role === 'faculty') {
+      await Faculty.deleteOne({ user_id: user._id });
+    }
+
     await user.deleteOne();
   }
 }
