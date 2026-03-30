@@ -85,6 +85,14 @@ expiresIn: '7d'
   /**
    * Get current user with profile
    */
+  static async getCurrentUser(userId) {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+    return await this.formatUserWithProfile(user);
+  }
+
   /**
    * Send password reset token to email
    */

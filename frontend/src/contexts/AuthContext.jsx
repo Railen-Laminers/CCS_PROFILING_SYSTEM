@@ -1,7 +1,7 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   // Check if user is already authenticated on mount
   useEffect(() => {
     const controller = new AbortController();
+    
     const checkAuth = async () => {
       try {
         if (authAPI.isAuthenticated()) {
@@ -20,11 +21,16 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (err) {
         if (err.name !== 'AbortError' && err.name !== 'CanceledError') {
-          console.error('Auth check failed:', err);
-          setError('Session expired or invalid');
+          // Only clear token if explicitly unauthorized (401).
+          // Don't clear on 500 or network errors to persist session.
+          if (err.response?.status === 401) {
+            localStorage.removeItem('authToken');
+          }
         }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -41,7 +47,7 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return userData;
     } catch (err) {
-      const errorMsg = err.data?.message || 'Login failed';
+      const errorMsg = err.response?.data?.message || 'Login failed';
       setError(errorMsg);
       throw err;
     } finally {
@@ -57,7 +63,6 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setError(null);
     } catch (err) {
-      console.error('Logout failed:', err);
       setError('Logout failed');
       throw err;
     } finally {
@@ -80,12 +85,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };
