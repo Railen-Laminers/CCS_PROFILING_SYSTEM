@@ -42,7 +42,8 @@ const StudentPage = () => {
         handleSearch,
         clearFilters,
         refresh,
-        searchQuery
+        searchQuery,
+        fetchAllStudents
     } = useStudents();
 
     // Modal and Action state
@@ -52,6 +53,7 @@ const StudentPage = () => {
     const [editingId, setEditingId] = useState(null);
     const [deletingUserId, setDeletingUserId] = useState(null);
     const [togglingUserId, setTogglingUserId] = useState(null);
+    const [isExporting, setIsExporting] = useState(false);
 
     if (user?.role !== 'admin') {
         return <div className="p-6 text-red-500 dark:text-red-400">You do not have permission to view this page.</div>;
@@ -135,27 +137,40 @@ const StudentPage = () => {
         }
     };
 
-    const handleExport = () => {
-        if (!students.length) return;
+    const handleExport = async () => {
+        setIsExporting(true);
+        try {
+            const allStudents = await fetchAllStudents();
+            if (!allStudents.length) {
+                showToast('No students found to export.', 'info');
+                return;
+            }
 
-        const exportData = students.map(s => ({
-            'Student ID': s.user.user_id,
-            'Full Name': `${s.user.firstname} ${s.user.middlename ? s.user.middlename + ' ' : ''}${s.user.lastname}`,
-            'Email': s.user.email,
-            'Gender': s.user.gender || 'N/A',
-            'Birth Date': s.user.birth_date ? s.user.birth_date.split('T')[0] : 'N/A',
-            'Contact Number': s.user.contact_number ? `'${s.user.contact_number}` : 'N/A',
-            'Address': s.user.address || 'N/A',
-            'Program': s.student?.program || 'N/A',
-            'Year Level': s.student?.year_level || 'N/A',
-            'Section': s.student?.section || 'N/A',
-            'GPA': s.student?.gpa || 'N/A',
-            'Blood Type': s.student?.blood_type || 'N/A',
-            'Status': s.user.is_active ? 'Active' : 'Inactive'
-        }));
+            const exportData = allStudents.map(s => ({
+                'Student ID': s.user.user_id,
+                'Full Name': `${s.user.firstname} ${s.user.middlename ? s.user.middlename + ' ' : ''}${s.user.lastname}`,
+                'Email': s.user.email,
+                'Gender': s.user.gender || 'N/A',
+                'Birth Date': s.user.birth_date ? s.user.birth_date.split('T')[0] : 'N/A',
+                'Contact Number': s.user.contact_number ? `'${s.user.contact_number}` : 'N/A',
+                'Address': s.user.address || 'N/A',
+                'Program': s.student?.program || 'N/A',
+                'Year Level': s.student?.year_level || 'N/A',
+                'Section': s.student?.section || 'N/A',
+                'GPA': s.student?.gpa || 'N/A',
+                'Blood Type': s.student?.blood_type || 'N/A',
+                'Status': s.user.is_active ? 'Active' : 'Inactive'
+            }));
 
-        const date = new Date().toISOString().split('T')[0];
-        exportToExcel(exportData, `Student_Management_Report_${date}.xlsx`);
+            const date = new Date().toISOString().split('T')[0];
+            exportToExcel(exportData, `Student_Management_Report_${date}.xlsx`);
+            showToast(`Successfully exported ${allStudents.length} students.`, 'success');
+        } catch (err) {
+            showToast('Failed to export student data.', 'error');
+            console.error('Export error:', err);
+        } finally {
+            setIsExporting(false);
+        }
     };
 
     return (
@@ -165,9 +180,11 @@ const StudentPage = () => {
                 <div className="flex items-center gap-3">
                     <button 
                         onClick={handleExport}
-                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary shadow-sm transition-all active:scale-95 scroll-smooth"
+                        disabled={isExporting}
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary shadow-sm transition-all active:scale-95 scroll-smooth disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <FiDownload className="w-4 h-4" /> Export Data
+                        <FiDownload className={`w-4 h-4 ${isExporting ? 'animate-bounce' : ''}`} /> 
+                        {isExporting ? 'Exporting...' : 'Export Data'}
                     </button>
                     <button
                         onClick={handleAdd}

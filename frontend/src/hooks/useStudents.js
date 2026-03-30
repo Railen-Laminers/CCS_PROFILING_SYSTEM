@@ -174,6 +174,34 @@ export const useStudents = () => {
         setSearchParams({}, { replace: true });
     };
 
+    const fetchAllStudents = async () => {
+        try {
+            const filterParams = {
+                search: debouncedSearchQuery || undefined,
+                sports: debouncedFilters.sports.length > 0 ? debouncedFilters.sports : undefined,
+                organizations: debouncedFilters.organizations.length > 0 ? debouncedFilters.organizations : undefined,
+                year_level: debouncedFilters.year_level ? parseInt(debouncedFilters.year_level) : undefined,
+                program: debouncedFilters.program || undefined,
+                gender: debouncedFilters.gender || undefined,
+                gpa_min: debouncedFilters.gpa_min ? parseFloat(debouncedFilters.gpa_min) : undefined,
+                gpa_max: debouncedFilters.gpa_max ? parseFloat(debouncedFilters.gpa_max) : undefined,
+                paginate: 'false'
+            };
+
+            // Remove undefined values
+            Object.keys(filterParams).forEach(key => {
+                if (filterParams[key] === undefined) delete filterParams[key];
+            });
+
+            const result = await studentProfileAPI.searchStudents(filterParams);
+            return result.students || [];
+        } catch (err) {
+            showToast('Failed to fetch all students for export.', 'error');
+            console.error(err);
+            return [];
+        }
+    };
+
     return {
         students,
         loading,
@@ -191,6 +219,7 @@ export const useStudents = () => {
         isSearching,
         handleSearch,
         clearFilters,
+        fetchAllStudents,
         refresh: () => {
             const signal = new AbortController().signal;
             fetchStudents(currentPage, debouncedSearchQuery, debouncedFilters, signal);

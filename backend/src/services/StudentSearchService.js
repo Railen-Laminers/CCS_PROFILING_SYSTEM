@@ -7,7 +7,7 @@ class StudentSearchService {
    */
   static async search(filters) {
     const page = parseInt(filters.page) || 1;
-    const limit = parseInt(filters.per_page) || 15;
+    const limit = filters.paginate === 'false' ? 0 : (parseInt(filters.per_page) || 15);
     const skip = (page - 1) * limit;
 
     // Build query
@@ -74,28 +74,38 @@ class StudentSearchService {
       query['organizations.clubs'] = { $in: filters.organizations };
     }
 
-    // Execute query with pagination
-    // Instead of simple countDocuments, we use an aggregation to ensure we only count students with valid users
-    const countResult = await Student.aggregate([
-      { $match: query },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'user_id',
-          foreignField: '_id',
-          as: 'user'
-        }
-      },
-      { $unwind: '$user' },
-      { $count: 'total' }
-    ]);
-    
-    const total = countResult.length > 0 ? countResult[0].total : 0;
-    const students = await Student.find(query)
+    // Execute query
+    let studentsQuery = Student.find(query)
       .populate('user_id')
-      .sort({ _id: -1 })
-      .skip(skip)
-      .limit(limit);
+      .sort({ _id: -1 });
+
+    // Conditional pagination
+    if (filters.paginate !== 'false') {
+      studentsQuery = studentsQuery.skip(skip).limit(limit);
+    }
+
+    const students = await studentsQuery;
+
+    // Get total for metadata
+    let total;
+    if (filters.paginate === 'false') {
+      total = students.length;
+    } else {
+      const countResult = await Student.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user_id',
+            foreignField: '_id',
+            as: 'user'
+          }
+        },
+        { $unwind: '$user' },
+        { $count: 'total' }
+      ]);
+      total = countResult.length > 0 ? countResult[0].total : 0;
+    }
 
     // Format response
     const formattedStudents = students.filter(student => student.user_id).map(student => {
@@ -123,9 +133,9 @@ class StudentSearchService {
     return {
       students: formattedStudents,
       meta: {
-        current_page: page,
-        last_page: Math.ceil(total / limit),
-        per_page: limit,
+        current_page: filters.paginate === 'false' ? 1 : page,
+        last_page: filters.paginate === 'false' ? 1 : Math.ceil(total / limit),
+        per_page: filters.paginate === 'false' ? total : limit,
         total
       }
     };
