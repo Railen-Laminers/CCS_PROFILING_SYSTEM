@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Skeleton';
+import { BulletList, SectionSubhead, formatDate, parseList, renderTags } from '@/lib/facultyHelpers';
 
 // Sample faculty data matching the exact specifications
 const sampleFaculty = [
@@ -121,22 +122,6 @@ const FacultyDetails = () => {
 
     const fullName = [faculty.user.firstname, faculty.user.middlename, faculty.user.lastname].filter(Boolean).join(' ');
     const initials = faculty.user.firstname?.[0] || 'F';
-    const parseStringOrArray = (data) => {
-        if (!data) return [];
-        if (Array.isArray(data)) return data;
-        if (typeof data !== 'string') return [];
-        return data.split(',').map(s => s.trim()).filter(Boolean);
-    };
-
-    const subjects = parseStringOrArray(faculty.faculty?.subjects_handled);
-    const schedule = parseStringOrArray(faculty.faculty?.teaching_schedule);
-    const research = parseStringOrArray(faculty.faculty?.research_projects);
-
-    const formatDate = (dateString) => {
-        if (!dateString) return 'Not Provided';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    };
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#121212] p-6">
@@ -251,28 +236,28 @@ const FacultyDetails = () => {
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Full Name</p>
+                                                <SectionSubhead>Full Name</SectionSubhead>
                                                 <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{fullName}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Faculty ID</p>
+                                                <SectionSubhead>Faculty ID</SectionSubhead>
                                                 <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{faculty.user.user_id}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Gender</p>
+                                                <SectionSubhead>Gender</SectionSubhead>
                                                 <p className="text-base font-semibold text-gray-900 dark:text-gray-100 capitalize">{faculty.user.gender || 'Not Specified'}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Birthdate</p>
+                                                <SectionSubhead>Birthdate</SectionSubhead>
                                                 <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{formatDate(faculty.user.birth_date)}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Department</p>
+                                                <SectionSubhead>Department</SectionSubhead>
                                                 <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{faculty.faculty?.department || 'N/A'}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Specialization</p>
-                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{faculty.faculty?.specialization || 'N/A'}</p>
+                                                <SectionSubhead>Specialization</SectionSubhead>
+                                                <div className="mt-1">{renderTags(faculty.faculty?.specialization, "zinc")}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -285,15 +270,15 @@ const FacultyDetails = () => {
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Email</p>
+                                                <SectionSubhead>Email</SectionSubhead>
                                                 <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{faculty.user.email}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Contact Number</p>
+                                                <SectionSubhead>Contact Number</SectionSubhead>
                                                 <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{faculty.user.contact_number || 'Not Provided'}</p>
                                             </div>
                                             <div className="md:col-span-2">
-                                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Address</p>
+                                                <SectionSubhead>Address</SectionSubhead>
                                                 <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{faculty.user.address || 'Not Provided'}</p>
                                             </div>
                                         </div>
@@ -303,73 +288,37 @@ const FacultyDetails = () => {
 
                             {activeTab === 'Teaching Schedule' && (
                                 <div className="space-y-6">
-                                    <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                        <div className="flex items-center gap-2 mb-6 text-orange-500">
-                                            <FiClock className="w-5 h-5" />
-                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
-                                        </div>
-                                        {schedule.length > 0 ? (
-                                            <div className="space-y-3">
-                                                {schedule.map((item, idx) => (
-                                                    <div key={idx} className="flex items-center gap-3 p-4 bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-200 dark:border-gray-800">
-                                                        <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center">
-                                                            <FiCalendar className="w-5 h-5 text-orange-500" />
-                                                        </div>
-                                                        <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{item}</p>
-                                                    </div>
-                                                ))}
+                                        <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                            <div className="flex items-center gap-2 mb-6 text-orange-500">
+                                                <FiClock className="w-5 h-5" />
+                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
                                             </div>
-                                        ) : (
-                                            <p className="text-gray-500 dark:text-gray-400">No teaching schedule recorded.</p>
-                                        )}
-                                    </div>
+                                            <BulletList items={parseList(faculty.faculty?.teaching_schedule)} />
+                                        </div>
                                 </div>
                             )}
 
                             {activeTab === 'Research Projects' && (
                                 <div className="space-y-6">
-                                    <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                        <div className="flex items-center gap-2 mb-6 text-orange-500">
-                                            <FiBookOpen className="w-5 h-5" />
-                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Research Projects</h3>
-                                        </div>
-                                        {research.length > 0 ? (
-                                            <div className="space-y-3">
-                                                {research.map((item, idx) => (
-                                                    <div key={idx} className="flex items-center gap-3 p-4 bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-200 dark:border-gray-800">
-                                                        <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-500/10 flex items-center justify-center">
-                                                            <FiAward className="w-5 h-5 text-purple-500" />
-                                                        </div>
-                                                        <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{item}</p>
-                                                    </div>
-                                                ))}
+                                        <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                            <div className="flex items-center gap-2 mb-6 text-orange-500">
+                                                <FiBookOpen className="w-5 h-5" />
+                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Research Projects</h3>
                                             </div>
-                                        ) : (
-                                            <p className="text-gray-500 dark:text-gray-400">No research projects recorded.</p>
-                                        )}
-                                    </div>
+                                            <BulletList items={parseList(faculty.faculty?.research_projects)} />
+                                        </div>
                                 </div>
                             )}
 
                             {activeTab === 'Subjects Handled' && (
                                 <div className="space-y-6">
-                                    <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                        <div className="flex items-center gap-2 mb-6 text-orange-500">
-                                            <FiBookOpen className="w-5 h-5" />
-                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>
-                                        </div>
-                                        {subjects.length > 0 ? (
-                                            <div className="flex flex-wrap gap-3">
-                                                {subjects.map((subject, idx) => (
-                                                    <span key={idx} className="px-4 py-2 bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 text-sm font-semibold rounded-full border border-orange-200 dark:border-orange-500/20">
-                                                        {subject}
-                                                    </span>
-                                                ))}
+                                        <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                            <div className="flex items-center gap-2 mb-6 text-orange-500">
+                                                <FiBookOpen className="w-5 h-5" />
+                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>
                                             </div>
-                                        ) : (
-                                            <p className="text-gray-500 dark:text-gray-400">No subjects recorded.</p>
-                                        )}
-                                    </div>
+                                            {renderTags(faculty.faculty?.subjects_handled, "orange")}
+                                        </div>
                                 </div>
                             )}
                         </div>

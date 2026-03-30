@@ -2,14 +2,7 @@ import React from 'react';
 import { FiUsers, FiMail, FiPhone, FiMapPin, FiTrash2 } from 'react-icons/fi';
 import EditIcon from '@/components/ui/EditIcon';
 import { Spinner } from '@/components/ui/Skeleton';
-
-// Helper: parse data that can be string or array
-const parseList = (data) => {
-    if (!data) return [];
-    if (Array.isArray(data)) return data;
-    if (typeof data === 'string') return data.split(',').map(s => s.trim()).filter(Boolean);
-    return [];
-};
+import { parseList } from '@/lib/facultyHelpers';
 
 const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserId }) => {
     const fullName = `${member.user.firstname} ${member.user.lastname}`;
