@@ -50,8 +50,15 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 const formattedData = { ...initialData };
                 const arrayFields = ['sports_activities', 'organizations', 'behavior_discipline_records', 'current_subjects', 'academic_awards', 'events_participated'];
                 arrayFields.forEach(field => {
-                    if (Array.isArray(formattedData[field])) {
-                        formattedData[field] = formattedData[field].join(', ');
+                    const value = formattedData[field];
+                    if (Array.isArray(value)) {
+                        formattedData[field] = value.join(', ');
+                    } else if (value && typeof value === 'object') {
+                        // Handle nested objects for sports and organizations
+                        const innerArray = value.sportsPlayed || value.clubs;
+                        if (Array.isArray(innerArray)) {
+                            formattedData[field] = innerArray.join(', ');
+                        }
                     }
                 });
                 setFormData(formattedData);
