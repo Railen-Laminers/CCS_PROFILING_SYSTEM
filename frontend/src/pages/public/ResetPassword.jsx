@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { FaLock, FaEye, FaEyeSlash, FaChartLine } from 'react-icons/fa';
 import axios from 'axios';
@@ -91,7 +91,7 @@ const ResetPassword = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 className={`block w-full pl-10 pr-12 py-3 border rounded-xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white transition duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500
                                           ${errors.password ? 'border-red-500' : 'border-gray-200 dark:border-white/10'}`}
-                                placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó"
+                                placeholder="••••••••"
                             />
                             <button
                                 type="button"
@@ -116,7 +116,7 @@ const ResetPassword = () => {
                                 value={passwordConfirmation}
                                 onChange={(e) => setPasswordConfirmation(e.target.value)}
                                 className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-white/10 rounded-xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white transition duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                                placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó"
+                                placeholder="••••••••"
                             />
                         </div>
                     </div>
