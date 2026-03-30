@@ -2,6 +2,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ToastProvider } from './contexts/ToastContext';
+import Toast from './components/ui/Toast';
 import DashboardLayout from './components/layout/DashboardLayout';
 import { ProtectedRoute, RoleBasedRoute, PublicRoute } from './components/ProtectedRoute';
 import Login from './pages/public/Login';
@@ -138,11 +140,14 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </Router>
+      <ToastProvider>
+        <Router>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+          <Toast />
+        </Router>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

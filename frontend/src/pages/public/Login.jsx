@@ -141,14 +141,23 @@ const LoginPage = () => {
       className="min-h-screen bg-cover bg-center bg-no-repeat fixed inset-0 flex items-center justify-center p-4 md:p-8 transition-all duration-700"
       style={{ backgroundImage: `url(${loginBg})` }}
     >
-      {/* Universal Overlay for image depth and theme readability */}
-      <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-[1px] transition-colors duration-700"></div>
+      {/* Universal Overlay for image depth and theme readability - slightly reduced opacity */}
+      <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px] transition-colors duration-700"></div>
 
       <div className="max-w-6xl w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-3xl shadow-2xl dark:shadow-black/60 overflow-hidden flex flex-col md:flex-row border border-white/20 dark:border-white/10 z-10 transition-all duration-500">
 
-        {/* LEFT SIDE - Branding */}
-        <div className="md:w-1/2 bg-gradient-to-br from-brand-500 to-brand-400 p-8 md:p-12 flex flex-col justify-between text-white">
-          <div className="space-y-6">
+        {/* LEFT SIDE - Branding with background image */}
+        <div 
+          className="md:w-1/2 bg-brand-500 p-8 md:p-12 flex flex-col justify-between text-white relative overflow-hidden"
+        >
+          {/* Internal background image for the branding side */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center opacity-20 transition-opacity duration-700"
+            style={{ backgroundImage: `url(${loginBg})` }}
+          ></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-600/60 to-brand-400/60 z-0"></div>
+          
+          <div className="space-y-6 relative z-10">
             <div className="flex items-center gap-3">
               <FaChartLine className="text-3xl md:text-4xl text-white/90" />
 
@@ -227,7 +236,7 @@ const LoginPage = () => {
                               focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
                               transition duration-200 bg-gray-50/50 dark:bg-slate-800/50 dark:text-white
                               ${passwordError ? 'border-red-200 bg-red-50 dark:border-red-900/50 dark:bg-red-900/10' : 'border-gray-200 dark:border-white/10'}`}
-                    placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó"
+                    placeholder="••••••••"
                   />
                   <button
                     type="button"
