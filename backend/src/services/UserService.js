@@ -262,7 +262,7 @@ class UserService {
       throw new Error('You cannot delete your own account.');
     }
 
-    if (user.is_active) {
+    if (user.is_active && user.role === 'student') {
       throw new Error('User must be deactivated before deletion.');
     }
 

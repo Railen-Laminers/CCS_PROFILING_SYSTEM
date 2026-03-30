@@ -143,13 +143,16 @@ const useFaculty = () => {
     };
 
     const clearFilters = () => {
-        setSearchQuery('');
-        setTempSearchQuery('');
-        setFilters({
+        const emptyFilters = {
             department: '',
             position: '',
             gender: '',
-        });
+        };
+        setSearchQuery('');
+        setTempSearchQuery('');
+        setDebouncedSearchQuery('');
+        setFilters(emptyFilters);
+        setDebouncedFilters(emptyFilters);
         setCurrentPage(1);
         setSearchParams({}, { replace: true });
     };
