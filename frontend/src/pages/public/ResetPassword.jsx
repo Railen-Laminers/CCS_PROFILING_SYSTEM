@@ -69,18 +69,18 @@ const ResetPassword = () => {
         >
             <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-[1px]"></div>
 
-            <div className="max-w-md w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 z-10 border border-white/20 dark:border-white/10">
+            <div className="max-w-md w-full bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 z-10 border border-white/20">
                 <div className="text-center mb-8">
                     <div className="flex justify-center mb-4">
                         <FaChartLine className="text-4xl text-brand-500" />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-800 dark:text-white">Create New Password</h3>
-                    <p className="text-gray-500 dark:text-slate-400 mt-2">Enter your new password below to regain access.</p>
+                    <h3 className="text-2xl font-bold text-gray-800">Create New Password</h3>
+                    <p className="text-gray-500 mt-2">Enter your new password below to regain access.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">New Password</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <FaLock className="h-4 w-4 text-gray-400" />
@@ -90,8 +90,8 @@ const ResetPassword = () => {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className={`block w-full pl-10 pr-12 py-3 border rounded-xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white transition duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500
-                                          ${errors.password ? 'border-red-500' : 'border-gray-200 dark:border-white/10'}`}
+                                className={`block w-full pl-10 pr-12 py-3 border rounded-xl bg-[#F9FAFB] text-gray-900 transition duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500
+                                          ${errors.password ? 'border-red-500' : 'border-gray-200'}`}
                                 placeholder="••••••••"
                             />
                             <button
@@ -106,7 +106,7 @@ const ResetPassword = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Confirm New Password</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <FaLock className="h-4 w-4 text-gray-400" />
@@ -116,7 +116,7 @@ const ResetPassword = () => {
                                 required
                                 value={passwordConfirmation}
                                 onChange={(e) => setPasswordConfirmation(e.target.value)}
-                                className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-white/10 rounded-xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white transition duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl bg-[#F9FAFB] text-gray-900 transition duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -132,7 +132,7 @@ const ResetPassword = () => {
                 </form>
 
                 <div className="mt-8 text-center">
-                    <Link to="/login" className="text-gray-500 dark:text-slate-400 text-sm hover:text-brand-500 transition-colors">
+                    <Link to="/login" className="text-gray-500 text-sm hover:text-brand-500 transition-colors">
                         Remembered your password? <span className="text-brand-500 font-medium">Back to Login</span>
                     </Link>
                 </div>
