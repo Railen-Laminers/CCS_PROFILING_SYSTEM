@@ -181,7 +181,7 @@ const StudentPage = () => {
                     <button 
                         onClick={handleExport}
                         disabled={isExporting}
-                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-surface-secondary shadow-sm transition-all active:scale-95 scroll-smooth disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 scroll-smooth disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <FiDownload className={`w-4 h-4 ${isExporting ? 'animate-bounce' : ''}`} /> 
                         {isExporting ? 'Exporting...' : 'Export Data'}

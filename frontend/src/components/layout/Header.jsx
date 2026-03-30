@@ -32,7 +32,7 @@ export const Header = () => {
   }, []);
 
   return (
-    <header className="bg-white/70 dark:bg-surface-secondary/30 backdrop-blur-md border-b border-gray-200/50 dark:border-white/10 px-6 h-[76px] flex justify-between items-center sticky top-0 z-40 transition-colors duration-300 shadow-sm relative flex-shrink-0">
+    <header className="bg-white dark:bg-[#1E1E1E] backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 h-[76px] flex justify-between items-center sticky top-0 z-40 transition-colors duration-300 shadow-sm relative flex-shrink-0">
       {/* Decorative subtle top border/glow if needed, but no inner ring since it's flat now */}
       <div className="flex items-center gap-2">
         <h1 className="text-xl font-bold text-gray-800 dark:text-zinc-100 tracking-tight">

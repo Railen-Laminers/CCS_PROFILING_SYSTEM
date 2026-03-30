@@ -174,6 +174,23 @@ export const studentProfileAPI = {
   },
 };
 
+// ─── Faculty Profile API (Search & Filter) ───────────────────────────────────
+
+export const facultyProfileAPI = {
+  getDepartments: async () => {
+    const response = await axiosInstance.get('/faculty/departments');
+    return response.data;
+  },
+  getPositions: async () => {
+    const response = await axiosInstance.get('/faculty/positions');
+    return response.data;
+  },
+  searchFaculty: async (params, signal) => {
+    const response = await axiosInstance.get('/faculty/search', { params, signal });
+    return response.data;
+  },
+};
+
 // ─── Contact API ─────────────────────────────────────────────────────────────
 
 export const contactAPI = {

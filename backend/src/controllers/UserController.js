@@ -120,7 +120,7 @@ class UserController {
       ];
 
       const facultyFields = [
-        'department', 'specialization', 'subjects_handled',
+        'department', 'position', 'specialization', 'subjects_handled',
         'teaching_schedule', 'research_projects'
       ];
 

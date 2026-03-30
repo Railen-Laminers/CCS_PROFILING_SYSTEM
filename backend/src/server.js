@@ -14,6 +14,7 @@ const academicRecordRoutes = require('./routes/academicRecord.routes');
 const studentSearchRoutes = require('./routes/studentSearch.routes');
 const studentRoutes = require('./routes/student.routes');
 const facultyRoutes = require('./routes/faculty.routes');
+const facultySearchRoutes = require('./routes/facultySearch.routes');
 const contactRoutes = require('./routes/contact.routes');
 
 // Import middleware
@@ -47,6 +48,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/users', academicRecordRoutes);
 app.use('/api/students', studentSearchRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api/faculty', facultySearchRoutes);
 app.use('/api/faculty', facultyRoutes);
 app.use('/api/contact', contactRoutes);
 

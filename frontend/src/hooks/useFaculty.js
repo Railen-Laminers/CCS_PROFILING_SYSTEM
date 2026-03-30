@@ -1,5 +1,6 @@
-﻿import { useState, useEffect } from 'react';
-import { userAPI } from '../services/api';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { userAPI, facultyProfileAPI } from '../services/api';
 
 const formatDateForInput = (dateString) => {
     if (!dateString) return '';
@@ -13,6 +14,30 @@ const useFaculty = () => {
     const [faculty, setFaculty] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    // Pagination state
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, per_page: 15, total: 0 });
+    const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page')) || 1);
+
+    // Search and filter states
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+    const [tempSearchQuery, setTempSearchQuery] = useState(searchParams.get('search') || '');
+    const [filters, setFilters] = useState({
+        department: searchParams.get('department') || '',
+        position: searchParams.get('position') || '',
+        gender: searchParams.get('gender') || '',
+    });
+
+    // Debounced states for single-effect fetching
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+
+    const [departments, setDepartments] = useState([]);
+    const [positions, setPositions] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const abortControllerRef = useRef(null);
+    const isFirstMount = useRef(true);
 
     const [formMode, setFormMode] = useState('create');
     const [formData, setFormData] = useState({
@@ -29,6 +54,7 @@ const useFaculty = () => {
         address: '',
         is_active: true,
         department: '',
+        position: '',
         specialization: '',
         subjects_handled: '',
         teaching_schedule: '',
@@ -122,23 +148,142 @@ const useFaculty = () => {
         return {};
     };
 
-    const fetchFaculty = async () => {
+    const syncUrlParams = useCallback((page, query, currentFilters) => {
+        const params = new URLSearchParams();
+        if (query) params.set('search', query);
+        if (currentFilters.department) params.set('department', currentFilters.department);
+        if (currentFilters.position) params.set('position', currentFilters.position);
+        if (currentFilters.gender) params.set('gender', currentFilters.gender);
+        if (page > 1) params.set('page', page.toString());
+        setSearchParams(params, { replace: true });
+    }, [setSearchParams]);
+
+    const fetchFaculty = useCallback(async (page, query, currentFilters, signal) => {
+        setLoading(true);
         try {
-            setLoading(true);
-            const data = await userAPI.getFaculty();
-            setFaculty(data);
+            const filterParams = {
+                search: query || undefined,
+                department: currentFilters.department || undefined,
+                position: currentFilters.position || undefined,
+                gender: currentFilters.gender || undefined,
+                page,
+            };
+
+            const result = await facultyProfileAPI.searchFaculty(filterParams, signal);
+            const freshFaculty = result.faculty || [];
+            
+            if (freshFaculty.length === 0 && page > 1 && result.meta?.total > 0) {
+                setCurrentPage(prev => prev - 1);
+                return;
+            }
+
+            setFaculty(freshFaculty);
+            if (result.meta) setPagination(result.meta);
             setError('');
         } catch (err) {
-            setError('Failed to fetch faculty.');
-            console.error(err);
+            if (err.name !== 'AbortError' && err.name !== 'CanceledError') {
+                setError('Failed to fetch faculty.');
+                console.error(err);
+            }
         } finally {
-            setLoading(false);
+            if (!signal?.aborted) {
+                setLoading(false);
+                setIsSearching(false);
+            }
+        }
+    }, []);
+
+    const fetchDepartments = async () => {
+        try {
+            const data = await facultyProfileAPI.getDepartments();
+            setDepartments(data.departments || []);
+        } catch (err) {
+            console.error('Failed to fetch departments:', err);
+        }
+    };
+
+    const fetchPositions = async () => {
+        try {
+            const data = await facultyProfileAPI.getPositions();
+            setPositions(data.positions || []);
+        } catch (err) {
+            console.error('Failed to fetch positions:', err);
         }
     };
 
     useEffect(() => {
-        fetchFaculty();
+        const handler = setTimeout(() => {
+            if (searchQuery !== debouncedSearchQuery) {
+                setDebouncedSearchQuery(searchQuery);
+                setCurrentPage(1); 
+            }
+            if (JSON.stringify(filters) !== JSON.stringify(debouncedFilters)) {
+                setDebouncedFilters(filters);
+                setCurrentPage(1);
+            }
+        }, isFirstMount.current ? 0 : 300);
+
+        return () => clearTimeout(handler);
+    }, [searchQuery, filters]);
+
+    useEffect(() => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
+        const signal = abortControllerRef.current.signal;
+
+        fetchFaculty(currentPage, debouncedSearchQuery, debouncedFilters, signal);
+        syncUrlParams(currentPage, debouncedSearchQuery, debouncedFilters);
+        
+        isFirstMount.current = false;
+
+        return () => {
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+        };
+    }, [currentPage, debouncedSearchQuery, debouncedFilters, fetchFaculty, syncUrlParams]);
+
+    useEffect(() => {
+        fetchDepartments();
+        fetchPositions();
     }, []);
+
+    const handleSearch = () => {
+        setSearchQuery(tempSearchQuery);
+        setIsSearching(true);
+        setCurrentPage(1);
+    };
+
+    const clearFilters = () => {
+        setSearchQuery('');
+        setTempSearchQuery('');
+        setFilters({
+            department: '',
+            position: '',
+            gender: '',
+        });
+        setCurrentPage(1);
+        setSearchParams({}, { replace: true });
+    };
+
+    const fetchAllFaculty = async () => {
+        try {
+            const filterParams = {
+                search: debouncedSearchQuery || undefined,
+                department: debouncedFilters.department || undefined,
+                position: debouncedFilters.position || undefined,
+                gender: debouncedFilters.gender || undefined,
+                paginate: 'false'
+            };
+            const result = await facultyProfileAPI.searchFaculty(filterParams);
+            return result.faculty || [];
+        } catch (err) {
+            console.error('Failed to fetch all faculty for export:', err);
+            return [];
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -166,6 +311,7 @@ const useFaculty = () => {
             address: '',
             is_active: true,
             department: '',
+            position: '',
             specialization: '',
             subjects_handled: '',
             teaching_schedule: '',
@@ -199,13 +345,14 @@ const useFaculty = () => {
                 address: formData.address,
                 is_active: formData.is_active,
                 department: formData.department,
+                position: formData.position,
                 specialization: formData.specialization,
                 subjects_handled: formData.subjects_handled ? formData.subjects_handled.split(',').map(s => s.trim()) : null,
                 teaching_schedule: formData.teaching_schedule ? formData.teaching_schedule.split(',').map(s => s.trim()) : null,
                 research_projects: formData.research_projects ? formData.research_projects.split(',').map(s => s.trim()) : null,
             };
             await userAPI.createUser(facultyData);
-            await fetchFaculty();
+            refresh();
             resetForm();
         } catch (err) {
             const serverErrors = getErrorMessage(err);
@@ -235,6 +382,7 @@ const useFaculty = () => {
             address: member.user.address || '',
             is_active: member.user.is_active,
             department: f?.department || '',
+            position: f?.position || '',
             specialization: f?.specialization || '',
             subjects_handled: Array.isArray(f?.subjects_handled) ? f.subjects_handled.join(', ') : '',
             teaching_schedule: Array.isArray(f?.teaching_schedule) ? f.teaching_schedule.join(', ') : '',
@@ -263,6 +411,7 @@ const useFaculty = () => {
                 address: formData.address,
                 is_active: formData.is_active,
                 department: formData.department,
+                position: formData.position,
                 specialization: formData.specialization,
                 subjects_handled: formData.subjects_handled ? formData.subjects_handled.split(',').map(s => s.trim()) : null,
                 teaching_schedule: formData.teaching_schedule ? formData.teaching_schedule.split(',').map(s => s.trim()) : null,
@@ -270,7 +419,7 @@ const useFaculty = () => {
             };
             if (formData.password) updateData.password = formData.password;
             await userAPI.updateUser(editingId, updateData);
-            await fetchFaculty();
+            refresh();
             resetForm();
         } catch (err) {
             const serverErrors = getErrorMessage(err);
@@ -293,7 +442,7 @@ const useFaculty = () => {
         setError('');
         try {
             await userAPI.deleteUser(userId);
-            await fetchFaculty();
+            refresh();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to delete faculty.');
         } finally {
@@ -310,7 +459,7 @@ const useFaculty = () => {
         setError('');
         try {
             await userAPI.updateUser(member.user.id, { is_active: newStatus });
-            await fetchFaculty();
+            refresh();
         } catch (err) {
             setError(err.response?.data?.message || `Failed to ${action} faculty.`);
         } finally {
@@ -323,10 +472,30 @@ const useFaculty = () => {
         setShowForm(true);
     };
 
+    const refresh = () => {
+        fetchFaculty(currentPage, debouncedSearchQuery, debouncedFilters);
+        fetchDepartments();
+        fetchPositions();
+    };
+
     return {
         faculty,
         loading,
         error,
+        pagination,
+        currentPage,
+        setCurrentPage,
+        searchQuery,
+        tempSearchQuery,
+        setTempSearchQuery,
+        filters,
+        setFilters,
+        departments,
+        positions,
+        isSearching,
+        handleSearch,
+        clearFilters,
+        fetchAllFaculty,
         formMode,
         formData,
         fieldErrors,
@@ -350,6 +519,7 @@ const useFaculty = () => {
         handleDelete,
         handleToggleStatus,
         openCreateForm,
+        refresh,
     };
 };
 

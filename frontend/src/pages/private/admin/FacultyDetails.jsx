@@ -121,9 +121,16 @@ const FacultyDetails = () => {
 
     const fullName = [faculty.user.firstname, faculty.user.middlename, faculty.user.lastname].filter(Boolean).join(' ');
     const initials = faculty.user.firstname?.[0] || 'F';
-    const subjects = faculty.faculty?.subjects_handled?.split(',').map(s => s.trim()).filter(Boolean) || [];
-    const schedule = faculty.faculty?.teaching_schedule?.split(',').map(s => s.trim()).filter(Boolean) || [];
-    const research = faculty.faculty?.research_projects?.split(',').map(s => s.trim()).filter(Boolean) || [];
+    const parseStringOrArray = (data) => {
+        if (!data) return [];
+        if (Array.isArray(data)) return data;
+        if (typeof data !== 'string') return [];
+        return data.split(',').map(s => s.trim()).filter(Boolean);
+    };
+
+    const subjects = parseStringOrArray(faculty.faculty?.subjects_handled);
+    const schedule = parseStringOrArray(faculty.faculty?.teaching_schedule);
+    const research = parseStringOrArray(faculty.faculty?.research_projects);
 
     const formatDate = (dateString) => {
         if (!dateString) return 'Not Provided';
@@ -237,7 +244,7 @@ const FacultyDetails = () => {
                             {activeTab === 'Personal Information' && (
                                 <div className="space-y-6">
                                     {/* Personal Info Block */}
-                                    <div className="p-6 rounded-[2rem] bg-gray-50/50 dark:bg-[#121212]/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-sm relative">
+                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiUser className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
@@ -271,7 +278,7 @@ const FacultyDetails = () => {
                                     </div>
 
                                     {/* Contact Info Block */}
-                                    <div className="p-6 rounded-[2rem] bg-gray-50/50 dark:bg-[#121212]/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-sm relative">
+                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiPhone className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact Information</h3>
@@ -296,7 +303,7 @@ const FacultyDetails = () => {
 
                             {activeTab === 'Teaching Schedule' && (
                                 <div className="space-y-6">
-                                    <div className="p-6 rounded-[2rem] bg-gray-50/50 dark:bg-[#121212]/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-sm relative">
+                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiClock className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
@@ -321,7 +328,7 @@ const FacultyDetails = () => {
 
                             {activeTab === 'Research Projects' && (
                                 <div className="space-y-6">
-                                    <div className="p-6 rounded-[2rem] bg-gray-50/50 dark:bg-[#121212]/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-sm relative">
+                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiBookOpen className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Research Projects</h3>
@@ -346,7 +353,7 @@ const FacultyDetails = () => {
 
                             {activeTab === 'Subjects Handled' && (
                                 <div className="space-y-6">
-                                    <div className="p-6 rounded-[2rem] bg-gray-50/50 dark:bg-[#121212]/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/5 shadow-sm relative">
+                                    <div className="p-6 rounded-[2rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                         <div className="flex items-center gap-2 mb-6 text-orange-500">
                                             <FiBookOpen className="w-5 h-5" />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>

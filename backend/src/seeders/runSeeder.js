@@ -5,6 +5,7 @@ require('dotenv').config();
 // Import models
 const User = require('../models/User');
 const Student = require('../models/Student');
+const Faculty = require('../models/Faculty');
 const Course = require('../models/Course');
 const Event = require('../models/Event');
 
@@ -25,6 +26,7 @@ const seedData = async () => {
     // Clear existing data
     await User.deleteMany({});
     await Student.deleteMany({});
+    await Faculty.deleteMany({});
     await Course.deleteMany({});
     await Event.deleteMany({});
 
@@ -110,6 +112,90 @@ const seedData = async () => {
     }
 
     console.log('Students created...');
+    
+    // --- Faculty Seeder ---
+    
+    const facultyData = [
+      {
+        user: {
+          firstname: 'Roberto',
+          middlename: '',
+          lastname: 'Fernandez',
+          user_id: 'FAC-CS-001',
+          email: 'r.fernandez@ccs.edu',
+          contact_number: '09171234580',
+          address: 'CCS Building - Room 301',
+          gender: 'male',
+          birth_date: '1975-03-15'
+        },
+        faculty: {
+          department: 'Computer Science',
+          position: 'Professor',
+          specialization: 'Artificial Intelligence, Machine Learning',
+          subjects_handled: ['AI Fundamentals', 'Machine Learning', 'Deep Learning', 'Neural Networks'],
+          teaching_schedule: ['Mon 9:00-12:00 - AI Fundamentals', 'Wed 13:00-16:00 - Machine Learning'],
+          research_projects: ['Neural Network Optimization', 'Predictive Analytics']
+        }
+      },
+      {
+        user: {
+          firstname: 'Maria',
+          middlename: '',
+          lastname: 'Gonzales',
+          user_id: 'FAC-IT-002',
+          email: 'm.gonzales@ccs.edu',
+          contact_number: '09191234581',
+          address: 'CCS Building - Room 205',
+          gender: 'female',
+          birth_date: '1980-07-22'
+        },
+        faculty: {
+          department: 'Information Technology',
+          position: 'Associate Professor',
+          specialization: 'Network Security, Cyber Security',
+          subjects_handled: ['Network Security', 'Ethical Hacking', 'Cryptography'],
+          teaching_schedule: ['Tue 10:00-13:00 - Network Security', 'Thu 10:00-13:00 - Ethical Hacking'],
+          research_projects: ['Advanced Threat Detection', 'Blockchain Security']
+        }
+      },
+      {
+        user: {
+          firstname: 'Antonio',
+          middlename: '',
+          lastname: 'Rivera',
+          user_id: 'FAC-CS-003',
+          email: 'a.rivera@ccs.edu',
+          contact_number: '09191234582',
+          address: 'CCS Building - Room 108',
+          gender: 'male',
+          birth_date: '1982-11-08'
+        },
+        faculty: {
+          department: 'Computer Science',
+          position: 'Assistant Professor',
+          specialization: 'Software Engineering, Web Development',
+          subjects_handled: ['Software Engineering', 'Web Development', 'Agile Methodologies'],
+          teaching_schedule: ['Mon 13:00-16:00 - Software Engineering', 'Wed 9:00-12:00 - Web Development'],
+          research_projects: ['Microservices Architecture', 'Full-Stack Performance']
+        }
+      }
+    ];
+
+    for (const f of facultyData) {
+      const user = await User.create({
+        ...f.user,
+        password: 'password',
+        role: 'faculty',
+        is_active: true
+      });
+
+      await Faculty.create({
+        user_id: user._id,
+        ...f.faculty
+      });
+    }
+
+    console.log('Faculty seed records created...');
 
     // Create IT-related courses
     await Course.create({

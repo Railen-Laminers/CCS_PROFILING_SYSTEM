@@ -37,7 +37,7 @@ class UserService {
    * Faculty-specific fields for mass operations
    */
   static FACULTY_FIELDS = [
-    'department', 'specialization', 'subjects_handled',
+    'department', 'position', 'specialization', 'subjects_handled',
     'teaching_schedule', 'research_projects'
   ];
 

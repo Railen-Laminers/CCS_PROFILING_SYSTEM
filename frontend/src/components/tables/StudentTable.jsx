@@ -14,7 +14,7 @@ const StudentTable = ({
 }) => {
     if (loading) {
         return (
-            <div className="bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-zinc-200/50 dark:border-white/5 overflow-hidden">
+            <div className="bg-white dark:bg-[#1E1E1E] rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
                 <div className="flex justify-center items-center py-16">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-500"></div>
                 </div>
@@ -24,7 +24,7 @@ const StudentTable = ({
 
     if (students.length === 0) {
         return (
-            <div className="bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[2rem] shadow-sm border border-zinc-200/50 dark:border-white/5 overflow-hidden">
+            <div className="bg-white dark:bg-[#1E1E1E] rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
                 <div className="text-center py-16 text-sm text-gray-500 dark:text-zinc-400 flex flex-col items-center">
                     <FiUsers className="w-12 h-12 text-gray-300 dark:text-zinc-700 mb-3" />
                     <p>No students found in the database.</p>
@@ -34,12 +34,12 @@ const StudentTable = ({
     }
 
     return (
-        <div className="bg-white/60 dark:bg-surface-secondary/30 backdrop-blur-2xl rounded-[1rem] shadow-sm border border-zinc-200/50 dark:border-white/5 overflow-hidden relative">
-            <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/10 pointer-events-none"></div>
+        <div className="bg-white dark:bg-[#1E1E1E] rounded-[1rem] shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden relative">
+            <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/5 pointer-events-none"></div>
             <div className="p-6 overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[800px]">
                     <thead>
-                        <tr className="border-b border-gray-200 dark:border-border-dark">
+                        <tr className="border-b border-gray-200 dark:border-gray-800">
                             <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[7%]">Photo</th>
                             <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[12%]">Student ID</th>
                             <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[18%]">Name</th>
@@ -50,7 +50,7 @@ const StudentTable = ({
                             <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 text-left w-[15%]">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                         {students.map((student) => {
                             const fullName = [student.user.firstname, student.user.middlename, student.user.lastname].filter(Boolean).join(' ');
                             const initials = student.user.firstname?.[0] || 'S';

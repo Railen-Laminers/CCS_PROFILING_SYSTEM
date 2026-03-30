@@ -12,6 +12,11 @@ const facultySchema = new mongoose.Schema({
     trim: true,
     default: null
   },
+  position: {
+    type: String,
+    trim: true,
+    default: null
+  },
   specialization: {
     type: String,
     trim: true,
