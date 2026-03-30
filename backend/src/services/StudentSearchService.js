@@ -135,40 +135,16 @@ class StudentSearchService {
    * Get distinct sports from all students
    */
   static async getDistinctSports() {
-    const students = await Student.find({
-      sports_activities: { $ne: null }
-    }).select('sports_activities');
-
-    const sports = new Set();
-    students.forEach(student => {
-      if (student.sports_activities && student.sports_activities.sportsPlayed) {
-        student.sports_activities.sportsPlayed.forEach(sport => {
-          sports.add(sport);
-        });
-      }
-    });
-
-    return Array.from(sports).sort();
+    const sports = await Student.distinct('sports_activities.sportsPlayed');
+    return sports.sort();
   }
 
   /**
    * Get distinct organizations from all students
    */
   static async getDistinctOrganizations() {
-    const students = await Student.find({
-      organizations: { $ne: null }
-    }).select('organizations');
-
-    const orgs = new Set();
-    students.forEach(student => {
-      if (student.organizations && student.organizations.clubs) {
-        student.organizations.clubs.forEach(club => {
-          orgs.add(club);
-        });
-      }
-    });
-
-    return Array.from(orgs).sort();
+    const orgs = await Student.distinct('organizations.clubs');
+    return orgs.sort();
   }
 }
 

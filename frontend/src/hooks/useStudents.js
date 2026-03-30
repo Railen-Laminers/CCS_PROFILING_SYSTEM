@@ -191,7 +191,12 @@ export const useStudents = () => {
         isSearching,
         handleSearch,
         clearFilters,
-        refresh: () => fetchStudents(currentPage, debouncedSearchQuery, debouncedFilters, new AbortController().signal),
+        refresh: () => {
+            const signal = new AbortController().signal;
+            fetchStudents(currentPage, debouncedSearchQuery, debouncedFilters, signal);
+            fetchSports();
+            fetchOrganizations();
+        },
         fetchSports,
         fetchOrganizations
     };
