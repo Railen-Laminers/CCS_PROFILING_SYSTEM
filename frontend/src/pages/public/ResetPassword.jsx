@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { FaLock, FaEye, FaEyeSlash, FaChartLine } from 'react-icons/fa';
-import axios from 'axios';
+import { authAPI } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
 import loginBg from '../../assets/Bagong_Cabuyao_Hall.jpg';
 
@@ -30,19 +30,20 @@ const ResetPassword = () => {
 
         setIsResetting(true);
         try {
-            await axios.post('http://localhost:8000/api/auth/reset-password', {
+            await authAPI.resetPassword({
                 token,
                 email,
                 password,
-                password_confirmation: passwordConfirmation,
             });
             showToast('Password reset successfully! You can now login.', 'success');
             navigate('/login');
         } catch (err) {
             if (err.response?.data?.errors) {
                 setErrors(err.response.data.errors);
+            } else if (err.response?.data?.message) {
+                showToast(err.response.data.message, 'error');
             } else {
-                showToast(err.response?.data?.message || 'Failed to reset password', 'error');
+                showToast('Failed to reset password', 'error');
             }
         } finally {
             setIsResetting(false);
