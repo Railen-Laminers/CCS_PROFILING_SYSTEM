@@ -1,61 +1,142 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CCS Profiling System - Node.js Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is the Node.js/Express backend for the CCS Profiling System, converted from the original Laravel backend.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Authentication**: JWT-based authentication with login/logout
+- **User Management**: CRUD operations for users (admin, student, faculty)
+- **Student Management**: Student profiles with academic information
+- **Faculty Management**: Faculty profiles with department information
+- **Course Management**: CRUD operations for courses
+- **Event Management**: CRUD operations for events
+- **Academic Records**: Manage student academic records
+- **Student Search**: Advanced search and filtering for students
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT (JSON Web Tokens)
+- **Password Hashing**: bcryptjs
 
-## Learning Laravel
+## Prerequisites
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Node.js (v14 or higher)
+- MongoDB (running on localhost:27017 or configure in .env)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Navigate to the backend directory:
+```bash
+cd backend
+```
 
-## Laravel Sponsors
+2. Install dependencies:
+```bash
+npm install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. Create a `.env` file (already provided) with the following variables:
+```env
+NODE_ENV=development
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/css_profiling
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_EXPIRE=7d
+CORS_ORIGIN=http://localhost:5173
+```
 
-### Premium Partners
+4. Seed the database (optional):
+```bash
+npm run seed
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+5. Start the development server:
+```bash
+npm run dev
+```
 
-## Contributing
+The server will start on `http://localhost:5000`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## API Endpoints
 
-## Code of Conduct
+### Authentication
+- `POST /api/auth/login` - Login with user_id or email
+- `GET /api/auth/me` - Get current user profile (protected)
+- `POST /api/auth/logout` - Logout (protected)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Users (Admin only)
+- `GET /api/users` - List all users
+- `GET /api/users/students` - List all students
+- `GET /api/users/faculty` - List all faculty
+- `GET /api/users/:identifier` - Get user by ID or user_id
+- `POST /api/users` - Create new user
+- `PUT /api/users/:identifier` - Update user
+- `DELETE /api/users/:identifier` - Delete user (must be inactive)
 
-## Security Vulnerabilities
+### Courses (Admin only)
+- `GET /api/courses` - List all courses
+- `GET /api/courses/:id` - Get course by ID or course_code
+- `POST /api/courses` - Create new course
+- `PUT /api/courses/:id` - Update course
+- `DELETE /api/courses/:id` - Delete course
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Events (Admin only)
+- `GET /api/events` - List all events
+- `GET /api/events/:search` - Get event by ID or title
+- `POST /api/events` - Create new event
+- `PUT /api/events/:id` - Update event
+- `DELETE /api/events/:id` - Delete event
 
-## License
+### Academic Records (Admin only)
+- `GET /api/academic-records/users/:userId/academic-records` - Get student's academic records
+- `POST /api/academic-records/users/:userId/academic-records` - Create academic record
+- `GET /api/academic-records/:id` - Get academic record by ID
+- `PUT /api/academic-records/:id` - Update academic record
+- `DELETE /api/academic-records/:id` - Delete academic record
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Student Search (Admin only)
+- `GET /api/students/search` - Search students with filters
+- `GET /api/students/sports` - Get distinct sports
+- `GET /api/students/organizations` - Get distinct organizations
+
+## Default Credentials
+
+After running the seeder, you can login with:
+- **Admin**: user_id: `1234567`, email: `admin@gmail.com`, password: `password`
+- **Students**: Various students with password: `password`
+
+## Project Structure
+
+```
+backend/
+├── src/
+│   ├── controllers/     # Route handlers
+│   ├── middleware/      # Auth and error handling middleware
+│   ├── models/          # Mongoose models
+│   ├── routes/          # Express routes
+│   ├── seeders/         # Database seeders
+│   └── server.js        # Main application file
+├── .env                 # Environment variables
+├── package.json         # Dependencies and scripts
+└── README.md           # This file
+```
+
+## Migration from Laravel
+
+This backend is a direct conversion from the Laravel backend with the following changes:
+
+1. **Authentication**: Changed from Laravel Sanctum to JWT
+2. **Database**: Still uses MongoDB but with Mongoose instead of Laravel MongoDB
+3. **Validation**: Uses express-validator instead of Laravel Form Requests
+4. **Error Handling**: Custom error handling middleware
+5. **Structure**: Follows Node.js/Express conventions
+
+## Notes
+
+- The API maintains the same endpoints and response formats as the Laravel backend
+- The frontend should work without any changes
+- JWT tokens are used instead of Sanctum tokens
+- Password hashing uses bcryptjs instead of Laravel's Hash facade

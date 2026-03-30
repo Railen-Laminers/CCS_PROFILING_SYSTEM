@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Helper functions
 const getAuthToken = () => localStorage.getItem('authToken');
@@ -115,6 +115,17 @@ export const eventAPI = {
   getEvents: async (signal) => {
     const response = await axiosInstance.get('/events', { signal });
     return response.data.events;
+  },
+  createEvent: async (eventData) => {
+    const response = await axiosInstance.post('/events', eventData);
+    return response.data.event;
+  },
+  updateEvent: async (id, eventData) => {
+    const response = await axiosInstance.put(`/events/${id}`, eventData);
+    return response.data.event;
+  },
+  deleteEvent: async (id) => {
+    await axiosInstance.delete(`/events/${id}`);
   },
 };
 

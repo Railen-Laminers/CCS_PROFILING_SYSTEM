@@ -21,7 +21,7 @@ export default defineConfig({
   define: {
     // Use localhost for development, or set VITE_API_URL env var for LAN access
     'import.meta.env.VITE_API_URL': JSON.stringify(
-      process.env.VITE_API_URL || 'http://localhost:8000/api'
+      process.env.VITE_API_URL || 'http://localhost:5000/api'
     ),
   },
 })
