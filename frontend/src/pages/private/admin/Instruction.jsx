@@ -311,15 +311,9 @@ const Instruction = () => {
             ))
           ) : (
             <EmptyState 
-              icon={<FiBookOpen className="h-16 w-16 text-gray-700" />} 
-              title="No classes found"
-              description={searchQuery ? `No results match "${searchQuery}"` : "Add your first class to get started with instruction management."}
-              action={
-                <Button className="bg-brand-500 hover:bg-brand-600 text-white px-8 py-6 rounded-2xl font-bold shadow-lg shadow-orange-900/20 h-auto">
-                  Add New Class
-                </Button>
-              }
-              className="bg-[#1A1A1A] border-gray-800 rounded-[2.5rem] py-24"
+              icon={<FiBookOpen className="w-12 h-12 text-gray-300 dark:text-zinc-700" />} 
+              title={searchQuery ? `No results match "${searchQuery}"` : "No classes found in the database."}
+              className="bg-gray-50 dark:bg-[#1A1A1A] border-gray-100 dark:border-gray-800 rounded-2xl py-16 shadow-none"
             />
           )}
         </div>
@@ -336,15 +330,9 @@ const Instruction = () => {
                 ))
               ) : (
                 <EmptyState 
-                  icon={<FiFileText className="h-16 w-16 text-gray-700" />} 
-                  title="No assignments found"
-                  description="Create your first assignment to start tracking student progress."
-                  action={
-                    <Button className="h-9 bg-brand-500 hover:bg-brand-600 text-white px-8 rounded-lg text-[13px] font-semibold active:scale-95 transition-all">
-                      New Assignment
-                    </Button>
-                  }
-                  className="bg-gray-50 dark:bg-[#1A1A1A] border-gray-100 dark:border-gray-800 rounded-2xl py-20"
+                  icon={<FiFileText className="w-12 h-12 text-gray-300 dark:text-zinc-700" />} 
+                  title="No assignments found in the database."
+                  className="bg-gray-50 dark:bg-[#1A1A1A] border-gray-100 dark:border-gray-800 rounded-2xl py-16 shadow-none"
                 />
               )}
             </div>
@@ -361,15 +349,9 @@ const Instruction = () => {
                 ))
               ) : (
                 <EmptyState 
-                  icon={<FiCalendar className="h-16 w-16 text-gray-700" />} 
-                  title="No lesson plans found"
-                  description="Structure your teaching by creating detailed lesson plans."
-                  action={
-                    <Button className="h-9 bg-brand-500 hover:bg-brand-600 text-white px-8 rounded-lg text-[13px] font-semibold active:scale-95 transition-all">
-                      Create Plan
-                    </Button>
-                  }
-                  className="bg-gray-50 dark:bg-[#1A1A1A] border-gray-100 dark:border-gray-800 rounded-2xl py-20"
+                  icon={<FiCalendar className="w-12 h-12 text-gray-300 dark:text-zinc-700" />} 
+                  title="No lesson plans found in the database."
+                  className="bg-gray-50 dark:bg-[#1A1A1A] border-gray-100 dark:border-gray-800 rounded-2xl py-16 shadow-none"
                 />
               )}
             </div>
@@ -386,15 +368,9 @@ const Instruction = () => {
                 ))
               ) : (
                 <EmptyState 
-                  icon={<FiBookOpen className="h-16 w-16 text-gray-700" />} 
-                  title="No course materials found"
-                  description="Upload handouts, slides, and other resources for your students."
-                  action={
-                    <Button className="h-9 bg-brand-500 hover:bg-brand-600 text-white px-8 rounded-lg text-[13px] font-semibold active:scale-95 transition-all">
-                      Upload Material
-                    </Button>
-                  }
-                  className="bg-[#1A1A1A] border-gray-800 rounded-2xl py-20"
+                  icon={<FiBookOpen className="w-12 h-12 text-gray-300 dark:text-zinc-700" />} 
+                  title="No course materials found in the database."
+                  className="bg-gray-50 dark:bg-[#1A1A1A] border-gray-100 dark:border-gray-800 rounded-2xl py-16 shadow-none"
                 />
               )}
             </div>
