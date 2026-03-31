@@ -106,17 +106,19 @@ const useEvents = () => {
             }
             await fetchEvents();
             closeModal();
+            setError(null); // Clear any previous errors
         } catch (err) {
             if (err.response && err.response.data && err.response.data.errors) {
                 const backendErrors = err.response.data.errors;
                 const mapped = {};
-                if (backendErrors.title) mapped.title = backendErrors.title[0];
-                if (backendErrors.description) mapped.description = backendErrors.description[0];
-                if (backendErrors.start_datetime) mapped.start_datetime = backendErrors.start_datetime[0];
-                if (backendErrors.end_datetime) mapped.end_datetime = backendErrors.end_datetime[0];
+                if (backendErrors.title) mapped.title = Array.isArray(backendErrors.title) ? backendErrors.title[0] : backendErrors.title;
+                if (backendErrors.description) mapped.description = Array.isArray(backendErrors.description) ? backendErrors.description[0] : backendErrors.description;
+                if (backendErrors.start_datetime) mapped.start_datetime = Array.isArray(backendErrors.start_datetime) ? backendErrors.start_datetime[0] : backendErrors.start_datetime;
+                if (backendErrors.end_datetime) mapped.end_datetime = Array.isArray(backendErrors.end_datetime) ? backendErrors.end_datetime[0] : backendErrors.end_datetime;
                 setFormErrors(mapped);
             } else {
-                setError('Failed to save event. Please try again.');
+                const errorMessage = err.response?.data?.message || 'Failed to save event. Please try again.';
+                setError(errorMessage);
             }
         } finally {
             setSubmitLoading(false);
@@ -128,8 +130,10 @@ const useEvents = () => {
         try {
             await eventAPI.deleteEvent(eventId);
             await fetchEvents();
+            setError(null); // Clear any previous errors
         } catch (err) {
-            setError('Failed to delete event. Please try again.');
+            const errorMessage = err.response?.data?.message || 'Failed to delete event. Please try again.';
+            setError(errorMessage);
             console.error(err);
         }
     };

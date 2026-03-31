@@ -8,8 +8,17 @@ class EventController {
     try {
       const events = await EventService.getAll();
 
+      // Transform _id to event_id for consistency
+      const transformedEvents = events.map(event => ({
+        event_id: event._id,
+        title: event.title,
+        description: event.description,
+        start_datetime: event.start_datetime,
+        end_datetime: event.end_datetime
+      }));
+
       res.status(200).json({
-        events
+        events: transformedEvents
       });
     } catch (error) {
       next(error);
@@ -25,7 +34,13 @@ class EventController {
       const event = await EventService.findByIdentifier(search);
 
       res.status(200).json({
-        event
+        event: {
+          event_id: event._id,
+          title: event.title,
+          description: event.description,
+          start_datetime: event.start_datetime,
+          end_datetime: event.end_datetime
+        }
       });
     } catch (error) {
       if (error.message === 'Event not found') {
@@ -55,6 +70,17 @@ class EventController {
         }
       });
     } catch (error) {
+      // Handle validation errors
+      if (error.name === 'ValidationError') {
+        const errors = {};
+        Object.keys(error.errors).forEach(key => {
+          errors[key] = [error.errors[key].message];
+        });
+        return res.status(400).json({
+          message: 'Validation error',
+          errors
+        });
+      }
       next(error);
     }
   }
@@ -78,6 +104,18 @@ class EventController {
         }
       });
     } catch (error) {
+      // Handle validation errors
+      if (error.name === 'ValidationError') {
+        const errors = {};
+        Object.keys(error.errors).forEach(key => {
+          errors[key] = [error.errors[key].message];
+        });
+        return res.status(400).json({
+          message: 'Validation error',
+          errors
+        });
+      }
+
       if (error.message === 'Event not found') {
         return res.status(404).json({
           message: error.message

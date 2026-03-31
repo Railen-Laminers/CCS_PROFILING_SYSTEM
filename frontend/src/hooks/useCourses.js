@@ -91,16 +91,18 @@ const useCourses = () => {
             }
             await fetchCourses();
             closeModal();
+            setError(null); // Clear any previous errors
         } catch (err) {
             if (err.response && err.response.data && err.response.data.errors) {
                 const backendErrors = err.response.data.errors;
                 const mapped = {};
-                if (backendErrors.course_code) mapped.course_code = backendErrors.course_code[0];
-                if (backendErrors.course_title) mapped.course_title = backendErrors.course_title[0];
-                if (backendErrors.credits) mapped.credits = backendErrors.credits[0];
+                if (backendErrors.course_code) mapped.course_code = Array.isArray(backendErrors.course_code) ? backendErrors.course_code[0] : backendErrors.course_code;
+                if (backendErrors.course_title) mapped.course_title = Array.isArray(backendErrors.course_title) ? backendErrors.course_title[0] : backendErrors.course_title;
+                if (backendErrors.credits) mapped.credits = Array.isArray(backendErrors.credits) ? backendErrors.credits[0] : backendErrors.credits;
                 setFormErrors(mapped);
             } else {
-                setError('Failed to save course. Please try again.');
+                const errorMessage = err.response?.data?.message || 'Failed to save course. Please try again.';
+                setError(errorMessage);
             }
         } finally {
             setSubmitLoading(false);
@@ -112,8 +114,10 @@ const useCourses = () => {
         try {
             await courseAPI.deleteCourse(courseId);
             await fetchCourses();
+            setError(null); // Clear any previous errors
         } catch (err) {
-            setError('Failed to delete course. Please try again.');
+            const errorMessage = err.response?.data?.message || 'Failed to delete course. Please try again.';
+            setError(errorMessage);
             console.error(err);
         }
     };

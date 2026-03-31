@@ -8,8 +8,16 @@ class CourseController {
     try {
       const courses = await CourseService.getAll();
 
+      // Transform _id to course_id for consistency
+      const transformedCourses = courses.map(course => ({
+        course_id: course._id,
+        credits: course.credits,
+        course_code: course.course_code,
+        course_title: course.course_title
+      }));
+
       res.status(200).json({
-        courses
+        courses: transformedCourses
       });
     } catch (error) {
       next(error);
@@ -25,7 +33,12 @@ class CourseController {
       const course = await CourseService.findByIdentifier(id);
 
       res.status(200).json({
-        course
+        course: {
+          course_id: course._id,
+          credits: course.credits,
+          course_code: course.course_code,
+          course_title: course.course_title
+        }
       });
     } catch (error) {
       if (error.message === 'Course not found') {
@@ -54,11 +67,28 @@ class CourseController {
         }
       });
     } catch (error) {
+      // Handle duplicate course code
       if (error.code === 11000) {
         return res.status(400).json({
-          message: 'Course code already exists'
+          message: 'Course code already exists',
+          errors: {
+            course_code: ['Course code already exists']
+          }
         });
       }
+
+      // Handle validation errors
+      if (error.name === 'ValidationError') {
+        const errors = {};
+        Object.keys(error.errors).forEach(key => {
+          errors[key] = [error.errors[key].message];
+        });
+        return res.status(400).json({
+          message: 'Validation error',
+          errors
+        });
+      }
+
       next(error);
     }
   }
@@ -81,6 +111,28 @@ class CourseController {
         }
       });
     } catch (error) {
+      // Handle duplicate course code
+      if (error.code === 11000) {
+        return res.status(400).json({
+          message: 'Course code already exists',
+          errors: {
+            course_code: ['Course code already exists']
+          }
+        });
+      }
+
+      // Handle validation errors
+      if (error.name === 'ValidationError') {
+        const errors = {};
+        Object.keys(error.errors).forEach(key => {
+          errors[key] = [error.errors[key].message];
+        });
+        return res.status(400).json({
+          message: 'Validation error',
+          errors
+        });
+      }
+
       if (error.message === 'Course not found') {
         return res.status(404).json({
           message: error.message
