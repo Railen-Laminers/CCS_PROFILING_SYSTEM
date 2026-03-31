@@ -16,8 +16,6 @@ import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { FiSearch } from 'react-icons/fi';
 
-// --- Local Sub-components ---
-
 const StatCards = ({ statCards }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     {statCards.map((card, index) => (
