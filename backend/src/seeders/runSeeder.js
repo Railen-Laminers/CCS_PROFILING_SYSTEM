@@ -8,6 +8,10 @@ const Student = require('../models/Student');
 const Faculty = require('../models/Faculty');
 const Course = require('../models/Course');
 const Event = require('../models/Event');
+const Class = require('../models/Class');
+const Assignment = require('../models/Assignment');
+const LessonPlan = require('../models/LessonPlan');
+const Material = require('../models/Material');
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -29,6 +33,10 @@ const seedData = async () => {
     await Faculty.deleteMany({});
     await Course.deleteMany({});
     await Event.deleteMany({});
+    await Class.deleteMany({});
+    await Assignment.deleteMany({});
+    await LessonPlan.deleteMany({});
+    await Material.deleteMany({});
 
     console.log('Data cleared...');
 
@@ -249,6 +257,67 @@ const seedData = async () => {
     });
 
     console.log('Events created...');
+    
+    // --- Instruction Seeder (Classes, Assignments, etc.) ---
+    
+    const courses = await Course.find();
+    const facultyMembers = await Faculty.find().populate('user_id');
+    
+    if (courses.length > 0 && facultyMembers.length > 0) {
+      // Create Classes
+      const class1 = await Class.create({
+        course_id: courses[0]._id,
+        instructor_id: facultyMembers[0]._id,
+        schedule: 'Mon/Wed 9:00 AM - 10:30 AM',
+        room: 'CCS 301',
+        students_count: 35
+      });
+
+      const class2 = await Class.create({
+        course_id: courses[1]._id,
+        instructor_id: facultyMembers[1]._id,
+        schedule: 'Tue/Thu 1:00 PM - 2:30 PM',
+        room: 'CCS 205',
+        students_count: 28
+      });
+
+      console.log('Classes created...');
+
+      // Create Assignments for Class 1
+      await Assignment.create({
+        class_id: class1._id,
+        title: 'Midterm Research Paper',
+        description: 'Submit a 10-page research paper on AI Ethics.',
+        due_date: new Date('2026-04-15'),
+        status: 'open'
+      });
+
+      await Assignment.create({
+        class_id: class1._id,
+        title: 'Weekly Quiz 5',
+        description: 'Covers Neural Networks basics.',
+        due_date: new Date('2026-03-30'),
+        status: 'closed'
+      });
+
+      // Create Lesson Plan for Class 1
+      await LessonPlan.create({
+        class_id: class1._id,
+        topic: 'Introduction to Transformers',
+        content: 'Overview of Attention mechanisms and Transformer architecture.',
+        date: new Date('2026-04-01')
+      });
+
+      // Create Material for Class 1
+      await Material.create({
+        class_id: class1._id,
+        title: 'Deep Learning Slides - Week 4',
+        type: 'presentation',
+        file_url: 'https://example.com/slides-w4.pdf'
+      });
+
+      console.log('Assignments, Lesson Plans, and Materials created...');
+    }
 
     console.log('Seed data completed successfully!');
     process.exit(0);

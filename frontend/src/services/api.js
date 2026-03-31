@@ -200,4 +200,25 @@ export const contactAPI = {
   },
 };
 
+// ─── Instruction API ─────────────────────────────────────────────────────────
+
+export const instructionAPI = {
+  getClasses: async (signal) => {
+    const response = await axiosInstance.get('/instruction/classes', { signal });
+    return response.data;
+  },
+  getAssignments: async (signal) => {
+    const response = await axiosInstance.get('/instruction/assignments', { signal });
+    return response.data;
+  },
+  getLessonPlans: async (signal) => {
+    const response = await axiosInstance.get('/instruction/lesson-plans', { signal });
+    return response.data;
+  },
+  getMaterials: async (signal) => {
+    const response = await axiosInstance.get('/instruction/materials', { signal });
+    return response.data;
+  },
+};
+
 export default authAPI;

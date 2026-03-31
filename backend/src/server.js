@@ -16,6 +16,7 @@ const studentRoutes = require('./routes/student.routes');
 const facultyRoutes = require('./routes/faculty.routes');
 const facultySearchRoutes = require('./routes/facultySearch.routes');
 const contactRoutes = require('./routes/contact.routes');
+const instructionRoutes = require('./routes/instruction.routes');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -51,6 +52,7 @@ app.use('/api/students', studentRoutes);
 app.use('/api/faculty', facultySearchRoutes);
 app.use('/api/faculty', facultyRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/instruction', instructionRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

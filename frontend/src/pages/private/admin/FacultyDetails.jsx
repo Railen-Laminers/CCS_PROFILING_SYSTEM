@@ -154,7 +154,7 @@ const FacultyDetails = () => {
             </div>
 
             {/* Tab Content Rendering */}
-            <Card className="p-6 min-h-[400px] bg-white dark:bg-[#1E1E1E] rounded-[1rem] shadow-sm border border-gray-200 dark:border-gray-800 relative overflow-hidden">
+            <Card className="p-6 bg-white dark:bg-[#1E1E1E] rounded-[1rem] shadow-sm border border-gray-200 dark:border-gray-800 relative overflow-hidden">
                 <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/5 pointer-events-none"></div>
                 {isTabLoading ? (
                     <div className="flex justify-center items-center h-[300px]">
