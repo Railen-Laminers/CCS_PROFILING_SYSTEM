@@ -215,8 +215,8 @@ const StudentPage = () => {
                 setTempSearchQuery={setTempSearchQuery}
                 handleSearch={handleSearch}
                 isSearching={isSearching}
-                filters={filters}
-                setFilters={setFilters}
+                tempFilters={tempFilters}
+                setTempFilters={setTempFilters}
                 sports={sports}
                 organizations={organizations}
                 clearFilters={clearFilters}

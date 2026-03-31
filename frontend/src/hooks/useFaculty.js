@@ -20,10 +20,7 @@ const useFaculty = () => {
         position: searchParams.get('position') || '',
         gender: searchParams.get('gender') || '',
     });
-
-    // Debounced states for single-effect fetching
-    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
-    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+    const [tempFilters, setTempFilters] = useState({ ...filters });
 
     const [departments, setDepartments] = useState([]);
     const [positions, setPositions] = useState([]);
@@ -97,20 +94,6 @@ const useFaculty = () => {
         }
     };
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            if (searchQuery !== debouncedSearchQuery) {
-                setDebouncedSearchQuery(searchQuery);
-                setCurrentPage(1); 
-            }
-            if (JSON.stringify(filters) !== JSON.stringify(debouncedFilters)) {
-                setDebouncedFilters(filters);
-                setCurrentPage(1);
-            }
-        }, isFirstMount.current ? 0 : 300);
-
-        return () => clearTimeout(handler);
-    }, [searchQuery, filters]);
 
     useEffect(() => {
         if (abortControllerRef.current) {
@@ -119,8 +102,8 @@ const useFaculty = () => {
         abortControllerRef.current = new AbortController();
         const signal = abortControllerRef.current.signal;
 
-        fetchFaculty(currentPage, debouncedSearchQuery, debouncedFilters, signal);
-        syncUrlParams(currentPage, debouncedSearchQuery, debouncedFilters);
+        fetchFaculty(currentPage, searchQuery, filters, signal);
+        syncUrlParams(currentPage, searchQuery, filters);
         
         isFirstMount.current = false;
 
@@ -129,7 +112,7 @@ const useFaculty = () => {
                 abortControllerRef.current.abort();
             }
         };
-    }, [currentPage, debouncedSearchQuery, debouncedFilters, fetchFaculty, syncUrlParams]);
+    }, [currentPage, searchQuery, filters, fetchFaculty, syncUrlParams]);
 
     useEffect(() => {
         fetchDepartments();
@@ -138,6 +121,7 @@ const useFaculty = () => {
 
     const handleSearch = () => {
         setSearchQuery(tempSearchQuery);
+        setFilters({ ...tempFilters });
         setIsSearching(true);
         setCurrentPage(1);
     };
@@ -150,9 +134,8 @@ const useFaculty = () => {
         };
         setSearchQuery('');
         setTempSearchQuery('');
-        setDebouncedSearchQuery('');
         setFilters(emptyFilters);
-        setDebouncedFilters(emptyFilters);
+        setTempFilters(emptyFilters);
         setCurrentPage(1);
         setSearchParams({}, { replace: true });
     };
@@ -175,7 +158,7 @@ const useFaculty = () => {
     };
 
     const refresh = () => {
-        fetchFaculty(currentPage, debouncedSearchQuery, debouncedFilters);
+        fetchFaculty(currentPage, searchQuery, filters);
         fetchDepartments();
         fetchPositions();
     };
@@ -190,8 +173,9 @@ const useFaculty = () => {
         searchQuery,
         tempSearchQuery,
         setTempSearchQuery,
+        tempFilters,
+        setTempFilters,
         filters,
-        setFilters,
         departments,
         positions,
         isSearching,

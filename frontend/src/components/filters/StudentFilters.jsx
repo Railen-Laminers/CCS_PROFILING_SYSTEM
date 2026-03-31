@@ -7,8 +7,8 @@ const StudentFilters = ({
     setTempSearchQuery, 
     handleSearch, 
     isSearching, 
-    filters, 
-    setFilters, 
+    tempFilters, 
+    setTempFilters, 
     sports, 
     organizations, 
     clearFilters,
@@ -17,21 +17,21 @@ const StudentFilters = ({
     const [showFilters, setShowFilters] = useState(false);
 
     const hasActiveFilters = searchQuery || 
-        filters.sports.length > 0 || 
-        filters.organizations.length > 0 || 
-        filters.year_level || 
-        filters.program || 
-        filters.gender || 
-        filters.gpa_min || 
-        filters.gpa_max;
+        tempFilters.sports.length > 0 || 
+        tempFilters.organizations.length > 0 || 
+        tempFilters.year_level || 
+        tempFilters.program || 
+        tempFilters.gender || 
+        tempFilters.gpa_min || 
+        tempFilters.gpa_max;
 
-    const filterCount = (filters.sports.length || 0) + 
-        (filters.organizations.length || 0) + 
-        (filters.year_level ? 1 : 0) + 
-        (filters.program ? 1 : 0) + 
-        (filters.gender ? 1 : 0) + 
-        (filters.gpa_min ? 1 : 0) + 
-        (filters.gpa_max ? 1 : 0);
+    const filterCount = (tempFilters.sports.length || 0) + 
+        (tempFilters.organizations.length || 0) + 
+        (tempFilters.year_level ? 1 : 0) + 
+        (tempFilters.program ? 1 : 0) + 
+        (tempFilters.gender ? 1 : 0) + 
+        (tempFilters.gpa_min ? 1 : 0) + 
+        (tempFilters.gpa_max ? 1 : 0);
 
     return (
         <div className="bg-white dark:bg-[#1E1E1E] rounded-[1rem] shadow-sm border border-gray-200 dark:border-gray-800 p-5 mb-6 relative overflow-hidden">
@@ -91,8 +91,8 @@ const StudentFilters = ({
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sports</label>
                             <select 
                                 multiple
-                                value={filters.sports}
-                                onChange={(e) => setFilters({...filters, sports: Array.from(e.target.selectedOptions, option => option.value)})}
+                                value={tempFilters.sports}
+                                onChange={(e) => setTempFilters({...tempFilters, sports: Array.from(e.target.selectedOptions, option => option.value)})}
                                 className="w-full h-[80px] px-3 py-2 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                             >
                                 {sports.map((sport, idx) => (
@@ -107,8 +107,8 @@ const StudentFilters = ({
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Organizations</label>
                             <select 
                                 multiple
-                                value={filters.organizations}
-                                onChange={(e) => setFilters({...filters, organizations: Array.from(e.target.selectedOptions, option => option.value)})}
+                                value={tempFilters.organizations}
+                                onChange={(e) => setTempFilters({...tempFilters, organizations: Array.from(e.target.selectedOptions, option => option.value)})}
                                 className="w-full h-[80px] px-3 py-2 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                             >
                                 {organizations.map((org, idx) => (
@@ -122,8 +122,8 @@ const StudentFilters = ({
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Year Level</label>
                             <select 
-                                value={filters.year_level}
-                                onChange={(e) => setFilters({...filters, year_level: e.target.value})}
+                                value={tempFilters.year_level}
+                                onChange={(e) => setTempFilters({...tempFilters, year_level: e.target.value})}
                                 className="w-full h-[38px] px-3 py-1.5 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                             >
                                 <option value="">All Years</option>
@@ -138,8 +138,8 @@ const StudentFilters = ({
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Program</label>
                             <select 
-                                value={filters.program}
-                                onChange={(e) => setFilters({...filters, program: e.target.value})}
+                                value={tempFilters.program}
+                                onChange={(e) => setTempFilters({...tempFilters, program: e.target.value})}
                                 className="w-full h-[38px] px-3 py-1.5 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                             >
                                 <option value="">All Programs</option>
@@ -152,8 +152,8 @@ const StudentFilters = ({
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Gender</label>
                             <select 
-                                value={filters.gender}
-                                onChange={(e) => setFilters({...filters, gender: e.target.value})}
+                                value={tempFilters.gender}
+                                onChange={(e) => setTempFilters({...tempFilters, gender: e.target.value})}
                                 className="w-full h-[38px] px-3 py-1.5 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                             >
                                 <option value="">All Genders</option>
@@ -172,8 +172,8 @@ const StudentFilters = ({
                                     step="0.1"
                                     min="0"
                                     max="4"
-                                    value={filters.gpa_min}
-                                    onChange={(e) => setFilters({...filters, gpa_min: e.target.value})}
+                                    value={tempFilters.gpa_min}
+                                    onChange={(e) => setTempFilters({...tempFilters, gpa_min: e.target.value})}
                                     placeholder="Min"
                                     className="w-1/2 h-[38px] px-3 py-1.5 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                                 />
@@ -182,8 +182,8 @@ const StudentFilters = ({
                                     step="0.1"
                                     min="0"
                                     max="4"
-                                    value={filters.gpa_max}
-                                    onChange={(e) => setFilters({...filters, gpa_max: e.target.value})}
+                                    value={tempFilters.gpa_max}
+                                    onChange={(e) => setTempFilters({...tempFilters, gpa_max: e.target.value})}
                                     placeholder="Max"
                                     className="w-1/2 h-[38px] px-3 py-1.5 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                                 />

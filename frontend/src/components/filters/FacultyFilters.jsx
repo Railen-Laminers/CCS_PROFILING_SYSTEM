@@ -7,8 +7,8 @@ const FacultyFilters = ({
     setTempSearchQuery, 
     handleSearch, 
     isSearching, 
-    filters, 
-    setFilters, 
+    tempFilters, 
+    setTempFilters, 
     departments, 
     positions, 
     clearFilters,
@@ -17,13 +17,13 @@ const FacultyFilters = ({
     const [showFilters, setShowFilters] = useState(false);
 
     const hasActiveFilters = searchQuery || 
-        filters.department || 
-        filters.position || 
-        filters.gender;
+        tempFilters.department || 
+        tempFilters.position || 
+        tempFilters.gender;
 
-    const filterCount = (filters.department ? 1 : 0) + 
-        (filters.position ? 1 : 0) + 
-        (filters.gender ? 1 : 0);
+    const filterCount = (tempFilters.department ? 1 : 0) + 
+        (tempFilters.position ? 1 : 0) + 
+        (tempFilters.gender ? 1 : 0);
 
     return (
         <div className="bg-white dark:bg-[#1E1E1E] rounded-[1rem] shadow-sm border border-gray-200 dark:border-gray-700/50 p-5 mb-6 relative overflow-hidden">
@@ -82,8 +82,8 @@ const FacultyFilters = ({
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Department</label>
                             <select 
-                                value={filters.department}
-                                onChange={(e) => setFilters({...filters, department: e.target.value})}
+                                value={tempFilters.department}
+                                onChange={(e) => setTempFilters({...tempFilters, department: e.target.value})}
                                 className="w-full h-10 px-3 bg-gray-50 dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                             >
                                 <option value="">All Departments</option>
@@ -97,8 +97,8 @@ const FacultyFilters = ({
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Position / Rank</label>
                             <select 
-                                value={filters.position}
-                                onChange={(e) => setFilters({...filters, position: e.target.value})}
+                                value={tempFilters.position}
+                                onChange={(e) => setTempFilters({...tempFilters, position: e.target.value})}
                                 className="w-full h-10 px-3 bg-gray-50 dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                             >
                                 <option value="">All Positions</option>
@@ -112,8 +112,8 @@ const FacultyFilters = ({
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Gender</label>
                             <select 
-                                value={filters.gender}
-                                onChange={(e) => setFilters({...filters, gender: e.target.value})}
+                                value={tempFilters.gender}
+                                onChange={(e) => setTempFilters({...tempFilters, gender: e.target.value})}
                                 className="w-full h-10 px-3 bg-gray-50 dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
                             >
                                 <option value="">All Genders</option>

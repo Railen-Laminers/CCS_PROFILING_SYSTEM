@@ -24,8 +24,9 @@ const FacultyPage = () => {
         setCurrentPage,
         tempSearchQuery,
         setTempSearchQuery,
+        tempFilters,
+        setTempFilters,
         filters,
-        setFilters,
         departments,
         positions,
         isSearching,
@@ -141,8 +142,8 @@ const FacultyPage = () => {
                 setTempSearchQuery={setTempSearchQuery}
                 handleSearch={handleSearch}
                 isSearching={isSearching}
-                filters={filters}
-                setFilters={setFilters}
+                tempFilters={tempFilters}
+                setTempFilters={setTempFilters}
                 departments={departments}
                 positions={positions}
                 clearFilters={clearFilters}

@@ -26,10 +26,11 @@ export const useStudents = () => {
         gpa_min: searchParams.get('gpa_min') || '',
         gpa_max: searchParams.get('gpa_max') || '',
     });
+    const [tempFilters, setTempFilters] = useState({ ...filters });
 
-    // Debounced states for single-effect fetching
-    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
-    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+    // Debounced states for search bar results (if we wanted to keep search-as-you-type)
+    // However, the user requested only on click. So we use the applied searchQuery/filters.
+
 
     const [sports, setSports] = useState([]);
     const [organizations, setOrganizations] = useState([]);
@@ -113,20 +114,6 @@ export const useStudents = () => {
         }
     }, [showToast]);
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            if (searchQuery !== debouncedSearchQuery) {
-                setDebouncedSearchQuery(searchQuery);
-                setCurrentPage(1); 
-            }
-            if (JSON.stringify(filters) !== JSON.stringify(debouncedFilters)) {
-                setDebouncedFilters(filters);
-                setCurrentPage(1);
-            }
-        }, isFirstMount.current ? 0 : 300);
-
-        return () => clearTimeout(handler);
-    }, [searchQuery, filters]);
 
     useEffect(() => {
         if (abortControllerRef.current) {
@@ -154,14 +141,13 @@ export const useStudents = () => {
 
     const handleSearch = () => {
         setSearchQuery(tempSearchQuery);
+        setFilters({ ...tempFilters });
         setIsSearching(true);
         setCurrentPage(1);
     };
 
     const clearFilters = () => {
-        setSearchQuery('');
-        setTempSearchQuery('');
-        setFilters({
+        const emptyFilters = {
             sports: [],
             organizations: [],
             year_level: '',
@@ -169,7 +155,11 @@ export const useStudents = () => {
             gender: '',
             gpa_min: '',
             gpa_max: '',
-        });
+        };
+        setSearchQuery('');
+        setTempSearchQuery('');
+        setFilters(emptyFilters);
+        setTempFilters(emptyFilters);
         setCurrentPage(1);
         setSearchParams({}, { replace: true });
     };
@@ -177,14 +167,14 @@ export const useStudents = () => {
     const fetchAllStudents = async () => {
         try {
             const filterParams = {
-                search: debouncedSearchQuery || undefined,
-                sports: debouncedFilters.sports.length > 0 ? debouncedFilters.sports : undefined,
-                organizations: debouncedFilters.organizations.length > 0 ? debouncedFilters.organizations : undefined,
-                year_level: debouncedFilters.year_level ? parseInt(debouncedFilters.year_level) : undefined,
-                program: debouncedFilters.program || undefined,
-                gender: debouncedFilters.gender || undefined,
-                gpa_min: debouncedFilters.gpa_min ? parseFloat(debouncedFilters.gpa_min) : undefined,
-                gpa_max: debouncedFilters.gpa_max ? parseFloat(debouncedFilters.gpa_max) : undefined,
+                search: searchQuery || undefined,
+                sports: filters.sports.length > 0 ? filters.sports : undefined,
+                organizations: filters.organizations.length > 0 ? filters.organizations : undefined,
+                year_level: filters.year_level ? parseInt(filters.year_level) : undefined,
+                program: filters.program || undefined,
+                gender: filters.gender || undefined,
+                gpa_min: filters.gpa_min ? parseFloat(filters.gpa_min) : undefined,
+                gpa_max: filters.gpa_max ? parseFloat(filters.gpa_max) : undefined,
                 paginate: 'false'
             };
 
@@ -212,8 +202,9 @@ export const useStudents = () => {
         searchQuery,
         tempSearchQuery,
         setTempSearchQuery,
+        tempFilters,
+        setTempFilters,
         filters,
-        setFilters,
         sports,
         organizations,
         isSearching,
@@ -222,7 +213,7 @@ export const useStudents = () => {
         fetchAllStudents,
         refresh: () => {
             const signal = new AbortController().signal;
-            fetchStudents(currentPage, debouncedSearchQuery, debouncedFilters, signal);
+            fetchStudents(currentPage, searchQuery, filters, signal);
             fetchSports();
             fetchOrganizations();
         },
