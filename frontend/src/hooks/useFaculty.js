@@ -143,10 +143,10 @@ const useFaculty = () => {
     const fetchAllFaculty = async () => {
         try {
             const filterParams = {
-                search: debouncedSearchQuery || undefined,
-                department: debouncedFilters.department || undefined,
-                position: debouncedFilters.position || undefined,
-                gender: debouncedFilters.gender || undefined,
+                search: searchQuery || undefined,
+                department: filters.department || undefined,
+                position: filters.position || undefined,
+                gender: filters.gender || undefined,
                 paginate: 'false'
             };
             const result = await facultyProfileAPI.searchFaculty(filterParams);

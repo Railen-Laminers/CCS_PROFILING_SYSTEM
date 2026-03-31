@@ -28,9 +28,6 @@ export const useStudents = () => {
     });
     const [tempFilters, setTempFilters] = useState({ ...filters });
 
-    // Debounced states for search bar results (if we wanted to keep search-as-you-type)
-    // However, the user requested only on click. So we use the applied searchQuery/filters.
-
 
     const [sports, setSports] = useState([]);
     const [organizations, setOrganizations] = useState([]);
@@ -122,8 +119,8 @@ export const useStudents = () => {
         abortControllerRef.current = new AbortController();
         const signal = abortControllerRef.current.signal;
 
-        fetchStudents(currentPage, debouncedSearchQuery, debouncedFilters, signal);
-        syncUrlParams(currentPage, debouncedSearchQuery, debouncedFilters);
+        fetchStudents(currentPage, searchQuery, filters, signal);
+        syncUrlParams(currentPage, searchQuery, filters);
         
         isFirstMount.current = false;
 
@@ -132,7 +129,7 @@ export const useStudents = () => {
                 abortControllerRef.current.abort();
             }
         };
-    }, [currentPage, debouncedSearchQuery, debouncedFilters]);
+    }, [currentPage, searchQuery, filters]);
 
     useEffect(() => {
         fetchSports();
