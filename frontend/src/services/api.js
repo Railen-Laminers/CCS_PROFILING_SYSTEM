@@ -203,78 +203,22 @@ export const contactAPI = {
 // ─── Instruction API ─────────────────────────────────────────────────────────
 
 export const instructionAPI = {
-  // Classes
   getClasses: async (signal) => {
     const response = await axiosInstance.get('/instruction/classes', { signal });
     return response.data;
   },
-  createClass: async (data) => {
-    const response = await axiosInstance.post('/instruction/classes', data);
-    return response.data;
-  },
-  updateClass: async (id, data) => {
-    const response = await axiosInstance.put(`/instruction/classes/${id}`, data);
-    return response.data;
-  },
-  deleteClass: async (id) => {
-    const response = await axiosInstance.delete(`/instruction/classes/${id}`);
-    return response.data;
-  },
-
-  // Assignments
   getAssignments: async (signal) => {
     const response = await axiosInstance.get('/instruction/assignments', { signal });
     return response.data;
   },
-  createAssignment: async (data) => {
-    const response = await axiosInstance.post('/instruction/assignments', data);
-    return response.data;
-  },
-  updateAssignment: async (id, data) => {
-    const response = await axiosInstance.put(`/instruction/assignments/${id}`, data);
-    return response.data;
-  },
-  deleteAssignment: async (id) => {
-    const response = await axiosInstance.delete(`/instruction/assignments/${id}`);
-    return response.data;
-  },
-
-  // Lesson Plans
   getLessonPlans: async (signal) => {
     const response = await axiosInstance.get('/instruction/lesson-plans', { signal });
     return response.data;
   },
-  createLessonPlan: async (data) => {
-    const response = await axiosInstance.post('/instruction/lesson-plans', data);
-    return response.data;
-  },
-  updateLessonPlan: async (id, data) => {
-    const response = await axiosInstance.put(`/instruction/lesson-plans/${id}`, data);
-    return response.data;
-  },
-  deleteLessonPlan: async (id) => {
-    const response = await axiosInstance.delete(`/instruction/lesson-plans/${id}`);
-    return response.data;
-  },
-
-  // Materials
   getMaterials: async (signal) => {
     const response = await axiosInstance.get('/instruction/materials', { signal });
     return response.data;
   },
-  createMaterial: async (data) => {
-    const response = await axiosInstance.post('/instruction/materials', data);
-    return response.data;
-  },
-  updateMaterial: async (id, data) => {
-    const response = await axiosInstance.put(`/instruction/materials/${id}`, data);
-    return response.data;
-  },
-  deleteMaterial: async (id) => {
-    const response = await axiosInstance.delete(`/instruction/materials/${id}`);
-    return response.data;
-  },
 };
-
 
 export default authAPI;
