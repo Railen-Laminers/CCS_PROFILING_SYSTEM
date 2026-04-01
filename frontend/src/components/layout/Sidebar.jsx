@@ -9,7 +9,7 @@ import {
   FiClock, 
   FiCalendar, 
   FiFileText, 
-  FiSettings 
+  FiSettings
 } from 'react-icons/fi';
 import { HiOutlineAcademicCap } from 'react-icons/hi';
 

@@ -16,6 +16,9 @@ import FacultyDetails from './pages/private/admin/FacultyDetails';
 import CoursesPage from './pages/private/admin/Courses';
 import EventsPage from './pages/private/admin/Events';
 import InstructionPage from './pages/private/admin/Instruction';
+import Reports from './pages/private/admin/Reports';
+import Scheduling from './pages/private/admin/Scheduling';
+import SystemSettings from './pages/private/SystemSettings';
 
 // Loading component using the accent color
 const LoadingSpinner = () => (
@@ -135,6 +138,39 @@ function AppContent() {
           <ProtectedRoute>
             <DashboardLayout>
               <InstructionPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <Reports />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/scheduling"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <Scheduling />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <SystemSettings />
             </DashboardLayout>
           </ProtectedRoute>
         }
