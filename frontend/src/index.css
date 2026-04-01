@@ -5,6 +5,7 @@
 @layer base {
   body {
     @apply text-gray-900 dark:text-zinc-100 font-sans antialiased bg-transparent min-h-screen relative;
+    scrollbar-gutter: stable;
   }
 }
 
