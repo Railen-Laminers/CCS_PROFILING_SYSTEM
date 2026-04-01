@@ -13,9 +13,9 @@ import StudentPage from './pages/private/admin/Student';
 import StudentDetails from './pages/private/admin/StudentDetails';
 import FacultyPage from './pages/private/admin/Faculty';
 import FacultyDetails from './pages/private/admin/FacultyDetails';
-import CoursesPage from './pages/private/admin/Courses';
 import EventsPage from './pages/private/admin/Events';
 import InstructionPage from './pages/private/admin/Instruction';
+import CourseDetail from './pages/private/admin/CourseDetail';
 import Reports from './pages/private/admin/Reports';
 import Scheduling from './pages/private/admin/Scheduling';
 import SystemSettings from './pages/private/SystemSettings';
@@ -110,16 +110,6 @@ function AppContent() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/courses"
-        element={
-          <ProtectedRoute>
-            <DashboardLayout>
-              <CoursesPage />
-            </DashboardLayout>
-          </ProtectedRoute>
-        }
-      />
 
       <Route
         path="/events"
@@ -138,6 +128,17 @@ function AppContent() {
           <ProtectedRoute>
             <DashboardLayout>
               <InstructionPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/instruction/course/:id"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <CourseDetail />
             </DashboardLayout>
           </ProtectedRoute>
         }

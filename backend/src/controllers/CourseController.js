@@ -2,30 +2,22 @@ const CourseService = require('../services/CourseService');
 
 class CourseController {
   /**
-   * List all courses
+   * List all courses with curriculum metadata
    */
   static async index(req, res, next) {
     try {
       const courses = await CourseService.getAll();
-
-      // Transform _id to course_id for consistency
-      const transformedCourses = courses.map(course => ({
-        course_id: course._id,
-        credits: course.credits,
-        course_code: course.course_code,
-        course_title: course.course_title
-      }));
-
       res.status(200).json({
-        courses: transformedCourses
+        courses: courses
       });
     } catch (error) {
+      console.error(' [CourseController.index] Error:', error);
       next(error);
     }
   }
 
   /**
-   * Show a single course based on course_id or course_code
+   * Show a single course with metadata
    */
   static async show(req, res, next) {
     try {
@@ -33,14 +25,10 @@ class CourseController {
       const course = await CourseService.findByIdentifier(id);
 
       res.status(200).json({
-        course: {
-          course_id: course._id,
-          credits: course.credits,
-          course_code: course.course_code,
-          course_title: course.course_title
-        }
+        course: course
       });
     } catch (error) {
+      console.error(' [CourseController.show] Error:', error);
       if (error.message === 'Course not found') {
         return res.status(404).json({
           message: error.message
@@ -51,26 +39,26 @@ class CourseController {
   }
 
   /**
-   * Create a new course
+   * Create a new course with curriculum metadata
    */
   static async store(req, res, next) {
     try {
+      // Log outgoing request for debugging 400s
+      console.log(' [CourseController.store] Creating course with body:', req.body);
+      
       const course = await CourseService.create(req.body);
 
       res.status(201).json({
         message: 'Course created successfully',
-        course: {
-          course_id: course._id,
-          credits: course.credits,
-          course_code: course.course_code,
-          course_title: course.course_title
-        }
+        course: course
       });
     } catch (error) {
+      console.error(' [CourseController.store] Error details:', error);
+
       // Handle duplicate course code
       if (error.code === 11000) {
         return res.status(400).json({
-          message: 'Course code already exists',
+          message: 'Course code already exists in the curriculum.',
           errors: {
             course_code: ['Course code already exists']
           }
@@ -83,8 +71,12 @@ class CourseController {
         Object.keys(error.errors).forEach(key => {
           errors[key] = [error.errors[key].message];
         });
+        
+        // Return first validation error as main message for toast
+        const firstError = Object.values(error.errors)[0]?.message || 'Validation failed';
+
         return res.status(400).json({
-          message: 'Validation error',
+          message: firstError,
           errors
         });
       }
@@ -103,18 +95,15 @@ class CourseController {
 
       res.status(200).json({
         message: 'Course updated successfully',
-        course: {
-          course_id: course._id,
-          credits: course.credits,
-          course_code: course.course_code,
-          course_title: course.course_title
-        }
+        course: course
       });
     } catch (error) {
+      console.error(' [CourseController.update] Error details:', error);
+
       // Handle duplicate course code
       if (error.code === 11000) {
         return res.status(400).json({
-          message: 'Course code already exists',
+          message: 'Course code already exists.',
           errors: {
             course_code: ['Course code already exists']
           }
@@ -127,8 +116,11 @@ class CourseController {
         Object.keys(error.errors).forEach(key => {
           errors[key] = [error.errors[key].message];
         });
+        
+        const firstError = Object.values(error.errors)[0]?.message || 'Validation failed';
+
         return res.status(400).json({
-          message: 'Validation error',
+          message: firstError,
           errors
         });
       }
@@ -154,6 +146,7 @@ class CourseController {
         message: 'Course deleted successfully'
       });
     } catch (error) {
+      console.error(' [CourseController.destroy] Error:', error);
       if (error.message === 'Course not found') {
         return res.status(404).json({
           message: error.message

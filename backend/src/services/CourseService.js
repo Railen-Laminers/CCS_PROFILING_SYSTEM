@@ -2,14 +2,14 @@ const Course = require('../models/Course');
 
 class CourseService {
   /**
-   * Get all courses
+   * Get all courses with all curriculum metadata
    */
   static async getAll() {
-    return await Course.find().select('_id credits course_code course_title');
+    return await Course.find();
   }
 
   /**
-   * Find a course by ID or course_code
+   * Find a course by ID or course_code with full metadata
    */
   static async findByIdentifier(identifier) {
     const course = await Course.findOne({
@@ -17,7 +17,7 @@ class CourseService {
         { _id: identifier },
         { course_code: identifier }
       ]
-    }).select('_id credits course_code course_title');
+    });
 
     if (!course) {
       throw new Error('Course not found');
@@ -27,13 +27,16 @@ class CourseService {
   }
 
   /**
-   * Create a new course
+   * Create a new course with full curriculum fields
    */
   static async create(data) {
     return await Course.create({
-      credits: data.credits,
+      units: data.units,
       course_code: data.course_code,
-      course_title: data.course_title
+      course_title: data.course_title,
+      year_level: data.year_level,
+      semester: data.semester,
+      syllabus: data.syllabus
     });
   }
 
@@ -46,7 +49,14 @@ class CourseService {
       throw new Error('Course not found');
     }
 
-    Object.assign(course, data);
+    // Assign only allowed curriculum fields
+    const allowedFields = ['units', 'course_code', 'course_title', 'year_level', 'semester', 'syllabus'];
+    allowedFields.forEach(field => {
+      if (data[field] !== undefined) {
+        course[field] = data[field];
+      }
+    });
+
     await course.save();
     return course;
   }

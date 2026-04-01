@@ -68,7 +68,7 @@ export const Dashboard = () => {
 
             {/* Courses Card Link */}
             <Link
-              to="/courses"
+              to="/instruction"
               className="group block p-6 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-800 dark:to-gray-700 rounded-xl border border-purple-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow duration-200"
             >
               <div className="flex items-center justify-between">
