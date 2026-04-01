@@ -1,256 +1,298 @@
 import React from 'react';
 import useEvents from '../../../hooks/useEvents';
-import { FaPlus, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+import { 
+  FiPlus, 
+  FiEdit, 
+  FiTrash2, 
+  FiX, 
+  FiCalendar, 
+  FiClock, 
+  FiInfo, 
+  FiSearch 
+} from 'react-icons/fi';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Badge } from '../../../components/ui/Badge';
+import { EmptyState } from '../../../components/ui/EmptyState';
+
+const EventItem = ({ event, onEdit, onDelete, formatDateTime }) => (
+  <Card className="bg-white dark:bg-[#252525] border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl overflow-hidden group">
+    <CardContent className="p-5">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="flex items-center gap-6">
+          <div className="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center shrink-0 border border-brand-500/20 group-hover:scale-110 transition-transform duration-300">
+            <FiCalendar className="w-6 h-6 text-brand-500" />
+          </div>
+          <div>
+            <h3 className="text-[17px] font-bold text-gray-900 dark:text-gray-100 group-hover:text-brand-500 transition-colors line-clamp-1 leading-tight">
+              {event.title}
+            </h3>
+            <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1 line-clamp-1 max-w-md">
+              {event.description || 'No description available'}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12 flex-1 max-w-xl px-6 border-l border-gray-100 dark:border-gray-800 ml-6 hidden lg:grid">
+          <div className="flex items-center gap-3 text-gray-600 dark:text-zinc-400">
+            <FiClock className="w-4 h-4 text-brand-500" />
+            <div className="flex flex-col">
+              <span className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Starts</span>
+              <span className="text-[13px] font-semibold">{formatDateTime(event.start_datetime)}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 text-gray-600 dark:text-zinc-400">
+            <FiClock className="w-4 h-4 text-brand-500" />
+            <div className="flex flex-col">
+              <span className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Ends</span>
+              <span className="text-[13px] font-semibold">{formatDateTime(event.end_datetime)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <Button 
+            onClick={() => onEdit(event)}
+            variant="ghost"
+            className="h-9 w-9 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-all active:scale-95"
+          >
+            <FiEdit className="w-4 h-4" />
+          </Button>
+          <Button 
+            onClick={() => onDelete(event.event_id)}
+            variant="ghost"
+            className="h-9 w-9 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all active:scale-95"
+          >
+            <FiTrash2 className="w-4 h-4" />
+          </Button>
+          <Button 
+            className="h-9 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-[13px] font-semibold transition-all px-6 active:scale-95 shadow-sm ml-2"
+          >
+            View Details
+          </Button>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
 
 const EventsPage = () => {
-    const {
-        events,
-        loading,
-        error,
-        modalOpen,
-        editingEvent,
-        formData,
-        formErrors,
-        submitLoading,
-        openCreateModal,
-        openEditModal,
-        closeModal,
-        handleSubmit,
-        handleDelete,
-        handleInputChange,
-        formatDateTime,
-    } = useEvents();
+  const {
+    events,
+    loading,
+    error,
+    modalOpen,
+    editingEvent,
+    formData,
+    formErrors,
+    submitLoading,
+    openCreateModal,
+    openEditModal,
+    closeModal,
+    handleSubmit,
+    handleDelete,
+    handleInputChange,
+    formatDateTime,
+  } = useEvents();
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500"></div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="bg-red-100 dark:bg-red-900/50 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded-xl relative mb-4">
-                {error}
-            </div>
-        );
-    }
-
+  if (loading) {
     return (
-        <div className="w-full">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Events Management</h1>
-                <Button
-                    onClick={openCreateModal}
-                    className="flex items-center gap-2"
-                >
-                    <FaPlus size={14} />
-                    <span>Add Event</span>
-                </Button>
-            </div>
-
-            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-gray-200 dark:border-gray-800">
-                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Title</th>
-                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 hidden sm:table-cell">Description</th>
-                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Start Date</th>
-                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 hidden md:table-cell">End Date</th>
-                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                                {events.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="5" className="py-12 text-center text-sm text-gray-500 dark:text-zinc-400">
-                                            No events found. Click "Add Event" to create one.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    events.map((event) => (
-                                        <tr 
-                                            key={event.event_id} 
-                                            className="hover:bg-brand-500/5 dark:hover:bg-brand-500/10 transition-all duration-200 group"
-                                        >
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 font-medium">
-                                                <div className="truncate max-w-xs" title={event.title}>{event.title}</div>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-700 dark:text-zinc-400 hidden sm:table-cell">
-                                                <div className="truncate max-w-xs" title={event.description}>{event.description || 'N/A'}</div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-zinc-400">
-                                                {formatDateTime(event.start_datetime)}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-zinc-400 hidden md:table-cell">
-                                                {formatDateTime(event.end_datetime)}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                <div className="flex justify-end gap-2 items-center">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => openEditModal(event)}
-                                                        className="text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10"
-                                                        title="Edit Event"
-                                                    >
-                                                        <FaEdit className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => handleDelete(event.event_id)}
-                                                        className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
-                                                        title="Delete Event"
-                                                    >
-                                                        <FaTrash className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Modal for Create/Edit */}
-            {modalOpen && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-                    <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200">
-                        <div className="p-6 relative">
-                            <button
-                                onClick={closeModal}
-                                className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                            >
-                                <FaTimes size={20} />
-                            </button>
-                            <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white tracking-tight">
-                                {editingEvent ? 'Edit Event' : 'Add New Event'}
-                            </h2>
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" htmlFor="title">
-                                        Title
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="title"
-                                        name="title"
-                                        value={formData.title}
-                                        onChange={handleInputChange}
-                                        className={`w-full px-4 py-2 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white ${
-                                            formErrors.title ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
-                                        }`}
-                                        placeholder="Enter event title"
-                                    />
-                                    {formErrors.title && (
-                                        <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.title}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" htmlFor="description">
-                                        Description
-                                    </label>
-                                    <textarea
-                                        id="description"
-                                        name="description"
-                                        rows="3"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
-                                        className={`w-full px-4 py-2 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white resize-none ${
-                                            formErrors.description ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
-                                        }`}
-                                        placeholder="Describe the event"
-                                    ></textarea>
-                                    {formErrors.description && (
-                                        <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.description}</p>
-                                    )}
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" htmlFor="start_datetime">
-                                            Start Date & Time
-                                        </label>
-                                        <input
-                                            type="datetime-local"
-                                            id="start_datetime"
-                                            name="start_datetime"
-                                            value={formData.start_datetime}
-                                            onChange={handleInputChange}
-                                            className={`w-full px-4 py-2 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white ${
-                                                formErrors.start_datetime ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
-                                            }`}
-                                        />
-                                        {formErrors.start_datetime && (
-                                            <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.start_datetime}</p>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" htmlFor="end_datetime">
-                                            End Date & Time
-                                        </label>
-                                        <input
-                                            type="datetime-local"
-                                            id="end_datetime"
-                                            name="end_datetime"
-                                            value={formData.end_datetime}
-                                            onChange={handleInputChange}
-                                            className={`w-full px-4 py-2 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white ${
-                                                formErrors.end_datetime ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
-                                            }`}
-                                        />
-                                        {formErrors.end_datetime && (
-                                            <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.end_datetime}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="pt-4 flex flex-col-reverse sm:flex-row justify-end gap-3">
-                                    <Button
-                                        type="button"
-                                        variant="secondary"
-                                        onClick={closeModal}
-                                        disabled={submitLoading}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        type="submit"
-                                        disabled={submitLoading}
-                                        className="gap-2"
-                                    >
-                                        {submitLoading ? (
-                                            <>
-                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                <span>Saving...</span>
-                                            </>
-                                        ) : editingEvent ? (
-                                            <>
-                                                <FaEdit size={14} />
-                                                <span>Update Event</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <FaPlus size={14} />
-                                                <span>Create Event</span>
-                                            </>
-                                        )}
-                                    </Button>
-                                </div>
-                            </form>
-                        </div>
-                    </Card>
-                </div>
-            )}
+      <div className="flex justify-center items-center h-64">
+        <div className="flex flex-col items-center gap-3">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-brand-500"></div>
+          <p className="text-sm font-medium text-gray-400">Loading events...</p>
         </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="w-full">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Events Management</h1>
+          <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1">Manage and organize campus events and activities</p>
+        </div>
+        <Button
+          onClick={openCreateModal}
+          className="h-10 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-sm font-bold px-6 shadow-sm shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2"
+        >
+          <FiPlus className="w-4 h-4" />
+          <span>Add New Event</span>
+        </Button>
+      </div>
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-[14px] px-6 py-4 rounded-2xl mb-8 font-medium">
+          {error}
+        </div>
+      )}
+
+      {/* Events List Container */}
+      <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
+        <div className="relative group max-w-sm ml-auto mb-6">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <FiSearch className="h-5 w-5 text-gray-400 dark:text-zinc-500 group-focus-within:text-brand-500 transition-colors" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search events..."
+            className="block w-full h-10 pl-11 pr-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-sm"
+          />
+        </div>
+
+        <div className="space-y-4">
+          {events.length > 0 ? (
+            events.map((event) => (
+              <EventItem 
+                key={event.event_id} 
+                event={event} 
+                onEdit={openEditModal} 
+                onDelete={handleDelete}
+                formatDateTime={formatDateTime}
+              />
+            ))
+          ) : (
+            <EmptyState 
+              icon={<FiCalendar className="w-12 h-12 text-gray-300 dark:text-zinc-700" />} 
+              title="No events found in the database."
+              className="bg-gray-50 dark:bg-[#1A1A1A] border-gray-100 dark:border-gray-800 rounded-2xl py-16 shadow-none"
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Modal for Create/Edit */}
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
+          <Card className="w-full max-w-xl bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 relative">
+              <button
+                onClick={closeModal}
+                className="absolute top-6 right-6 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors bg-gray-50 dark:bg-zinc-800 p-2 rounded-lg"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+              
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center border border-brand-500/20">
+                  {editingEvent ? <FiEdit className="text-brand-500" /> : <FiPlus className="text-brand-500" />}
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+                  {editingEvent ? 'Edit Event' : 'Add New Event'}
+                </h2>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[13px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1" htmlFor="title">
+                    Event Title
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    className={`block w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] border transition-all rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+                      formErrors.title ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
+                    }`}
+                    placeholder="E.g. Department Assembly"
+                  />
+                  {formErrors.title && (
+                    <p className="text-red-500 text-xs mt-1 font-medium ml-1">{formErrors.title}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[13px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1" htmlFor="description">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows="4"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    className={`block w-full px-4 py-3 bg-gray-50 dark:bg-[#18181B] border transition-all rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none ${
+                      formErrors.description ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
+                    }`}
+                    placeholder="Describe the details of the event..."
+                  ></textarea>
+                  {formErrors.description && (
+                    <p className="text-red-500 text-xs mt-1 font-medium ml-1">{formErrors.description}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1" htmlFor="start_datetime">
+                      Start Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      id="start_datetime"
+                      name="start_datetime"
+                      value={formData.start_datetime}
+                      onChange={handleInputChange}
+                      className={`block w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] border transition-all rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+                        formErrors.start_datetime ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
+                      }`}
+                    />
+                    {formErrors.start_datetime && (
+                      <p className="text-red-500 text-xs mt-1 font-medium ml-1">{formErrors.start_datetime}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1" htmlFor="end_datetime">
+                      End Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      id="end_datetime"
+                      name="end_datetime"
+                      value={formData.end_datetime}
+                      onChange={handleInputChange}
+                      className={`block w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] border transition-all rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+                        formErrors.end_datetime ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
+                      }`}
+                    />
+                    {formErrors.end_datetime && (
+                      <p className="text-red-500 text-xs mt-1 font-medium ml-1">{formErrors.end_datetime}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={closeModal}
+                    disabled={submitLoading}
+                    className="h-11 px-8 rounded-xl font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={submitLoading}
+                    className="h-11 px-10 bg-brand-500 hover:bg-brand-600 text-white rounded-xl shadow-lg shadow-brand-500/20 font-bold active:scale-95 transition-all flex items-center gap-2 min-w-[140px] justify-center"
+                  >
+                    {submitLoading ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      editingEvent ? 'Save Changes' : 'Create Event'
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default EventsPage;

@@ -14,10 +14,53 @@ import {
   FiDroplet,
   FiGlobe,
   FiX,
-  FiActivity
+  FiActivity,
+  FiCheck,
+  FiLayout,
+  FiMonitor,
+  FiSearch
 } from 'react-icons/fi';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
+
+const StatCards = ({ statCards }) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    {statCards.map((card, index) => (
+      <Card key={index} className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl font-sans">
+        <CardContent className="p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">0</p>
+              <p className="text-xs font-semibold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mt-1">{card.label}</p>
+            </div>
+            <div className={`${card.bgColor} rounded-xl p-3 shadow-inner bg-opacity-10 dark:bg-opacity-10`}>
+              <card.icon className={`h-6 w-6 ${card.color}`} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+);
+
+const TabNavigation = ({ tabs, activeTab, setActiveTab }) => (
+  <div className="flex space-x-2 mb-8 overflow-x-auto p-2 bg-gray-100 dark:bg-[#252525] rounded-[1.25rem] border border-gray-200 dark:border-gray-800 scrollbar-hide shadow-inner relative overflow-hidden">
+    {tabs.map((tab, index) => (
+      <button
+        key={index}
+        onClick={() => setActiveTab(index)}
+        className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-[1.25rem] relative z-10 focus:outline-none ${
+          activeTab === index
+            ? 'bg-white dark:bg-[#1E1E1E] text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10 backdrop-blur-md'
+            : 'text-zinc-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-[#2C2C2C]'
+        }`}
+      >
+        {tab}
+      </button>
+    ))}
+  </div>
+);
 
 const SystemSettings = () => {
   const { primaryColor, updatePrimaryColor } = useTheme();
@@ -46,10 +89,10 @@ const SystemSettings = () => {
   const tabs = ['General', 'User Management', 'Notifications', 'Security', 'Appearance'];
 
   const statCards = [
-    { label: 'Total Users', icon: FiUsers, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-    { label: 'Storage Used', icon: FiDatabase, color: 'text-green-600', bgColor: 'bg-green-100' },
-    { label: 'Active Sessions', icon: FiShield, color: 'text-orange-600', bgColor: 'bg-orange-100' },
-    { label: 'Last Backup', icon: FiHardDrive, color: 'text-purple-600', bgColor: 'bg-purple-100' },
+    { label: 'Total Users', icon: FiUsers, color: 'text-blue-600', bgColor: 'bg-blue-500' },
+    { label: 'Storage Used', icon: FiDatabase, color: 'text-green-600', bgColor: 'bg-green-500' },
+    { label: 'Active Sessions', icon: FiShield, color: 'text-orange-600', bgColor: 'bg-orange-500' },
+    { label: 'Last Backup', icon: FiHardDrive, color: 'text-purple-600', bgColor: 'bg-purple-500' },
   ];
 
   const toggleNotification = (id) => {
@@ -113,138 +156,120 @@ const SystemSettings = () => {
     fileInputRef.current?.click();
   };
 
-  const inputClasses = "w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white";
-  const labelClasses = "block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5";
+  const inputClasses = "w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-[14px]";
+  const labelClasses = "block text-[12px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-2 ml-1";
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">System Settings</h1>
-          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Configure system preferences and settings</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">System Configuration</h1>
+          <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1">Global settings and administrative preferences</p>
         </div>
-        <Button className="gap-2">
-          <FiUpload className="h-5 w-5" />
-          <span>Backup System</span>
+        <Button className="h-10 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-sm font-bold px-6 shadow-sm shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2">
+          <FiUpload className="h-4 w-4" />
+          <span>Backup System Now</span>
         </Button>
       </div>
 
       {/* Stat Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((card, index) => (
-          <Card key={index} className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">0</p>
-                  <p className="text-sm font-medium text-gray-500 dark:text-zinc-400 mt-1">{card.label}</p>
-                </div>
-                <div className={`${card.bgColor} dark:bg-opacity-10 p-3 rounded-xl`}>
-                  <card.icon className={`h-6 w-6 ${card.color}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <StatCards statCards={statCards} />
 
       {/* Navigation Tabs */}
-      <div className="bg-gray-100/50 dark:bg-zinc-900/50 p-1.5 rounded-xl flex gap-1 overflow-x-auto no-scrollbar">
-        {tabs.map((tab, index) => (
-          <button
-            key={index}
-            onClick={() => setActiveTab(index)}
-            className={`flex-1 min-w-fit px-4 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 whitespace-nowrap ${
-              activeTab === index
-                ? 'bg-white dark:bg-zinc-800 text-brand-500 shadow-sm'
-                : 'text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-800/50'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      <TabNavigation 
+        tabs={tabs} 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+      />
 
       {/* Main Content Area */}
-      <div className="space-y-6">
+      <div className="space-y-10">
         {activeTab === 0 && (
-          <div className="space-y-6">
-            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
-              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <FiSettings className="w-5 h-5 text-brand-500" />
-                  General Settings
+          <div className="space-y-10">
+            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                  <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                    <FiSettings className="w-5 h-5 text-brand-500" />
+                  </div>
+                  General Information
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className={labelClasses}>System Name</label>
+              <CardContent className="p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className={labelClasses}>System Title</label>
                     <input type="text" className={inputClasses} placeholder="CCS Profiling System" />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <label className={labelClasses}>Institution Name</label>
                     <input type="text" className={inputClasses} placeholder="College of Computer Studies" />
                   </div>
-                  <div>
-                    <label className={labelClasses}>Academic Year</label>
-                    <input type="text" className={inputClasses} placeholder="2023-2024" />
+                  <div className="space-y-2">
+                    <label className={labelClasses}>Academic period (Year)</label>
+                    <input type="text" className={inputClasses} placeholder="2024-2025" />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <label className={labelClasses}>Current Semester</label>
-                    <input type="text" className={inputClasses} placeholder="1st Semester" />
-                  </div>
-                  <div>
-                    <label className={labelClasses}>Time Zone</label>
                     <select className={inputClasses}>
-                      <option>(GMT+08:00) Manila</option>
-                      <option>(GMT+00:00) UTC</option>
+                      <option>1st Semester</option>
+                      <option>2nd Semester</option>
+                      <option>Summer Term</option>
                     </select>
                   </div>
-                  <div>
-                    <label className={labelClasses}>Language</label>
+                  <div className="space-y-2">
+                    <label className={labelClasses}>System Localization (Time Zone)</label>
                     <select className={inputClasses}>
-                      <option>English (US)</option>
-                      <option>Filipino</option>
+                      <option>(GMT+08:00) Manila / Philippines</option>
+                      <option>(GMT+00:00) Universal Coordinated Time</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className={labelClasses}>Interface Language</label>
+                    <select className={inputClasses}>
+                      <option>English - North America</option>
+                      <option>Filipino - PH</option>
                     </select>
                   </div>
                 </div>
-                <div className="mt-8 flex justify-end">
-                  <Button>Save General Settings</Button>
+                <div className="mt-10 flex justify-end">
+                  <Button className="h-11 px-8 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-md active:scale-95 transition-all">Save Environmental Variables</Button>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
-              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <FiMail className="w-5 h-5 text-blue-500" />
-                  Email Configuration
+            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300 delay-75">
+              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                  <div className="bg-blue-500/10 p-2 rounded-lg border border-blue-500/20">
+                    <FiMail className="w-5 h-5 text-blue-500" />
+                  </div>
+                  Email Gateway (SMTP)
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className={labelClasses}>SMTP Server</label>
+              <CardContent className="p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className={labelClasses}>SMTP Hostname</label>
                     <input type="text" className={inputClasses} placeholder="smtp.gmail.com" />
                   </div>
-                  <div>
-                    <label className={labelClasses}>SMTP Port</label>
+                  <div className="space-y-2">
+                    <label className={labelClasses}>Port protocol</label>
                     <input type="text" className={inputClasses} placeholder="587" />
                   </div>
-                  <div>
-                    <label className={labelClasses}>From Email</label>
+                  <div className="space-y-2">
+                    <label className={labelClasses}>Outgoing Address</label>
                     <input type="email" className={inputClasses} placeholder="noreply@ccs.edu" />
                   </div>
-                  <div>
-                    <label className={labelClasses}>From Name</label>
-                    <input type="text" className={inputClasses} placeholder="System Admin" />
+                  <div className="space-y-2">
+                    <label className={labelClasses}>Sender Identifier</label>
+                    <input type="text" className={inputClasses} placeholder="CCS Profiling System Administrator" />
                   </div>
                 </div>
-                <div className="mt-8 flex justify-end gap-3">
-                  <Button variant="secondary">Test Connection</Button>
-                  <Button>Save Email Settings</Button>
+                <div className="mt-10 flex justify-end gap-3">
+                  <Button variant="ghost" className="h-11 px-6 rounded-xl border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-[#252525] font-bold">Validate Connection</Button>
+                  <Button className="h-11 px-8 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-md active:scale-95 transition-all">Save Gateway Settings</Button>
                 </div>
               </CardContent>
             </Card>
@@ -252,37 +277,42 @@ const SystemSettings = () => {
         )}
 
         {activeTab === 1 && (
-          <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <FiUsers className="w-5 h-5 text-brand-500" />
-                User Management
+          <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <CardHeader className="p-6 flex flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+              <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                  <FiUsers className="w-5 h-5 text-brand-500" />
+                </div>
+                Access Control (Users)
               </CardTitle>
-              <Button size="sm" className="gap-2">
+              <Button size="sm" className="gap-2 h-9 bg-brand-500 hover:bg-brand-600 rounded-lg px-5 font-bold shadow-sm active:scale-95 transition-all">
                 <FiPlus className="h-4 w-4" />
-                <span>Add User</span>
+                <span>Create Administrator</span>
               </Button>
             </CardHeader>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-200 dark:border-gray-800">
-                      <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Name</th>
-                      <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Email</th>
-                      <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Role</th>
-                      <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 text-right">Actions</th>
+                    <tr className="border-b border-gray-100 dark:border-gray-800">
+                      <th className="px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-zinc-500 bg-gray-50/30 dark:bg-zinc-900/5">Avatar & Identity</th>
+                      <th className="px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-zinc-500 bg-gray-50/30 dark:bg-zinc-900/5">Contact Point</th>
+                      <th className="px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-zinc-500 bg-gray-50/30 dark:bg-zinc-900/5">Authorization Rank</th>
+                      <th className="px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-zinc-500 bg-gray-50/30 dark:bg-zinc-900/5 text-right">Operations</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="hover:bg-brand-500/5 dark:hover:bg-brand-500/10">
-                      <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-zinc-500">
-                        <div className="flex flex-col items-center gap-2">
-                           <div className="bg-gray-100 dark:bg-zinc-800/50 p-4 rounded-full">
-                             <FiUsers className="h-8 w-8 text-gray-300 dark:text-zinc-600" />
+                    <tr>
+                      <td colSpan={4} className="px-8 py-20 text-center text-gray-500 dark:text-zinc-500 bg-white dark:bg-[#1E1E1E]">
+                        <div className="flex flex-col items-center gap-4">
+                           <div className="bg-gray-100 dark:bg-[#252525] p-5 rounded-3xl border border-gray-200 dark:border-gray-800">
+                             <FiUsers className="h-10 w-10 text-gray-300 dark:text-zinc-700" />
                            </div>
-                           <p className="font-semibold text-lg dark:text-zinc-300">No users found</p>
-                           <p className="text-sm">Manage system administrators and staff</p>
+                           <div>
+                            <p className="font-bold text-xl text-gray-900 dark:text-zinc-200 tracking-tight">No administrative profiles</p>
+                            <p className="text-[14px] text-gray-400 dark:text-zinc-500 mt-1 max-w-sm mx-auto">You haven't defined any additional administrators or support staff profiles yet.</p>
+                           </div>
+                           <Button variant="ghost" className="mt-4 text-brand-500 font-bold border border-brand-500/20 hover:bg-brand-500/10 rounded-xl px-8 h-10 transition-all">Add Initial User</Button>
                         </div>
                       </td>
                     </tr>
@@ -294,65 +324,77 @@ const SystemSettings = () => {
         )}
 
         {activeTab === 2 && (
-          <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
-            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <FiBell className="w-5 h-5 text-brand-500" />
-                Notification Preferences
+          <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+              <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                <div className="bg-yellow-500/10 p-2 rounded-lg border border-yellow-500/20">
+                  <FiBell className="w-5 h-5 text-yellow-500" />
+                </div>
+                Push & Email notification matrix
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-gray-100 dark:divide-gray-800">
                 {notificationSettings.map((setting) => (
-                  <div key={setting.id} className="p-6 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-zinc-800/30 transition-colors">
+                  <div key={setting.id} className="p-8 flex items-center justify-between hover:bg-gray-50/30 dark:hover:bg-[#252525]/30 transition-all group">
                     <div className="max-w-[80%]">
-                      <h3 className="font-bold text-gray-900 dark:text-white">{setting.title}</h3>
-                      <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">{setting.description}</p>
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-bold text-[16px] text-gray-900 dark:text-white group-hover:text-brand-500 transition-colors">{setting.title}</h3>
+                        {setting.enabled && <FiCheck className="w-4 h-4 text-green-500" />}
+                      </div>
+                      <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1">{setting.description}</p>
                     </div>
                     <button
                       onClick={() => toggleNotification(setting.id)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                        setting.enabled ? 'bg-brand-500' : 'bg-gray-200 dark:bg-zinc-700'
+                      className={`relative inline-flex h-6 w-12 items-center rounded-full transition-all focus:outline-none ring-offset-2 focus:ring-2 focus:ring-brand-500/50 ${
+                        setting.enabled ? 'bg-brand-500 shadow-inner' : 'bg-gray-200 dark:bg-zinc-800'
                       }`}
                     >
                       <span
                         className={`${
-                          setting.enabled ? 'translate-x-6' : 'translate-x-1'
-                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                          setting.enabled ? 'translate-x-7' : 'translate-x-1'
+                        } inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform duration-300 transition-timing-ease-in-out`}
                       />
                     </button>
                   </div>
                 ))}
               </div>
-              <div className="p-6 flex justify-end">
-                <Button>Save Preferences</Button>
+              <div className="p-8 border-t border-gray-100 dark:border-gray-800 flex justify-end">
+                <Button className="h-11 px-10 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-lg shadow-brand-500/20">Save Matrix Changes</Button>
               </div>
             </CardContent>
           </Card>
         )}
 
         {activeTab === 3 && (
-          <div className="space-y-6">
-            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
-              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <FiLock className="w-5 h-5 text-orange-500" />
-                  Security Policy
+          <div className="space-y-10">
+            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                  <div className="bg-orange-500/10 p-2 rounded-lg border border-orange-500/20">
+                    <FiShield className="w-5 h-5 text-orange-500" />
+                  </div>
+                  Cybersecurity compliance & policies
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-gray-100 dark:divide-gray-800">
                   {securitySettings.map((setting) => (
-                    <div key={setting.id} className="p-6 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-zinc-800/30 transition-colors">
-                      <div>
-                        <h3 className="font-bold text-gray-900 dark:text-white">{setting.title}</h3>
-                        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">{setting.description}</p>
+                    <div key={setting.id} className="p-8 flex items-center justify-between hover:bg-gray-50/30 dark:hover:bg-[#252525]/30 transition-all group">
+                      <div className="flex items-center gap-6">
+                        <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 flex items-center justify-center group-hover:border-brand-500/50 transition-colors">
+                          <FiLock className="w-4 h-4 text-gray-400 dark:text-zinc-600 group-hover:text-brand-500" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-[16px] text-gray-900 dark:text-white group-hover:text-brand-500 transition-colors">{setting.title}</h3>
+                          <p className="text-[14px] text-gray-500 dark:text-zinc-400 mt-1">{setting.description}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                         <span className="px-3 py-1 bg-brand-500/10 text-brand-500 rounded-lg text-xs font-bold uppercase tracking-wider underline underline-offset-4 decoration-2">
+                      <div className="flex items-center gap-4">
+                         <Badge variant="outline" className="h-8 px-4 border border-brand-500/20 bg-brand-500/10 text-brand-500 text-[11px] font-bold uppercase tracking-wider rounded-lg">
                            {setting.status}
-                         </span>
-                         <Button variant="outline" size="sm">Configure</Button>
+                         </Badge>
+                         <Button variant="ghost" className="h-9 px-4 rounded-lg bg-gray-50 dark:bg-zinc-900 text-[13px] font-bold border border-gray-200 dark:border-gray-800 hover:text-brand-500 transition-all">Configure</Button>
                       </div>
                     </div>
                   ))}
@@ -360,30 +402,34 @@ const SystemSettings = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
-              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <FiActivity className="w-5 h-5 text-blue-500" />
-                  Change Password
+            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300 delay-75">
+              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                  <div className="bg-blue-500/10 p-2 rounded-lg border border-blue-500/20">
+                    <FiActivity className="w-5 h-5 text-blue-500" />
+                  </div>
+                  Credential rotation (Password)
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div>
-                  <label className={labelClasses}>Current Password</label>
-                  <input type="password" className={inputClasses} placeholder="••••••••" />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className={labelClasses}>New Password</label>
-                    <input type="password" className={inputClasses} placeholder="••••••••" />
-                  </div>
-                  <div>
-                    <label className={labelClasses}>Confirm New Password</label>
+              <CardContent className="p-8 space-y-8">
+                <div className="max-w-md">
+                  <div className="space-y-2">
+                    <label className={labelClasses}>Current administrative secret</label>
                     <input type="password" className={inputClasses} placeholder="••••••••" />
                   </div>
                 </div>
-                <div className="mt-8 flex justify-end">
-                  <Button>Update Password</Button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className={labelClasses}>New cryptographic password</label>
+                    <input type="password" className={inputClasses} placeholder="••••••••" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className={labelClasses}>Confirm secret synchronization</label>
+                    <input type="password" className={inputClasses} placeholder="••••••••" />
+                  </div>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <Button className="h-11 px-10 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-lg active:scale-95 transition-all">Synchronize Passwords</Button>
                 </div>
               </CardContent>
             </Card>
@@ -391,95 +437,123 @@ const SystemSettings = () => {
         )}
 
         {activeTab === 4 && (
-          <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
-            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <FiDroplet className="w-5 h-5 text-brand-500" />
-                Appearance Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-8">
-              {/* Primary Color */}
-              <div>
-                <label className={labelClasses}>Primary Brand Color</label>
-                <div className="flex items-center gap-4">
-                  <div 
-                    className="w-12 h-12 rounded-xl border-2 border-white dark:border-gray-800 shadow-sm cursor-pointer hover:scale-105 transition-transform"
-                    style={{ backgroundColor: primaryColor }}
-                    onClick={() => document.getElementById('color-picker').click()}
-                  />
-                  <input
-                    type="color"
-                    id="color-picker"
-                    value={primaryColor}
-                    onChange={handleColorChange}
-                    className="hidden"
-                  />
-                  <input
-                    type="text"
-                    value={primaryColor}
-                    onChange={handleColorChange}
-                    className={`${inputClasses} flex-1 font-mono uppercase`}
-                    placeholder="#F97316"
-                  />
-                </div>
-              </div>
-
-              {/* Logo Upload */}
-              <div>
-                <label className={labelClasses}>System Logo</label>
-                <div 
-                  className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-200 cursor-pointer group ${
-                    isDragOver 
-                      ? 'border-brand-500 bg-brand-500/5' 
-                      : 'border-gray-200 dark:border-gray-800 hover:border-brand-500/50 hover:bg-brand-500/5'
-                  }`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  onClick={handleChooseFileClick}
-                >
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    className="hidden"
-                  />
-                  {logoPreview ? (
-                    <div className="relative inline-block">
-                      <img 
-                        src={logoPreview} 
-                        alt="Logo preview" 
-                        className="max-h-32 mx-auto rounded-lg"
+          <div className="space-y-10">
+            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                  <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                    <FiDroplet className="w-5 h-5 text-brand-500" />
+                  </div>
+                  Visual branding & Identity (Appearance)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8 space-y-10">
+                {/* Primary Color */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                  <div className="md:col-span-1">
+                    <h4 className="text-[15px] font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Accent Signature Color</h4>
+                    <p className="text-[13px] text-gray-500 dark:text-zinc-500 mt-1">This color will be consistent across all buttons, active states, and highlights.</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <div className="flex items-center gap-6 p-6 bg-gray-100/50 dark:bg-[#252525]/30 rounded-2xl border border-gray-200 dark:border-gray-800/50">
+                      <div 
+                        className="w-16 h-16 rounded-2xl border-4 border-white dark:border-zinc-800 shadow-xl cursor-pointer hover:scale-110 active:scale-95 hover:rotate-3 transition-all ring-4 ring-brand-500/10"
+                        style={{ backgroundColor: primaryColor }}
+                        onClick={() => document.getElementById('color-picker').click()}
                       />
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleRemoveLogo(); }}
-                        className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-2 shadow-lg hover:bg-red-600 transition-colors"
-                      >
-                        <FiX className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="bg-gray-100 dark:bg-zinc-800 p-4 rounded-2xl group-hover:bg-brand-500/10 transition-colors">
-                        <FiGlobe className="h-8 w-8 text-gray-400 group-hover:text-brand-500" />
+                      <div className="flex-1 space-y-3">
+                        <input
+                          type="color"
+                          id="color-picker"
+                          value={primaryColor}
+                          onChange={handleColorChange}
+                          className="hidden"
+                        />
+                        <div className="flex items-center gap-2">
+                          <span className="text-[12px] font-bold text-gray-400 dark:text-zinc-600 font-mono">HEX CODE:</span>
+                          <input
+                            type="text"
+                            value={primaryColor}
+                            onChange={handleColorChange}
+                            className={`${inputClasses} h-10 w-40 font-mono uppercase bg-white dark:bg-zinc-900 shadow-sm`}
+                            placeholder="#F97316"
+                          />
+                        </div>
+                        <p className="text-[11px] font-bold text-brand-500 uppercase tracking-widest bg-brand-500/10 px-3 py-1 rounded-full w-fit">Current Brand signature</p>
                       </div>
-                      <div>
-                        <p className="font-bold text-gray-900 dark:text-white">Click to upload or drag and drop</p>
-                        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">PNG, JPG, SVG up to 5MB</p>
-                      </div>
-                      <Button variant="secondary" size="sm" className="mt-2">Choose File</Button>
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-gray-800">
-                <Button>Save Appearance</Button>
-              </div>
-            </CardContent>
-          </Card>
+                <hr className="border-gray-100 dark:border-gray-800" />
+
+                {/* Logo Upload */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                  <div className="md:col-span-1">
+                    <h4 className="text-[15px] font-bold text-gray-900 dark:text-zinc-100 tracking-tight">System Identity (Logo)</h4>
+                    <p className="text-[13px] text-gray-500 dark:text-zinc-500 mt-1">Uploaded image will appear in the navigation bar and authentication screens.</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <div 
+                      className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 cursor-pointer group ${
+                        isDragOver 
+                          ? 'border-brand-500 bg-brand-500/5 shadow-inner' 
+                          : 'border-gray-200 dark:border-gray-800 hover:border-brand-500/50 hover:bg-brand-500/[0.02]'
+                      }`}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      onClick={handleChooseFileClick}
+                    >
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="hidden"
+                      />
+                      {logoPreview ? (
+                        <div className="relative inline-block animate-in zoom-in-95 duration-200">
+                          <div className="p-4 bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 ring-4 ring-brand-500/5">
+                            <img 
+                              src={logoPreview} 
+                              alt="Logo preview" 
+                              className="max-h-40 mx-auto rounded-xl"
+                            />
+                          </div>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleRemoveLogo(); }}
+                            className="absolute -top-4 -right-4 bg-red-500 text-white rounded-full p-2.5 shadow-xl hover:bg-red-600 hover:scale-110 active:scale-95 transition-all"
+                          >
+                            <FiX className="h-4 w-4" />
+                          </button>
+                          <div className="mt-4 flex items-center justify-center gap-2">
+                            <Badge className="bg-green-500/10 text-green-500 border-green-500/20 text-[10px] py-1">READY FOR SYNC</Badge>
+                            <span className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">{logoFile?.name.split('.').pop()} FILE</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-4">
+                          <div className="w-16 h-16 bg-gray-100 dark:bg-[#252525] p-5 rounded-[1.5rem] border border-gray-200 dark:border-gray-800 group-hover:scale-110 group-hover:border-brand-500/50 group-hover:bg-brand-500/5 transition-all duration-300">
+                            <FiGlobe className="h-full w-full text-gray-400 group-hover:text-brand-500" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-[17px] text-gray-900 dark:text-zinc-100 tracking-tight">Synchronize Brand Identity</p>
+                            <p className="text-[14px] text-gray-400 dark:text-zinc-500 mt-1 max-w-xs mx-auto">Drag images directly into this interface or click to browse system files</p>
+                          </div>
+                          <Button variant="ghost" size="sm" className="mt-2 text-brand-500 font-bold border border-brand-500/20 hover:bg-brand-500/10 rounded-xl px-10 h-10 transition-all">System Browse</Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-8 border-t border-gray-100 dark:border-gray-800">
+                  <Button className="h-11 px-12 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-lg shadow-brand-500/20 active:scale-95 transition-all">Synchronize Visual Branding</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
       </div>
     </div>
