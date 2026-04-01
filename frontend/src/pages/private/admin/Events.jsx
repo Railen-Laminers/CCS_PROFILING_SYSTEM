@@ -16,7 +16,7 @@ import { Badge } from '../../../components/ui/Badge';
 import { EmptyState } from '../../../components/ui/EmptyState';
 
 const EventItem = ({ event, onEdit, onDelete, formatDateTime }) => (
-  <Card className="bg-white dark:bg-[#252525] border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl overflow-hidden group">
+  <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
     <CardContent className="p-5">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="flex items-center gap-6">
@@ -24,7 +24,7 @@ const EventItem = ({ event, onEdit, onDelete, formatDateTime }) => (
             <FiCalendar className="w-6 h-6 text-brand-500" />
           </div>
           <div>
-            <h3 className="text-[17px] font-bold text-gray-900 dark:text-gray-100 group-hover:text-brand-500 transition-colors line-clamp-1 leading-tight">
+            <h3 className="text-[16px] font-bold text-gray-900 dark:text-gray-100 group-hover:text-brand-500 transition-colors line-clamp-1 leading-tight">
               {event.title}
             </h3>
             <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1 line-clamp-1 max-w-md">
@@ -54,22 +54,22 @@ const EventItem = ({ event, onEdit, onDelete, formatDateTime }) => (
           <Button 
             onClick={() => onEdit(event)}
             variant="ghost"
-            className="h-9 w-9 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-all active:scale-95"
+            className="h-9 w-9 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-all active:scale-95 shadow-none"
           >
             <FiEdit className="w-4 h-4" />
           </Button>
           <Button 
             onClick={() => onDelete(event.event_id)}
             variant="ghost"
-            className="h-9 w-9 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all active:scale-95"
+            className="h-9 w-9 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all active:scale-95 shadow-none"
           >
             <FiTrash2 className="w-4 h-4" />
           </Button>
-          <Button 
-            className="h-9 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-[13px] font-semibold transition-all px-6 active:scale-95 shadow-sm ml-2"
+          <button 
+            className="flex items-center gap-2 px-6 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-[13px] font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 ml-2"
           >
             View Details
-          </Button>
+          </button>
         </div>
       </div>
     </CardContent>
@@ -109,18 +109,19 @@ const EventsPage = () => {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Events Management</h1>
-          <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1">Manage and organize campus events and activities</p>
         </div>
-        <Button
+        <button
           onClick={openCreateModal}
-          className="h-10 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-sm font-bold px-6 shadow-sm shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2"
+          className="relative group overflow-hidden rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
         >
-          <FiPlus className="w-4 h-4" />
-          <span>Add New Event</span>
-        </Button>
+          <span className="relative z-10 flex items-center gap-2">
+            <FiPlus className="w-4 h-4" /> Add New Event
+          </span>
+          <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+        </button>
       </div>
 
       {error && (
@@ -130,7 +131,7 @@ const EventsPage = () => {
       )}
 
       {/* Events List Container */}
-      <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
+      <Card className="p-6 shadow-sm border-gray-200 dark:border-gray-800 rounded-2xl">
         <div className="relative group max-w-sm ml-auto mb-6">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <FiSearch className="h-5 w-5 text-gray-400 dark:text-zinc-500 group-focus-within:text-brand-500 transition-colors" />
@@ -138,7 +139,7 @@ const EventsPage = () => {
           <input
             type="text"
             placeholder="Search events..."
-            className="block w-full h-10 pl-11 pr-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-sm"
+            className="block w-full h-10 pl-11 pr-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-all shadow-sm"
           />
         </div>
 
@@ -161,12 +162,12 @@ const EventsPage = () => {
             />
           )}
         </div>
-      </div>
+      </Card>
 
       {/* Modal for Create/Edit */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
-          <Card className="w-full max-w-xl bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+          <Card className="w-full max-w-xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="p-8 relative">
               <button
                 onClick={closeModal}
@@ -270,21 +271,24 @@ const EventsPage = () => {
                     variant="ghost"
                     onClick={closeModal}
                     disabled={submitLoading}
-                    className="h-11 px-8 rounded-xl font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all"
+                    className="h-11 px-8 rounded-xl font-bold transition-all shadow-none"
                   >
                     Cancel
                   </Button>
-                  <Button
+                  <button
                     type="submit"
                     disabled={submitLoading}
-                    className="h-11 px-10 bg-brand-500 hover:bg-brand-600 text-white rounded-xl shadow-lg shadow-brand-500/20 font-bold active:scale-95 transition-all flex items-center gap-2 min-w-[140px] justify-center"
+                    className="relative group overflow-hidden rounded-xl bg-brand-500 px-10 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2 min-w-[140px] justify-center disabled:opacity-50"
                   >
-                    {submitLoading ? (
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      editingEvent ? 'Save Changes' : 'Create Event'
-                    )}
-                  </Button>
+                    <span className="relative z-10 flex items-center gap-2">
+                      {submitLoading ? (
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        editingEvent ? 'Save Changes' : 'Create Event'
+                      )}
+                    </span>
+                    {!submitLoading && <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>}
+                  </button>
                 </div>
               </form>
             </div>

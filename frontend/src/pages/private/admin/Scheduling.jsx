@@ -23,7 +23,7 @@ const StatCards = ({ statCards }) => (
               <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">0</p>
               <p className="text-xs font-semibold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mt-1">{card.label}</p>
             </div>
-            <div className={`${card.bgColor} rounded-xl p-3 shadow-inner bg-opacity-10 dark:bg-opacity-10`}>
+            <div className={`${card.bgColor} rounded-xl p-3 shadow-inner`}>
               <card.icon className={`h-6 w-6 ${card.color}`} />
             </div>
           </div>
@@ -38,10 +38,10 @@ const Scheduling = () => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
 
   const statCards = [
-    { label: 'Total Classes', icon: FiCalendar, color: 'text-blue-600', bgColor: 'bg-blue-500' },
-    { label: 'Available Rooms', icon: FiHome, color: 'text-green-600', bgColor: 'bg-green-500' },
-    { label: 'Conflicts', icon: FiAlertCircle, color: 'text-red-600', bgColor: 'bg-red-500' },
-    { label: 'Instructors', icon: FiUsers, color: 'text-purple-600', bgColor: 'bg-purple-500' },
+    { label: 'Total Classes', icon: FiCalendar, color: 'text-blue-600', bgColor: 'bg-blue-100' },
+    { label: 'Available Rooms', icon: FiHome, color: 'text-green-600', bgColor: 'bg-green-100' },
+    { label: 'Conflicts', icon: FiAlertCircle, color: 'text-red-600', bgColor: 'bg-red-100' },
+    { label: 'Instructors', icon: FiUsers, color: 'text-purple-600', bgColor: 'bg-purple-100' },
   ];
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -81,34 +81,35 @@ const Scheduling = () => {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Class Scheduling</h1>
-          <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1">Manage weekly class schedules and room assignments</p>
         </div>
-        <Button className="h-10 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-sm font-bold px-6 shadow-sm shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2">
-          <FiPlus className="h-4 w-4" />
-          <span>Add New Schedule</span>
-        </Button>
+        <button
+          className="relative group overflow-hidden rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+        >
+          <span className="relative z-10 flex items-center gap-2">
+            <FiPlus className="h-4 w-4" /> Add New Schedule
+          </span>
+          <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+        </button>
       </div>
 
       {/* Stats Grid */}
       <StatCards statCards={statCards} />
 
       {/* Calendar Controls & Grid Container */}
-      <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden">
+      <Card className="overflow-hidden shadow-sm">
         {/* Navigation Bar */}
         <div className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <Button 
-                variant="ghost" 
-                size="sm" 
+            <button 
                 onClick={handlePreviousWeek} 
-                className="gap-2 w-full sm:w-auto h-10 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-zinc-400 rounded-xl hover:bg-white dark:hover:bg-[#252525] shadow-sm font-semibold"
+                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 disabled:opacity-50 w-full sm:w-auto justify-center"
             >
-              <FiChevronLeft className="h-4 w-4" />
+              <FiChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
               <span>Back</span>
-            </Button>
+            </button>
             
             <div className="text-center group">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight group-hover:text-brand-500 transition-colors">{getWeekRange()}</h2>
@@ -118,15 +119,13 @@ const Scheduling = () => {
               </div>
             </div>
             
-            <Button 
-                variant="ghost" 
-                size="sm" 
+            <button 
                 onClick={handleNextWeek} 
-                className="gap-2 w-full sm:w-auto h-10 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-zinc-400 rounded-xl hover:bg-white dark:hover:bg-[#252525] shadow-sm font-semibold"
+                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 disabled:opacity-50 w-full sm:w-auto justify-center group"
             >
               <span>Next</span>
-              <FiChevronRight className="h-4 w-4" />
-            </Button>
+              <FiChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </button>
           </div>
         </div>
 
@@ -153,7 +152,7 @@ const Scheduling = () => {
                   {timeSlots.map((time, index) => (
                     <div 
                       key={index} 
-                      className="h-20 px-4 flex items-center justify-center border-b border-gray-100/50 dark:border-zinc-800/50 last:border-b-0"
+                      className="h-16 px-4 flex items-center justify-center border-b border-gray-100/50 dark:border-zinc-800/50 last:border-b-0"
                     >
                       <span className="text-[10px] text-gray-400 dark:text-zinc-500 font-bold uppercase whitespace-nowrap">{time}</span>
                     </div>
@@ -166,7 +165,7 @@ const Scheduling = () => {
                     {timeSlots.map((time, timeIndex) => (
                       <div 
                         key={timeIndex} 
-                        className="h-20 border-b border-gray-100/50 dark:border-zinc-800/50 last:border-b-0 transition-colors hover:bg-brand-500/[0.03] dark:hover:bg-brand-500/[0.05]"
+                        className="h-16 border-b border-gray-100/50 dark:border-zinc-800/50 last:border-b-0 transition-colors hover:bg-brand-500/[0.03] dark:hover:bg-brand-500/[0.05]"
                       >
                         {/* Empty cell */}
                       </div>
@@ -177,7 +176,7 @@ const Scheduling = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

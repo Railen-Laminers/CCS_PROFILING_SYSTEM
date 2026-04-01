@@ -27,14 +27,14 @@ import { Badge } from '../../components/ui/Badge';
 const StatCards = ({ statCards }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     {statCards.map((card, index) => (
-      <Card key={index} className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl font-sans">
+      <Card key={index} className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl">
         <CardContent className="p-5">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">0</p>
               <p className="text-xs font-semibold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mt-1">{card.label}</p>
             </div>
-            <div className={`${card.bgColor} rounded-xl p-3 shadow-inner bg-opacity-10 dark:bg-opacity-10`}>
+            <div className={`${card.bgColor} rounded-xl p-3 shadow-inner`}>
               <card.icon className={`h-6 w-6 ${card.color}`} />
             </div>
           </div>
@@ -89,10 +89,10 @@ const SystemSettings = () => {
   const tabs = ['General', 'User Management', 'Notifications', 'Security', 'Appearance'];
 
   const statCards = [
-    { label: 'Total Users', icon: FiUsers, color: 'text-blue-600', bgColor: 'bg-blue-500' },
-    { label: 'Storage Used', icon: FiDatabase, color: 'text-green-600', bgColor: 'bg-green-500' },
-    { label: 'Active Sessions', icon: FiShield, color: 'text-orange-600', bgColor: 'bg-orange-500' },
-    { label: 'Last Backup', icon: FiHardDrive, color: 'text-purple-600', bgColor: 'bg-purple-500' },
+    { label: 'Total Users', icon: FiUsers, color: 'text-blue-600', bgColor: 'bg-blue-100' },
+    { label: 'Storage Used', icon: FiDatabase, color: 'text-green-600', bgColor: 'bg-green-100' },
+    { label: 'Active Sessions', icon: FiShield, color: 'text-orange-600', bgColor: 'bg-orange-100' },
+    { label: 'Last Backup', icon: FiHardDrive, color: 'text-purple-600', bgColor: 'bg-purple-100' },
   ];
 
   const toggleNotification = (id) => {
@@ -162,15 +162,14 @@ const SystemSettings = () => {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">System Configuration</h1>
-          <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1">Global settings and administrative preferences</p>
         </div>
-        <Button className="h-10 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-sm font-bold px-6 shadow-sm shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2">
+        <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 disabled:opacity-50">
           <FiUpload className="h-4 w-4" />
           <span>Backup System Now</span>
-        </Button>
+        </button>
       </div>
 
       {/* Stat Cards Row */}
@@ -187,9 +186,9 @@ const SystemSettings = () => {
       <div className="space-y-10">
         {activeTab === 0 && (
           <div className="space-y-10">
-            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
                     <FiSettings className="w-5 h-5 text-brand-500" />
                   </div>
@@ -234,14 +233,19 @@ const SystemSettings = () => {
                   </div>
                 </div>
                 <div className="mt-10 flex justify-end">
-                  <Button className="h-11 px-8 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-md active:scale-95 transition-all">Save Environmental Variables</Button>
+                  <button
+                    className="relative group overflow-hidden rounded-xl bg-brand-500 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+                  >
+                    <span className="relative z-10">Save Environmental Variables</span>
+                    <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+                  </button>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300 delay-75">
-              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300 delay-75">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-blue-500/10 p-2 rounded-lg border border-blue-500/20">
                     <FiMail className="w-5 h-5 text-blue-500" />
                   </div>
@@ -268,8 +272,13 @@ const SystemSettings = () => {
                   </div>
                 </div>
                 <div className="mt-10 flex justify-end gap-3">
-                  <Button variant="ghost" className="h-11 px-6 rounded-xl border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-[#252525] font-bold">Validate Connection</Button>
-                  <Button className="h-11 px-8 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-md active:scale-95 transition-all">Save Gateway Settings</Button>
+                  <button className="flex items-center gap-2 px-6 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 disabled:opacity-50 font-bold">Validate Connection</button>
+                  <button
+                    className="relative group overflow-hidden rounded-xl bg-brand-500 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+                  >
+                    <span className="relative z-10 font-bold">Save Gateway Settings</span>
+                    <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+                  </button>
                 </div>
               </CardContent>
             </Card>
@@ -277,18 +286,22 @@ const SystemSettings = () => {
         )}
 
         {activeTab === 1 && (
-          <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <CardHeader className="p-6 flex flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-              <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+          <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+              <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                 <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
                   <FiUsers className="w-5 h-5 text-brand-500" />
                 </div>
                 Access Control (Users)
               </CardTitle>
-              <Button size="sm" className="gap-2 h-9 bg-brand-500 hover:bg-brand-600 rounded-lg px-5 font-bold shadow-sm active:scale-95 transition-all">
-                <FiPlus className="h-4 w-4" />
-                <span>Create Administrator</span>
-              </Button>
+              <button
+                className="relative group overflow-hidden rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  <FiPlus className="h-4 w-4" /> Create Administrator
+                </span>
+                <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+              </button>
             </CardHeader>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
@@ -312,7 +325,7 @@ const SystemSettings = () => {
                             <p className="font-bold text-xl text-gray-900 dark:text-zinc-200 tracking-tight">No administrative profiles</p>
                             <p className="text-[14px] text-gray-400 dark:text-zinc-500 mt-1 max-w-sm mx-auto">You haven't defined any additional administrators or support staff profiles yet.</p>
                            </div>
-                           <Button variant="ghost" className="mt-4 text-brand-500 font-bold border border-brand-500/20 hover:bg-brand-500/10 rounded-xl px-8 h-10 transition-all">Add Initial User</Button>
+                           <button className="mt-4 flex items-center gap-2 px-8 py-2 bg-white dark:bg-[#1E1E1E] border border-brand-500/20 text-sm font-medium text-brand-500 hover:bg-brand-500/10 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-50">Add Initial User</button>
                         </div>
                       </td>
                     </tr>
@@ -324,9 +337,9 @@ const SystemSettings = () => {
         )}
 
         {activeTab === 2 && (
-          <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-              <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+          <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+              <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                 <div className="bg-yellow-500/10 p-2 rounded-lg border border-yellow-500/20">
                   <FiBell className="w-5 h-5 text-yellow-500" />
                 </div>
@@ -360,7 +373,12 @@ const SystemSettings = () => {
                 ))}
               </div>
               <div className="p-8 border-t border-gray-100 dark:border-gray-800 flex justify-end">
-                <Button className="h-11 px-10 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-lg shadow-brand-500/20">Save Matrix Changes</Button>
+                <button
+                  className="relative group overflow-hidden rounded-xl bg-brand-500 px-10 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2"
+                >
+                  <span className="relative z-10">Save Matrix Changes</span>
+                  <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+                </button>
               </div>
             </CardContent>
           </Card>
@@ -368,9 +386,9 @@ const SystemSettings = () => {
 
         {activeTab === 3 && (
           <div className="space-y-10">
-            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-orange-500/10 p-2 rounded-lg border border-orange-500/20">
                     <FiShield className="w-5 h-5 text-orange-500" />
                   </div>
@@ -394,7 +412,7 @@ const SystemSettings = () => {
                          <Badge variant="outline" className="h-8 px-4 border border-brand-500/20 bg-brand-500/10 text-brand-500 text-[11px] font-bold uppercase tracking-wider rounded-lg">
                            {setting.status}
                          </Badge>
-                         <Button variant="ghost" className="h-9 px-4 rounded-lg bg-gray-50 dark:bg-zinc-900 text-[13px] font-bold border border-gray-200 dark:border-gray-800 hover:text-brand-500 transition-all">Configure</Button>
+                         <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-[13px] font-bold text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 disabled:opacity-50">Configure</button>
                       </div>
                     </div>
                   ))}
@@ -402,9 +420,9 @@ const SystemSettings = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300 delay-75">
-              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300 delay-75">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-blue-500/10 p-2 rounded-lg border border-blue-500/20">
                     <FiActivity className="w-5 h-5 text-blue-500" />
                   </div>
@@ -429,7 +447,12 @@ const SystemSettings = () => {
                   </div>
                 </div>
                 <div className="mt-4 flex justify-end">
-                  <Button className="h-11 px-10 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-lg active:scale-95 transition-all">Synchronize Passwords</Button>
+                  <button
+                    className="relative group overflow-hidden rounded-xl bg-brand-500 px-10 py-2.5 text-sm font-semibold text-white shadow-lg active:scale-95 transition-all flex items-center gap-2"
+                  >
+                    <span className="relative z-10">Synchronize Passwords</span>
+                    <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+                  </button>
                 </div>
               </CardContent>
             </Card>
@@ -438,9 +461,9 @@ const SystemSettings = () => {
 
         {activeTab === 4 && (
           <div className="space-y-10">
-            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <CardHeader className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-                <CardTitle className="text-[17px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
                     <FiDroplet className="w-5 h-5 text-brand-500" />
                   </div>
@@ -541,7 +564,7 @@ const SystemSettings = () => {
                             <p className="font-bold text-[17px] text-gray-900 dark:text-zinc-100 tracking-tight">Synchronize Brand Identity</p>
                             <p className="text-[14px] text-gray-400 dark:text-zinc-500 mt-1 max-w-xs mx-auto">Drag images directly into this interface or click to browse system files</p>
                           </div>
-                          <Button variant="ghost" size="sm" className="mt-2 text-brand-500 font-bold border border-brand-500/20 hover:bg-brand-500/10 rounded-xl px-10 h-10 transition-all">System Browse</Button>
+                          <button className="mt-2 flex items-center gap-2 px-10 py-2 bg-white dark:bg-[#1E1E1E] border border-brand-500/20 text-sm font-medium text-brand-500 hover:bg-brand-500/10 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-50">System Browse</button>
                         </div>
                       )}
                     </div>
@@ -549,7 +572,12 @@ const SystemSettings = () => {
                 </div>
 
                 <div className="flex justify-end pt-8 border-t border-gray-100 dark:border-gray-800">
-                  <Button className="h-11 px-12 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold shadow-lg shadow-brand-500/20 active:scale-95 transition-all">Synchronize Visual Branding</Button>
+                  <button
+                    className="relative group overflow-hidden rounded-xl bg-brand-500 px-12 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2"
+                  >
+                    <span className="relative z-10">Synchronize Visual Branding</span>
+                    <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+                  </button>
                 </div>
               </CardContent>
             </Card>

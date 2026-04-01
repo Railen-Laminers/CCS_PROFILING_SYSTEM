@@ -23,10 +23,10 @@ const StatCards = ({ statCards }) => (
         <CardContent className="p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">--</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">0</p>
               <p className="text-xs font-semibold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mt-1">{card.label}</p>
             </div>
-            <div className={`${card.bgColor} rounded-xl p-3 shadow-inner bg-opacity-10 dark:bg-opacity-10`}>
+            <div className={`${card.bgColor} rounded-xl p-3 shadow-inner`}>
               <card.icon className={`h-6 w-6 ${card.color}`} />
             </div>
           </div>
@@ -61,29 +61,32 @@ const Reports = () => {
   const tabs = ['Overview', 'Academic', 'Attendance', 'Custom Reports'];
 
   const statCards = [
-    { label: 'Total Reports', icon: FiFileText, color: 'text-blue-600', bgColor: 'bg-blue-500' },
-    { label: 'Avg. GPA', icon: FiTrendingUp, color: 'text-green-600', bgColor: 'bg-green-500' },
-    { label: 'Attendance Rate', icon: FiCalendar, color: 'text-orange-600', bgColor: 'bg-orange-500' },
-    { label: 'Pass Rate', icon: FiCheckCircle, color: 'text-purple-600', bgColor: 'bg-purple-500' },
+    { label: 'Total Reports', icon: FiFileText, color: 'text-blue-600', bgColor: 'bg-blue-100' },
+    { label: 'Avg. GPA', icon: FiTrendingUp, color: 'text-green-600', bgColor: 'bg-green-100' },
+    { label: 'Attendance Rate', icon: FiCalendar, color: 'text-orange-600', bgColor: 'bg-orange-100' },
+    { label: 'Pass Rate', icon: FiCheckCircle, color: 'text-purple-600', bgColor: 'bg-purple-100' },
   ];
 
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Reports & Analytics</h1>
-          <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1">View and analyze academic performance data</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Button variant="ghost" className="flex-1 sm:flex-none gap-2 h-10 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-zinc-400 rounded-xl hover:bg-gray-50 dark:hover:bg-[#252525]">
+          <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 disabled:opacity-50 flex-1 sm:flex-none justify-center">
             <FiFilter className="h-4 w-4" />
             <span>Filter</span>
-          </Button>
-          <Button className="flex-1 sm:flex-none gap-2 h-10 bg-brand-500 hover:bg-brand-600 text-white rounded-xl shadow-lg shadow-brand-500/20 px-6">
-            <FiDownload className="h-4 w-4" />
-            <span>Export Data</span>
-          </Button>
+          </button>
+          <button
+            className="relative group overflow-hidden rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 flex-1 sm:flex-none justify-center"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              <FiDownload className="h-4 w-4" /> Export Data
+            </span>
+            <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+          </button>
         </div>
       </div>
 
@@ -101,9 +104,9 @@ const Reports = () => {
       <div className="space-y-8">
         {activeTab === 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden">
+            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 pb-4">
-                <CardTitle className="text-[16px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-blue-500/10 p-2 rounded-lg">
                     <FiActivity className="w-4 h-4 text-blue-500" />
                   </div>
@@ -119,9 +122,9 @@ const Reports = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden">
+            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 pb-4">
-                <CardTitle className="text-[16px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-green-500/10 p-2 rounded-lg">
                     <FiBarChart2 className="w-4 h-4 text-green-500" />
                   </div>
@@ -137,9 +140,9 @@ const Reports = () => {
               </CardContent>
             </Card>
 
-            <Card className="lg:col-span-2 bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden">
+            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl lg:col-span-2 overflow-hidden shadow-sm">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 pb-4">
-                <CardTitle className="text-[16px] font-bold flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-orange-500/10 p-2 rounded-lg">
                     <FiTrendingUp className="w-4 h-4 text-orange-500" />
                   </div>
@@ -228,7 +231,7 @@ const Reports = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[...Array(4)].map((_, index) => (
-                <Card key={index} className="bg-white dark:bg-[#252525] border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden group hover:shadow-md transition-all">
+                <Card key={index} className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden group hover:shadow-md transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-5">
                       <div className="bg-brand-500/10 p-3.5 rounded-2xl group-hover:scale-110 transition-transform flex items-center justify-center border border-brand-500/20">
@@ -238,11 +241,17 @@ const Reports = () => {
                         <h3 className="text-[16px] font-bold text-gray-900 dark:text-white group-hover:text-brand-500 transition-colors">Analytical report v{index + 1}.0</h3>
                         <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1 lines-clamp-2">Standardized report generated based on the current academic period metrics.</p>
                         <div className="mt-6 flex items-center gap-3">
-                           <Button className="h-9 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-[12px] font-bold px-6 shadow-sm active:scale-95 transition-all">
-                             <FiDownload className="w-3.5 h-3.5 mr-2" />
-                             Generate Report
-                           </Button>
-                           <Button variant="ghost" className="h-9 text-gray-400 hover:text-gray-900 dark:hover:text-white text-[12px] font-bold px-4">Preview</Button>
+                           <button
+                             className="relative group overflow-hidden rounded-xl bg-brand-500 px-6 py-2 text-[12px] font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+                           >
+                             <span className="relative z-10 flex items-center gap-2">
+                               <FiDownload className="w-3.5 h-3.5" /> Generate Report
+                             </span>
+                             <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+                           </button>
+                           <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-[12px] font-medium text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-none transition-all active:scale-95">
+                             Preview
+                           </button>
                         </div>
                       </div>
                     </div>
