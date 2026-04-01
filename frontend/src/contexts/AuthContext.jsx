@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
           // Only clear token if explicitly unauthorized (401).
           // Don't clear on 500 or network errors to persist session.
           if (err.response?.status === 401) {
-            localStorage.removeItem('authToken');
+            sessionStorage.removeItem('authToken');
           }
         }
       } finally {

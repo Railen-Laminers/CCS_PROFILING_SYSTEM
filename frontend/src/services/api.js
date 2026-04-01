@@ -3,9 +3,9 @@ import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Helper functions
-const getAuthToken = () => localStorage.getItem('authToken');
-const setAuthToken = (token) => localStorage.setItem('authToken', token);
-const removeAuthToken = () => localStorage.removeItem('authToken');
+const getAuthToken = () => sessionStorage.getItem('authToken');
+const setAuthToken = (token) => sessionStorage.setItem('authToken', token);
+const removeAuthToken = () => sessionStorage.removeItem('authToken');
 const isAuthenticated = () => !!getAuthToken();
 
 // Axios instance
