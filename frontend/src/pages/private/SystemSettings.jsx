@@ -5,19 +5,19 @@ import {
   FiDatabase, 
   FiShield, 
   FiHardDrive,
-  FiSave,
   FiUpload,
   FiPlus,
-  FiEdit2,
-  FiTrash2,
   FiSettings,
   FiMail,
   FiBell,
   FiLock,
   FiDroplet,
   FiGlobe,
-  FiX
+  FiX,
+  FiActivity
 } from 'react-icons/fi';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
 
 const SystemSettings = () => {
   const { primaryColor, updatePrimaryColor } = useTheme();
@@ -113,364 +113,298 @@ const SystemSettings = () => {
     fileInputRef.current?.click();
   };
 
+  const inputClasses = "w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white";
+  const labelClasses = "block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5";
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-6">
+    <div className="w-full space-y-6">
       {/* Header */}
-      <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-xl p-6 mb-6 flex items-center justify-between shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">System Settings</h1>
-          <p className="text-gray-500 mt-1">Configure system preferences and settings</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">System Settings</h1>
+          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Configure system preferences and settings</p>
         </div>
-        <button 
-          className="text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors hover:brightness-90"
-          style={{ backgroundColor: primaryColor }}
-        >
+        <Button className="gap-2">
           <FiUpload className="h-5 w-5" />
           <span>Backup System</span>
-        </button>
+        </Button>
       </div>
 
       {/* Stat Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((card, index) => (
-          <div key={index} className="bg-white/70 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-3xl font-bold text-gray-800"></p>
-                <p className="text-gray-500 mt-1">{card.label}</p>
+          <Card key={index} className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+                  <p className="text-sm font-medium text-gray-500 dark:text-zinc-400 mt-1">{card.label}</p>
+                </div>
+                <div className={`${card.bgColor} dark:bg-opacity-10 p-3 rounded-xl`}>
+                  <card.icon className={`h-6 w-6 ${card.color}`} />
+                </div>
               </div>
-              <div className={`${card.bgColor} rounded-lg p-3`}>
-                <card.icon className={`h-6 w-6 ${card.color}`} />
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-xl p-2 mb-6 shadow-sm">
-        <div className="flex gap-2">
-          {tabs.map((tab, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveTab(index)}
-              className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
-                activeTab === index
-                  ? 'text-white'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-              }`}
-              style={activeTab === index ? { backgroundColor: primaryColor } : {}}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+      <div className="bg-gray-100/50 dark:bg-zinc-900/50 p-1.5 rounded-xl flex gap-1 overflow-x-auto no-scrollbar">
+        {tabs.map((tab, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveTab(index)}
+            className={`flex-1 min-w-fit px-4 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 whitespace-nowrap ${
+              activeTab === index
+                ? 'bg-white dark:bg-zinc-800 text-brand-500 shadow-sm'
+                : 'text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-800/50'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
       {/* Main Content Area */}
       <div className="space-y-6">
-        {/* General Tab Content */}
         {activeTab === 0 && (
           <div className="space-y-6">
-            {/* General Settings Section */}
-            <div className="bg-white/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="rounded-lg p-2" style={{ backgroundColor: `${primaryColor}20` }}>
-                  <FiSettings className="h-5 w-5" style={{ color: primaryColor }} />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-800">General Settings</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">System Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Institution Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Academic Year</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Current Semester</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Time Zone</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-              </div>
-              <div className="mt-6 flex justify-end">
-                <button 
-                  className="text-white px-6 py-2 rounded-lg transition-colors hover:brightness-90"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
-
-            {/* Email Configuration Section */}
-            <div className="bg-white/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-blue-100 rounded-lg p-2">
-                  <FiMail className="h-5 w-5 text-blue-600" />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-800">Email Configuration</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Server</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Port</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">From Email</label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">From Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
-                </div>
-              </div>
-              <div className="mt-6 flex justify-start gap-3">
-                <button className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-6 py-2 rounded-lg transition-colors">
-                  Test Connection
-                </button>
-                <button 
-                  className="text-white px-6 py-2 rounded-lg transition-colors hover:brightness-90"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  Save Settings
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* User Management Tab Content */}
-        {activeTab === 1 && (
-          <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">User Management</h2>
-              <button 
-                className="text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors hover:brightness-90"
-                style={{ backgroundColor: primaryColor }}
-              >
-                <FiPlus className="h-4 w-4" />
-                <span>Add New User</span>
-              </button>
-            </div>
-
-            {/* User Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Name</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Email</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Role</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Last Login</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan="6" className="text-center py-12 text-gray-500">
-                      <div className="flex flex-col items-center gap-2">
-                        <FiUsers className="h-12 w-12 text-gray-300" />
-                        <p className="text-lg font-medium">No users found</p>
-                        <p className="text-sm">Add your first user to get started</p>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* Notifications Tab Content */}
-        {activeTab === 2 && (
-          <div className="bg-white/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="rounded-lg p-2" style={{ backgroundColor: `${primaryColor}20` }}>
-                <FiBell className="h-5 w-5" style={{ color: primaryColor }} />
-              </div>
-              <h2 className="text-xl font-semibold text-gray-800">Notification Preferences</h2>
-            </div>
-            <div className="space-y-4">
-              {notificationSettings.map((setting, index) => (
-                <div 
-                  key={setting.id} 
-                  className={`flex items-center justify-between py-4 ${index !== notificationSettings.length - 1 ? 'border-b border-gray-200' : ''}`}
-                >
+            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <FiSettings className="w-5 h-5 text-brand-500" />
+                  General Settings
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="font-semibold text-gray-800">{setting.title}</h3>
-                    <p className="text-sm text-gray-500 mt-1">{setting.description}</p>
+                    <label className={labelClasses}>System Name</label>
+                    <input type="text" className={inputClasses} placeholder="CCS Profiling System" />
                   </div>
-                  <button
-                    onClick={() => toggleNotification(setting.id)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      setting.enabled
-                        ? 'text-white hover:brightness-90'
-                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }`}
-                    style={setting.enabled ? { backgroundColor: primaryColor } : {}}
-                  >
-                    {setting.enabled ? 'Enabled' : 'Disabled'}
-                  </button>
+                  <div>
+                    <label className={labelClasses}>Institution Name</label>
+                    <input type="text" className={inputClasses} placeholder="College of Computer Studies" />
+                  </div>
+                  <div>
+                    <label className={labelClasses}>Academic Year</label>
+                    <input type="text" className={inputClasses} placeholder="2023-2024" />
+                  </div>
+                  <div>
+                    <label className={labelClasses}>Current Semester</label>
+                    <input type="text" className={inputClasses} placeholder="1st Semester" />
+                  </div>
+                  <div>
+                    <label className={labelClasses}>Time Zone</label>
+                    <select className={inputClasses}>
+                      <option>(GMT+08:00) Manila</option>
+                      <option>(GMT+00:00) UTC</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClasses}>Language</label>
+                    <select className={inputClasses}>
+                      <option>English (US)</option>
+                      <option>Filipino</option>
+                    </select>
+                  </div>
                 </div>
-              ))}
-            </div>
+                <div className="mt-8 flex justify-end">
+                  <Button>Save General Settings</Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <FiMail className="w-5 h-5 text-blue-500" />
+                  Email Configuration
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className={labelClasses}>SMTP Server</label>
+                    <input type="text" className={inputClasses} placeholder="smtp.gmail.com" />
+                  </div>
+                  <div>
+                    <label className={labelClasses}>SMTP Port</label>
+                    <input type="text" className={inputClasses} placeholder="587" />
+                  </div>
+                  <div>
+                    <label className={labelClasses}>From Email</label>
+                    <input type="email" className={inputClasses} placeholder="noreply@ccs.edu" />
+                  </div>
+                  <div>
+                    <label className={labelClasses}>From Name</label>
+                    <input type="text" className={inputClasses} placeholder="System Admin" />
+                  </div>
+                </div>
+                <div className="mt-8 flex justify-end gap-3">
+                  <Button variant="secondary">Test Connection</Button>
+                  <Button>Save Email Settings</Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
-        {/* Security Tab Content */}
-        {activeTab === 3 && (
-          <div className="space-y-6">
-            {/* Security Settings Overview */}
-            <div className="bg-white/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="rounded-lg p-2" style={{ backgroundColor: `${primaryColor}20` }}>
-                  <FiLock className="h-5 w-5" style={{ color: primaryColor }} />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-800">Security Settings</h2>
+        {activeTab === 1 && (
+          <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FiUsers className="w-5 h-5 text-brand-500" />
+                User Management
+              </CardTitle>
+              <Button size="sm" className="gap-2">
+                <FiPlus className="h-4 w-4" />
+                <span>Add User</span>
+              </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-gray-200 dark:border-gray-800">
+                      <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Name</th>
+                      <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Email</th>
+                      <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Role</th>
+                      <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="hover:bg-brand-500/5 dark:hover:bg-brand-500/10">
+                      <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-zinc-500">
+                        <div className="flex flex-col items-center gap-2">
+                           <div className="bg-gray-100 dark:bg-zinc-800/50 p-4 rounded-full">
+                             <FiUsers className="h-8 w-8 text-gray-300 dark:text-zinc-600" />
+                           </div>
+                           <p className="font-semibold text-lg dark:text-zinc-300">No users found</p>
+                           <p className="text-sm">Manage system administrators and staff</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <div className="space-y-4">
-                {securitySettings.map((setting, index) => (
-                  <div 
-                    key={setting.id} 
-                    className={`flex items-center justify-between py-4 ${index !== securitySettings.length - 1 ? 'border-b border-gray-200' : ''}`}
-                  >
-                    <div>
-                      <h3 className="font-semibold text-gray-800">{setting.title}</h3>
-                      <p className="text-sm text-gray-500 mt-1">{setting.description}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {activeTab === 2 && (
+          <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FiBell className="w-5 h-5 text-brand-500" />
+                Notification Preferences
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                {notificationSettings.map((setting) => (
+                  <div key={setting.id} className="p-6 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-zinc-800/30 transition-colors">
+                    <div className="max-w-[80%]">
+                      <h3 className="font-bold text-gray-900 dark:text-white">{setting.title}</h3>
+                      <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">{setting.description}</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <button 
-                        className="px-3 py-1 text-white rounded-lg text-sm font-medium hover:brightness-90 transition-colors"
-                        style={{ backgroundColor: primaryColor }}
-                      >
-                        {setting.status}
-                      </button>
-                      <button className="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                        Configure
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => toggleNotification(setting.id)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                        setting.enabled ? 'bg-brand-500' : 'bg-gray-200 dark:bg-zinc-700'
+                      }`}
+                    >
+                      <span
+                        className={`${
+                          setting.enabled ? 'translate-x-6' : 'translate-x-1'
+                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                      />
+                    </button>
                   </div>
                 ))}
               </div>
-            </div>
+              <div className="p-6 flex justify-end">
+                <Button>Save Preferences</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-            {/* Change Password Form */}
-            <div className="bg-white/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-sm">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6">Change Password</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-                  <input
-                    type="password"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
+        {activeTab === 3 && (
+          <div className="space-y-6">
+            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <FiLock className="w-5 h-5 text-orange-500" />
+                  Security Policy
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                  {securitySettings.map((setting) => (
+                    <div key={setting.id} className="p-6 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-zinc-800/30 transition-colors">
+                      <div>
+                        <h3 className="font-bold text-gray-900 dark:text-white">{setting.title}</h3>
+                        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">{setting.description}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                         <span className="px-3 py-1 bg-brand-500/10 text-brand-500 rounded-lg text-xs font-bold uppercase tracking-wider underline underline-offset-4 decoration-2">
+                           {setting.status}
+                         </span>
+                         <Button variant="outline" size="sm">Configure</Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <FiActivity className="w-5 h-5 text-blue-500" />
+                  Change Password
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                  <input
-                    type="password"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
+                  <label className={labelClasses}>Current Password</label>
+                  <input type="password" className={inputClasses} placeholder="••••••••" />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-                  <input
-                    type="password"
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                    style={{ '--tw-ring-color': primaryColor }}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className={labelClasses}>New Password</label>
+                    <input type="password" className={inputClasses} placeholder="••••••••" />
+                  </div>
+                  <div>
+                    <label className={labelClasses}>Confirm New Password</label>
+                    <input type="password" className={inputClasses} placeholder="••••••••" />
+                  </div>
                 </div>
-              </div>
-              <div className="mt-6">
-                <button 
-                  className="text-white px-6 py-2 rounded-lg transition-colors hover:brightness-90"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  Update Password
-                </button>
-              </div>
-            </div>
+                <div className="mt-8 flex justify-end">
+                  <Button>Update Password</Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
-        {/* Appearance Tab Content */}
         {activeTab === 4 && (
-          <div className="bg-white/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="rounded-lg p-2" style={{ backgroundColor: `${primaryColor}20` }}>
-                <FiDroplet className="h-5 w-5" style={{ color: primaryColor }} />
-              </div>
-              <h2 className="text-xl font-semibold text-gray-800">Theme Customization</h2>
-            </div>
-
-            {/* Primary Color Picker */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Primary Color</label>
-              <div className="flex items-center gap-3">
-                <div className="relative">
+          <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FiDroplet className="w-5 h-5 text-brand-500" />
+                Appearance Settings
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-8">
+              {/* Primary Color */}
+              <div>
+                <label className={labelClasses}>Primary Brand Color</label>
+                <div className="flex items-center gap-4">
                   <div 
-                    className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer hover:border-gray-400 transition-colors"
+                    className="w-12 h-12 rounded-xl border-2 border-white dark:border-gray-800 shadow-sm cursor-pointer hover:scale-105 transition-transform"
                     style={{ backgroundColor: primaryColor }}
                     onClick={() => document.getElementById('color-picker').click()}
                   />
@@ -479,116 +413,73 @@ const SystemSettings = () => {
                     id="color-picker"
                     value={primaryColor}
                     onChange={handleColorChange}
-                    className="absolute opacity-0 w-0 h-0"
+                    className="hidden"
+                  />
+                  <input
+                    type="text"
+                    value={primaryColor}
+                    onChange={handleColorChange}
+                    className={`${inputClasses} flex-1 font-mono uppercase`}
+                    placeholder="#F97316"
                   />
                 </div>
-                <input
-                  type="text"
-                  value={primaryColor}
-                  onChange={handleColorChange}
-                  placeholder="#FF8C42"
-                  className="flex-1 px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent"
-                  style={{ '--tw-ring-color': primaryColor }}
-                />
               </div>
-            </div>
 
-            {/* Logo Upload Dropzone */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Logo</label>
-              <div 
-                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 cursor-pointer ${
-                  isDragOver 
-                    ? 'border-orange-400 bg-orange-50' 
-                    : 'border-gray-300 hover:border-orange-400'
-                }`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={handleChooseFileClick}
-              >
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  accept="image/*"
-                  onChange={handleLogoUpload}
-                  className="hidden"
-                />
-                {logoPreview ? (
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="relative">
+              {/* Logo Upload */}
+              <div>
+                <label className={labelClasses}>System Logo</label>
+                <div 
+                  className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-200 cursor-pointer group ${
+                    isDragOver 
+                      ? 'border-brand-500 bg-brand-500/5' 
+                      : 'border-gray-200 dark:border-gray-800 hover:border-brand-500/50 hover:bg-brand-500/5'
+                  }`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={handleChooseFileClick}
+                >
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                  />
+                  {logoPreview ? (
+                    <div className="relative inline-block">
                       <img 
                         src={logoPreview} 
                         alt="Logo preview" 
-                        className="max-h-32 max-w-full rounded-lg object-contain"
+                        className="max-h-32 mx-auto rounded-lg"
                       />
                       <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveLogo();
-                        }}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        onClick={(e) => { e.stopPropagation(); handleRemoveLogo(); }}
+                        className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-2 shadow-lg hover:bg-red-600 transition-colors"
                       >
                         <FiX className="h-4 w-4" />
                       </button>
                     </div>
-                    <p className="text-sm text-gray-600">{logoFile?.name}</p>
-                  </div>
-                ) : logoFile ? (
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="bg-gray-100 rounded-full p-4">
-                      <FiGlobe className="h-8 w-8 text-gray-400" />
+                  ) : (
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="bg-gray-100 dark:bg-zinc-800 p-4 rounded-2xl group-hover:bg-brand-500/10 transition-colors">
+                        <FiGlobe className="h-8 w-8 text-gray-400 group-hover:text-brand-500" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900 dark:text-white">Click to upload or drag and drop</p>
+                        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">PNG, JPG, SVG up to 5MB</p>
+                      </div>
+                      <Button variant="secondary" size="sm" className="mt-2">Choose File</Button>
                     </div>
-                    <div>
-                      <p className="text-gray-600 font-medium">{logoFile.name}</p>
-                      <p className="text-sm text-gray-400 mt-1">Click to change or drag a new file</p>
-                    </div>
-                    <button 
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveLogo();
-                      }}
-                      className="mt-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
-                    >
-                      Remove File
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="bg-gray-100 rounded-full p-4">
-                      <FiGlobe className="h-8 w-8 text-gray-400" />
-                    </div>
-                    <div>
-                      <p className="text-gray-600 font-medium">Drop your logo here or click to upload</p>
-                      <p className="text-sm text-gray-400 mt-1">PNG, JPG, SVG up to 5MB</p>
-                    </div>
-                    <button 
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleChooseFileClick();
-                      }}
-                      className="mt-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
-                    >
-                      Choose File
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Save Button */}
-            <div className="flex justify-end">
-              <button 
-                className="text-white px-6 py-2 rounded-lg transition-colors hover:brightness-90"
-                style={{ backgroundColor: primaryColor }}
-              >
-                Save Appearance
-              </button>
-            </div>
-          </div>
+              <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-gray-800">
+                <Button>Save Appearance</Button>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

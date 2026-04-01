@@ -1,6 +1,8 @@
-﻿import React from 'react';
+import React from 'react';
 import useEvents from '../../../hooks/useEvents';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaEye } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+import { Card, CardContent } from '../../../components/ui/Card';
+import { Button } from '../../../components/ui/Button';
 
 const EventsPage = () => {
     const {
@@ -31,215 +33,220 @@ const EventsPage = () => {
 
     if (error) {
         return (
-            <div className="bg-red-100 dark:bg-red-900/50 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded relative mb-4">
+            <div className="bg-red-100 dark:bg-red-900/50 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded-xl relative mb-4">
                 {error}
             </div>
         );
     }
 
     return (
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Events</h1>
-                <button
+        <div className="w-full">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Events Management</h1>
+                <Button
                     onClick={openCreateModal}
-                    className="w-full sm:w-auto bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg flex items-center justify-center sm:justify-start gap-2 transition-colors font-medium"
+                    className="flex items-center gap-2"
                 >
-                    <FaPlus size={16} />
+                    <FaPlus size={14} />
                     <span>Add Event</span>
-                </button>
+                </Button>
             </div>
 
-            <div className="bg-white dark:bg-[#1E1E1E] rounded-[1rem] shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden relative">
-                <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/5 pointer-events-none"></div>
-                <div className="p-6 overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[768px]">
-                        <thead>
-                            <tr className="border-b border-gray-200 dark:border-gray-800">
-                                <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[25%]">Title</th>
-                                <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[20%] hidden sm:table-cell">Description</th>
-                                <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[18%]">Start Date</th>
-                                <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[18%] hidden md:table-cell">End Date</th>
-                                <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 text-left w-[19%]">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                            {events.length === 0 ? (
-                                <tr>
-                                    <td colSpan="5" className="py-12 text-center text-sm text-gray-500 dark:text-zinc-400">
-                                        No events found. Click "Add Event" to create one.
-                                    </td>
+            <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+                <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="border-b border-gray-200 dark:border-gray-800">
+                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Title</th>
+                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 hidden sm:table-cell">Description</th>
+                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Start Date</th>
+                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 hidden md:table-cell">End Date</th>
+                                    <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 text-right">Actions</th>
                                 </tr>
-                            ) : (
-                                events.map((event) => (
-                                    <tr 
-                                        key={event.event_id} 
-                                        className="hover:bg-brand-500/10 transition-all duration-200 h-[64px] group hover:shadow-[inset_0_0_20px_rgba(249,115,22,0.05)]"
-                                    >
-                                        <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-900 dark:text-gray-100 font-medium">
-                                            <div className="truncate max-w-xs" title={event.title}>{event.title}</div>
-                                        </td>
-                                        <td className="py-2 pr-4 text-[14px] text-gray-700 dark:text-zinc-400 hidden sm:table-cell">
-                                            <div className="truncate max-w-xs" title={event.description}>{event.description || 'N/A'}</div>
-                                        </td>
-                                        <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">
-                                            <div className="truncate max-w-xs text-xs sm:text-sm" title={formatDateTime(event.start_datetime)}>
-                                                {formatDateTime(event.start_datetime)}
-                                            </div>
-                                        </td>
-                                        <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400 hidden md:table-cell">
-                                            <div className="truncate max-w-xs text-xs sm:text-sm" title={formatDateTime(event.end_datetime)}>
-                                                {formatDateTime(event.end_datetime)}
-                                            </div>
-                                        </td>
-                                        <td className="py-2 px-1 whitespace-nowrap text-left">
-                                            <div className="flex justify-start gap-2 items-center">
-                                                <button
-                                                    onClick={() => openEditModal(event)}
-                                                    className="text-blue-500 hover:bg-blue-200 dark:hover:bg-blue-500/10 transition-colors p-1.5 rounded-md"
-                                                    title="Edit Event"
-                                                >
-                                                    <FaEdit className="w-[16px] h-[16px]" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(event.event_id)}
-                                                    className="text-red-500 hover:bg-red-200 dark:hover:bg-red-500/10 transition-colors p-1.5 rounded-md"
-                                                    title="Delete Event"
-                                                >
-                                                    <FaTrash className="w-[16px] h-[16px]" />
-                                                </button>
-                                            </div>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                                {events.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="5" className="py-12 text-center text-sm text-gray-500 dark:text-zinc-400">
+                                            No events found. Click "Add Event" to create one.
                                         </td>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                ) : (
+                                    events.map((event) => (
+                                        <tr 
+                                            key={event.event_id} 
+                                            className="hover:bg-brand-500/5 dark:hover:bg-brand-500/10 transition-all duration-200 group"
+                                        >
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 font-medium">
+                                                <div className="truncate max-w-xs" title={event.title}>{event.title}</div>
+                                            </td>
+                                            <td className="px-6 py-4 text-sm text-gray-700 dark:text-zinc-400 hidden sm:table-cell">
+                                                <div className="truncate max-w-xs" title={event.description}>{event.description || 'N/A'}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-zinc-400">
+                                                {formatDateTime(event.start_datetime)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-zinc-400 hidden md:table-cell">
+                                                {formatDateTime(event.end_datetime)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                                                <div className="flex justify-end gap-2 items-center">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => openEditModal(event)}
+                                                        className="text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                                                        title="Edit Event"
+                                                    >
+                                                        <FaEdit className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => handleDelete(event.event_id)}
+                                                        className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+                                                        title="Delete Event"
+                                                    >
+                                                        <FaTrash className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </CardContent>
+            </Card>
 
             {/* Modal for Create/Edit */}
             {modalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative border border-gray-200 dark:border-gray-800">
-                        <button
-                            onClick={closeModal}
-                            className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                        >
-                            <FaTimes size={20} />
-                        </button>
-                        <h2 className="text-2xl font-bold mb-6 dark:text-white text-gray-900">
-                            {editingEvent ? 'Edit Event' : 'Add New Event'}
-                        </h2>
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2" htmlFor="title">
-                                    Title
-                                </label>
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    value={formData.title}
-                                    onChange={handleInputChange}
-                                    className={`w-full px-4 py-2.5 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 text-gray-900 dark:text-white ${
-                                        formErrors.title ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
-                                    }`}
-                                />
-                                {formErrors.title && (
-                                    <p className="text-red-500 text-xs mt-1">{formErrors.title}</p>
-                                )}
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2" htmlFor="description">
-                                    Description
-                                </label>
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    rows="3"
-                                    value={formData.description}
-                                    onChange={handleInputChange}
-                                    className={`w-full px-4 py-2.5 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 text-gray-900 dark:text-white resize-none ${
-                                        formErrors.description ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
-                                    }`}
-                                ></textarea>
-                                {formErrors.description && (
-                                    <p className="text-red-500 text-xs mt-1">{formErrors.description}</p>
-                                )}
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="p-6 relative">
+                            <button
+                                onClick={closeModal}
+                                className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                            >
+                                <FaTimes size={20} />
+                            </button>
+                            <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white tracking-tight">
+                                {editingEvent ? 'Edit Event' : 'Add New Event'}
+                            </h2>
+                            <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
-                                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2" htmlFor="start_datetime">
-                                        Start Date & Time
+                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" htmlFor="title">
+                                        Title
                                     </label>
                                     <input
-                                        type="datetime-local"
-                                        id="start_datetime"
-                                        name="start_datetime"
-                                        value={formData.start_datetime}
+                                        type="text"
+                                        id="title"
+                                        name="title"
+                                        value={formData.title}
                                         onChange={handleInputChange}
-                                        className={`w-full px-4 py-2.5 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 text-gray-900 dark:text-white ${
-                                            formErrors.start_datetime ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                                        className={`w-full px-4 py-2 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white ${
+                                            formErrors.title ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
                                         }`}
+                                        placeholder="Enter event title"
                                     />
-                                    {formErrors.start_datetime && (
-                                        <p className="text-red-500 text-xs mt-1">{formErrors.start_datetime}</p>
+                                    {formErrors.title && (
+                                        <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.title}</p>
                                     )}
                                 </div>
                                 <div>
-                                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2" htmlFor="end_datetime">
-                                        End Date & Time
+                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" htmlFor="description">
+                                        Description
                                     </label>
-                                    <input
-                                        type="datetime-local"
-                                        id="end_datetime"
-                                        name="end_datetime"
-                                        value={formData.end_datetime}
+                                    <textarea
+                                        id="description"
+                                        name="description"
+                                        rows="3"
+                                        value={formData.description}
                                         onChange={handleInputChange}
-                                        className={`w-full px-4 py-2.5 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 text-gray-900 dark:text-white ${
-                                            formErrors.end_datetime ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                                        className={`w-full px-4 py-2 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white resize-none ${
+                                            formErrors.description ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
                                         }`}
-                                    />
-                                    {formErrors.end_datetime && (
-                                        <p className="text-red-500 text-xs mt-1">{formErrors.end_datetime}</p>
+                                        placeholder="Describe the event"
+                                    ></textarea>
+                                    {formErrors.description && (
+                                        <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.description}</p>
                                     )}
                                 </div>
-                            </div>
-                            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={closeModal}
-                                    className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition-colors"
-                                    disabled={submitLoading}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-50 transition-colors"
-                                    disabled={submitLoading}
-                                >
-                                    {submitLoading ? (
-                                        <>
-                                            <span className="animate-spin">⟳</span>
-                                            <span>Saving...</span>
-                                        </>
-                                    ) : editingEvent ? (
-                                        <>
-                                            <FaEdit size={14} />
-                                            <span>Update</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <FaPlus size={14} />
-                                            <span>Create</span>
-                                        </>
-                                    )}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" htmlFor="start_datetime">
+                                            Start Date & Time
+                                        </label>
+                                        <input
+                                            type="datetime-local"
+                                            id="start_datetime"
+                                            name="start_datetime"
+                                            value={formData.start_datetime}
+                                            onChange={handleInputChange}
+                                            className={`w-full px-4 py-2 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white ${
+                                                formErrors.start_datetime ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
+                                            }`}
+                                        />
+                                        {formErrors.start_datetime && (
+                                            <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.start_datetime}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" htmlFor="end_datetime">
+                                            End Date & Time
+                                        </label>
+                                        <input
+                                            type="datetime-local"
+                                            id="end_datetime"
+                                            name="end_datetime"
+                                            value={formData.end_datetime}
+                                            onChange={handleInputChange}
+                                            className={`w-full px-4 py-2 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white ${
+                                                formErrors.end_datetime ? 'border-red-500' : 'border-gray-200 dark:border-gray-800'
+                                            }`}
+                                        />
+                                        {formErrors.end_datetime && (
+                                            <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.end_datetime}</p>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="pt-4 flex flex-col-reverse sm:flex-row justify-end gap-3">
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={closeModal}
+                                        disabled={submitLoading}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        disabled={submitLoading}
+                                        className="gap-2"
+                                    >
+                                        {submitLoading ? (
+                                            <>
+                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                <span>Saving...</span>
+                                            </>
+                                        ) : editingEvent ? (
+                                            <>
+                                                <FaEdit size={14} />
+                                                <span>Update Event</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <FaPlus size={14} />
+                                                <span>Create Event</span>
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            </form>
+                        </div>
+                    </Card>
                 </div>
             )}
         </div>

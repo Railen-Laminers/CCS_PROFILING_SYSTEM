@@ -9,6 +9,8 @@ import {
   FiChevronRight,
   FiPlus
 } from 'react-icons/fi';
+import { Card, CardContent } from '../../../components/ui/Card';
+import { Button } from '../../../components/ui/Button';
 
 const Scheduling = () => {
   const { primaryColor } = useTheme();
@@ -56,108 +58,109 @@ const Scheduling = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-6">
+    <div className="w-full space-y-6">
       {/* Header */}
-      <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-xl p-6 mb-6 flex items-center justify-between shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Class Scheduling</h1>
-          <p className="text-gray-500 mt-1">Manage weekly class schedules and room assignments</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Class Scheduling</h1>
+          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Manage weekly class schedules and room assignments</p>
         </div>
-        <button 
-          className="text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors hover:brightness-90"
-          style={{ backgroundColor: primaryColor }}
-        >
+        <Button className="gap-2">
           <FiPlus className="h-5 w-5" />
           <span>Add Schedule</span>
-        </button>
+        </Button>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((card, index) => (
-          <div key={index} className="bg-white/70 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-3xl font-bold text-gray-800">0</p>
-                <p className="text-gray-500 mt-1">{card.label}</p>
+          <Card key={index} className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+                  <p className="text-sm font-medium text-gray-500 dark:text-zinc-400 mt-1">{card.label}</p>
+                </div>
+                <div className={`${card.bgColor} dark:bg-opacity-10 p-3 rounded-xl`}>
+                  <card.icon className={`h-6 w-6 ${card.color}`} />
+                </div>
               </div>
-              <div className={`${card.bgColor} rounded-lg p-3`}>
-                <card.icon className={`h-6 w-6 ${card.color}`} />
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       {/* Calendar Controls */}
-      <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-xl p-4 mb-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <button 
-            onClick={handlePreviousWeek}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <FiChevronLeft className="h-4 w-4" />
-            <span>Previous Week</span>
-          </button>
-          
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-800">{getWeekRange()}</h2>
-            <p className="text-sm text-gray-500">Current Semester</p>
+      <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50">
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Button variant="secondary" size="sm" onClick={handlePreviousWeek} className="gap-2 w-full sm:w-auto">
+              <FiChevronLeft className="h-4 w-4" />
+              <span>Previous Week</span>
+            </Button>
+            
+            <div className="text-center">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">{getWeekRange()}</h2>
+              <p className="text-xs text-brand-500 font-semibold uppercase tracking-wider mt-0.5">Current Semester</p>
+            </div>
+            
+            <Button variant="secondary" size="sm" onClick={handleNextWeek} className="gap-2 w-full sm:w-auto">
+              <span>Next Week</span>
+              <FiChevronRight className="h-4 w-4" />
+            </Button>
           </div>
-          
-          <button 
-            onClick={handleNextWeek}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <span>Next Week</span>
-            <FiChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Weekly Schedule Grid */}
-      <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-xl shadow-sm overflow-hidden">
-        {/* Days Header */}
-        <div className="grid grid-cols-7 border-b border-gray-200">
-          <div className="p-4 bg-gray-50 border-r border-gray-200">
-            <span className="text-sm font-semibold text-gray-700">Time</span>
-          </div>
-          {days.map((day, index) => (
-            <div key={index} className="p-4 bg-gray-50 border-r border-gray-200 last:border-r-0">
-              <span className="text-sm font-semibold text-gray-700">{day}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Time Slots Grid */}
-        <div className="grid grid-cols-7">
-          {/* Time Column */}
-          <div className="border-r border-gray-200">
-            {timeSlots.map((time, index) => (
-              <div 
-                key={index} 
-                className="h-16 px-4 flex items-start pt-2 border-b border-gray-100 last:border-b-0"
-              >
-                <span className="text-xs text-gray-500 font-medium">{time}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Day Columns */}
-          {days.map((day, dayIndex) => (
-            <div key={dayIndex} className="border-r border-gray-200 last:border-r-0">
-              {timeSlots.map((time, timeIndex) => (
-                <div 
-                  key={timeIndex} 
-                  className="h-16 border-b border-gray-100 last:border-b-0 relative"
-                >
-                  {/* Empty cell - event blocks can be positioned here absolutely */}
+      <Card className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md border-white/20 dark:border-gray-800/50 overflow-hidden">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <div className="min-w-[1000px]">
+              {/* Days Header */}
+              <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-800">
+                <div className="p-4 bg-gray-50/50 dark:bg-zinc-900/50 border-r border-gray-200 dark:border-gray-800">
+                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">Time</span>
                 </div>
-              ))}
+                {days.map((day, index) => (
+                  <div key={index} className="p-4 bg-gray-50/50 dark:bg-zinc-900/50 border-r border-gray-200 dark:border-gray-800 last:border-r-0 text-center">
+                    <span className="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">{day}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Time Slots Grid */}
+              <div className="grid grid-cols-7 relative">
+                {/* Time Column */}
+                <div className="border-r border-gray-200 dark:border-gray-800">
+                  {timeSlots.map((time, index) => (
+                    <div 
+                      key={index} 
+                      className="h-16 px-4 flex items-start pt-2 border-b border-gray-100 dark:border-gray-800/50 last:border-b-0"
+                    >
+                      <span className="text-[10px] text-gray-500 dark:text-zinc-500 font-bold uppercase">{time}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Day Columns */}
+                {days.map((day, dayIndex) => (
+                  <div key={dayIndex} className="border-r border-gray-200 dark:border-gray-800 last:border-r-0 relative group">
+                    {timeSlots.map((time, timeIndex) => (
+                      <div 
+                        key={timeIndex} 
+                        className="h-16 border-b border-gray-100 dark:border-gray-800/50 last:border-b-0 transition-colors hover:bg-brand-500/5 dark:hover:bg-brand-500/5"
+                      >
+                        {/* Empty cell */}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
