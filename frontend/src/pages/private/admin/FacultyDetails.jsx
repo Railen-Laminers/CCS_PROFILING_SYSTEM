@@ -31,6 +31,8 @@ const FacultyDetails = () => {
         fetchFaculty,
         teachingSchedule,
         subjectsHandled,
+        departments,
+        positions,
     } = useFacultyDetails();
 
     if (loading) {
@@ -278,6 +280,8 @@ const FacultyDetails = () => {
                 onSuccess={() => {
                     fetchFaculty();
                 }} 
+                departments={departments}
+                positions={positions}
             />
 
             {/* Hidden Printable Component */}

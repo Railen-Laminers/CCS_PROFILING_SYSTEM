@@ -34,24 +34,25 @@ const FacultyFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
     useEffect(() => {
         if (isOpen) {
             if (mode === 'edit' && initialData) {
-                const f = initialData.faculty;
+                const u = initialData.user || initialData;
+                const f = initialData.faculty || initialData;
                 const formattedData = {
-                    firstname: initialData.user.firstname,
-                    middlename: initialData.user.middlename || '',
-                    lastname: initialData.user.lastname,
-                    user_id: initialData.user.user_id,
-                    email: initialData.user.email,
+                    firstname: u.firstname || '',
+                    middlename: u.middlename || '',
+                    lastname: u.lastname || '',
+                    user_id: u.user_id || '',
+                    email: u.email || '',
                     password: '',
                     password_confirmation: '',
-                    birth_date: initialData.user.birth_date ? initialData.user.birth_date.split('T')[0] : '',
-                    contact_number: initialData.user.contact_number || '',
-                    gender: initialData.user.gender || '',
-                    address: initialData.user.address || '',
-                    is_active: initialData.user.is_active,
-                    department: f?.department || '',
-                    position: f?.position || '',
-                    specialization: f?.specialization || '',
-                    research_projects: Array.isArray(f?.research_projects) ? f.research_projects.join(', ') : '',
+                    birth_date: u.birth_date ? (typeof u.birth_date === 'string' ? u.birth_date.split('T')[0] : '') : '',
+                    contact_number: u.contact_number || '',
+                    gender: u.gender || '',
+                    address: u.address || '',
+                    is_active: u.is_active ?? true,
+                    department: f.department || '',
+                    position: f.position || '',
+                    specialization: f.specialization || '',
+                    research_projects: Array.isArray(f.research_projects) ? f.research_projects.join(', ') : (typeof f.research_projects === 'string' ? f.research_projects : ''),
                 };
                 setFormData(formattedData);
             } else {
