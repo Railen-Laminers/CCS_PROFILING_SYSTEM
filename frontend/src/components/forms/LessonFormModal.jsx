@@ -19,7 +19,6 @@ const LessonFormModal = ({
 }) => {
   const [formData, setFormData] = useState({
     topic: initialData?.topic || '',
-    content: initialData?.content || '',
     week_number: initialData?.week_number || 1,
     date: initialData?.date ? new Date(initialData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
   });
@@ -56,7 +55,6 @@ const LessonFormModal = ({
     if (file) {
       submissionData = new FormData();
       submissionData.append('topic', formData.topic);
-      submissionData.append('content', formData.content);
       submissionData.append('week_number', formData.week_number === '' ? 1 : Number(formData.week_number));
       submissionData.append('date', formData.date);
       submissionData.append('attached_file', file);
@@ -163,20 +161,7 @@ const LessonFormModal = ({
               </div>
             </div>
 
-            {/* Content Preview */}
-            <div className="space-y-2">
-              <label className={labelClass}>Topic Outline / Notes</label>
-              <div className="relative group">
-                <FiFileText className="absolute left-4 top-4 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
-                <textarea 
-                  name="content"
-                  placeholder="Brief summary of what will be covered..."
-                  className={`${inputClass} h-32 py-3 resize-none`}
-                  value={formData.content}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
+
 
             {/* Attached File Upload */}
             <div className="space-y-2 mt-4">

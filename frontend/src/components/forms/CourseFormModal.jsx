@@ -21,6 +21,7 @@ const CourseFormModal = ({
   mode = 'create',
   preselectYear = 1,
   preselectSem = 1,
+  preselectProgram = 'BSIT',
   onSubmit
 }) => {
   const [formData, setFormData] = useState({
@@ -29,6 +30,7 @@ const CourseFormModal = ({
     units: 3,
     year_level: 1,
     semester: 1,
+    program: 'BSIT',
     syllabus: ''
   });
 
@@ -43,7 +45,8 @@ const CourseFormModal = ({
         course_title: initialData.course_title || '',
         units: initialData.units ?? 3,
         year_level: initialData.year_level ?? 1,
-        semester: initialData.semester ?? 1
+        semester: initialData.semester ?? 1,
+        program: initialData.program || preselectProgram || 'BSIT'
       });
     } else {
       setFormData({
@@ -51,11 +54,12 @@ const CourseFormModal = ({
         course_title: '',
         units: 3,
         year_level: preselectYear || 1,
-        semester: preselectSem || 1
+        semester: preselectSem || 1,
+        program: preselectProgram || 'BSIT'
       });
     }
     setFile(null);
-  }, [initialData, preselectYear, preselectSem, isOpen]);
+  }, [initialData, preselectYear, preselectSem, preselectProgram, isOpen]);
 
   if (!isOpen) return null;
 
@@ -100,13 +104,15 @@ const CourseFormModal = ({
       submissionData.append('units', formData.units === '' ? 0 : Number(formData.units));
       submissionData.append('year_level', formData.year_level === '' ? 1 : Number(formData.year_level));
       submissionData.append('semester', formData.semester === '' ? 1 : Number(formData.semester));
+      submissionData.append('program', formData.program);
       submissionData.append('syllabus_file', file);
     } else {
       submissionData = {
         ...formData,
         units: formData.units === '' ? 0 : Number(formData.units),
         year_level: formData.year_level === '' ? 1 : Number(formData.year_level),
-        semester: formData.semester === '' ? 1 : Number(formData.semester)
+        semester: formData.semester === '' ? 1 : Number(formData.semester),
+        program: formData.program
       };
     }
 

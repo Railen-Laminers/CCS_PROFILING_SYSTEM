@@ -7,7 +7,7 @@ import {
 } from 'react-icons/fi';
 import { instructionAPI, courseAPI } from '@/services/api';
 
-const useInstruction = () => {
+const useInstruction = (program = 'BSIT') => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,7 +39,7 @@ const useInstruction = () => {
     };
 
     if (Array.isArray(courses)) {
-      courses.forEach(course => {
+      courses.filter(c => !c.program || c.program === program).forEach(course => {
         const yr = course.year_level;
         const sem = course.semester;
 
@@ -53,7 +53,7 @@ const useInstruction = () => {
     }
 
     return grouped;
-  }, [courses]);
+  }, [courses, program]);
 
   return {
     curriculum,

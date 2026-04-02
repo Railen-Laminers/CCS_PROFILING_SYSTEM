@@ -20,6 +20,11 @@ const lessonPlanSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  week_number: {
+    type: Number,
+    required: false,
+    default: 1
+  },
   date: {
     type: Date,
     required: [true, 'Lesson date is required']

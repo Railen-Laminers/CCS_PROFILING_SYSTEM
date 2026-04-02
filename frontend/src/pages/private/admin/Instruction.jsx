@@ -52,12 +52,13 @@ const CourseRow = ({ course }) => {
 
 const Instruction = () => {
   const { showToast } = useToast();
+  const [selectedProgram, setSelectedProgram] = useState('BSIT');
   const {
     curriculum,
     loading,
     error,
     refresh
-  } = useInstruction();
+  } = useInstruction(selectedProgram);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -99,15 +100,39 @@ const Instruction = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Instruction Management</h1>
         </div>
-        <button
-          onClick={() => handleAddClick(1, 1)}
-          className="relative group overflow-hidden rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
-        >
-          <span className="relative z-10 flex items-center gap-2">
-            <FiPlus className="w-4 h-4" /> Add New Course
-          </span>
-          <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
-        </button>
+        <div className="flex items-center gap-4">
+          <div className="bg-gray-100 dark:bg-[#18181B] p-1 rounded-xl flex items-center shadow-inner border border-gray-200 dark:border-gray-800">
+            <button
+              onClick={() => setSelectedProgram('BSIT')}
+              className={`px-4 py-1.5 text-xs font-bold uppercase tracking-widest rounded-lg transition-all ${
+                selectedProgram === 'BSIT' 
+                  ? 'bg-white dark:bg-[#252525] text-brand-500 shadow-sm border border-gray-200 dark:border-gray-700' 
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border border-transparent'
+              }`}
+            >
+              BSIT
+            </button>
+            <button
+              onClick={() => setSelectedProgram('BSCS')}
+              className={`px-4 py-1.5 text-xs font-bold uppercase tracking-widest rounded-lg transition-all ${
+                selectedProgram === 'BSCS' 
+                  ? 'bg-white dark:bg-[#252525] text-brand-500 shadow-sm border border-gray-200 dark:border-gray-700' 
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border border-transparent'
+              }`}
+            >
+              BSCS
+            </button>
+          </div>
+          <button
+            onClick={() => handleAddClick(1, 1)}
+            className="relative group overflow-hidden rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              <FiPlus className="w-4 h-4" /> Add New Course
+            </span>
+            <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -179,6 +204,7 @@ const Instruction = () => {
         onClose={() => setIsModalOpen(false)}
         preselectYear={preselect.year}
         preselectSem={preselect.sem}
+        preselectProgram={selectedProgram}
         onSubmit={handleCreateCourse}
       />
     </div>

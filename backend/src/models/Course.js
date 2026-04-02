@@ -33,12 +33,18 @@ const courseSchema = new mongoose.Schema({
     trim: true
   },
   syllabus: {
-    type: String, // Can be Markdown or JSON
+    type: String, 
     trim: true
   },
   syllabus_file: {
-    type: String, // URL/Path to the uploaded file
+    type: String, 
     trim: true
+  },
+  program: {
+    type: String,
+    enum: ['BSIT', 'BSCS'],
+    required: [true, 'Program is required'],
+    default: 'BSIT'
   }
 }, {
   timestamps: true

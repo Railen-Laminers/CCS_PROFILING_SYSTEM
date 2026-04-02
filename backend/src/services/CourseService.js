@@ -37,7 +37,8 @@ class CourseService {
       year_level: data.year_level,
       semester: data.semester,
       syllabus: data.syllabus,
-      syllabus_file: data.syllabus_file
+      syllabus_file: data.syllabus_file,
+      program: data.program || 'BSIT'
     });
   }
 
@@ -51,7 +52,7 @@ class CourseService {
     }
 
     // Assign only allowed curriculum fields
-    const allowedFields = ['units', 'course_code', 'course_title', 'year_level', 'semester', 'syllabus', 'syllabus_file'];
+    const allowedFields = ['units', 'course_code', 'course_title', 'year_level', 'semester', 'syllabus', 'syllabus_file', 'program'];
     allowedFields.forEach(field => {
       if (data[field] !== undefined) {
         course[field] = data[field];
