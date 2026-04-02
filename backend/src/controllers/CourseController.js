@@ -46,6 +46,10 @@ class CourseController {
       // Log outgoing request for debugging 400s
       console.log(' [CourseController.store] Creating course with body:', req.body);
       
+      if (req.file) {
+        req.body.syllabus_file = `/uploads/${req.file.filename}`;
+      }
+      
       const course = await CourseService.create(req.body);
 
       res.status(201).json({
@@ -91,6 +95,11 @@ class CourseController {
   static async update(req, res, next) {
     try {
       const { id } = req.params;
+      
+      if (req.file) {
+        req.body.syllabus_file = `/uploads/${req.file.filename}`;
+      }
+
       const course = await CourseService.update(id, req.body);
 
       res.status(200).json({

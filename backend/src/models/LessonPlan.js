@@ -4,7 +4,12 @@ const lessonPlanSchema = new mongoose.Schema({
   class_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Class',
-    required: [true, 'Class ID is required']
+    required: false
+  },
+  course_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course',
+    required: false
   },
   topic: {
     type: String,
@@ -18,6 +23,10 @@ const lessonPlanSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: [true, 'Lesson date is required']
+  },
+  attached_file: {
+    type: String, // URL/Path to the uploaded file
+    trim: true
   }
 }, {
   timestamps: true

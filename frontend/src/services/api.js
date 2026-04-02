@@ -22,6 +22,12 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
+    
+    // Let the browser set Content-Type with boundary for FormData
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+    
     return config;
   },
   (error) => Promise.reject(error)
@@ -218,9 +224,23 @@ export const instructionAPI = {
     const response = await axiosInstance.get('/instruction/lesson-plans', { signal });
     return response.data;
   },
+  createLessonPlan: async (lessonData) => {
+    const response = await axiosInstance.post('/instruction/lesson-plans', lessonData);
+    return response.data;
+  },
+  deleteLessonPlan: async (id) => {
+    await axiosInstance.delete(`/instruction/lesson-plans/${id}`);
+  },
   getMaterials: async (signal) => {
     const response = await axiosInstance.get('/instruction/materials', { signal });
     return response.data;
+  },
+  createMaterial: async (materialData) => {
+    const response = await axiosInstance.post('/instruction/materials', materialData);
+    return response.data;
+  },
+  deleteMaterial: async (id) => {
+    await axiosInstance.delete(`/instruction/materials/${id}`);
   },
 };
 

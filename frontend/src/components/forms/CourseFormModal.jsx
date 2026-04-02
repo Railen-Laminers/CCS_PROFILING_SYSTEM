@@ -7,9 +7,10 @@ import {
   FiType,
   FiLayers,
   FiCalendar,
-  FiClock
+  FiClock,
+  FiFileText,
+  FiUploadCloud
 } from 'react-icons/fi';
-import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
 const CourseFormModal = ({ 
@@ -31,6 +32,7 @@ const CourseFormModal = ({
     syllabus: ''
   });
 
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -41,8 +43,7 @@ const CourseFormModal = ({
         course_title: initialData.course_title || '',
         units: initialData.units ?? 3,
         year_level: initialData.year_level ?? 1,
-        semester: initialData.semester ?? 1,
-        syllabus: initialData.syllabus || ''
+        semester: initialData.semester ?? 1
       });
     } else {
       setFormData({
@@ -50,10 +51,10 @@ const CourseFormModal = ({
         course_title: '',
         units: 3,
         year_level: preselectYear || 1,
-        semester: preselectSem || 1,
-        syllabus: ''
+        semester: preselectSem || 1
       });
     }
+    setFile(null);
   }, [initialData, preselectYear, preselectSem, isOpen]);
 
   if (!isOpen) return null;
@@ -63,8 +64,6 @@ const CourseFormModal = ({
     
     // Handle number fields carefully to avoid NaN warnings in the input
     if (name === 'units' || name === 'year_level' || name === 'semester') {
-      // If empty string, keep as empty string in state so the user can clear the input
-      // but treat as 0 or valid number for other logic
       setFormData(prev => ({
         ...prev,
         [name]: value === '' ? '' : parseInt(value)
@@ -82,18 +81,34 @@ const CourseFormModal = ({
     }
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
 
-    // Final validation: ensure numeric fields are numbers, not empty strings
-    const submissionData = {
-      ...formData,
-      units: formData.units === '' ? 0 : Number(formData.units),
-      year_level: formData.year_level === '' ? 1 : Number(formData.year_level),
-      semester: formData.semester === '' ? 1 : Number(formData.semester)
-    };
+    let submissionData;
+    if (file) {
+      submissionData = new FormData();
+      submissionData.append('course_code', formData.course_code);
+      submissionData.append('course_title', formData.course_title);
+      submissionData.append('units', formData.units === '' ? 0 : Number(formData.units));
+      submissionData.append('year_level', formData.year_level === '' ? 1 : Number(formData.year_level));
+      submissionData.append('semester', formData.semester === '' ? 1 : Number(formData.semester));
+      submissionData.append('syllabus_file', file);
+    } else {
+      submissionData = {
+        ...formData,
+        units: formData.units === '' ? 0 : Number(formData.units),
+        year_level: formData.year_level === '' ? 1 : Number(formData.year_level),
+        semester: formData.semester === '' ? 1 : Number(formData.semester)
+      };
+    }
 
     try {
       await onSubmit(submissionData);
@@ -109,7 +124,6 @@ const CourseFormModal = ({
   const inputClass = "w-full h-11 pl-11 pr-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all";
   const labelClass = "text-[12px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-2 block ml-1";
 
-  // Prevent NaN display in value attributes
   const getValue = (name) => {
     const val = formData[name];
     return (val === undefined || val === null || isNaN(val)) ? '' : val;
@@ -230,6 +244,39 @@ const CourseFormModal = ({
                   <option value={1}>1st Semester</option>
                   <option value={2}>2nd Semester</option>
                 </select>
+              </div>
+            </div>
+
+
+            {/* Syllabus File Upload */}
+            <div className="md:col-span-2 space-y-2">
+              <label className={labelClass}>Syllabus Attachment</label>
+              <div className="relative group">
+                <input 
+                  type="file"
+                  id="syllabus_file"
+                  name="syllabus_file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept=".pdf,.doc,.docx"
+                />
+                <label 
+                  htmlFor="syllabus_file"
+                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl bg-gray-50 dark:bg-[#18181B] hover:bg-gray-100 dark:hover:bg-zinc-800/50 hover:border-brand-500/50 transition-all cursor-pointer group"
+                >
+                  <FiUploadCloud className="w-8 h-8 text-gray-400 group-hover:text-brand-500 mb-2 transition-colors" />
+                  <span className="text-sm font-bold text-gray-600 dark:text-gray-300">
+                    {file ? file.name : (
+                      <>
+                        <span className="text-brand-500">Click to attach file</span> or drag and drop
+                      </>
+                    )}
+                  </span>
+                  <span className="text-xs text-gray-400 mt-1">PDF, DOC, DOCX up to 20MB</span>
+                </label>
+                {initialData?.syllabus_file && !file && (
+                  <p className="text-xs text-brand-500 mt-2 font-medium">Currently attached: {initialData.syllabus_file.split('/').pop()}</p>
+                )}
               </div>
             </div>
           </div>

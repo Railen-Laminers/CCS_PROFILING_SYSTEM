@@ -35,6 +35,10 @@ const courseSchema = new mongoose.Schema({
   syllabus: {
     type: String, // Can be Markdown or JSON
     trim: true
+  },
+  syllabus_file: {
+    type: String, // URL/Path to the uploaded file
+    trim: true
   }
 }, {
   timestamps: true

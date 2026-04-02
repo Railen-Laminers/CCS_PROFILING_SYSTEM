@@ -38,11 +38,19 @@ const useInstruction = () => {
       4: { 1: [], 2: [] }
     };
 
-    courses.forEach(course => {
-      if (grouped[course.year_level]) {
-        grouped[course.year_level][course.semester].push(course);
-      }
-    });
+    if (Array.isArray(courses)) {
+      courses.forEach(course => {
+        const yr = course.year_level;
+        const sem = course.semester;
+
+        if (grouped[yr]) {
+          if (!grouped[yr][sem]) {
+            grouped[yr][sem] = [];
+          }
+          grouped[yr][sem].push(course);
+        }
+      });
+    }
 
     return grouped;
   }, [courses]);

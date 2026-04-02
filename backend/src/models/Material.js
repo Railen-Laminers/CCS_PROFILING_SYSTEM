@@ -4,7 +4,12 @@ const materialSchema = new mongoose.Schema({
   class_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Class',
-    required: [true, 'Class ID is required']
+    required: false
+  },
+  course_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course',
+    required: false
   },
   title: {
     type: String,

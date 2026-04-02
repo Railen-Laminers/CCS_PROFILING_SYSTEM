@@ -36,7 +36,8 @@ class CourseService {
       course_title: data.course_title,
       year_level: data.year_level,
       semester: data.semester,
-      syllabus: data.syllabus
+      syllabus: data.syllabus,
+      syllabus_file: data.syllabus_file
     });
   }
 
@@ -50,7 +51,7 @@ class CourseService {
     }
 
     // Assign only allowed curriculum fields
-    const allowedFields = ['units', 'course_code', 'course_title', 'year_level', 'semester', 'syllabus'];
+    const allowedFields = ['units', 'course_code', 'course_title', 'year_level', 'semester', 'syllabus', 'syllabus_file'];
     allowedFields.forEach(field => {
       if (data[field] !== undefined) {
         course[field] = data[field];
