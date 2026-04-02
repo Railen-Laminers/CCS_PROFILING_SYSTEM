@@ -19,8 +19,6 @@ const DEFAULT_FORM_DATA = {
     department: '',
     position: '',
     specialization: '',
-    subjects_handled: '',
-    teaching_schedule: '',
     research_projects: '',
 };
 
@@ -53,8 +51,6 @@ const FacultyFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                     department: f?.department || '',
                     position: f?.position || '',
                     specialization: f?.specialization || '',
-                    subjects_handled: Array.isArray(f?.subjects_handled) ? f.subjects_handled.join(', ') : '',
-                    teaching_schedule: Array.isArray(f?.teaching_schedule) ? f.teaching_schedule.join(', ') : '',
                     research_projects: Array.isArray(f?.research_projects) ? f.research_projects.join(', ') : '',
                 };
                 setFormData(formattedData);
@@ -178,8 +174,6 @@ const FacultyFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 department: formData.department,
                 position: formData.position,
                 specialization: formData.specialization,
-                subjects_handled: formData.subjects_handled ? formData.subjects_handled.split(',').map(s => s.trim()).filter(Boolean) : [],
-                teaching_schedule: formData.teaching_schedule ? formData.teaching_schedule.split(',').map(s => s.trim()).filter(Boolean) : [],
                 research_projects: formData.research_projects ? formData.research_projects.split(',').map(s => s.trim()).filter(Boolean) : [],
             };
 
@@ -419,8 +413,6 @@ const FacultyFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                     positions.map(p => ({ value: p, label: p }))
                                 )}
                                 {renderField('Specialization', 'specialization', 'text', false, null, null, 'e.g. Artificial Intelligence')}
-                                {renderField('Subjects Handled', 'subjects_handled', 'text', false, null, 'Separate with commas', 'e.g. AI, DBMS, Web Dev')}
-                                {renderField('Teaching Schedule', 'teaching_schedule', 'textarea', false, null, 'Separate with commas', 'e.g. Mon 9-12, Tue 1-4')}
                                 {renderField('Research Projects', 'research_projects', 'textarea', false, null, 'Separate with commas', 'e.g. Neural Networks, Machine Learning')}
                             </div>
                         </div>

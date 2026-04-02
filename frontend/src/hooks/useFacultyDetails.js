@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import { useReactToPrint } from 'react-to-print';
-import { userAPI } from '../services/api';
+import { userAPI, instructionAPI } from '../services/api';
 import { formatDateForInput } from './useStudentDetails';
 
 export const useFacultyDetails = () => {
@@ -11,6 +11,7 @@ export const useFacultyDetails = () => {
     const [faculty, setFaculty] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [instructorClasses, setInstructorClasses] = useState([]);
 
     const [activeTab, setActiveTab] = useState('Personal Information');
     const [isTabLoading, setIsTabLoading] = useState(false);
@@ -36,9 +37,13 @@ export const useFacultyDetails = () => {
         setError('');
         try {
             const data = await userAPI.getUser(id);
-            // The backend returns { user: {...}, faculty: {...} } or just the user object with faculty nested
-            // Based on previous Faculty.jsx logic, it seems it expects the whole object
             setFaculty(data);
+            
+            // Fetch classes for this instructor
+            if (data.faculty?._id) {
+                const classes = await instructionAPI.getClasses({ instructor_id: data.faculty._id });
+                setInstructorClasses(classes);
+            }
         } catch (err) {
             console.error(err);
             showToast('Failed to fetch faculty details.', 'error');
@@ -69,12 +74,12 @@ export const useFacultyDetails = () => {
             contact_number: u.contact_number || '',
             gender: u.gender || '',
             address: u.address || '',
+            gender: u.gender || '',
+            address: u.address || '',
             is_active: u.is_active,
             department: f?.department || '',
             position: f?.position || '',
             specialization: f?.specialization || '',
-            subjects_handled: Array.isArray(f?.subjects_handled) ? f.subjects_handled.join(', ') : f?.subjects_handled || '',
-            teaching_schedule: Array.isArray(f?.teaching_schedule) ? f.teaching_schedule.join(', ') : f?.teaching_schedule || '',
             research_projects: Array.isArray(f?.research_projects) ? f.research_projects.join(', ') : f?.research_projects || '',
         });
         setModalOpen(true);
@@ -86,6 +91,15 @@ export const useFacultyDetails = () => {
         setActiveTab(tab);
         setTimeout(() => setIsTabLoading(false), 300);
     };
+
+    // Derived statistics and formatted data
+    const teachingSchedule = instructorClasses.map(cls => ({
+        id: cls._id,
+        display: `${cls.course_id?.course_code} - ${cls.schedule.date} at ${cls.schedule.startTime}-${cls.schedule.endTime} (${cls.room_id?.name || 'Unknown Room'})`,
+        course: cls.course_id?.course_code
+    }));
+
+    const subjectsHandled = [...new Set(instructorClasses.map(cls => cls.course_id?.course_code))].filter(Boolean);
 
     return {
         faculty,
@@ -102,5 +116,8 @@ export const useFacultyDetails = () => {
         handleTabChange,
         fetchFaculty,
         showToast,
+        teachingSchedule,
+        subjectsHandled,
+        instructorClasses,
     };
 };

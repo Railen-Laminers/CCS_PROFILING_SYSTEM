@@ -235,8 +235,8 @@ export const roomAPI = {
 // ─── Instruction API ─────────────────────────────────────────────────────────
 
 export const instructionAPI = {
-  getClasses: async (signal) => {
-    const response = await axiosInstance.get('/instruction/classes', { signal });
+  getClasses: async (params, signal) => {
+    const response = await axiosInstance.get('/instruction/classes', { params, signal });
     return response.data;
   },
   createClass: async (classData) => {

@@ -29,6 +29,8 @@ const FacultyDetails = () => {
         handleEdit,
         handleTabChange,
         fetchFaculty,
+        teachingSchedule,
+        subjectsHandled,
     } = useFacultyDetails();
 
     if (loading) {
@@ -228,7 +230,10 @@ const FacultyDetails = () => {
                                         <FiClock className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
                                     </div>
-                                    <BulletList items={parseList(f?.teaching_schedule)} />
+                                    <BulletList items={teachingSchedule.map(s => s.display)} />
+                                    {teachingSchedule.length === 0 && (
+                                        <p className="text-sm text-gray-500 italic">No classes currently scheduled.</p>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -252,7 +257,10 @@ const FacultyDetails = () => {
                                         <FiBookOpen className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>
                                     </div>
-                                    {renderTags(f?.subjects_handled, "orange")}
+                                    {renderTags(subjectsHandled.join(', '), "orange")}
+                                    {subjectsHandled.length === 0 && (
+                                        <p className="text-sm text-gray-500 italic">No subjects currently assigned.</p>
+                                    )}
                                 </div>
                             </div>
                         )}

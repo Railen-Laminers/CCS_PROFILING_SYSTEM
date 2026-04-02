@@ -6,7 +6,12 @@ const Material = require('../models/Material');
 class InstructionController {
   static async getClasses(req, res, next) {
     try {
-      const classes = await Class.find()
+      const filter = {};
+      if (req.query.instructor_id) {
+        filter.instructor_id = req.query.instructor_id;
+      }
+
+      const classes = await Class.find(filter)
         .populate('course_id', 'course_code course_title')
         .populate({
           path: 'instructor_id',
