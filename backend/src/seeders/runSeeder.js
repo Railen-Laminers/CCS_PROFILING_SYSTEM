@@ -176,25 +176,33 @@ const seedData = async () => {
     const courses = await Course.find();
     const facultyMembers = await Faculty.find().populate('user_id');
     
+    // Create Rooms
+    const Room = require('../models/Room');
+    await Room.deleteMany({});
+    const room1 = await Room.create({ name: 'CCS 301', type: 'Lecture', capacity: 40 });
+    const room2 = await Room.create({ name: 'CCS 205', type: 'Laboratory', capacity: 30 });
+    
     if (courses.length > 0 && facultyMembers.length > 0) {
       // Create Classes
       const class1 = await Class.create({
         course_id: courses[0]._id,
         instructor_id: facultyMembers[0]._id,
-        schedule: 'Mon/Wed 9:00 AM - 10:30 AM',
-        room: 'CCS 301',
+        section: 'IT-A',
+        schedule: { date: '2026-04-06', startTime: '09:00', endTime: '10:30' },
+        room_id: room1._id,
         students_count: 35
       });
 
       const class2 = await Class.create({
         course_id: courses[1]._id,
-        instructor_id: facultyMembers[0]._id, // Use the same instructor since only one was created
-        schedule: 'Tue/Thu 1:00 PM - 2:30 PM',
-        room: 'CCS 205',
+        instructor_id: facultyMembers[0]._id,
+        section: 'IT-B',
+        schedule: { date: '2026-04-07', startTime: '13:00', endTime: '14:30' },
+        room_id: room2._id,
         students_count: 28
       });
 
-      console.log('Classes created...');
+      console.log('Classes and Rooms created...');
 
       // Create Assignments for Class 1
       await Assignment.create({

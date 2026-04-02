@@ -11,5 +11,6 @@ router.use(authorize('admin'));
 router.get('/search', StudentSearchController.search);
 router.get('/sports', StudentSearchController.sports);
 router.get('/organizations', StudentSearchController.organizations);
+router.get('/sections', StudentSearchController.sections);
 
 module.exports = router;

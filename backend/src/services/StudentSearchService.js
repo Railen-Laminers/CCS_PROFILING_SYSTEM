@@ -156,6 +156,14 @@ class StudentSearchService {
     const orgs = await Student.distinct('organizations.clubs');
     return orgs.sort();
   }
+
+  /**
+   * Get distinct sections from all students
+   */
+  static async getDistinctSections() {
+    const sections = await Student.distinct('section');
+    return sections.filter(s => s).sort();
+  }
 }
 
 module.exports = StudentSearchService;

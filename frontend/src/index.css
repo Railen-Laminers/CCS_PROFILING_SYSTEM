@@ -50,6 +50,135 @@
     background-color: rgba(107, 114, 128, 0.8);
 }
 
-::-webkit-scrollbar-corner {
-    background: transparent;
-}
+
+/* React Big Calendar Overrides */
+@layer components {
+  .rbc-theme-container .rbc-calendar {
+    font-family: inherit;
+    color: inherit;
+  }
+
+  /* Light mode overrides */
+  .rbc-theme-container .rbc-header {
+    padding: 10px 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    @apply text-gray-500 border-b border-gray-100;
+  }
+
+  /* Toolbar adjustments */
+  .rbc-theme-container .rbc-toolbar button {
+    @apply rounded-lg border-gray-200 text-gray-700;
+  }
+
+  .rbc-theme-container .rbc-toolbar button:hover,
+  .rbc-theme-container .rbc-toolbar button:active {
+    @apply bg-gray-100 border-gray-300 text-gray-900 shadow-none;
+  }
+
+  /* Only view-switch types should keep the active state */
+  .rbc-theme-container .rbc-toolbar .rbc-view-container button.rbc-active,
+  .rbc-theme-container .rbc-toolbar .rbc-btn-group:last-child button.rbc-active {
+    @apply bg-gray-100 border-gray-300 text-gray-900;
+  }
+
+  /* Remove focus outlines from all buttons */
+  .rbc-theme-container .rbc-toolbar button:focus {
+    @apply outline-none bg-transparent;
+  }
+  .rbc-theme-container .rbc-toolbar button:focus:hover {
+    @apply bg-gray-100;
+  }
+
+  /* Dark mode overrides explicitly */
+  .dark .rbc-theme-container .rbc-header {
+    @apply text-gray-400 border-b border-zinc-800;
+  }
+
+  .dark .rbc-theme-container .rbc-month-view,
+  .dark .rbc-theme-container .rbc-time-view,
+  .dark .rbc-theme-container .rbc-agenda-view {
+    @apply border-zinc-800;
+  }
+
+  .dark .rbc-theme-container .rbc-month-row,
+  .dark .rbc-theme-container .rbc-day-bg,
+  .dark .rbc-theme-container .rbc-header,
+  .dark .rbc-theme-container .rbc-time-content,
+  .dark .rbc-theme-container .rbc-time-header,
+  .dark .rbc-theme-container .rbc-time-header-content,
+  .dark .rbc-theme-container .rbc-timeslot-group,
+  .dark .rbc-theme-container .rbc-day-slot .rbc-time-slot {
+    @apply border-zinc-800;
+  }
+
+  /* Toolbar Dark Mode */
+  .dark .rbc-theme-container .rbc-toolbar button {
+    @apply border-zinc-700 text-zinc-300;
+  }
+
+  .dark .rbc-theme-container .rbc-toolbar button:hover,
+  .dark .rbc-theme-container .rbc-toolbar button:active {
+    @apply bg-zinc-800 border-zinc-600 text-white;
+  }
+
+  /* Only view-switch types should keep the active state in dark mode */
+  .dark .rbc-theme-container .rbc-toolbar .rbc-btn-group:last-child button.rbc-active {
+    @apply bg-zinc-800 border-zinc-600 text-white;
+  }
+
+  /* Remove focus outlines in dark mode */
+  .dark .rbc-theme-container .rbc-toolbar button:focus {
+    @apply outline-none bg-transparent;
+  }
+  .dark .rbc-theme-container .rbc-toolbar button:focus:hover {
+    @apply bg-zinc-800;
+  }
+
+  /* Today cell highlighting */
+  .rbc-theme-container .rbc-today {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+  .dark .rbc-theme-container .rbc-today {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+  }
+
+  /* Fix off-range background rendering in dark mode which glares white by default */
+  .dark .rbc-theme-container .rbc-off-range-bg {
+    @apply bg-zinc-950;
+  }
+
+  /* Remove ugly focus outlines and enforce transparency hooks */
+  .rbc-theme-container .rbc-event {
+    @apply outline-none bg-transparent border-none p-0 !important;
+  }
+
+  /* Minimalist border for today indicator in header */
+  .rbc-theme-container .rbc-header.rbc-today {
+    @apply border-b-2 border-slate-800;
+  }
+  .dark .rbc-theme-container .rbc-header.rbc-today {
+    @apply border-b-2 border-zinc-600;
+  }
+
+  /* Custom agenda overrides */
+  .dark .rbc-theme-container .rbc-agenda-table,
+  .dark .rbc-theme-container .rbc-agenda-table th,
+  .dark .rbc-theme-container .rbc-agenda-table td {
+    @apply border-zinc-800;
+  }
+
+  /* Hide all-day section row properly without collapsing the Day Name headers */
+  .rbc-theme-container .rbc-time-view .rbc-allday-cell {
+    @apply hidden opacity-0 pointer-events-none;
+    display: none !important;
+  }
+
+  /* Ensure header row (where Mon, Tue, etc. are) has its height back */
+  .rbc-theme-container .rbc-time-header-content .rbc-row:first-child {
+    @apply h-auto min-h-0;
+    height: auto !important;
+  }
+}

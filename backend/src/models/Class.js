@@ -11,15 +11,20 @@ const classSchema = new mongoose.Schema({
     ref: 'Faculty',
     required: [true, 'Faculty ID is required']
   },
-  schedule: {
+  section: {
     type: String,
-    required: [true, 'Schedule is required'],
+    required: [true, 'Section is required'],
     trim: true
   },
-  room: {
-    type: String,
-    required: [true, 'Room is required'],
-    trim: true
+  schedule: {
+    date: { type: String, required: true },
+    startTime: { type: String, required: true },
+    endTime: { type: String, required: true }
+  },
+  room_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Room',
+    required: [true, 'Room is required']
   },
   students_count: {
     type: Number,

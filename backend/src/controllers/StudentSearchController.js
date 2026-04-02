@@ -43,6 +43,18 @@ class StudentSearchController {
       next(error);
     }
   }
+
+  /**
+   * List distinct sections from students
+   */
+  static async sections(req, res, next) {
+    try {
+      const sections = await StudentSearchService.getDistinctSections();
+      res.status(200).json({ sections });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = StudentSearchController;

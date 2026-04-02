@@ -18,6 +18,7 @@ import InstructionPage from './pages/private/admin/Instruction';
 import CourseDetail from './pages/private/admin/CourseDetail';
 import Reports from './pages/private/admin/Reports';
 import Scheduling from './pages/private/admin/Scheduling';
+import SchedulingRoomDetail from './pages/private/admin/SchedulingRoomDetail';
 import SystemSettings from './pages/private/SystemSettings';
 
 // Loading component using the accent color
@@ -161,6 +162,17 @@ function AppContent() {
           <ProtectedRoute>
             <DashboardLayout>
               <Scheduling />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/scheduling/room/:id"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <SchedulingRoomDetail />
             </DashboardLayout>
           </ProtectedRoute>
         }

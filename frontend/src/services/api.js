@@ -177,6 +177,10 @@ export const studentProfileAPI = {
     const response = await axiosInstance.get('/students/organizations');
     return response.data;
   },
+  getSections: async () => {
+    const response = await axiosInstance.get('/students/sections');
+    return response.data.sections;
+  },
   searchStudents: async (params) => {
     const response = await axiosInstance.get('/students/search', { params });
     return response.data;
@@ -209,12 +213,42 @@ export const contactAPI = {
   },
 };
 
+// ─── Room API ────────────────────────────────────────────────────────────────
+export const roomAPI = {
+  getRooms: async (signal) => {
+    const response = await axiosInstance.get('/rooms', { signal });
+    return response.data;
+  },
+  createRoom: async (roomData) => {
+    const response = await axiosInstance.post('/rooms', roomData);
+    return response.data;
+  },
+  updateRoom: async (id, roomData) => {
+    const response = await axiosInstance.put(`/rooms/${id}`, roomData);
+    return response.data;
+  },
+  deleteRoom: async (id) => {
+    await axiosInstance.delete(`/rooms/${id}`);
+  },
+};
+
 // ─── Instruction API ─────────────────────────────────────────────────────────
 
 export const instructionAPI = {
   getClasses: async (signal) => {
     const response = await axiosInstance.get('/instruction/classes', { signal });
     return response.data;
+  },
+  createClass: async (classData) => {
+    const response = await axiosInstance.post('/instruction/classes', classData);
+    return response.data;
+  },
+  updateClass: async (id, classData) => {
+    const response = await axiosInstance.put(`/instruction/classes/${id}`, classData);
+    return response.data;
+  },
+  deleteClass: async (id) => {
+    await axiosInstance.delete(`/instruction/classes/${id}`);
   },
   getAssignments: async (signal) => {
     const response = await axiosInstance.get('/instruction/assignments', { signal });
