@@ -1,28 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React from 'react';
 import { FiChevronLeft, FiPlus, FiTrash2, FiEdit3 } from 'react-icons/fi';
 import { Card } from '@/components/ui/Card';
-import { roomAPI, instructionAPI } from '@/services/api';
 import ClassFormModal from '@/components/forms/ClassFormModal';
-import { useToast } from '@/contexts/ToastContext';
-
-// React Big Calendar imports
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
-import { enUS } from 'date-fns/locale';
+import { Calendar } from 'react-big-calendar';
+import { localizer } from '@/lib/schedulingHelpers';
+import { useSchedulingRoomDetail } from '@/hooks/useSchedulingRoomDetail';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-
-const locales = {
-  'en-US': enUS,
-};
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }), // start on Monday
-  getDay,
-  locales,
-});
 
 const CustomEvent = ({ event }) => {
   const cls = event.resource;
@@ -53,96 +36,24 @@ const CustomEvent = ({ event }) => {
 };
 
 const SchedulingRoomDetail = () => {
-  const { id: roomId } = useParams();
-  const navigate = useNavigate();
-  const { showToast } = useToast();
-  
-  const [room, setRoom] = useState(null);
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedClass, setSelectedClass] = useState(null);
-  const [currentView, setCurrentView] = useState('week');
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  const handleDeleteClass = async (classId) => {
-    if(window.confirm('Delete this class schedule?')) {
-      try {
-        await instructionAPI.deleteClass(classId);
-        showToast('Class deleted', 'info');
-        fetchData();
-      } catch(e) {
-        showToast('Failed to delete', 'error');
-      }
-    }
-  };
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [rooms, allClasses] = await Promise.all([
-        roomAPI.getRooms(),
-        instructionAPI.getClasses() 
-      ]);
-      const currentRoom = rooms.find(r => r._id === roomId);
-      setRoom(currentRoom);
-      
-      const roomClasses = allClasses.filter(c => c.room_id && c.room_id._id === roomId);
-      
-      // Parse to Big Calendar format
-      const parsedEvents = roomClasses.map(cls => {
-        const dateString = cls.schedule?.date;
-        const startString = cls.schedule?.startTime;
-        const endString = cls.schedule?.endTime;
-        
-        let start = new Date();
-        let end = new Date();
-        
-        if (dateString && startString && endString) {
-            start = new Date(`${dateString}T${startString}:00`);
-            end = new Date(`${dateString}T${endString}:00`);
-        }
-
-        return {
-          id: cls._id,
-          title: cls.course_id?.course_code || 'Class',
-          start,
-          end,
-          resource: {
-            ...cls,
-            onEdit: () => handleSelectEvent({ resource: cls }),
-            onDelete: () => handleDeleteClass(cls._id)
-          }
-        };
-      });
-
-      setEvents(parsedEvents);
-    } catch (err) {
-      showToast('Failed to load schedule', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [roomId]);
-
-  const handleClassSubmit = async (classData, classId) => {
-    if (classId) {
-      await instructionAPI.updateClass(classId, classData);
-      showToast('Class updated successfully', 'success');
-    } else {
-      await instructionAPI.createClass(classData);
-      showToast('Class scheduled successfully', 'success');
-    }
-    fetchData(); 
-  };
-  
-  const handleSelectEvent = (event) => {
-    setSelectedClass(event.resource);
-    setIsModalOpen(true);
-  };
+    const {
+        room,
+        roomId,
+        events,
+        loading,
+        isModalOpen,
+        setIsModalOpen,
+        selectedClass,
+        setSelectedClass,
+        currentView,
+        currentDate,
+        handleClassSubmit,
+        handleSelectEvent,
+        handleViewChange,
+        handleNavigate,
+        handleCloseModal,
+        navigate,
+    } = useSchedulingRoomDetail();
 
   return (
     <div className="w-full">
@@ -189,9 +100,9 @@ const SchedulingRoomDetail = () => {
               endAccessor="end"
               views={['month', 'week', 'day', 'agenda']}
               view={currentView}
-              onView={(view) => setCurrentView(view)}
+              onView={handleViewChange}
               date={currentDate}
-              onNavigate={(date) => setCurrentDate(date)}
+              onNavigate={handleNavigate}
               allDaySlot={false}
               step={30}
               timeslots={2}
@@ -199,16 +110,9 @@ const SchedulingRoomDetail = () => {
               components={{
                 event: CustomEvent
               }}
-              eventPropGetter={(event) => {
-                return {
-                  className: 'bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded shadow-sm hover:border-gray-300 dark:hover:border-zinc-600 transition-colors mx-[2px] mt-[1px]',
-                  style: {
-                    backgroundColor: 'transparent', // Overridden by Tailwind bg class
-                    borderColor: 'transparent',
-                    color: 'inherit'
-                  }
-                };
-              }}
+              eventPropGetter={() => ({
+                className: 'bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded shadow-sm hover:border-gray-300 dark:hover:border-zinc-600 transition-colors mx-[2px] mt-[1px]'
+              })}
             />
           </div>
         )}
@@ -216,7 +120,7 @@ const SchedulingRoomDetail = () => {
 
       <ClassFormModal 
         isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setSelectedClass(null); }}
+        onClose={handleCloseModal}
         onSuccess={handleClassSubmit}
         initialData={selectedClass}
         roomId={roomId}

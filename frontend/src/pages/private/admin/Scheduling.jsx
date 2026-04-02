@@ -1,38 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { FiHome, FiPlus, FiServer, FiUsers } from 'react-icons/fi';
-import { roomAPI } from '@/services/api';
 import RoomFormModal from '@/components/forms/RoomFormModal';
-import { useToast } from '@/contexts/ToastContext';
+import { useScheduling } from '@/hooks/useScheduling';
 
 const Scheduling = () => {
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { showToast } = useToast();
-  const navigate = useNavigate();
-
-  const fetchRooms = async () => {
-    try {
-      setLoading(true);
-      const data = await roomAPI.getRooms();
-      setRooms(data);
-    } catch (err) {
-      showToast('Failed to load rooms', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRooms();
-  }, []);
-
-  const handleCreateRoom = async (roomData) => {
-    await roomAPI.createRoom(roomData);
-    showToast('Room successfully created', 'success');
-    fetchRooms();
-  };
+    const {
+        rooms,
+        loading,
+        isModalOpen,
+        setIsModalOpen,
+        navigate,
+        handleCreateRoom,
+    } = useScheduling();
 
   return (
     <div className="w-full">
