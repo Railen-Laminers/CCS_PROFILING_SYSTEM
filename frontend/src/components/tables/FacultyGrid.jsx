@@ -7,12 +7,8 @@ import { parseList } from '@/lib/facultyHelpers';
 const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserId }) => {
     const fullName = `${member.user.firstname} ${member.user.lastname}`;
     const initials = member.user.firstname?.[0] || 'F';
-    const subjects = parseList(member.faculty?.subjects_handled);
-    const schedule = parseList(member.faculty?.teaching_schedule);
     const research = parseList(member.faculty?.research_projects);
 
-    const MAX_CHIPS = 3;
-    const MAX_SCHEDULE = 2;
     const MAX_RESEARCH = 2;
 
     return (
@@ -61,27 +57,6 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
                     )}
                 </div>
 
-                {/* Subjects Handled — Chips */}
-                <div>
-                    <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Subjects Handled</p>
-                    {subjects.length > 0 ? (
-                        <div className="flex flex-wrap gap-1.5">
-                            {subjects.slice(0, MAX_CHIPS).map((subj, idx) => (
-                                <span key={idx} className="px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-zinc-300 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md">
-                                    {subj}
-                                </span>
-                            ))}
-                            {subjects.length > MAX_CHIPS && (
-                                <span className="px-2.5 py-1 text-xs font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-500/10 border border-brand-200 dark:border-brand-500/30 rounded-md">
-                                    +{subjects.length - MAX_CHIPS} more
-                                </span>
-                            )}
-                        </div>
-                    ) : (
-                        <p className="text-[14px] italic text-gray-400 dark:text-zinc-600">No subjects assigned</p>
-                    )}
-                </div>
-
                 {/* Contact Info — Icons */}
                 <div className="pt-3 border-t border-gray-100 dark:border-gray-800 space-y-2.5">
                     <div className="flex items-center gap-2.5 text-[14px]">
@@ -106,24 +81,6 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
                     </div>
                 </div>
 
-                {/* Teaching Schedule */}
-                <div className="pt-3 border-t border-gray-100 dark:border-gray-800">
-                    <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Teaching Schedule</p>
-                    {schedule.length > 0 ? (
-                        <div className="space-y-1">
-                            {schedule.slice(0, MAX_SCHEDULE).map((item, idx) => (
-                                <p key={idx} className="text-[14px] text-gray-700 dark:text-zinc-300">{item}</p>
-                            ))}
-                            {schedule.length > MAX_SCHEDULE && (
-                                <p className="text-[13px] font-semibold text-brand-500 dark:text-brand-400 cursor-pointer hover:underline">
-                                    +{schedule.length - MAX_SCHEDULE} more schedules
-                                </p>
-                            )}
-                        </div>
-                    ) : (
-                        <p className="text-[14px] italic text-gray-400 dark:text-zinc-600">No schedule recorded</p>
-                    )}
-                </div>
 
                 {/* Research Projects */}
                 <div className="pt-3 border-t border-gray-100 dark:border-gray-800">
