@@ -29,6 +29,10 @@ const classSchema = new mongoose.Schema({
   students_count: {
     type: Number,
     default: 0
+  },
+  series_id: {
+    type: String,
+    default: null
   }
 }, {
   timestamps: true

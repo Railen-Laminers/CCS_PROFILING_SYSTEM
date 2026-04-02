@@ -86,36 +86,6 @@ const seedData = async () => {
 
     console.log('Student user created...');
     
-    // --- Faculty Seeder ---
-    
-    // Create Single Faculty
-    const facultyUser = await User.create({
-      firstname: 'Jane',
-      middlename: 'M',
-      lastname: 'Faculty',
-      user_id: '00000001',
-      email: 'faculty@gmail.com',
-      password: 'password',
-      role: 'faculty',
-      birth_date: '1985-01-01',
-      contact_number: '09123456781',
-      gender: 'female',
-      address: 'Faculty Address',
-      is_active: true
-    });
-
-    await Faculty.create({
-      user_id: facultyUser._id,
-      department: 'Computer Science',
-      position: 'Professor',
-      specialization: 'Software Engineering',
-      subjects_handled: ['Intro to IT', 'Software Engineering'],
-      teaching_schedule: ['Mon/Wed 9:00-10:30'],
-      research_projects: ['AI in Education']
-    });
-
-    console.log('Faculty user created...');
-
     // Create IT-related courses (Curriculum)
     const courseData = [
       { units: 3, course_code: 'IT 101', course_title: 'Introduction to Computing', year_level: 1, semester: 1, syllabus: 'Week 1: History of Computing\nWeek 2: Hardware Basics\nWeek 3: Operating Systems Overview' },
@@ -132,6 +102,17 @@ const seedData = async () => {
     await Course.insertMany(courseData);
 
     console.log('Curriculum Courses created...');
+
+    // Create Rooms
+    const Room = require('../models/Room');
+    await Room.deleteMany({});
+    await Room.create([
+      { name: 'CCS 301', type: 'Lecture', capacity: 40 },
+      { name:  'CCS 205', type: 'Laboratory', capacity: 30 },
+      { name: 'CCS 302', type: 'Lecture', capacity: 45 },
+      { name: 'CCS 101', type: 'Lecture', capacity: 50 }
+    ]);
+    console.log('Rooms created...');
 
     // Create sample events
     await Event.create({
@@ -171,75 +152,6 @@ const seedData = async () => {
 
     console.log('Events created...');
     
-    // --- Instruction Seeder (Classes, Assignments, etc.) ---
-    
-    const courses = await Course.find();
-    const facultyMembers = await Faculty.find().populate('user_id');
-    
-    // Create Rooms
-    const Room = require('../models/Room');
-    await Room.deleteMany({});
-    const room1 = await Room.create({ name: 'CCS 301', type: 'Lecture', capacity: 40 });
-    const room2 = await Room.create({ name: 'CCS 205', type: 'Laboratory', capacity: 30 });
-    
-    if (courses.length > 0 && facultyMembers.length > 0) {
-      // Create Classes
-      const class1 = await Class.create({
-        course_id: courses[0]._id,
-        instructor_id: facultyMembers[0]._id,
-        section: 'IT-A',
-        schedule: { date: '2026-04-06', startTime: '09:00', endTime: '10:30' },
-        room_id: room1._id,
-        students_count: 35
-      });
-
-      const class2 = await Class.create({
-        course_id: courses[1]._id,
-        instructor_id: facultyMembers[0]._id,
-        section: 'IT-B',
-        schedule: { date: '2026-04-07', startTime: '13:00', endTime: '14:30' },
-        room_id: room2._id,
-        students_count: 28
-      });
-
-      console.log('Classes and Rooms created...');
-
-      // Create Assignments for Class 1
-      await Assignment.create({
-        class_id: class1._id,
-        title: 'Midterm Research Paper',
-        description: 'Submit a 10-page research paper on AI Ethics.',
-        due_date: new Date('2026-04-15'),
-        status: 'open'
-      });
-
-      await Assignment.create({
-        class_id: class1._id,
-        title: 'Weekly Quiz 5',
-        description: 'Covers Neural Networks basics.',
-        due_date: new Date('2026-03-30'),
-        status: 'closed'
-      });
-
-      // Create Lesson Plan for Class 1
-      await LessonPlan.create({
-        class_id: class1._id,
-        topic: 'Introduction to Transformers',
-        content: 'Overview of Attention mechanisms and Transformer architecture.',
-        date: new Date('2026-04-01')
-      });
-
-      // Create Material for Class 1
-      await Material.create({
-        class_id: class1._id,
-        title: 'Deep Learning Slides - Week 4',
-        type: 'presentation',
-        file_url: 'https://example.com/slides-w4.pdf'
-      });
-
-      console.log('Assignments, Lesson Plans, and Materials created...');
-    }
-
     console.log('Seed data completed successfully!');
     process.exit(0);
   } catch (error) {

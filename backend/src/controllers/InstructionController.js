@@ -2,6 +2,7 @@ const Class = require('../models/Class');
 const Assignment = require('../models/Assignment');
 const LessonPlan = require('../models/LessonPlan');
 const Material = require('../models/Material');
+const crypto = require('crypto');
 
 class InstructionController {
   static async getClasses(req, res, next) {
@@ -64,12 +65,63 @@ class InstructionController {
 
   static async createClass(req, res, next) {
     try {
-      const conflictMsg = await InstructionController.hasConflict(req.body);
-      if (conflictMsg) {
-        return res.status(400).json({ message: conflictMsg, errors: { global: [conflictMsg] } });
+      const { repeat_weekly, until_date } = req.body;
+
+      // Handle Single Creation
+      if (!repeat_weekly) {
+        const conflictMsg = await InstructionController.hasConflict(req.body);
+        if (conflictMsg) {
+          return res.status(400).json({ message: conflictMsg, errors: { global: [conflictMsg] } });
+        }
+        const newClass = await Class.create(req.body);
+        return res.status(201).json(newClass);
       }
-      const newClass = await Class.create(req.body);
-      res.status(201).json(newClass);
+
+      // Handle Recurring Creation
+      if (!until_date) {
+        return res.status(400).json({ message: 'Until date is required for recurring classes.', errors: { until_date: ['Required'] } });
+      }
+
+      const series_id = crypto.randomUUID();
+      const occurrences = [];
+      let currentDate = new Date(req.body.schedule.date);
+      const endDate = new Date(until_date);
+
+      if (endDate <= currentDate) {
+        return res.status(400).json({ message: 'Until date must be after start date.', errors: { until_date: ['Must be after start date'] } });
+      }
+
+      // 1. Collect all dates and validate conflicts for each
+      while (currentDate <= endDate) {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const classOccurrence = {
+          ...req.body,
+          series_id,
+          schedule: {
+            ...req.body.schedule,
+            date: dateStr
+          }
+        };
+
+        const conflictMsg = await InstructionController.hasConflict(classOccurrence);
+        if (conflictMsg) {
+          return res.status(400).json({ 
+            message: `Conflict on ${dateStr}: ${conflictMsg}`, 
+            errors: { global: [`Conflict on ${dateStr}: ${conflictMsg}`] } 
+          });
+        }
+
+        occurrences.push(classOccurrence);
+        currentDate.setDate(currentDate.getDate() + 7);
+      }
+
+      // 2. Perform bulk creation
+      const createdClasses = await Class.insertMany(occurrences);
+      res.status(201).json({ 
+        message: `Successfully scheduled ${createdClasses.length} sessions.`,
+        classes: createdClasses 
+      });
+
     } catch (error) {
       if (error.name === 'ValidationError') {
         const errors = {};

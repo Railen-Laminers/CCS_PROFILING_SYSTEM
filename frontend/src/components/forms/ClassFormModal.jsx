@@ -13,7 +13,9 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
       startTime: '08:00',
       endTime: '09:00'
     },
-    room_id: roomId || ''
+    room_id: roomId || '',
+    repeat_weekly: false,
+    until_date: ''
   });
   
   const [courses, setCourses] = useState([]);
@@ -55,7 +57,9 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
         instructor_id: '',
         section: '',
         schedule: { date: new Date().toISOString().split('T')[0], startTime: '08:00', endTime: '09:00' },
-        room_id: roomId || ''
+        room_id: roomId || '',
+        repeat_weekly: false,
+        until_date: ''
       });
     }
   }, [initialData, roomId, isOpen]);
@@ -196,6 +200,46 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
                 <input type="time" name="schedule.endTime" className={inputClass} value={formData.schedule.endTime} onChange={handleChange} required />
               </div>
             </div>
+
+            {!initialData && (
+              <>
+                <div className="md:col-span-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                  <label className="flex items-center gap-3 cursor-pointer group w-fit">
+                    <div className={`w-10 h-6 rounded-full p-1 transition-all duration-300 ${formData.repeat_weekly ? 'bg-brand-500' : 'bg-gray-200 dark:bg-zinc-800'} relative`}>
+                      <div className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${formData.repeat_weekly ? 'translate-x-4' : 'translate-x-0'} shadow-sm`} />
+                    </div>
+                    <input 
+                      type="checkbox" 
+                      name="repeat_weekly" 
+                      className="hidden" 
+                      checked={formData.repeat_weekly} 
+                      onChange={(e) => setFormData(prev => ({ ...prev, repeat_weekly: e.target.checked }))} 
+                    />
+                    <span className="text-sm font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-widest">Repeat every week</span>
+                  </label>
+                </div>
+
+                {formData.repeat_weekly && (
+                  <div className="md:col-span-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <label className={labelClass}>Repeat Until</label>
+                    <div className="relative group">
+                      <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
+                      <input 
+                        type="date" 
+                        name="until_date" 
+                        className={inputClass} 
+                        value={formData.until_date} 
+                        onChange={handleChange} 
+                        required 
+                      />
+                    </div>
+                    <p className="text-[11px] text-gray-500 dark:text-zinc-500 ml-1">
+                      The class will be scheduled every 7 days from the start date until this date.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
             
           </div>
 
