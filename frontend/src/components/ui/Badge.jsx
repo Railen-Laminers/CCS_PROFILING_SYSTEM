@@ -1,11 +1,7 @@
-﻿import React from "react"
+import React from "react"
 import { cn } from "@/lib/utils"
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: "gray" | "orange" | "yellow" | "red" | "purple" | "white" | "green"
-}
-
-const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+const Badge = React.forwardRef(
   ({ className, variant = "gray", ...props }, ref) => {
     return (
       <span
