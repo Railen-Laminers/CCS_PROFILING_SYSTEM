@@ -12,6 +12,7 @@ const Class = require('../models/Class');
 const Assignment = require('../models/Assignment');
 const LessonPlan = require('../models/LessonPlan');
 const Material = require('../models/Material');
+const Room = require('../models/Room');
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -37,6 +38,7 @@ const seedData = async () => {
     await Assignment.deleteMany({});
     await LessonPlan.deleteMany({});
     await Material.deleteMany({});
+    await Room.deleteMany({});
 
     console.log('Data cleared...');
 
@@ -102,6 +104,8 @@ const seedData = async () => {
     await Course.insertMany(courseData);
 
     console.log('Curriculum Courses created...');
+
+
 
     // Create sample events
     await Event.create({
