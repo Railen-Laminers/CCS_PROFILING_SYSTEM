@@ -91,10 +91,6 @@ const Scheduling = () => {
               icon={FiHome}
               title="No Rooms Established"
               description="You haven't established any rooms yet. Rooms are required to configure class schedules and laboratory sessions."
-              action={{
-                label: "Establish Room",
-                onClick: () => setIsModalOpen(true)
-              }}
               className="py-24"
             />
           )}
