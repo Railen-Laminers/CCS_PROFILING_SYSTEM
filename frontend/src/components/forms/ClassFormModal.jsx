@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { FiX, FiSave, FiBook, FiUsers, FiClock, FiCalendar } from 'react-icons/fi';
+import { FiX, FiSave, FiBook, FiUsers, FiClock, FiCalendar, FiAlertTriangle } from 'react-icons/fi';
 import { Button } from '@/components/ui/Button';
 import { courseAPI, userAPI, studentProfileAPI } from '@/services/api';
 
-const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId }) => {
+const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId, roomCapacity }) => {
   const [formData, setFormData] = useState({
     course_id: '',
     instructor_id: '',
@@ -23,6 +23,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [capacityWarning, setCapacityWarning] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +64,31 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
       });
     }
   }, [initialData, roomId, isOpen]);
+
+  // Check section student count against room capacity
+  useEffect(() => {
+    const checkCapacity = async () => {
+      if (!formData.section || !roomCapacity) {
+        setCapacityWarning(null);
+        return;
+      }
+      try {
+        const data = await studentProfileAPI.getSectionCount(formData.section);
+        if (data.count > roomCapacity) {
+          setCapacityWarning({
+            section: formData.section,
+            studentCount: data.count,
+            capacity: roomCapacity
+          });
+        } else {
+          setCapacityWarning(null);
+        }
+      } catch (err) {
+        setCapacityWarning(null);
+      }
+    };
+    checkCapacity();
+  }, [formData.section, roomCapacity]);
 
   if (!isOpen) return null;
 
@@ -130,6 +156,18 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
               </p>
             </div>
           )}
+
+          {capacityWarning && (
+            <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="w-8 h-8 rounded-xl bg-yellow-500/20 flex items-center justify-center text-yellow-600 dark:text-yellow-400 flex-shrink-0">
+                <FiAlertTriangle className="w-4 h-4" />
+              </div>
+              <p className="text-sm font-medium text-yellow-700 dark:text-yellow-300 leading-tight">
+                Section <span className="font-bold">{capacityWarning.section}</span> has <span className="font-bold">{capacityWarning.studentCount} students</span> but this room only holds <span className="font-bold">{capacityWarning.capacity} seats</span>.
+              </p>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className={labelClass}>Course</label>

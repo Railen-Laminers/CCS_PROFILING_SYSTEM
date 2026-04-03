@@ -132,6 +132,7 @@ const SchedulingRoomDetail = () => {
         onSuccess={handleClassSubmit}
         initialData={selectedClass}
         roomId={roomId}
+        roomCapacity={room?.capacity}
       />
     </div>
   );

@@ -55,6 +55,22 @@ class StudentSearchController {
       next(error);
     }
   }
+
+  /**
+   * Get the count of active students in a specific section
+   */
+  static async sectionCount(req, res, next) {
+    try {
+      const { section } = req.query;
+      if (!section) {
+        return res.status(400).json({ message: 'Section query parameter is required.' });
+      }
+      const count = await StudentSearchService.getStudentCountBySection(section);
+      res.status(200).json({ section, count });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = StudentSearchController;

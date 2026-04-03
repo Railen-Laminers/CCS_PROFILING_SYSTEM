@@ -12,5 +12,6 @@ router.get('/search', StudentSearchController.search);
 router.get('/sports', StudentSearchController.sports);
 router.get('/organizations', StudentSearchController.organizations);
 router.get('/sections', StudentSearchController.sections);
+router.get('/section-count', StudentSearchController.sectionCount);
 
 module.exports = router;

@@ -164,6 +164,15 @@ class StudentSearchService {
     const sections = await Student.distinct('section');
     return sections.filter(s => s).sort();
   }
+
+  /**
+   * Count active students in a specific section
+   */
+  static async getStudentCountBySection(section) {
+    const students = await Student.find({ section }).populate('user_id', 'is_active');
+    const activeStudents = students.filter(s => s.user_id && s.user_id.is_active);
+    return activeStudents.length;
+  }
 }
 
 module.exports = StudentSearchService;

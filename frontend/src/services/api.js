@@ -185,6 +185,10 @@ export const studentProfileAPI = {
     const response = await axiosInstance.get('/students/search', { params });
     return response.data;
   },
+  getSectionCount: async (section) => {
+    const response = await axiosInstance.get('/students/section-count', { params: { section } });
+    return response.data;
+  },
 };
 
 // ─── Faculty Profile API (Search & Filter) ───────────────────────────────────
