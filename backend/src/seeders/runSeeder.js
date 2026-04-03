@@ -103,8 +103,6 @@ const seedData = async () => {
 
     console.log('Curriculum Courses created...');
 
-
-
     // Create sample events
     await Event.create({
       title: 'Annual Tech Conference 2026',
