@@ -13,9 +13,9 @@ const CustomEvent = ({ event }) => {
   const end = new Date(event.end).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   
   return (
-    <div className="flex flex-col h-full overflow-hidden p-1 group relative">
+    <div className="flex flex-col group relative p-1">
       <div className="flex justify-between items-start leading-none mb-0.5">
-        <span className="font-bold text-[11px] text-gray-900 dark:text-gray-100 truncate">
+        <span className="font-bold text-[11px] text-gray-900 dark:text-gray-100">
           {cls.course_id?.course_code || 'Course'}
         </span>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -31,7 +31,7 @@ const CustomEvent = ({ event }) => {
         {start} - {end}
       </div>
 
-      <div className="text-[9px] truncate font-medium text-gray-600 dark:text-gray-400 leading-tight">
+      <div className="text-[9px] font-medium text-gray-600 dark:text-gray-400 leading-tight">
         {cls.section} • {cls.instructor_id?.user?.lastname || 'Instructor'}
       </div>
     </div>
