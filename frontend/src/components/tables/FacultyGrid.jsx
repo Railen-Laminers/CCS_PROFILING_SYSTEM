@@ -2,6 +2,7 @@ import React from 'react';
 import { FiUsers, FiMail, FiPhone, FiMapPin, FiTrash2 } from 'react-icons/fi';
 import EditIcon from '@/components/ui/EditIcon';
 import { Spinner } from '@/components/ui/Skeleton';
+import EmptyState from '@/components/ui/EmptyState';
 import { parseList } from '@/lib/facultyHelpers';
 
 const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserId }) => {
@@ -140,11 +141,12 @@ const FacultyGrid = ({ faculty, loading, navigate, handleEdit, handleDelete, del
 
     if (faculty.length === 0) {
         return (
-            <div className="bg-white dark:bg-[#1E1E1E] py-20 rounded-[1rem] border border-gray-200 dark:border-gray-700/50 flex flex-col items-center">
-                <FiUsers className="w-16 h-16 text-gray-300 dark:text-zinc-700 mb-4" />
-                <p className="text-gray-500 dark:text-zinc-400 font-medium text-lg">No Faculty Found</p>
-                <p className="text-gray-400 dark:text-zinc-500 text-sm">Try adjusting your filters or search query.</p>
-            </div>
+            <EmptyState 
+                icon={FiUsers}
+                title="No Faculty Members"
+                description="We couldn't find any faculty members matching your criteria. Try adjusting your search query or filters to find what you're looking for."
+                className="py-32"
+            />
         );
     }
 

@@ -1,6 +1,7 @@
 import { FiFilter, FiHome, FiPlus, FiRefreshCw, FiSearch, FiServer, FiUsers } from 'react-icons/fi';
 import RoomFormModal from '@/components/forms/RoomFormModal';
 import SchedulingFilters from '@/components/filters/SchedulingFilters';
+import EmptyState from '@/components/ui/EmptyState';
 import { useScheduling } from '@/hooks/useScheduling';
 
 const Scheduling = () => {
@@ -86,10 +87,16 @@ const Scheduling = () => {
           ))}
 
           {rooms.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-[#18181B] rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
-              <FiHome className="w-12 h-12 text-gray-300 dark:text-zinc-600 mb-4" />
-              <p className="text-sm font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest">No rooms established yet</p>
-            </div>
+            <EmptyState 
+              icon={FiHome}
+              title="No Rooms Established"
+              description="You haven't established any rooms yet. Rooms are required to configure class schedules and laboratory sessions."
+              action={{
+                label: "Establish Room",
+                onClick: () => setIsModalOpen(true)
+              }}
+              className="py-24"
+            />
           )}
         </div>
       )}

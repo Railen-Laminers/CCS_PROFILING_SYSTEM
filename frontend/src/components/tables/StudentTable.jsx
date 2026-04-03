@@ -1,6 +1,7 @@
 import React from 'react';
 import { FiUsers, FiPower, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { Spinner } from '@/components/ui/Skeleton';
+import EmptyState from '@/components/ui/EmptyState';
 
 const StudentTable = ({ 
     students, 
@@ -24,12 +25,12 @@ const StudentTable = ({
 
     if (students.length === 0) {
         return (
-            <div className="bg-white dark:bg-[#1E1E1E] rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
-                <div className="text-center py-16 text-sm text-gray-500 dark:text-zinc-400 flex flex-col items-center">
-                    <FiUsers className="w-12 h-12 text-gray-300 dark:text-zinc-700 mb-3" />
-                    <p>No students found in the database.</p>
-                </div>
-            </div>
+            <EmptyState 
+                icon={FiUsers}
+                title="No Students Found"
+                description="The student database is currently empty or no students match your search criteria. Please check your spelling or add a new student record."
+                className="py-32"
+            />
         );
     }
 

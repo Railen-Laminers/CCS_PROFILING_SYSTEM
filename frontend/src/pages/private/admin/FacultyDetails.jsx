@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Skeleton';
+import EmptyState from '@/components/ui/EmptyState';
 import { BulletList, SectionSubhead, formatDate, parseList, renderTags } from '@/lib/facultyHelpers';
 import { useFacultyDetails } from '@/hooks/useFacultyDetails';
 import FacultyFormModal from '@/components/forms/FacultyFormModal';
@@ -234,7 +235,12 @@ const FacultyDetails = () => {
                                     </div>
                                     <BulletList items={teachingSchedule.map(s => s.display)} />
                                     {teachingSchedule.length === 0 && (
-                                        <p className="text-sm text-gray-500 italic">No classes currently scheduled.</p>
+                                        <EmptyState 
+                                            size="md"
+                                            icon={FiClock}
+                                            title="No Classes Scheduled"
+                                            description="This faculty member has no classes assigned to their schedule yet."
+                                        />
                                     )}
                                 </div>
                             </div>
@@ -261,7 +267,12 @@ const FacultyDetails = () => {
                                     </div>
                                     {renderTags(subjectsHandled.join(', '), "orange")}
                                     {subjectsHandled.length === 0 && (
-                                        <p className="text-sm text-gray-500 italic">No subjects currently assigned.</p>
+                                        <EmptyState 
+                                            size="md"
+                                            icon={FiBookOpen}
+                                            title="No Subjects Assigned"
+                                            description="This faculty member has not been assigned any subjects handled yet."
+                                        />
                                     )}
                                 </div>
                             </div>

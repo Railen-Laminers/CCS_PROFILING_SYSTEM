@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import useInstruction from '@/hooks/useInstruction';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import EmptyState from '@/components/ui/EmptyState';
 import CourseFormModal from '@/components/forms/CourseFormModal';
 import { courseAPI } from '@/services/api';
 import { useToast } from '@/contexts/ToastContext';
@@ -187,9 +188,13 @@ const Instruction = () => {
                         <CourseRow key={course._id} course={course} />
                       ))
                     ) : (
-                      <div className="flex items-center justify-center py-6 bg-gray-50 dark:bg-[#252525] rounded-xl border border-dashed border-gray-200 dark:border-gray-800 shadow-sm">
-                        <p className="text-[10px] font-bold text-gray-300 dark:text-zinc-600 uppercase tracking-widest">Available for establishment</p>
-                      </div>
+                      <EmptyState 
+                        size="md"
+                        icon={FiPlus}
+                        title="Available for Establishment"
+                        description="This semester is currently empty. Click the plus icon to add a new course."
+                        className="py-10"
+                      />
                     )}
                   </div>
                 </div>

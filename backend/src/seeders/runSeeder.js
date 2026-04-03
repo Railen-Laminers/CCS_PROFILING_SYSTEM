@@ -103,16 +103,7 @@ const seedData = async () => {
 
     console.log('Curriculum Courses created...');
 
-    // Create Rooms
-    const Room = require('../models/Room');
-    await Room.deleteMany({});
-    await Room.create([
-      { name: 'CCS 301', type: 'Lecture', capacity: 40 },
-      { name:  'CCS 205', type: 'Laboratory', capacity: 30 },
-      { name: 'CCS 302', type: 'Lecture', capacity: 45 },
-      { name: 'CCS 101', type: 'Lecture', capacity: 50 }
-    ]);
-    console.log('Rooms created...');
+
 
     // Create sample events
     await Event.create({

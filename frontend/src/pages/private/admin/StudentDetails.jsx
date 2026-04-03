@@ -10,7 +10,7 @@ import { useStudentDetails } from '../../../hooks/useStudentDetails';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { EmptyState } from '@/components/ui/EmptyState';
+import EmptyState from '@/components/ui/EmptyState';
 import { formatDate } from '@/lib/utils';
 import { BulletList, SectionSubhead, renderTags } from '@/lib/studentHelpers';
 
@@ -245,7 +245,12 @@ const StudentDetails = () => {
                                         {academicError}
                                     </div>
                                 ) : academicRecords.length === 0 ? (
-                                    <EmptyState icon={<FiFileText />} title="No Academic Records" description="There are no academic records on file for this student." />
+                                    <EmptyState 
+                                        size="md"
+                                        icon={FiFileText} 
+                                        title="No Academic Records" 
+                                        description="There are no academic records on file for this student." 
+                                    />
                                 ) : (
                                     <div className="space-y-6">
                                         {academicRecords.map((record) => (
