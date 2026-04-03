@@ -24,6 +24,11 @@ const CustomEvent = ({ event }) => {
             className="text-gray-400 hover:text-brand-500 rounded p-0.5 bg-white/80 dark:bg-zinc-800/80 shadow-sm">
             <FiEdit3 size={10} />
           </button>
+          <button 
+            onClick={(e) => { e.stopPropagation(); cls.onDelete && cls.onDelete(); }} 
+            className="text-gray-400 hover:text-red-500 rounded p-0.5 bg-white/80 dark:bg-zinc-800/80 shadow-sm">
+            <FiTrash2 size={10} />
+          </button>
         </div>
       </div>
       
