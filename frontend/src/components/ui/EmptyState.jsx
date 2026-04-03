@@ -12,22 +12,12 @@ const EmptyState = ({
     const isSmall = size === 'md';
 
     return (
-        <div className={`col-span-full flex flex-col items-center justify-center ${isSmall ? 'py-10 px-4 rounded-2xl' : 'py-20 px-6 rounded-3xl'} bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group ${className}`}>
-            {/* Subtle Gradient Background */}
-            <div className={`absolute top-0 right-0 ${isSmall ? 'w-32 h-32' : 'w-64 h-64'} bg-brand-500/5 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-700`}></div>
-            <div className={`absolute bottom-0 left-0 ${isSmall ? 'w-32 h-32' : 'w-64 h-64'} bg-brand-500/5 rounded-tr-full -ml-16 -mb-16 transition-transform group-hover:scale-110 duration-700`}></div>
-
+        <div className={`col-span-full flex flex-col items-center justify-center ${isSmall ? 'py-10 px-4 rounded-2xl' : 'py-20 px-6 rounded-3xl'} bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden ${className}`}>
             {/* Icon Container */}
             <div className={`relative ${isSmall ? 'mb-4' : 'mb-6'}`}>
-                <div className={`${isSmall ? 'w-14 h-14' : 'w-20 h-20'} bg-gray-50 dark:bg-zinc-900/50 rounded-2xl flex items-center justify-center border border-gray-100 dark:border-zinc-800 shadow-inner group-hover:border-brand-500/30 transition-colors duration-500`}>
-                    <Icon className={`${isSmall ? 'w-7 h-7' : 'w-10 h-10'} text-gray-300 dark:text-zinc-700 group-hover:text-brand-500 transition-colors duration-500`} />
+                <div className={`${isSmall ? 'w-12 h-12' : 'w-16 h-16'} bg-gray-50 dark:border-zinc-800 dark:bg-zinc-900/50 rounded-2xl flex items-center justify-center border border-gray-100 shadow-inner transition-colors duration-500`}>
+                    <Icon className={`${isSmall ? 'w-6 h-6' : 'w-8 h-8'} text-gray-300 dark:text-zinc-700`} />
                 </div>
-                {!isSmall && (
-                    <>
-                        <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-500/20 rounded-full blur-sm animate-pulse"></div>
-                        <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-brand-500/10 rounded-full blur-sm animate-pulse delay-700"></div>
-                    </>
-                )}
             </div>
 
             {/* Content */}
