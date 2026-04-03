@@ -340,9 +340,9 @@ const EventsPage = () => {
       />
 
       {/* Events List */}
-      <div className="space-y-4">
-        {events.length > 0 ? (
-          events.map((event) => (
+      {events.length > 0 ? (
+        <div className="space-y-4">
+          {events.map((event) => (
             <EventItem 
               key={event.event_id} 
               event={event} 
@@ -351,16 +351,17 @@ const EventsPage = () => {
               onViewParticipants={openParticipantModal}
               formatDateTime={formatDateTime}
             />
-          ))
-        ) : (
-          <EmptyState 
-            icon={FiCalendar} 
-            title="No Events Found"
-            description="No events found matching your current filters. Try resetting the filters or adding a new event."
-            className="py-32"
-          />
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState 
+          icon={FiCalendar} 
+          title="No Events Found"
+          description="No events found matching your current filters. Try resetting the filters or adding a new event."
+          className="min-h-[450px]"
+        />
+      )}
+
 
 
       {/* Create/Edit Modal */}

@@ -29,7 +29,7 @@ const StudentTable = ({
                 icon={FiUsers}
                 title="No Students Found"
                 description="The student database is currently empty or no students match your search criteria. Please check your spelling or add a new student record."
-                className="py-32"
+                className="min-h-[450px]"
             />
         );
     }

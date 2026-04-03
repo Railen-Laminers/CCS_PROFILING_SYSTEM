@@ -145,7 +145,7 @@ const FacultyGrid = ({ faculty, loading, navigate, handleEdit, handleDelete, del
                 icon={FiUsers}
                 title="No Faculty Members"
                 description="We couldn't find any faculty members matching your criteria. Try adjusting your search query or filters to find what you're looking for."
-                className="py-32"
+                className="min-h-[450px]"
             />
         );
     }
