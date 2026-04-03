@@ -7,7 +7,7 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Spinner } from '@/components/ui/Skeleton';
+import { Spinner } from '@/components/ui/Skeleton.jsx';
 import EmptyState from '@/components/ui/EmptyState';
 import { BulletList, SectionSubhead, formatDate, parseList, renderTags } from '@/lib/facultyHelpers';
 import { useFacultyDetails } from '@/hooks/useFacultyDetails';

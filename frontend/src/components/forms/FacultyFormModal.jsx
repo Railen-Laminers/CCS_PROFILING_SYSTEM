@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiX, FiSave, FiEye, FiEyeOff } from 'react-icons/fi';
 import { userAPI } from '../../services/api';
-import { Spinner } from '@/components/ui/Skeleton';
+import { Spinner } from '@/components/ui/Skeleton.jsx';
 
 const DEFAULT_FORM_DATA = {
     firstname: '',

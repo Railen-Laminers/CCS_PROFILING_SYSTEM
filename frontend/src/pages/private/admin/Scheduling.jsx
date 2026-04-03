@@ -91,7 +91,7 @@ const Scheduling = () => {
               icon={FiHome}
               title="No Rooms Established"
               description="You haven't established any rooms yet. Rooms are required to configure class schedules and laboratory sessions."
-              className="py-24"
+              className="py-32"
             />
           )}
         </div>

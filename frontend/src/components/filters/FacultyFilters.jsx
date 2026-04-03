@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FiSearch, FiFilter, FiX } from 'react-icons/fi';
-import { Spinner } from '@/components/ui/Skeleton';
+import { Spinner } from '@/components/ui/Skeleton.jsx';
 
 const FacultyFilters = ({ 
     tempSearchQuery, 

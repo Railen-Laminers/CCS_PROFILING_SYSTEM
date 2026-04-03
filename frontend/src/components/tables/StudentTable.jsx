@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiUsers, FiPower, FiEdit2, FiTrash2 } from 'react-icons/fi';
-import { Spinner } from '@/components/ui/Skeleton';
+import { Spinner } from '@/components/ui/Skeleton.jsx';
 import EmptyState from '@/components/ui/EmptyState';
 
 const StudentTable = ({ 
