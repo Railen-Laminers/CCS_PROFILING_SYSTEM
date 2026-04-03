@@ -9,26 +9,29 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const CustomEvent = ({ event }) => {
   const cls = event.resource;
+  const start = new Date(event.start).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const end = new Date(event.end).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  
   return (
-    <div className="flex flex-col h-full justify-center overflow-hidden p-1.5 pl-2.5 group relative">
-      <div className="flex justify-between items-start">
-        <span className="font-semibold text-xs tracking-tight truncate text-gray-900 dark:text-gray-100">
+    <div className="flex flex-col h-full overflow-hidden p-1 group relative">
+      <div className="flex justify-between items-start leading-none mb-0.5">
+        <span className="font-bold text-[11px] text-gray-900 dark:text-gray-100 truncate">
           {cls.course_id?.course_code || 'Course'}
         </span>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button 
             onClick={(e) => { e.stopPropagation(); cls.onEdit && cls.onEdit(); }} 
-            className="text-gray-400 hover:text-brand-500 rounded p-0.5">
-            <FiEdit3 size={12} />
-          </button>
-          <button 
-            onClick={(e) => { e.stopPropagation(); cls.onDelete && cls.onDelete(); }} 
-            className="text-gray-400 hover:text-red-500 rounded p-0.5">
-            <FiTrash2 size={12} />
+            className="text-gray-400 hover:text-brand-500 rounded p-0.5 bg-white/80 dark:bg-zinc-800/80 shadow-sm">
+            <FiEdit3 size={10} />
           </button>
         </div>
       </div>
-      <div className="text-[10px] truncate font-medium text-gray-500 dark:text-gray-400">
+      
+      <div className="text-[9px] font-bold text-brand-600 dark:text-brand-400 mb-0.5 leading-none">
+        {start} - {end}
+      </div>
+
+      <div className="text-[9px] truncate font-medium text-gray-600 dark:text-gray-400 leading-tight">
         {cls.section} • {cls.instructor_id?.user?.lastname || 'Instructor'}
       </div>
     </div>
@@ -111,7 +114,7 @@ const SchedulingRoomDetail = () => {
                 event: CustomEvent
               }}
               eventPropGetter={() => ({
-                className: 'bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded shadow-sm hover:border-gray-300 dark:hover:border-zinc-600 transition-colors mx-[2px] mt-[1px]'
+                className: 'bg-brand-50/50 dark:bg-[#252525] border border-brand-100 dark:border-zinc-800 rounded shadow-sm hover:border-brand-200 dark:hover:border-zinc-600 transition-colors mx-[2px] mt-[1px]'
               })}
             />
           </div>

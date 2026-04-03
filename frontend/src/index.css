@@ -153,6 +153,11 @@
   /* Remove ugly focus outlines and enforce transparency hooks */
   .rbc-theme-container .rbc-event {
     @apply outline-none bg-transparent border-none p-0 !important;
+    color: inherit !important;
+  }
+  
+  .rbc-theme-container .rbc-event-label {
+    @apply hidden;
   }
 
   /* Minimalist border for today indicator in header */
@@ -181,4 +186,4 @@
     @apply h-auto min-h-0;
     height: auto !important;
   }
-}
+}
