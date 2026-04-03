@@ -42,23 +42,23 @@ const Scheduling = () => {
             <div 
               key={room._id}
               onClick={() => navigate(`/scheduling/room/${room._id}`)}
-              className="group bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-brand-500/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
+              className="group bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 cursor-pointer hover:border-brand-500/50 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+              <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-110"></div>
               
-              <div className="flex justify-between items-start mb-6 align-top">
-                <div className="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-white transition-colors">
-                  {room.type === 'Laboratory' ? <FiServer className="w-6 h-6" /> : <FiHome className="w-6 h-6" />}
+              <div className="flex justify-between items-start mb-4 align-top">
+                <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-white transition-colors">
+                  {room.type === 'Laboratory' ? <FiServer className="w-5 h-5" /> : <FiHome className="w-5 h-5" />}
                 </div>
-                <div className="bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                <div className="bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
                   {room.type}
                 </div>
               </div>
               
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{room.name}</h3>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1.5">{room.name}</h3>
               
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-zinc-400 font-medium">
-                <FiUsers className="w-4 h-4" /> Capacity: {room.capacity} seats
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-zinc-400 font-medium">
+                <FiUsers className="w-3.5 h-3.5" /> Capacity: {room.capacity} seats
               </div>
             </div>
           ))}
