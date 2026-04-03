@@ -1,4 +1,4 @@
-import { FiFilter, FiHome, FiPlus, FiRefreshCw, FiSearch, FiServer, FiUsers } from 'react-icons/fi';
+import { FiEdit2, FiFilter, FiHome, FiPlus, FiRefreshCw, FiSearch, FiServer, FiTrash2, FiUsers } from 'react-icons/fi';
 import RoomFormModal from '@/components/forms/RoomFormModal';
 import SchedulingFilters from '@/components/filters/SchedulingFilters';
 import EmptyState from '@/components/ui/EmptyState';
@@ -15,9 +15,15 @@ const Scheduling = () => {
         setTempFilters,
         loading,
         isModalOpen,
+        editingRoom,
         setIsModalOpen,
         navigate,
         handleCreateRoom,
+        handleUpdateRoom,
+        handleDeleteRoom,
+        handleOpenCreateModal,
+        handleOpenEditModal,
+        handleCloseModal,
         handleSearch,
         handleReset,
     } = useScheduling();
@@ -29,7 +35,7 @@ const Scheduling = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Facility Scheduling</h1>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleOpenCreateModal}
           className="relative group overflow-hidden rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
         >
           <span className="relative z-10 flex items-center gap-2">
@@ -80,8 +86,34 @@ const Scheduling = () => {
               
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1.5">{room.name}</h3>
               
-              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-zinc-400 font-medium">
-                <FiUsers className="w-3.5 h-3.5" /> Capacity: {room.capacity} seats
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-zinc-400 font-medium">
+                  <FiUsers className="w-3.5 h-3.5" /> Capacity: {room.capacity} seats
+                </div>
+
+                {/* Hover-reveal actions */}
+                <div className="flex items-center gap-1 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenEditModal(room);
+                    }}
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all"
+                    title="Edit Room"
+                  >
+                    <FiEdit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteRoom(room._id);
+                    }}
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
+                    title="Delete Room"
+                  >
+                    <FiTrash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -99,8 +131,9 @@ const Scheduling = () => {
 
       <RoomFormModal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSubmit={handleCreateRoom} 
+        onClose={handleCloseModal} 
+        initialData={editingRoom}
+        onSubmit={editingRoom ? handleUpdateRoom : handleCreateRoom} 
       />
     </div>
   );

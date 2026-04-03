@@ -19,6 +19,7 @@ export const useScheduling = () => {
 
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingRoom, setEditingRoom] = useState(null);
     const { showToast } = useToast();
     const navigate = useNavigate();
 
@@ -44,11 +45,52 @@ export const useScheduling = () => {
             await roomAPI.createRoom(roomData);
             showToast('Room successfully created.', 'success');
             fetchRooms();
-            setIsModalOpen(false);
+            handleCloseModal();
         } catch (err) {
             showToast(err.response?.data?.message || 'Failed to create room.', 'error');
             throw err;
         }
+    };
+
+    const handleUpdateRoom = async (roomData) => {
+        try {
+            await roomAPI.updateRoom(editingRoom._id, roomData);
+            showToast('Room successfully updated.', 'success');
+            fetchRooms();
+            handleCloseModal();
+        } catch (err) {
+            showToast(err.response?.data?.message || 'Failed to update room.', 'error');
+            throw err;
+        }
+    };
+
+    const handleDeleteRoom = async (roomId) => {
+        if (!window.confirm('Are you sure you want to delete this room? This will remove all associated schedules.')) {
+            return;
+        }
+
+        try {
+            await roomAPI.deleteRoom(roomId);
+            showToast('Room successfully deleted.', 'success');
+            fetchRooms();
+        } catch (err) {
+            showToast(err.response?.data?.message || 'Failed to delete room.', 'error');
+        }
+    };
+
+    const handleOpenCreateModal = () => {
+        setEditingRoom(null);
+        setIsModalOpen(true);
+    };
+
+    const handleOpenEditModal = (room) => {
+        setEditingRoom(room);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setEditingRoom(null);
     };
 
     const handleSearch = () => {
@@ -88,10 +130,16 @@ export const useScheduling = () => {
         setTempFilters,
         loading,
         isModalOpen,
+        editingRoom,
         setIsModalOpen,
         navigate,
         fetchRooms,
         handleCreateRoom,
+        handleUpdateRoom,
+        handleDeleteRoom,
+        handleOpenCreateModal,
+        handleOpenEditModal,
+        handleCloseModal,
         handleSearch,
         handleReset,
     };
