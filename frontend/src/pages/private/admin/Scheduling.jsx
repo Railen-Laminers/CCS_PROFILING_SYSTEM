@@ -1,20 +1,29 @@
-import { FiHome, FiPlus, FiServer, FiUsers } from 'react-icons/fi';
+import { FiFilter, FiHome, FiPlus, FiRefreshCw, FiSearch, FiServer, FiUsers } from 'react-icons/fi';
 import RoomFormModal from '@/components/forms/RoomFormModal';
+import SchedulingFilters from '@/components/filters/SchedulingFilters';
 import { useScheduling } from '@/hooks/useScheduling';
 
 const Scheduling = () => {
     const {
         rooms,
+        searchQuery,
+        tempSearchQuery,
+        setTempSearchQuery,
+        filters,
+        tempFilters,
+        setTempFilters,
         loading,
         isModalOpen,
         setIsModalOpen,
         navigate,
         handleCreateRoom,
+        handleSearch,
+        handleReset,
     } = useScheduling();
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Facility Scheduling</h1>
         </div>
@@ -28,6 +37,19 @@ const Scheduling = () => {
           <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
         </button>
       </div>
+
+      {/* Search and Filters Extracted (Identical Design) */}
+      <SchedulingFilters 
+        tempSearchQuery={tempSearchQuery}
+        setTempSearchQuery={setTempSearchQuery}
+        tempFilters={tempFilters}
+        setTempFilters={setTempFilters}
+        handleSearch={handleSearch}
+        handleReset={handleReset}
+        searchQuery={searchQuery}
+        filters={filters}
+        loading={loading}
+      />
 
       {loading ? (
         <div className="flex items-center justify-center min-h-[400px]">
