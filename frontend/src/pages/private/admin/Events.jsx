@@ -19,6 +19,7 @@ import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
 import EmptyState from '../../../components/ui/EmptyState';
 import EventFormModal from '../../../components/forms/EventFormModal';
+import EventFilters from '../../../components/filters/EventFilters';
 
 const statusColors = {
   'Upcoming': 'orange',
@@ -258,9 +259,17 @@ const EventsPage = () => {
     formErrors,
     submitLoading,
     categoryFilter,
-    setCategoryFilter,
+    statusFilter,
+    tempCategoryFilter,
+    setTempCategoryFilter,
+    tempStatusFilter,
+    setTempStatusFilter,
+    tempSearchQuery,
+    setTempSearchQuery,
+    isSearching,
+    handleSearch,
+    clearFilters,
     searchQuery,
-    setSearchQuery,
     participantModalOpen,
     selectedEvent,
     openCreateModal,
@@ -275,8 +284,6 @@ const EventsPage = () => {
     handleInputChange,
     formatDateTime,
   } = useEvents();
-
-  const categories = ['All', 'Curricular', 'Extra-Curricular'];
 
   if (loading) {
     return (
@@ -316,37 +323,21 @@ const EventsPage = () => {
         </div>
       )}
 
-      {/* Category Tabs + Search */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <div className="flex items-center gap-1 bg-gray-100 dark:bg-[#252525] p-1 rounded-xl">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setCategoryFilter(cat)}
-              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
-                categoryFilter === cat
-                  ? 'bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        <div className="relative group w-full sm:w-auto sm:min-w-[280px]">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <FiSearch className="h-4 w-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
-          </div>
-          <input
-            type="text"
-            placeholder="Search events..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full h-10 pl-11 pr-4 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all shadow-sm"
-          />
-        </div>
-      </div>
+      {/* Manual Filters */}
+      <EventFilters
+        tempSearchQuery={tempSearchQuery}
+        setTempSearchQuery={setTempSearchQuery}
+        handleSearch={handleSearch}
+        isSearching={isSearching}
+        tempCategoryFilter={tempCategoryFilter}
+        setTempCategoryFilter={setTempCategoryFilter}
+        tempStatusFilter={tempStatusFilter}
+        setTempStatusFilter={setTempStatusFilter}
+        clearFilters={clearFilters}
+        searchQuery={searchQuery}
+        categoryFilter={categoryFilter}
+        statusFilter={statusFilter}
+      />
 
       {/* Events List */}
       <div className="space-y-4">
@@ -365,11 +356,12 @@ const EventsPage = () => {
           <EmptyState 
             icon={FiCalendar} 
             title="No Events Found"
-            description={categoryFilter !== 'All' ? `No ${categoryFilter} events found. Try switching the category filter or adding a new event.` : 'No events have been created yet. Click the button above to add your first event.'}
+            description="No events found matching your current filters. Try resetting the filters or adding a new event."
             className="py-32"
           />
         )}
       </div>
+
 
       {/* Create/Edit Modal */}
       <EventFormModal

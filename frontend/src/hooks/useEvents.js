@@ -10,7 +10,15 @@ const useEvents = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [editingEvent, setEditingEvent] = useState(null);
     const [categoryFilter, setCategoryFilter] = useState('All');
+    const [statusFilter, setStatusFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+
+    // Temporary filter states (for manual apply)
+    const [tempSearchQuery, setTempSearchQuery] = useState('');
+    const [tempCategoryFilter, setTempCategoryFilter] = useState('All');
+    const [tempStatusFilter, setTempStatusFilter] = useState('All');
+    const [isSearching, setIsSearching] = useState(false);
+
     const [participantModalOpen, setParticipantModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const { showToast } = useToast();
@@ -44,6 +52,26 @@ const useEvents = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSearch = () => {
+        setIsSearching(true);
+        // Simulate a small delay for better UX (consistent with other modules)
+        setTimeout(() => {
+            setSearchQuery(tempSearchQuery);
+            setCategoryFilter(tempCategoryFilter);
+            setStatusFilter(tempStatusFilter);
+            setIsSearching(false);
+        }, 300);
+    };
+
+    const clearFilters = () => {
+        setTempSearchQuery('');
+        setTempCategoryFilter('All');
+        setTempStatusFilter('All');
+        setSearchQuery('');
+        setCategoryFilter('All');
+        setStatusFilter('All');
     };
 
     const fetchStudents = async () => {
@@ -243,10 +271,11 @@ const useEvents = () => {
     // Filtered events
     const filteredEvents = events.filter(event => {
         const matchesCategory = categoryFilter === 'All' || event.category === categoryFilter;
+        const matchesStatus = statusFilter === 'All' || event.status === statusFilter;
         const matchesSearch = !searchQuery || 
             event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (event.venue && event.venue.toLowerCase().includes(searchQuery.toLowerCase()));
-        return matchesCategory && matchesSearch;
+        return matchesCategory && matchesStatus && matchesSearch;
     });
 
     return {
@@ -261,9 +290,17 @@ const useEvents = () => {
         formErrors,
         submitLoading,
         categoryFilter,
-        setCategoryFilter,
+        statusFilter,
+        tempCategoryFilter,
+        setTempCategoryFilter,
+        tempStatusFilter,
+        setTempStatusFilter,
+        tempSearchQuery,
+        setTempSearchQuery,
+        isSearching,
+        handleSearch,
+        clearFilters,
         searchQuery,
-        setSearchQuery,
         participantModalOpen,
         selectedEvent,
         openCreateModal,
@@ -278,6 +315,7 @@ const useEvents = () => {
         handleInputChange,
         formatDateTime,
     };
+
 };
 
 export default useEvents;
