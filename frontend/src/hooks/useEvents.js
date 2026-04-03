@@ -1,15 +1,28 @@
-﻿import { useState, useEffect } from 'react';
-import { eventAPI } from '../services/api';
+import { useState, useEffect } from 'react';
+import { eventAPI, userAPI } from '../services/api';
+import { useToast } from '../contexts/ToastContext';
 
 const useEvents = () => {
     const [events, setEvents] = useState([]);
+    const [allStudents, setAllStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [editingEvent, setEditingEvent] = useState(null);
+    const [categoryFilter, setCategoryFilter] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [participantModalOpen, setParticipantModalOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const { showToast } = useToast();
+
     const [formData, setFormData] = useState({
         title: '',
         description: '',
+        category: 'Extra-Curricular',
+        venue: '',
+        max_participants: '',
+        has_max_participants: false,
+        status: 'Upcoming',
         start_datetime: '',
         end_datetime: '',
     });
@@ -33,11 +46,25 @@ const useEvents = () => {
         }
     };
 
+    const fetchStudents = async () => {
+        try {
+            const data = await userAPI.getStudents();
+            setAllStudents(data);
+        } catch (err) {
+            console.error('Failed to load students:', err);
+        }
+    };
+
     const openCreateModal = () => {
         setEditingEvent(null);
         setFormData({
             title: '',
             description: '',
+            category: 'Extra-Curricular',
+            venue: '',
+            max_participants: '',
+            has_max_participants: false,
+            status: 'Upcoming',
             start_datetime: '',
             end_datetime: '',
         });
@@ -47,11 +74,16 @@ const useEvents = () => {
 
     const openEditModal = (event) => {
         setEditingEvent(event);
-        const startLocal = event.start_datetime.slice(0, 16);
-        const endLocal = event.end_datetime.slice(0, 16);
+        const startLocal = event.start_datetime ? event.start_datetime.slice(0, 16) : '';
+        const endLocal = event.end_datetime ? event.end_datetime.slice(0, 16) : '';
         setFormData({
             title: event.title,
-            description: event.description,
+            description: event.description || '',
+            category: event.category || 'Extra-Curricular',
+            venue: event.venue || '',
+            max_participants: event.max_participants || '',
+            has_max_participants: event.max_participants !== null && event.max_participants !== undefined,
+            status: event.status || 'Upcoming',
             start_datetime: startLocal,
             end_datetime: endLocal,
         });
@@ -62,13 +94,18 @@ const useEvents = () => {
     const closeModal = () => {
         setModalOpen(false);
         setEditingEvent(null);
-        setFormData({
-            title: '',
-            description: '',
-            start_datetime: '',
-            end_datetime: '',
-        });
         setFormErrors({});
+    };
+
+    const openParticipantModal = (event) => {
+        setSelectedEvent(event);
+        setParticipantModalOpen(true);
+        fetchStudents();
+    };
+
+    const closeParticipantModal = () => {
+        setParticipantModalOpen(false);
+        setSelectedEvent(null);
     };
 
     const validateForm = () => {
@@ -78,9 +115,6 @@ const useEvents = () => {
         } else if (formData.title.length > 200) {
             errors.title = 'Title must be at most 200 characters';
         }
-        if (!formData.description.trim()) {
-            errors.description = 'Description is required';
-        }
         if (!formData.start_datetime) {
             errors.start_datetime = 'Start date & time is required';
         }
@@ -88,6 +122,9 @@ const useEvents = () => {
             errors.end_datetime = 'End date & time is required';
         } else if (formData.start_datetime && formData.end_datetime <= formData.start_datetime) {
             errors.end_datetime = 'End date & time must be after start date & time';
+        }
+        if (formData.has_max_participants && (!formData.max_participants || formData.max_participants < 1)) {
+            errors.max_participants = 'Must be at least 1';
         }
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
@@ -98,27 +135,38 @@ const useEvents = () => {
         if (!validateForm()) return;
 
         setSubmitLoading(true);
+        const payload = {
+            title: formData.title,
+            description: formData.description,
+            category: formData.category,
+            venue: formData.venue || null,
+            max_participants: formData.has_max_participants ? parseInt(formData.max_participants) : null,
+            status: formData.status,
+            start_datetime: formData.start_datetime,
+            end_datetime: formData.end_datetime,
+        };
+
         try {
             if (editingEvent) {
-                await eventAPI.updateEvent(editingEvent.event_id, formData);
+                await eventAPI.updateEvent(editingEvent.event_id, payload);
+                showToast('Event updated successfully.', 'success');
             } else {
-                await eventAPI.createEvent(formData);
+                await eventAPI.createEvent(payload);
+                showToast('Event created successfully.', 'success');
             }
             await fetchEvents();
             closeModal();
-            setError(null); // Clear any previous errors
+            setError(null);
         } catch (err) {
-            if (err.response && err.response.data && err.response.data.errors) {
+            if (err.response?.data?.errors) {
                 const backendErrors = err.response.data.errors;
                 const mapped = {};
-                if (backendErrors.title) mapped.title = Array.isArray(backendErrors.title) ? backendErrors.title[0] : backendErrors.title;
-                if (backendErrors.description) mapped.description = Array.isArray(backendErrors.description) ? backendErrors.description[0] : backendErrors.description;
-                if (backendErrors.start_datetime) mapped.start_datetime = Array.isArray(backendErrors.start_datetime) ? backendErrors.start_datetime[0] : backendErrors.start_datetime;
-                if (backendErrors.end_datetime) mapped.end_datetime = Array.isArray(backendErrors.end_datetime) ? backendErrors.end_datetime[0] : backendErrors.end_datetime;
+                Object.keys(backendErrors).forEach(key => {
+                    mapped[key] = Array.isArray(backendErrors[key]) ? backendErrors[key][0] : backendErrors[key];
+                });
                 setFormErrors(mapped);
             } else {
-                const errorMessage = err.response?.data?.message || 'Failed to save event. Please try again.';
-                setError(errorMessage);
+                showToast(err.response?.data?.message || 'Failed to save event.', 'error');
             }
         } finally {
             setSubmitLoading(false);
@@ -129,18 +177,51 @@ const useEvents = () => {
         if (!window.confirm('Are you sure you want to delete this event?')) return;
         try {
             await eventAPI.deleteEvent(eventId);
+            showToast('Event deleted successfully.', 'success');
             await fetchEvents();
-            setError(null); // Clear any previous errors
         } catch (err) {
-            const errorMessage = err.response?.data?.message || 'Failed to delete event. Please try again.';
-            setError(errorMessage);
-            console.error(err);
+            showToast(err.response?.data?.message || 'Failed to delete event.', 'error');
+        }
+    };
+
+    const handleRegister = async (eventId, userId) => {
+        try {
+            await eventAPI.registerForEvent(eventId, userId);
+            showToast('Student registered successfully.', 'success');
+            await fetchEvents();
+            // Refresh selectedEvent if participant modal is open
+            if (selectedEvent && selectedEvent.event_id === eventId) {
+                const updated = await eventAPI.getEvents();
+                const refreshed = updated.find(e => e.event_id === eventId);
+                if (refreshed) setSelectedEvent(refreshed);
+            }
+        } catch (err) {
+            showToast(err.response?.data?.message || 'Failed to register student.', 'error');
+        }
+    };
+
+    const handleUnregister = async (eventId, userId) => {
+        try {
+            await eventAPI.unregisterFromEvent(eventId, userId);
+            showToast('Student unregistered successfully.', 'success');
+            await fetchEvents();
+            if (selectedEvent && selectedEvent.event_id === eventId) {
+                const updated = await eventAPI.getEvents();
+                const refreshed = updated.find(e => e.event_id === eventId);
+                if (refreshed) setSelectedEvent(refreshed);
+            }
+        } catch (err) {
+            showToast(err.response?.data?.message || 'Failed to unregister student.', 'error');
         }
     };
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        if (type === 'checkbox') {
+            setFormData((prev) => ({ ...prev, [name]: checked }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
         if (formErrors[name]) {
             setFormErrors((prev) => ({ ...prev, [name]: null }));
         }
@@ -149,11 +230,29 @@ const useEvents = () => {
     const formatDateTime = (isoString) => {
         if (!isoString) return '';
         const date = new Date(isoString);
-        return date.toLocaleString();
+        return date.toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
     };
 
+    // Filtered events
+    const filteredEvents = events.filter(event => {
+        const matchesCategory = categoryFilter === 'All' || event.category === categoryFilter;
+        const matchesSearch = !searchQuery || 
+            event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (event.venue && event.venue.toLowerCase().includes(searchQuery.toLowerCase()));
+        return matchesCategory && matchesSearch;
+    });
+
     return {
-        events,
+        events: filteredEvents,
+        allEvents: events,
+        allStudents,
         loading,
         error,
         modalOpen,
@@ -161,11 +260,21 @@ const useEvents = () => {
         formData,
         formErrors,
         submitLoading,
+        categoryFilter,
+        setCategoryFilter,
+        searchQuery,
+        setSearchQuery,
+        participantModalOpen,
+        selectedEvent,
         openCreateModal,
         openEditModal,
         closeModal,
+        openParticipantModal,
+        closeParticipantModal,
         handleSubmit,
         handleDelete,
+        handleRegister,
+        handleUnregister,
         handleInputChange,
         formatDateTime,
     };

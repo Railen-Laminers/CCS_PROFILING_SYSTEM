@@ -2,26 +2,27 @@ const Event = require('../models/Event');
 
 class EventService {
   /**
-   * Get all events
+   * Get all events with participant count
    */
   static async getAll() {
-    return await Event.find().select('_id title description start_datetime end_datetime');
+    return await Event.find()
+      .populate('participants', 'firstname lastname email')
+      .sort({ start_datetime: -1 });
   }
 
   /**
    * Find an event by ID or title (partial match)
    */
   static async findByIdentifier(search) {
-    // Check if search is a valid ObjectId
     if (search.match(/^[0-9a-fA-F]{24}$/)) {
-      const event = await Event.findById(search).select('_id title description start_datetime end_datetime');
+      const event = await Event.findById(search)
+        .populate('participants', 'firstname lastname email');
       if (event) return event;
     }
 
-    // Search by title (partial match)
     const event = await Event.findOne({
       title: { $regex: search, $options: 'i' }
-    }).select('_id title description start_datetime end_datetime');
+    }).populate('participants', 'firstname lastname email');
 
     if (!event) {
       throw new Error('Event not found');
@@ -37,6 +38,10 @@ class EventService {
     return await Event.create({
       title: data.title,
       description: data.description,
+      category: data.category || 'Extra-Curricular',
+      venue: data.venue || null,
+      max_participants: data.max_participants || null,
+      status: data.status || 'Upcoming',
       start_datetime: data.start_datetime,
       end_datetime: data.end_datetime
     });
@@ -51,7 +56,14 @@ class EventService {
       throw new Error('Event not found');
     }
 
-    Object.assign(event, data);
+    // Only update allowed fields
+    const allowedFields = ['title', 'description', 'category', 'venue', 'max_participants', 'status', 'start_datetime', 'end_datetime'];
+    allowedFields.forEach(field => {
+      if (data[field] !== undefined) {
+        event[field] = data[field];
+      }
+    });
+
     await event.save();
     return event;
   }
@@ -64,8 +76,54 @@ class EventService {
     if (!event) {
       throw new Error('Event not found');
     }
-
     await event.deleteOne();
+  }
+
+  /**
+   * Register a student (user) to an event
+   */
+  static async registerParticipant(eventId, userId) {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    // Check if already registered
+    if (event.participants.includes(userId)) {
+      throw new Error('Student is already registered for this event.');
+    }
+
+    // Check max participant cap
+    if (event.max_participants !== null && event.participants.length >= event.max_participants) {
+      throw new Error(`This event has reached its maximum capacity of ${event.max_participants} participants.`);
+    }
+
+    event.participants.push(userId);
+    await event.save();
+    
+    return await Event.findById(eventId)
+      .populate('participants', 'firstname lastname email');
+  }
+
+  /**
+   * Unregister a student (user) from an event
+   */
+  static async unregisterParticipant(eventId, userId) {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    const index = event.participants.indexOf(userId);
+    if (index === -1) {
+      throw new Error('Student is not registered for this event.');
+    }
+
+    event.participants.splice(index, 1);
+    await event.save();
+
+    return await Event.findById(eventId)
+      .populate('participants', 'firstname lastname email');
   }
 }
 

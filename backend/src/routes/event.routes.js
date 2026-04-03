@@ -14,4 +14,8 @@ router.post('/', EventController.store);
 router.put('/:id', EventController.update);
 router.delete('/:id', EventController.destroy);
 
+// Participant management
+router.post('/:id/register', EventController.register);
+router.delete('/:id/register', EventController.unregister);
+
 module.exports = router;

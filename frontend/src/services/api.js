@@ -144,6 +144,14 @@ export const eventAPI = {
   deleteEvent: async (id) => {
     await axiosInstance.delete(`/events/${id}`);
   },
+  registerForEvent: async (eventId, userId) => {
+    const response = await axiosInstance.post(`/events/${eventId}/register`, { user_id: userId });
+    return response.data;
+  },
+  unregisterFromEvent: async (eventId, userId) => {
+    const response = await axiosInstance.delete(`/events/${eventId}/register`, { data: { user_id: userId } });
+    return response.data;
+  },
 };
 
 // ─── Academic Record API ─────────────────────────────────────────────────────

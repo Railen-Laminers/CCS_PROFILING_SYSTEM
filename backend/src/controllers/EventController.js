@@ -8,11 +8,16 @@ class EventController {
     try {
       const events = await EventService.getAll();
 
-      // Transform _id to event_id for consistency
       const transformedEvents = events.map(event => ({
         event_id: event._id,
         title: event.title,
         description: event.description,
+        category: event.category,
+        venue: event.venue,
+        max_participants: event.max_participants,
+        participant_count: event.participants?.length || 0,
+        participants: event.participants || [],
+        status: event.status,
         start_datetime: event.start_datetime,
         end_datetime: event.end_datetime
       }));
@@ -38,15 +43,19 @@ class EventController {
           event_id: event._id,
           title: event.title,
           description: event.description,
+          category: event.category,
+          venue: event.venue,
+          max_participants: event.max_participants,
+          participant_count: event.participants?.length || 0,
+          participants: event.participants || [],
+          status: event.status,
           start_datetime: event.start_datetime,
           end_datetime: event.end_datetime
         }
       });
     } catch (error) {
       if (error.message === 'Event not found') {
-        return res.status(404).json({
-          message: error.message
-        });
+        return res.status(404).json({ message: error.message });
       }
       next(error);
     }
@@ -65,21 +74,22 @@ class EventController {
           event_id: event._id,
           title: event.title,
           description: event.description,
+          category: event.category,
+          venue: event.venue,
+          max_participants: event.max_participants,
+          participant_count: 0,
+          status: event.status,
           start_datetime: event.start_datetime,
           end_datetime: event.end_datetime
         }
       });
     } catch (error) {
-      // Handle validation errors
       if (error.name === 'ValidationError') {
         const errors = {};
         Object.keys(error.errors).forEach(key => {
           errors[key] = [error.errors[key].message];
         });
-        return res.status(400).json({
-          message: 'Validation error',
-          errors
-        });
+        return res.status(400).json({ message: 'Validation error', errors });
       }
       next(error);
     }
@@ -99,27 +109,25 @@ class EventController {
           event_id: event._id,
           title: event.title,
           description: event.description,
+          category: event.category,
+          venue: event.venue,
+          max_participants: event.max_participants,
+          participant_count: event.participants?.length || 0,
+          status: event.status,
           start_datetime: event.start_datetime,
           end_datetime: event.end_datetime
         }
       });
     } catch (error) {
-      // Handle validation errors
       if (error.name === 'ValidationError') {
         const errors = {};
         Object.keys(error.errors).forEach(key => {
           errors[key] = [error.errors[key].message];
         });
-        return res.status(400).json({
-          message: 'Validation error',
-          errors
-        });
+        return res.status(400).json({ message: 'Validation error', errors });
       }
-
       if (error.message === 'Event not found') {
-        return res.status(404).json({
-          message: error.message
-        });
+        return res.status(404).json({ message: error.message });
       }
       next(error);
     }
@@ -132,15 +140,68 @@ class EventController {
     try {
       const { id } = req.params;
       await EventService.delete(id);
-
-      res.status(200).json({
-        message: 'Event deleted successfully'
-      });
+      res.status(200).json({ message: 'Event deleted successfully' });
     } catch (error) {
       if (error.message === 'Event not found') {
-        return res.status(404).json({
-          message: error.message
-        });
+        return res.status(404).json({ message: error.message });
+      }
+      next(error);
+    }
+  }
+
+  /**
+   * Register a student to an event
+   */
+  static async register(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { user_id } = req.body;
+
+      if (!user_id) {
+        return res.status(400).json({ message: 'user_id is required.' });
+      }
+
+      const event = await EventService.registerParticipant(id, user_id);
+      res.status(200).json({
+        message: 'Student registered successfully.',
+        participant_count: event.participants.length,
+        participants: event.participants
+      });
+    } catch (error) {
+      if (error.message.includes('already registered') || error.message.includes('maximum capacity')) {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.message === 'Event not found') {
+        return res.status(404).json({ message: error.message });
+      }
+      next(error);
+    }
+  }
+
+  /**
+   * Unregister a student from an event
+   */
+  static async unregister(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { user_id } = req.body;
+
+      if (!user_id) {
+        return res.status(400).json({ message: 'user_id is required.' });
+      }
+
+      const event = await EventService.unregisterParticipant(id, user_id);
+      res.status(200).json({
+        message: 'Student unregistered successfully.',
+        participant_count: event.participants.length,
+        participants: event.participants
+      });
+    } catch (error) {
+      if (error.message.includes('not registered')) {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.message === 'Event not found') {
+        return res.status(404).json({ message: error.message });
       }
       next(error);
     }
