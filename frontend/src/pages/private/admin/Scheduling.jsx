@@ -17,7 +17,6 @@ const Scheduling = () => {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Facility Scheduling</h1>
-          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Select a room to configure its class schedule.</p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
