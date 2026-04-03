@@ -186,6 +186,12 @@
   .rbc-theme-container .rbc-timeslot-group {
     min-height: 50px;
   }
+
+  /* Style the +more link in month view */
+  .rbc-theme-container .rbc-show-more {
+    @apply text-brand-600 dark:text-brand-400 font-bold bg-transparent hover:underline text-[10px] mt-1;
+    background: transparent !important;
+  }
 }
 
 /* Native HTML5 Input Icon Styling (Date, Time, etc.) */
