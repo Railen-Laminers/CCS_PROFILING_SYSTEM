@@ -16,7 +16,7 @@ import { useCourseDetail } from '@/hooks/useCourseDetail';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { EmptyState } from '@/components/ui/EmptyState';
+import EmptyState from '@/components/ui/EmptyState';
 import LessonFormModal from '@/components/forms/LessonFormModal';
 import CourseFormModal from '@/components/forms/CourseFormModal';
 
@@ -53,14 +53,13 @@ const CourseDetail = () => {
   if (!course) {
     return (
       <EmptyState 
-        icon={<FiBook className="w-12 h-12 text-gray-300" />}
+        icon={FiBook}
         title="Course not found"
         description="The course you are looking for does not exist or has been removed."
-        action={
-          <Button onClick={() => navigate('/instruction')}>
-            Back to Instruction
-          </Button>
-        }
+        action={{
+          label: "Back to Curriculum",
+          onClick: () => navigate('/instruction')
+        }}
       />
     );
   }
@@ -266,10 +265,10 @@ const CourseDetail = () => {
                               ) : (
                                   <div className="col-span-full">
                                       <EmptyState 
-                                          icon={<FiList className="w-12 h-12 text-gray-300 dark:text-gray-600" />}
+                                          size="md"
+                                          icon={FiList}
                                           title="No modules established"
                                           description="Start by establishing lesson modules for this curriculum."
-                                          className="bg-white dark:bg-[#1E1E1E] border border-dashed border-gray-200 dark:border-gray-800 rounded-2xl py-12 shadow-none"
                                       />
                                   </div>
                               )}

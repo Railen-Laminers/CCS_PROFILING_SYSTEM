@@ -13,7 +13,7 @@ import {
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
-import { EmptyState } from '../../../components/ui/EmptyState';
+import EmptyState from '../../../components/ui/EmptyState';
 
 const EventItem = ({ event, onEdit, onDelete, formatDateTime }) => (
   <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
@@ -156,9 +156,8 @@ const EventsPage = () => {
             ))
           ) : (
             <EmptyState 
-              icon={<FiCalendar className="w-12 h-12 text-gray-300 dark:text-zinc-700" />} 
+              icon={FiCalendar} 
               title="No events found in the database."
-              className="bg-gray-50 dark:bg-[#1A1A1A] border-gray-100 dark:border-gray-800 rounded-2xl py-16 shadow-none"
             />
           )}
         </div>

@@ -14,7 +14,7 @@ import {
 } from 'react-icons/fi';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
-import { EmptyState } from '../../../components/ui/EmptyState';
+import EmptyState from '../../../components/ui/EmptyState';
 
 const StatCards = ({ statCards }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -115,9 +115,9 @@ const Reports = () => {
               </CardHeader>
               <CardContent className="h-72 p-0">
                 <EmptyState 
-                  icon={<FiActivity className="w-10 h-10 text-gray-300 dark:text-zinc-700" />} 
+                  size="md"
+                  icon={FiActivity} 
                   title="Aggregation pending..."
-                  className="h-full bg-transparent shadow-none"
                 />
               </CardContent>
             </Card>
@@ -133,9 +133,9 @@ const Reports = () => {
               </CardHeader>
               <CardContent className="h-72 p-0">
                 <EmptyState 
-                  icon={<FiPieChart className="w-10 h-10 text-gray-300 dark:text-zinc-700" />} 
+                  size="md"
+                  icon={FiPieChart} 
                   title="No department data found"
-                  className="h-full bg-transparent shadow-none"
                 />
               </CardContent>
             </Card>
@@ -151,9 +151,10 @@ const Reports = () => {
               </CardHeader>
               <CardContent className="h-80 p-0">
                 <EmptyState 
-                  icon={<FiBarChart2 className="w-12 h-12 text-gray-300 dark:text-zinc-700" />} 
-                  title="Chart will be displayed once grades are released"
-                  className="h-full bg-transparent shadow-none"
+                  size="md"
+                  icon={FiBarChart2} 
+                  title="Grades distribution pending"
+                  description="Chart will be displayed once grades are released"
                 />
               </CardContent>
             </Card>
@@ -214,10 +215,10 @@ const Reports = () => {
             </CardHeader>
             <CardContent className="h-96 p-0">
               <EmptyState 
-                icon={<FiCalendar className="w-14 h-14 text-gray-300 dark:text-zinc-700" />} 
-                title="Populating attendance records..."
+                size="md"
+                icon={FiCalendar} 
+                title="Populating records..."
                 description="Records will be synchronized once classes are in progress."
-                className="h-full bg-transparent shadow-none"
               />
             </CardContent>
           </Card>
