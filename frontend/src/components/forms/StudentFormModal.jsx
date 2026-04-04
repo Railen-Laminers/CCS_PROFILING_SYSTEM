@@ -234,7 +234,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
         }
     };
 
-    const renderField = (label, name, type = 'text', required = false, options = null, helpText = null, placeholder = null) => {
+    const renderField = (label, name, type = 'text', required = false, options = null, helpText = null, placeholder = null, min = null, max = null, step = null) => {
         const value = formData[name];
         const error = fieldErrors[name];
         const showError = touched[name] || error;
@@ -306,6 +306,9 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                         onBlur={() => handleBlur(name)}
                         placeholder={finalPlaceholder}
                         className={baseInputClass}
+                        min={min}
+                        max={max}
+                        step={step}
                     />
                 )}
                 {helpText && !error && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{helpText}</p>}
@@ -451,7 +454,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                     { value: '3', label: '3rd Year' },
                                     { value: '4', label: '4th Year' }
                                 ])}
-                                {renderField('GPA', 'gpa', 'number', false, null, 'Between 0 and 4')}
+                                {renderField('GPA', 'gpa', 'number', false, null, 'Range: 0.00 to 5.00', 'e.g., 1.25', 0, 5, 0.01)}
                                 {renderField('Blood Type', 'blood_type', 'select', false, [
                                     { value: 'A+', label: 'A+' }, { value: 'A-', label: 'A-' },
                                     { value: 'B+', label: 'B+' }, { value: 'B-', label: 'B-' },

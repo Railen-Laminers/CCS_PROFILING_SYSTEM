@@ -33,6 +33,8 @@ const studentSchema = new mongoose.Schema({
   },
   gpa: {
     type: Number,
+    min: [0, 'GPA cannot be less than 0'],
+    max: [5, 'GPA cannot be more than 5'],
     default: null
   },
   current_subjects: {

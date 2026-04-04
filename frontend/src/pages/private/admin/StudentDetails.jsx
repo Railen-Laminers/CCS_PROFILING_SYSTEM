@@ -266,7 +266,9 @@ const StudentDetails = () => {
                                                     </div>
                                                     <div className="text-right">
                                                         <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">GPA</p>
-                                                        <p className="text-3xl font-extrabold text-[#F97316] leading-none">{record.gpa ? Number(record.gpa).toFixed(2) : 'N/A'}</p>
+                                                        <p className="text-3xl font-extrabold text-[#F97316] leading-none">
+                                                            {record.gpa ? Number(record.gpa.toString()).toFixed(2) : 'N/A'}
+                                                        </p>
                                                     </div>
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200 dark:border-gray-700">
