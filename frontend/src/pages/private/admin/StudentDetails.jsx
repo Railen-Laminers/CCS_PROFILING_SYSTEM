@@ -51,6 +51,8 @@ const StudentDetails = () => {
         handleTabChange,
         fetchStudent,
         showToast,
+        curricularEvents,
+        isCurricularLoading,
     } = useStudentDetails();
 
     // ── Loading State ────────────────────────────────────────────
@@ -283,6 +285,18 @@ const StudentDetails = () => {
                                                         {record.academic_awards?.length > 0 ? (
                                                             <div className="flex flex-wrap gap-2 mt-2">{record.academic_awards.map((award, i) => <Badge key={i} color="yellow">{award}</Badge>)}</div>
                                                         ) : <p className="text-sm text-gray-500">None recorded</p>}
+                                                    </div>
+                                                    <div>
+                                                        <SectionSubhead>Curricular Participations</SectionSubhead>
+                                                        {curricularEvents && curricularEvents.length > 0 ? (
+                                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                                {curricularEvents.map((event, i) => (
+                                                                    <Badge key={i} color="indigo">{event.title}</Badge>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-sm text-gray-500">No curricular events joined</p>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

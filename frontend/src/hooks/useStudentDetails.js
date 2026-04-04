@@ -27,6 +27,8 @@ export const useStudentDetails = () => {
     const [academicRecords, setAcademicRecords] = useState([]);
     const [isAcademicLoading, setIsAcademicLoading] = useState(false);
     const [academicError, setAcademicError] = useState('');
+    const [curricularEvents, setCurricularEvents] = useState([]);
+    const [isCurricularLoading, setIsCurricularLoading] = useState(false);
 
     // Modal state
     const [modalOpen, setModalOpen] = useState(false);
@@ -113,18 +115,32 @@ export const useStudentDetails = () => {
         setActiveTab(tab);
 
         // Fetch academic records when clicking the tab if not already fetched
-        if (tab === 'Academic Record' && academicRecords.length === 0) {
-            setIsAcademicLoading(true);
-            setAcademicError('');
+        if (tab === 'Academic Record') {
+            if (academicRecords.length === 0) {
+                setIsAcademicLoading(true);
+                setAcademicError('');
+                try {
+                    const records = await academicRecordAPI.getAcademicRecords(id);
+                    setAcademicRecords(records);
+                } catch (err) {
+                    console.error(err);
+                    showToast('Failed to load academic records.', 'error');
+                    setAcademicError('Failed to load academic records.');
+                } finally {
+                    setIsAcademicLoading(false);
+                }
+            }
+
+            // Always refresh curricular events to stay up-to-date
+            setIsCurricularLoading(true);
             try {
-                const records = await academicRecordAPI.getAcademicRecords(id);
-                setAcademicRecords(records);
+                const { eventAPI } = await import('../services/api');
+                const events = await eventAPI.getStudentCurricularEvents(id);
+                setCurricularEvents(events);
             } catch (err) {
-                console.error(err);
-                showToast('Failed to load academic records.', 'error');
-                setAcademicError('Failed to load academic records.');
+                console.warn('Failed to load curricular events:', err);
             } finally {
-                setIsAcademicLoading(false);
+                setIsCurricularLoading(false);
             }
         }
 
@@ -140,6 +156,8 @@ export const useStudentDetails = () => {
         academicRecords,
         isAcademicLoading,
         academicError,
+        curricularEvents,
+        isCurricularLoading,
         modalOpen,
         setModalOpen,
         modalData,

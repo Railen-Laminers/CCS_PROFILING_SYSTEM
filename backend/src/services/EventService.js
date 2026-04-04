@@ -125,6 +125,17 @@ class EventService {
     return await Event.findById(eventId)
       .populate('participants', 'firstname lastname email');
   }
+
+  /**
+   * Get all curricular events for a specific student (by user document _id)
+   */
+  static async getCurricularEventsByUserId(userId) {
+    return await Event.find({
+      participants: userId,
+      category: 'Curricular'
+    })
+    .sort({ start_datetime: -1 });
+  }
 }
 
 module.exports = EventService;
