@@ -67,10 +67,10 @@ const Reports = () => {
 
   const statCards = [
     { label: 'Total Students', icon: FiFileText, color: 'text-blue-600', bgColor: 'bg-blue-100', value: analyticsData.enrollmentTrend?.reduce((acc, curr) => acc + curr.students, 0) || 0 },
-    { label: 'Avg. GPA', icon: FiTrendingUp, color: 'text-green-600', bgColor: 'bg-green-100', value: 'N/A' },
+    { label: 'Avg. GPA', icon: FiTrendingUp, color: 'text-green-600', bgColor: 'bg-green-100', value: analyticsData.averageGpa ? analyticsData.averageGpa.toFixed(2) : '0.00' },
     { label: 'Attendance Rate', icon: FiCalendar, color: 'text-orange-600', bgColor: 'bg-orange-100', value: 'N/A' },
     { label: 'Pass Rate', icon: FiCheckCircle, color: 'text-purple-600', bgColor: 'bg-purple-100', value: 'N/A' },
-  ];
+];
 
   if (error) {
     return (
@@ -133,7 +133,7 @@ const Reports = () => {
                   <div className="bg-blue-500/10 p-2 rounded-lg">
                     <FiActivity className="w-4 h-4 text-blue-500" />
                   </div>
-                  Enrollment Trend
+                  Student Registration History
                 </CardTitle>
               </CardHeader>
               <CardContent className="h-72 p-6">
@@ -143,7 +143,7 @@ const Reports = () => {
                   <EmptyState 
                     size="md"
                     icon={FiActivity} 
-                    title={loading ? "Loading data..." : "No enrollment trend data"}
+                    title={loading ? "Loading data..." : "No registration history data"}
                   />
                 )}
               </CardContent>

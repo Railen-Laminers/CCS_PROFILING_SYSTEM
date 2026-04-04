@@ -131,29 +131,54 @@ export const GradeDistributionChart = ({ data }) => (
         dataKey="name" 
         axisLine={false} 
         tickLine={false} 
-        tick={{ fill: '#9CA3AF', fontSize: 12 }}
+        tick={{ fill: '#9CA3AF', fontSize: 11 }}
         dy={10}
+        label={{ value: 'GPA Performance Ranges', position: 'insideBottom', offset: -10, fill: '#6B7280', fontSize: 11, fontWeight: 'bold' }}
       />
       <YAxis 
         axisLine={false} 
         tickLine={false} 
-        tick={{ fill: '#9CA3AF', fontSize: 12 }}
+        tick={{ fill: '#9CA3AF', fontSize: 11 }}
+        allowDecimals={false}
+        domain={[0, 'auto']}
+        label={{ value: 'Number of Students', angle: -90, position: 'insideLeft', offset: 10, fill: '#6B7280', fontSize: 11, fontWeight: 'bold' }}
       />
       <Tooltip 
         cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
-        contentStyle={{ 
-            borderRadius: '12px', 
-            backgroundColor: '#1F2937',
-            border: '1px solid #374151',
+        content={({ active, payload, label }) => {
+            if (active && payload && payload.length) {
+                const labels = {
+                    '4.1 - 5.0 (A)': { text: 'Excellent', color: '#F97316' },
+                    '3.1 - 4.0 (B)': { text: 'Very Good', color: '#F97316' },
+                    '2.1 - 3.0 (C)': { text: 'Good', color: '#F97316' },
+                    '1.1 - 2.0 (D)': { text: 'Fair', color: '#F97316' },
+                    '0.0 - 1.0 (F)': { text: 'Academic Risk', color: '#F97316' }
+                };
+                const info = labels[label] || { text: 'GPA Record', color: '#F97316' };
+
+                return (
+                    <div className="bg-[#1F2937] border border-[#374151] p-4 rounded-xl shadow-2xl backdrop-blur-md">
+                        <p className="text-xs font-black uppercase tracking-widest text-[#9CA3AF] mb-1">Status: {info.text}</p>
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                            <p className="text-[15px] font-bold text-white">{label}</p>
+                        </div>
+                        <p className="text-sm text-[#9CA3AF] mt-2">
+                            Count: <span className="text-orange-500 font-black">{payload[0].value}</span> Students
+                        </p>
+                    </div>
+                );
+            }
+            return null;
         }}
       />
-      <Legend verticalAlign="bottom" height={36} iconType="rect" />
       <Bar 
-        name="count"
+        name="Student Count"
         dataKey="count" 
-        fill="#F97316" 
-        radius={[2, 2, 0, 0]} 
-        barSize={120}
+        fill="#F97316"
+        radius={[6, 6, 0, 0]} 
+        barSize={80}
+        label={{ position: 'top', fill: '#9CA3AF', fontSize: 11, fontWeight: 'bold', offset: 10 }}
       />
     </BarChart>
   </ResponsiveContainer>

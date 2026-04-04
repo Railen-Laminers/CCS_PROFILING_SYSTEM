@@ -11,7 +11,6 @@ class ReportsService {
      * @returns {Promise<Object>} Formatted analytics data.
      */
     async getAnalyticsStats() {
-        // 1. Enrollment Trend (Monthly Registrations for past 6 months)
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
@@ -40,7 +39,6 @@ class ReportsService {
             students: item.count
         }));
 
-        // 2. Department Distribution
         const departmentStats = await Student.aggregate([
             {
                 $group: {
@@ -57,19 +55,24 @@ class ReportsService {
             }
         ]);
 
-        // 3. Grade Distribution (Categorized by GPA)
+        const avgGpaAggregation = await Student.aggregate([
+            { $match: { gpa: { $ne: null } } },
+            { $group: { _id: null, avgGpa: { $avg: '$gpa' } } }
+        ]);
+        const averageGpa = avgGpaAggregation.length > 0 ? avgGpaAggregation[0].avgGpa : 0;
+
         const gradeAggregation = await Student.aggregate([
             {
                 $project: {
-                    grade: {
+                    bin: {
                         $cond: [
-                            { $gte: ['$gpa', 3.5] }, 'A',
+                            { $gte: ['$gpa', 4.1] }, '4.1 - 5.0 (A)',
                             { $cond: [
-                                { $gte: ['$gpa', 3.0] }, 'B',
+                                { $gte: ['$gpa', 3.1] }, '3.1 - 4.0 (B)',
                                 { $cond: [
-                                    { $gte: ['$gpa', 2.5] }, 'C',
+                                    { $gte: ['$gpa', 2.1] }, '2.1 - 3.0 (C)',
                                     { $cond: [
-                                        { $gte: ['$gpa', 2.0] }, 'D', 'F'
+                                        { $gte: ['$gpa', 1.1] }, '1.1 - 2.0 (D)', '0.0 - 1.0 (F)'
                                     ]}
                                 ]}
                             ]}
@@ -78,30 +81,28 @@ class ReportsService {
                 }
             },
             {
-                $group: {
-                    _id: '$grade',
-                    count: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    name: '$_id',
-                    count: 1,
-                    _id: 0
-                }
+                $group: { _id: '$bin', count: { $sum: 1 } }
             }
         ]);
 
-        // Standardize output to include all grade buckets
-        const gradeDistribution = ['A', 'B', 'C', 'D', 'F'].map(g => {
-            const match = gradeAggregation.find(d => d.name === g);
-            return { name: g, count: match ? match.count : 0 };
+        // Standardize output to include all buckets in order
+        const buckets = [
+            '4.1 - 5.0 (A)', 
+            '3.1 - 4.0 (B)', 
+            '2.1 - 3.0 (C)', 
+            '1.1 - 2.0 (D)', 
+            '0.0 - 1.0 (F)'
+        ];
+        const gradeDistribution = buckets.map(b => {
+            const match = gradeAggregation.find(d => d._id === b);
+            return { name: b, count: match ? match.count : 0 };
         });
 
         return {
             enrollmentTrend: formattedTrend,
             departmentStats: departmentStats.filter(d => d.name),
-            gradeDistribution
+            gradeDistribution,
+            averageGpa
         };
     }
 }
