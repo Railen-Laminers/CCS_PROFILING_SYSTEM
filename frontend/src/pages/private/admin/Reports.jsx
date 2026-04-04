@@ -226,15 +226,15 @@ const Reports = () => {
                 { label: 'Honors (GPA 3.0-3.49)', color: 'text-blue-500', icon: FiTrendingUp, value: analyticsData.academicStats?.honors || 0 },
                 { label: 'Probation (GPA < 2.0)', color: 'text-red-500', icon: FiInfo, value: analyticsData.academicStats?.probation || 0 }
               ].map((item, index) => (
-                <Card key={index} className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl text-center hover:shadow-md transition-shadow group">
-                  <CardContent className="p-5">
+                <Card key={index} className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl text-center hover:shadow-md transition-shadow group flex flex-col justify-center">
+                  <CardContent className="p-8">
                     <div className="flex flex-col items-center">
-                      <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 mb-3 group-hover:scale-110 transition-transform">
-                        <item.icon className={`w-5 h-5 ${item.color}`} />
+                      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 mb-5 group-hover:scale-110 transition-transform">
+                        <item.icon className={`w-6 h-6 ${item.color}`} />
                       </div>
-                      <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest">{item.label}</p>
-                      <p className="text-2xl font-black text-gray-900 dark:text-white mt-1 tracking-tight">{item.value}</p>
-                      <p className="text-[12px] text-gray-400 dark:text-zinc-500 font-medium mt-1">Active Students</p>
+                      <p className="text-xs font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest">{item.label}</p>
+                      <p className="text-4xl font-black text-gray-900 dark:text-white mt-3 tracking-tight">{item.value}</p>
+                      <p className="text-sm text-gray-400 dark:text-zinc-500 font-medium mt-2">Active Students</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -251,27 +251,27 @@ const Reports = () => {
               <Button variant="ghost" className="text-xs font-bold text-brand-500 hover:text-brand-600 uppercase tracking-widest">Browse Library</Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
               {[...Array(4)].map((_, index) => (
-                <Card key={index} className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl p-5 hover:shadow-md transition-all group">
-                   <div className="flex gap-5">
-                     <div className="hidden sm:flex shrink-0 w-12 h-12 rounded-[14px] bg-brand-500/10 items-center justify-center border border-brand-500/20 group-hover:scale-110 transition-transform">
-                       <FiFileText className="w-6 h-6 text-brand-500" />
+                <Card key={index} className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl p-[18px] hover:shadow-md transition-all group">
+                   <div className="flex gap-[18px]">
+                     <div className="hidden sm:flex shrink-0 w-11 h-11 rounded-xl bg-brand-500/10 items-center justify-center border border-brand-500/20 group-hover:scale-110 transition-transform">
+                       <FiFileText className="w-[22px] h-[22px] text-brand-500" />
                      </div>
                      <div className="flex-1">
                        <div className="flex justify-between items-center mb-1.5">
-                         <h3 className="text-[15px] font-bold text-gray-900 dark:text-zinc-100">Analytical report v{index + 1}.0</h3>
-                         <Badge variant="outline" className="text-[10px] font-bold px-2 py-0.5">PDF</Badge>
+                         <h3 className="text-[14.5px] font-bold text-gray-900 dark:text-zinc-100">Analytical report v{index + 1}.0</h3>
+                         <Badge variant="outline" className="text-[9.5px] font-bold px-1.5 py-0.5">PDF</Badge>
                        </div>
-                       <p className="text-[13px] text-gray-500 dark:text-zinc-400 line-clamp-2 leading-relaxed mb-5">
+                       <p className="text-[12.5px] text-gray-500 dark:text-zinc-400 line-clamp-2 leading-relaxed mb-[18px]">
                          Standardized report generated based on the current academic period metrics.
                        </p>
-                       <div className="flex items-center gap-3">
-                         <Button size="sm" className="h-9 text-xs font-bold bg-brand-500 hover:bg-brand-600 shadow-sm px-4">
-                           <FiDownload className="mr-2 w-4 h-4" />
+                       <div className="flex items-center gap-2.5">
+                         <Button size="sm" className="h-[34px] text-[11.5px] font-bold bg-brand-500 hover:bg-brand-600 shadow-sm px-3.5">
+                           <FiDownload className="mr-1.5 w-3.5 h-3.5" />
                            Generate
                          </Button>
-                         <Button variant="outline" size="sm" className="h-9 text-xs font-bold border-gray-200 dark:border-gray-800 px-4">
+                         <Button variant="outline" size="sm" className="h-[34px] text-[11.5px] font-bold border-gray-200 dark:border-gray-800 px-3.5">
                            Preview
                          </Button>
                        </div>
