@@ -31,8 +31,6 @@ const DEFAULT_FORM_DATA = {
     organizations: '',
     behavior_discipline_records: '',
     academic_awards: '',
-    quiz_bee_participations: '',
-    programming_contests: '',
     events_participated: '',
 };
 
@@ -49,7 +47,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
         if (isOpen) {
             if (mode === 'edit' && initialData) {
                 const formattedData = { ...initialData };
-                const arrayFields = ['sports_activities', 'organizations', 'behavior_discipline_records', 'current_subjects', 'academic_awards', 'quiz_bee_participations', 'programming_contests', 'events_participated'];
+                const arrayFields = ['sports_activities', 'organizations', 'behavior_discipline_records', 'academic_awards', 'events_participated'];
                 arrayFields.forEach(field => {
                     const value = formattedData[field];
                     if (Array.isArray(value)) {
@@ -204,8 +202,6 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 organizations: formData.organizations ? { clubs: (typeof formData.organizations === 'string' ? formData.organizations.split(',').map(s => s.trim()).filter(Boolean) : formData.organizations) } : null,
                 behavior_discipline_records: formData.behavior_discipline_records ? (typeof formData.behavior_discipline_records === 'string' ? formData.behavior_discipline_records.split(',').map(s => s.trim()).filter(Boolean) : formData.behavior_discipline_records) : [],
                 academic_awards: formData.academic_awards ? (typeof formData.academic_awards === 'string' ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : formData.academic_awards) : [],
-                quiz_bee_participations: formData.quiz_bee_participations ? (typeof formData.quiz_bee_participations === 'string' ? formData.quiz_bee_participations.split(',').map(s => s.trim()).filter(Boolean) : formData.quiz_bee_participations) : [],
-                programming_contests: formData.programming_contests ? (typeof formData.programming_contests === 'string' ? formData.programming_contests.split(',').map(s => s.trim()).filter(Boolean) : formData.programming_contests) : [],
                 events_participated: formData.events_participated ? (typeof formData.events_participated === 'string' ? formData.events_participated.split(',').map(s => s.trim()).filter(Boolean) : formData.events_participated) : [],
             };
 
@@ -468,8 +464,6 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 {renderField('Organizations', 'organizations', 'textarea', false, null, null, 'List organizations')}
                                 {renderField('Behavior/Discipline Records', 'behavior_discipline_records', 'textarea')}
                                 {renderField('Academic Awards', 'academic_awards', 'text', false, null, 'Separate with commas', "e.g., Dean's Lister, Honor Roll")}
-                                {renderField('Quiz Bee Participations', 'quiz_bee_participations', 'text', false, null, 'Separate with commas', 'e.g., Math Quiz Bee, Science Quiz Bee')}
-                                {renderField('Programming Contests', 'programming_contests', 'text', false, null, 'Separate with commas', 'e.g., Hackathon, Coding Challenge')}
                                 {renderField('Events Participated', 'events_participated', 'text', false, null, 'Separate with commas', 'e.g., Seminar, Workshop')}
                             </div>
                         </div>

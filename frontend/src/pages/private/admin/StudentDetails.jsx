@@ -284,8 +284,6 @@ const StudentDetails = () => {
                                                             <div className="flex flex-wrap gap-2 mt-2">{record.academic_awards.map((award, i) => <Badge key={i} color="yellow">{award}</Badge>)}</div>
                                                         ) : <p className="text-sm text-gray-500">None recorded</p>}
                                                     </div>
-                                                    <div><SectionSubhead>Quiz Bee Participation</SectionSubhead><BulletList items={record.quiz_bee_participations} /></div>
-                                                    <div><SectionSubhead>Programming Contests</SectionSubhead><BulletList items={record.programming_contests} /></div>
                                                 </div>
                                             </div>
                                         ))}
