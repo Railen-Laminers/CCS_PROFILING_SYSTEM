@@ -22,7 +22,7 @@ const academicRecordSchema = new mongoose.Schema({
     default: null
   },
   gpa: {
-    type: mongoose.Schema.Types.Decimal128,
+    type: Number,
     min: [0, 'GPA cannot be less than 0'],
     max: [5, 'GPA cannot be more than 5'],
     default: null
