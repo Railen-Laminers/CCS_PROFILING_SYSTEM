@@ -86,8 +86,14 @@ const studentSchema = new mongoose.Schema({
     default: null
   },
   behavior_discipline_records: {
-    type: [mongoose.Schema.Types.Mixed],
-    default: []
+    type: mongoose.Schema.Types.Mixed,
+    default: {
+      warnings: 0,
+      suspensions: 0,
+      counseling: 0,
+      incidents: '',
+      counselingRecords: ''
+    }
   }
 }, {
   timestamps: true
