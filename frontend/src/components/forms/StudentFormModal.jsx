@@ -112,7 +112,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 if (value && (value < 1 || value > 4)) return 'Year level must be between 1 and 4.';
                 break;
             case 'gpa':
-                if (value && (value < 0 || value > 4)) return 'GPA must be between 0 and 4.';
+                if (value && (value < 0 || value > 5)) return 'GPA must be between 0 and 5.';
                 break;
             default:
                 break;
