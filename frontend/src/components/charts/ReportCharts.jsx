@@ -121,6 +121,42 @@ export const DepartmentDistributionChart = ({ data }) => {
 };
 
 /**
+ * Year Level Distribution Pie Chart (Compact)
+ */
+export const YearLevelChart = ({ data }) => {
+  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
+
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="45%"
+          innerRadius={60}
+          outerRadius={80}
+          paddingAngle={5}
+          dataKey="value"
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
+        <Tooltip 
+          contentStyle={{ 
+            borderRadius: '12px', 
+            backgroundColor: '#1F2937',
+            border: '1px solid #374151',
+          }}
+          itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+        />
+        <Legend verticalAlign="bottom" height={36} iconType="circle" />
+      </PieChart>
+    </ResponsiveContainer>
+  );
+};
+
+/**
  * Grade Distribution Bar Chart (Matching reference design)
  */
 export const GradeDistributionChart = ({ data }) => (

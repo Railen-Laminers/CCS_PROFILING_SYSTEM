@@ -131,13 +131,34 @@ class ReportsService {
                   _id: null,
                   deansList: { $sum: { $cond: [{ $gte: ['$gpa', 3.5] }, 1, 0] } },
                   honors: { $sum: { $cond: [{ $and: [{ $gte: ['$gpa', 3.0] }, { $lt: ['$gpa', 3.5] }] }, 1, 0] } },
-                  probation: { $sum: { $cond: [{ $lt: ['$gpa', 2.0] }, 1, 0] } }
+                  probation: { $sum: { $cond: [{ $lt: ['$gpa', 2.0] }, 1, 0] } },
+                  passing: { $sum: { $cond: [{ $gte: ['$gpa', 3.0] }, 1, 0] } },
+                  total: { $sum: 1 }
                 }
             }
         ]);
         const academicStats = academicStatsAggregation.length > 0 
             ? academicStatsAggregation[0] 
-            : { deansList: 0, honors: 0, probation: 0 };
+            : { deansList: 0, honors: 0, probation: 0, passing: 0, total: 0 };
+        
+        const passRate = academicStats.total > 0 
+            ? (academicStats.passing / academicStats.total) * 100 
+            : 0;
+
+        // 7. Year Level Distribution
+        const yearLevelAggregation = await Student.aggregate([
+            {
+                $group: {
+                    _id: '$year_level',
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { '_id': 1 } }
+        ]);
+        const yearLevelStats = [1, 2, 3, 4].map(y => {
+            const match = yearLevelAggregation.find(d => d._id === y);
+            return { name: `Year ${y}`, value: match ? match.count : 0 };
+        });
 
         return {
             enrollmentTrend: formattedTrend,
@@ -145,7 +166,9 @@ class ReportsService {
             gradeDistribution,
             averageGpa,
             topStudents,
-            academicStats
+            academicStats,
+            passRate,
+            yearLevelStats
         };
     }
 }
