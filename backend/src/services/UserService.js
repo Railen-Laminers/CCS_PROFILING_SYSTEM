@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Student = require('../models/Student');
 const Faculty = require('../models/Faculty');
+const AcademicRecord = require('../models/AcademicRecord');
 
 class UserService {
   /**
@@ -170,7 +171,19 @@ class UserService {
       this.STUDENT_FIELDS.forEach(field => {
         studentData[field] = data[field] || null;
       });
-      response.student = await Student.create(studentData);
+      const studentProfile = await Student.create(studentData);
+      response.student = studentProfile;
+
+      // Create initial academic record for history tracking
+      await AcademicRecord.create({
+        student_id: studentProfile._id,
+        course_name: data.program || null,
+        year_level: data.year_level || null,
+        semester: 'First Semester',
+        gpa: data.gpa || null,
+        current_subjects: data.current_subjects || [],
+        academic_awards: data.academic_awards || []
+      });
     } else {
       const facultyData = { user_id: user._id };
       this.FACULTY_FIELDS.forEach(field => {
@@ -215,6 +228,22 @@ class UserService {
         Object.assign(student, profileData);
         await student.save();
         profile = student;
+
+        // Sync with the most recent academic record to maintain consistency
+        const academicFields = ['gpa', 'current_subjects', 'academic_awards', 'program', 'year_level'];
+        const hasAcademicUpdates = academicFields.some(field => profileData[field] !== undefined);
+
+        if (hasAcademicUpdates) {
+          const latestRecord = await AcademicRecord.findOne({ student_id: student._id }).sort({ createdAt: -1 });
+          if (latestRecord) {
+            if (profileData.gpa !== undefined) latestRecord.gpa = profileData.gpa;
+            if (profileData.current_subjects !== undefined) latestRecord.current_subjects = profileData.current_subjects;
+            if (profileData.academic_awards !== undefined) latestRecord.academic_awards = profileData.academic_awards;
+            if (profileData.program !== undefined) latestRecord.course_name = profileData.program;
+            if (profileData.year_level !== undefined) latestRecord.year_level = profileData.year_level;
+            await latestRecord.save();
+          }
+        }
       }
     } else if (user.role === 'faculty') {
       const faculty = await Faculty.findOne({ user_id: user._id });
