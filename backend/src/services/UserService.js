@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Student = require('../models/Student');
 const Faculty = require('../models/Faculty');
 const AcademicRecord = require('../models/AcademicRecord');
+const Class = require('../models/Class');
 
 class UserService {
   /**
@@ -29,6 +30,7 @@ class UserService {
   static STUDENT_FIELDS = [
     'parent_guardian_name', 'emergency_contact', 'section', 'program',
     'year_level', 'gpa', 'current_subjects', 'academic_awards',
+    'quiz_bee_participations', 'programming_contests',
     'events_participated', 'blood_type', 'disabilities',
     'medical_condition', 'allergies', 'sports_activities',
     'organizations', 'behavior_discipline_records'
@@ -171,6 +173,19 @@ class UserService {
       this.STUDENT_FIELDS.forEach(field => {
         studentData[field] = data[field] || null;
       });
+
+      // Automate Current Subjects based on Section Schedule
+      if (data.section) {
+        const classes = await Class.find({ section: data.section }).populate('course_id');
+        const sectionSubjects = [...new Set(classes
+          .filter(c => c.course_id)
+          .map(c => c.course_id.course_title))];
+        
+        if (sectionSubjects.length > 0) {
+          studentData.current_subjects = sectionSubjects;
+        }
+      }
+
       const studentProfile = await Student.create(studentData);
       response.student = studentProfile;
 
@@ -181,8 +196,10 @@ class UserService {
         year_level: data.year_level || null,
         semester: 'First Semester',
         gpa: data.gpa || null,
-        current_subjects: data.current_subjects || [],
-        academic_awards: data.academic_awards || []
+        current_subjects: studentData.current_subjects || [],
+        academic_awards: data.academic_awards || [],
+        quiz_bee_participations: data.quiz_bee_participations || [],
+        programming_contests: data.programming_contests || []
       });
     } else {
       const facultyData = { user_id: user._id };
@@ -229,16 +246,35 @@ class UserService {
         await student.save();
         profile = student;
 
+        // Automate Current Subjects based on Section Schedule if section changed
+        if (profileData.section) {
+          const classes = await Class.find({ section: profileData.section }).populate('course_id');
+          const sectionSubjects = [...new Set(classes
+            .filter(c => c.course_id)
+            .map(c => c.course_id.course_title))];
+          
+          if (sectionSubjects.length > 0) {
+            student.current_subjects = sectionSubjects;
+            await student.save();
+          }
+        }
+
         // Sync with the most recent academic record to maintain consistency
-        const academicFields = ['gpa', 'current_subjects', 'academic_awards', 'program', 'year_level'];
-        const hasAcademicUpdates = academicFields.some(field => profileData[field] !== undefined);
+        const academicFields = [
+          'gpa', 'current_subjects', 'academic_awards', 
+          'quiz_bee_participations', 'programming_contests',
+          'program', 'year_level'
+        ];
+        const hasAcademicUpdates = academicFields.some(field => profileData[field] !== undefined) || profileData.section !== undefined;
 
         if (hasAcademicUpdates) {
           const latestRecord = await AcademicRecord.findOne({ student_id: student._id }).sort({ createdAt: -1 });
           if (latestRecord) {
             if (profileData.gpa !== undefined) latestRecord.gpa = profileData.gpa;
-            if (profileData.current_subjects !== undefined) latestRecord.current_subjects = profileData.current_subjects;
+            latestRecord.current_subjects = student.current_subjects; // Always sync with student's current subjects
             if (profileData.academic_awards !== undefined) latestRecord.academic_awards = profileData.academic_awards;
+            if (profileData.quiz_bee_participations !== undefined) latestRecord.quiz_bee_participations = profileData.quiz_bee_participations;
+            if (profileData.programming_contests !== undefined) latestRecord.programming_contests = profileData.programming_contests;
             if (profileData.program !== undefined) latestRecord.course_name = profileData.program;
             if (profileData.year_level !== undefined) latestRecord.year_level = profileData.year_level;
             await latestRecord.save();

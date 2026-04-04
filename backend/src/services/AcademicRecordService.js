@@ -1,5 +1,6 @@
 const AcademicRecord = require('../models/AcademicRecord');
 const Student = require('../models/Student');
+const Class = require('../models/Class');
 
 class AcademicRecordService {
   /**
@@ -14,6 +15,29 @@ class AcademicRecordService {
 
     const records = await AcademicRecord.find({ student_id: student._id })
       .sort({ createdAt: -1 });
+
+    if (student.section && records.length > 0) {
+      const latestRecord = records[0];
+      
+      const classes = await Class.find({ section: student.section }).populate('course_id', 'course_title');
+      const sectionSubjects = [...new Set(classes
+        .filter(c => c.course_id)
+        .map(c => c.course_id.course_title))];
+
+      if (sectionSubjects.length > 0) {
+        const currentStored = latestRecord.current_subjects || [];
+        const needsUpdate = sectionSubjects.length !== currentStored.length || 
+                           !sectionSubjects.every(s => currentStored.includes(s));
+
+        if (needsUpdate) {
+          latestRecord.current_subjects = sectionSubjects;
+          await latestRecord.save();
+          
+          student.current_subjects = sectionSubjects;
+          await student.save();
+        }
+      }
+    }
 
     return {
       found: true,

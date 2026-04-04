@@ -47,6 +47,14 @@ const studentSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  quiz_bee_participations: {
+    type: [String],
+    default: []
+  },
+  programming_contests: {
+    type: [String],
+    default: []
+  },
   blood_type: {
     type: String,
     trim: true,

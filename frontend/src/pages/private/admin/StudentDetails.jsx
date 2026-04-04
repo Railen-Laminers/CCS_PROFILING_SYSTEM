@@ -256,9 +256,13 @@ const StudentDetails = () => {
                                         {academicRecords.map((record) => (
                                             <div key={record.id} className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                                 <div className="flex justify-between items-start mb-6">
-                                                    <div>
-                                                        <p className="text-xl font-bold text-gray-900 dark:text-white">{record.course_name || 'N/A'}</p>
-                                                        <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mt-1">{record.year_level || 'N/A'} &middot; {record.semester || 'N/A'}</p>
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <p className="text-lg font-bold text-gray-900 dark:text-white">
+                                                            {formatYearLevel(record.year_level) || 'Year Level N/A'}
+                                                        </p>
+                                                        <p className="text-sm font-medium text-zinc-500 dark:text-gray-400">
+                                                            {record.semester || 'Semester N/A'}
+                                                        </p>
                                                     </div>
                                                     <div className="text-right">
                                                         <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">GPA</p>

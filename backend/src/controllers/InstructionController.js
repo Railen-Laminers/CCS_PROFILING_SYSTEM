@@ -231,6 +231,27 @@ class InstructionController {
       next(error);
     }
   }
+
+  static async getSectionCourses(req, res, next) {
+    try {
+      const { section } = req.params;
+      if (!section) {
+        return res.status(400).json({ message: 'Section is required' });
+      }
+
+      // Find all unique course titles for the given section
+      const classes = await Class.find({ section })
+        .populate('course_id', 'course_title');
+
+      const courseTitles = [...new Set(classes
+        .filter(c => c.course_id)
+        .map(c => c.course_id.course_title))];
+
+      res.status(200).json(courseTitles);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = InstructionController;

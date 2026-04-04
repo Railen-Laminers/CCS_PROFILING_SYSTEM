@@ -17,4 +17,6 @@ router.get('/materials', InstructionController.getMaterials);
 router.post('/materials', InstructionController.createMaterial);
 router.delete('/materials/:id', InstructionController.deleteMaterial);
 
+router.get('/section/:section/courses', InstructionController.getSectionCourses);
+
 module.exports = router;
