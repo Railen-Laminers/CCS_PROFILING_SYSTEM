@@ -15,6 +15,7 @@ router.put('/:id', EventController.update);
 router.delete('/:id', EventController.destroy);
 
 // Participant management
+router.get('/student/:userId', EventController.getStudentEvents);
 router.get('/student/:userId/curricular', EventController.getStudentCurricularEvents);
 router.post('/:id/register', EventController.register);
 router.delete('/:id/register', EventController.unregister);

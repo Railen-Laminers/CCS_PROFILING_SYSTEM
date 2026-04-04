@@ -42,6 +42,10 @@ const StudentDetails = () => {
         academicRecords,
         isAcademicLoading,
         academicError,
+        curricularEvents,
+        isCurricularLoading,
+        allParticipatedEvents,
+        isAllEventsLoading,
         modalOpen,
         setModalOpen,
         modalData,
@@ -51,8 +55,6 @@ const StudentDetails = () => {
         handleTabChange,
         fetchStudent,
         showToast,
-        curricularEvents,
-        isCurricularLoading,
     } = useStudentDetails();
 
     // ── Loading State ────────────────────────────────────────────
@@ -408,38 +410,58 @@ const StudentDetails = () => {
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">Events and Competitions</h3>
                                 </div>
                                 <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                        <div>
-                                            <SectionSubhead>Quiz Bee Competitions</SectionSubhead>
-                                            <div className="mt-2 space-y-2">
-                                                {profile?.events_participated?.quizBee?.length > 0 ? (
-                                                    profile.events_participated.quizBee.map((evt, i) => (
-                                                        <div key={i} className="p-3 bg-white dark:bg-[#1E1E1E] border border-purple-100 dark:border-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-semibold rounded-xl shadow-sm">{evt}</div>
-                                                    ))
-                                                ) : <p className="text-sm text-gray-500">No records</p>}
+                                    {isAllEventsLoading ? (
+                                        <div className="flex justify-center py-10">
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div>
+                                                <SectionSubhead>Curricular Events</SectionSubhead>
+                                                <div className="mt-4 space-y-3">
+                                                    {allParticipatedEvents?.filter(e => e.category === 'Curricular').length > 0 ? (
+                                                        allParticipatedEvents
+                                                            .filter(e => e.category === 'Curricular')
+                                                            .map((evt, i) => (
+                                                                <div key={i} className="p-4 bg-white dark:bg-[#1E1E1E] border border-indigo-100 dark:border-indigo-900/30 rounded-xl shadow-sm group hover:border-indigo-300 dark:hover:border-indigo-700 transition-all">
+                                                                    <div className="flex justify-between items-start">
+                                                                        <h5 className="font-bold text-indigo-700 dark:text-indigo-400">{evt.title}</h5>
+                                                                        <Badge color={evt.status === 'Completed' ? 'green' : 'blue'}>{evt.status}</Badge>
+                                                                    </div>
+                                                                    {evt.start_datetime && (
+                                                                        <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                                                                            <FiCalendar className="w-3 h-3" /> {new Date(evt.start_datetime).toLocaleDateString()}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            ))
+                                                    ) : <p className="text-sm text-gray-500 italic">No curricular events joined</p>}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <SectionSubhead>Extra-Curricular Events</SectionSubhead>
+                                                <div className="mt-4 space-y-3">
+                                                    {allParticipatedEvents?.filter(e => e.category === 'Extra-Curricular').length > 0 ? (
+                                                        allParticipatedEvents
+                                                            .filter(e => e.category === 'Extra-Curricular')
+                                                            .map((evt, i) => (
+                                                                <div key={i} className="p-4 bg-white dark:bg-[#1E1E1E] border border-orange-100 dark:border-orange-900/30 rounded-xl shadow-sm group hover:border-orange-300 dark:hover:border-orange-700 transition-all">
+                                                                    <div className="flex justify-between items-start">
+                                                                        <h5 className="font-bold text-orange-700 dark:text-orange-400">{evt.title}</h5>
+                                                                        <Badge color={evt.status === 'Completed' ? 'green' : 'blue'}>{evt.status}</Badge>
+                                                                    </div>
+                                                                    {evt.start_datetime && (
+                                                                        <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                                                                            <FiCalendar className="w-3 h-3" /> {new Date(evt.start_datetime).toLocaleDateString()}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            ))
+                                                    ) : <p className="text-sm text-gray-500 italic">No extra-curricular events joined</p>}
+                                                </div>
                                             </div>
                                         </div>
-                                        <div>
-                                            <SectionSubhead>Programming Contests</SectionSubhead>
-                                            <div className="mt-2 space-y-2">
-                                                {profile?.events_participated?.programming?.length > 0 ? (
-                                                    profile.events_participated.programming.map((evt, i) => (
-                                                        <div key={i} className="p-3 bg-white dark:bg-[#1E1E1E] border border-blue-100 dark:border-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-semibold rounded-xl shadow-sm">{evt}</div>
-                                                    ))
-                                                ) : <p className="text-sm text-gray-500">No records</p>}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Athletic Competitions</SectionSubhead>
-                                            <div className="mt-2 space-y-2">
-                                                {profile?.events_participated?.athletic?.length > 0 ? (
-                                                    profile.events_participated.athletic.map((evt, i) => (
-                                                        <div key={i} className="p-3 bg-white dark:bg-[#1E1E1E] border border-green-100 dark:border-green-900/30 text-green-700 dark:text-green-300 text-sm font-semibold rounded-xl shadow-sm">{evt}</div>
-                                                    ))
-                                                ) : <p className="text-sm text-gray-500">No records</p>}
-                                            </div>
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         )}

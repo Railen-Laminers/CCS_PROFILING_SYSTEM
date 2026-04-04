@@ -136,6 +136,16 @@ class EventService {
     })
     .sort({ start_datetime: -1 });
   }
+
+  /**
+   * Get all event participations for a specific student (by user document _id)
+   */
+  static async getEventsByUserId(userId) {
+    return await Event.find({
+      participants: userId
+    })
+    .sort({ start_datetime: -1 });
+  }
 }
 
 module.exports = EventService;

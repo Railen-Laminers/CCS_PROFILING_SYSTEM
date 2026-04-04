@@ -230,6 +230,30 @@ class EventController {
       next(error);
     }
   }
+
+  /**
+   * Get all events for a specific student
+   */
+  static async getStudentEvents(req, res, next) {
+    try {
+      const { userId } = req.params;
+      const events = await EventService.getEventsByUserId(userId);
+
+      const transformedEvents = events.map(event => ({
+        event_id: event._id,
+        title: event.title,
+        category: event.category,
+        start_datetime: event.start_datetime,
+        status: event.status
+      }));
+
+      res.status(200).json({
+        events: transformedEvents
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = EventController;

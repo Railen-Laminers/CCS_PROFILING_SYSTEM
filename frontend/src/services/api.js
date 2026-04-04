@@ -156,6 +156,10 @@ export const eventAPI = {
     const response = await axiosInstance.get(`/events/student/${userId}/curricular`, { signal });
     return response.data.events;
   },
+  getStudentEvents: async (userId, signal) => {
+    const response = await axiosInstance.get(`/events/student/${userId}`, { signal });
+    return response.data.events;
+  },
 };
 
 // ─── Academic Record API ─────────────────────────────────────────────────────

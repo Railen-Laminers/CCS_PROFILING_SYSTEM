@@ -29,6 +29,8 @@ export const useStudentDetails = () => {
     const [academicError, setAcademicError] = useState('');
     const [curricularEvents, setCurricularEvents] = useState([]);
     const [isCurricularLoading, setIsCurricularLoading] = useState(false);
+    const [allParticipatedEvents, setAllParticipatedEvents] = useState([]);
+    const [isAllEventsLoading, setIsAllEventsLoading] = useState(false);
 
     // Modal state
     const [modalOpen, setModalOpen] = useState(false);
@@ -144,6 +146,20 @@ export const useStudentDetails = () => {
             }
         }
 
+        // Fetch all participations when Events & Competitions tab is active
+        if (tab === 'Events & Competitions') {
+            setIsAllEventsLoading(true);
+            try {
+                const { eventAPI } = await import('../services/api');
+                const events = await eventAPI.getStudentEvents(id);
+                setAllParticipatedEvents(events);
+            } catch (err) {
+                console.warn('Failed to load all student events:', err);
+            } finally {
+                setIsAllEventsLoading(false);
+            }
+        }
+
         setTimeout(() => setIsTabLoading(false), 300);
     };
 
@@ -158,6 +174,8 @@ export const useStudentDetails = () => {
         academicError,
         curricularEvents,
         isCurricularLoading,
+        allParticipatedEvents,
+        isAllEventsLoading,
         modalOpen,
         setModalOpen,
         modalData,
