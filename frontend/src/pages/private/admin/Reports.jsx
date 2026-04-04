@@ -251,13 +251,15 @@ const Reports = () => {
                 { label: 'Probation (GPA < 2.0)', color: 'text-red-500', icon: FiInfo, value: analyticsData.academicStats?.probation || 0 }
               ].map((item, index) => (
                 <Card key={index} className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl text-center hover:shadow-md transition-shadow group">
-                  <CardContent className="pt-8 pb-6">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 mb-4 group-hover:scale-110 transition-transform">
-                      <item.icon className={`w-6 h-6 ${item.color}`} />
+                  <CardContent className="p-5">
+                    <div className="flex flex-col items-center">
+                      <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 mb-3 group-hover:scale-110 transition-transform">
+                        <item.icon className={`w-5 h-5 ${item.color}`} />
+                      </div>
+                      <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest">{item.label}</p>
+                      <p className="text-2xl font-black text-gray-900 dark:text-white mt-1 tracking-tight">{item.value}</p>
+                      <p className="text-[12px] text-gray-400 dark:text-zinc-500 font-medium mt-1">Active Students</p>
                     </div>
-                    <p className="text-[11px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest">{item.label}</p>
-                    <p className="text-4xl font-black text-gray-900 dark:text-white mt-3 tracking-tighter">{item.value}</p>
-                    <p className="text-[13px] text-gray-400 dark:text-zinc-500 font-medium mt-2">Active Students</p>
                   </CardContent>
                 </Card>
               ))}
