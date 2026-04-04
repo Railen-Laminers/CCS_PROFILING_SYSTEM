@@ -14,7 +14,12 @@ import {
 } from 'react-icons/fi';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Badge } from '../../../components/ui/Badge';
 import EmptyState from '../../../components/ui/EmptyState';
+import { useReports } from '../../../hooks/useReports';
+import { EnrollmentTrendChart, DepartmentDistributionChart, GradeDistributionChart } from '../../../components/charts/ReportCharts';
+
+import { FiRefreshCw } from 'react-icons/fi';
 
 const StatCards = ({ statCards }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -23,7 +28,7 @@ const StatCards = ({ statCards }) => (
         <CardContent className="p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">0</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{card.value}</p>
               <p className="text-xs font-semibold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mt-1">{card.label}</p>
             </div>
             <div className={`${card.bgColor} rounded-xl p-3 shadow-inner`}>
@@ -56,16 +61,27 @@ const TabNavigation = ({ tabs, activeTab, setActiveTab }) => (
 
 const Reports = () => {
   const { primaryColor } = useTheme();
+  const { analyticsData, loading, error, refresh } = useReports();
   const [activeTab, setActiveTab] = useState(0);
-
   const tabs = ['Overview', 'Academic', 'Attendance', 'Custom Reports'];
 
   const statCards = [
-    { label: 'Total Reports', icon: FiFileText, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-    { label: 'Avg. GPA', icon: FiTrendingUp, color: 'text-green-600', bgColor: 'bg-green-100' },
-    { label: 'Attendance Rate', icon: FiCalendar, color: 'text-orange-600', bgColor: 'bg-orange-100' },
-    { label: 'Pass Rate', icon: FiCheckCircle, color: 'text-purple-600', bgColor: 'bg-purple-100' },
+    { label: 'Total Students', icon: FiFileText, color: 'text-blue-600', bgColor: 'bg-blue-100', value: analyticsData.enrollmentTrend?.reduce((acc, curr) => acc + curr.students, 0) || 0 },
+    { label: 'Avg. GPA', icon: FiTrendingUp, color: 'text-green-600', bgColor: 'bg-green-100', value: 'N/A' },
+    { label: 'Attendance Rate', icon: FiCalendar, color: 'text-orange-600', bgColor: 'bg-orange-100', value: 'N/A' },
+    { label: 'Pass Rate', icon: FiCheckCircle, color: 'text-purple-600', bgColor: 'bg-purple-100', value: 'N/A' },
   ];
+
+  if (error) {
+    return (
+      <div className="p-8 text-center bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-2xl">
+        <FiInfo className="w-8 h-8 text-red-500 mx-auto mb-3" />
+        <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
+        <button onClick={refresh} className="mt-4 text-sm font-bold text-brand-500 hover:underline">Try Again</button>
+      </div>
+    );
+  }
+
 
   return (
     <div className="w-full">
@@ -75,6 +91,13 @@ const Reports = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Reports & Analytics</h1>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
+          <button 
+            onClick={refresh}
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 disabled:opacity-50 flex-1 sm:flex-none justify-center"
+          >
+            <FiRefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <span>Refresh</span>
+          </button>
           <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all active:scale-95 disabled:opacity-50 flex-1 sm:flex-none justify-center">
             <FiFilter className="h-4 w-4" />
             <span>Filter</span>
@@ -113,12 +136,16 @@ const Reports = () => {
                   Enrollment Trend
                 </CardTitle>
               </CardHeader>
-              <CardContent className="h-72 p-0">
-                <EmptyState 
-                  size="md"
-                  icon={FiActivity} 
-                  title="Aggregation pending..."
-                />
+              <CardContent className="h-72 p-6">
+                {analyticsData.enrollmentTrend?.length > 0 ? (
+                  <EnrollmentTrendChart data={analyticsData.enrollmentTrend} />
+                ) : (
+                  <EmptyState 
+                    size="md"
+                    icon={FiActivity} 
+                    title={loading ? "Loading data..." : "No enrollment trend data"}
+                  />
+                )}
               </CardContent>
             </Card>
 
@@ -131,12 +158,16 @@ const Reports = () => {
                   Students by Department
                 </CardTitle>
               </CardHeader>
-              <CardContent className="h-72 p-0">
-                <EmptyState 
-                  size="md"
-                  icon={FiPieChart} 
-                  title="No department data found"
-                />
+              <CardContent className="h-72 p-6">
+                {analyticsData.departmentStats?.length > 0 ? (
+                  <DepartmentDistributionChart data={analyticsData.departmentStats} />
+                ) : (
+                  <EmptyState 
+                    size="md"
+                    icon={FiPieChart} 
+                    title={loading ? "Loading data..." : "No department distribution data"}
+                  />
+                )}
               </CardContent>
             </Card>
 
@@ -146,16 +177,19 @@ const Reports = () => {
                   <div className="bg-orange-500/10 p-2 rounded-lg">
                     <FiTrendingUp className="w-4 h-4 text-orange-500" />
                   </div>
-                  Grade Distribution Overview
+                  Grade Distribution
                 </CardTitle>
               </CardHeader>
-              <CardContent className="h-80 p-0">
-                <EmptyState 
-                  size="md"
-                  icon={FiBarChart2} 
-                  title="Grades distribution pending"
-                  description="Chart will be displayed once grades are released"
-                />
+              <CardContent className="h-80 p-6">
+                {analyticsData.gradeDistribution?.length > 0 ? (
+                  <GradeDistributionChart data={analyticsData.gradeDistribution} />
+                ) : (
+                  <EmptyState 
+                    size="md"
+                    icon={FiBarChart2} 
+                    title={loading ? "Loading data..." : "No grade distribution data"}
+                  />
+                )}
               </CardContent>
             </Card>
           </div>
