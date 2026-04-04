@@ -198,42 +198,65 @@ const Reports = () => {
         {activeTab === 1 && (
           <div className="space-y-8">
             <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
-              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-                <CardTitle className="text-[17px] font-bold">Course Performance metrics</CardTitle>
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800 pb-4">
+                <CardTitle className="text-[17px] font-bold flex items-center gap-3">
+                  <div className="bg-brand-500/10 p-2 rounded-lg">
+                    <FiTrendingUp className="w-4 h-4 text-brand-500" />
+                  </div>
+                  Top Performing Students (Top 5)
+                </CardTitle>
               </CardHeader>
-              <CardContent className="pt-8">
-                <div className="space-y-8">
-                  {[...Array(5)].map((_, index) => (
-                    <div key={index} className="space-y-3">
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="font-bold text-gray-800 dark:text-zinc-200 bg-gray-50 dark:bg-zinc-800/50 px-3 py-1 rounded-lg border border-gray-100 dark:border-gray-700">CS-10{index + 1} - Core Curriculum</span>
-                        <Badge variant="outline" className="text-[11px] font-bold text-gray-400">NOT CALCULATED</Badge>
+              <CardContent className="pt-6">
+                <div className="space-y-6">
+                  {analyticsData.topStudents?.length > 0 ? (
+                    analyticsData.topStudents.map((student, index) => (
+                      <div key={index} className="space-y-3 group">
+                        <div className="flex justify-between items-center text-sm">
+                          <div className="flex items-center gap-4">
+                            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-zinc-800 text-[10px] font-bold text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-gray-700">
+                              #{index + 1}
+                            </span>
+                            <div>
+                              <p className="font-bold text-gray-800 dark:text-zinc-200">{student.firstname} {student.lastname}</p>
+                              <p className="text-[11px] text-zinc-500 uppercase tracking-wider">{student.program} • Year {student.year_level}</p>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="text-[12px] font-black border-brand-500/50 text-brand-500 bg-brand-500/5 px-2 py-1">
+                            {student.gpa?.toFixed(2)} GPA
+                          </Badge>
+                        </div>
+                        <div className="h-1.5 bg-gray-100 dark:bg-zinc-900 rounded-full overflow-hidden border border-gray-100 dark:border-gray-800/50">
+                          <div 
+                            className="h-full bg-brand-500 rounded-full transition-all duration-1000 ease-out group-hover:bg-brand-400 shadow-[0_0_10px_rgba(249,115,22,0.3)]"
+                            style={{ width: `${(student.gpa / 5) * 100}%` }}
+                          />
+                        </div>
                       </div>
-                      <div className="h-2.5 bg-gray-100 dark:bg-zinc-900 rounded-full overflow-hidden border border-gray-200 dark:border-gray-800">
-                        <div 
-                          className="h-full bg-brand-500/30 dark:bg-brand-500/20 rounded-full"
-                          style={{ width: `${Math.random() * 20 + 10}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <EmptyState 
+                      size="sm"
+                      icon={FiTrendingUp} 
+                      title="No academic records yet"
+                    />
+                  )}
                 </div>
               </CardContent>
             </Card>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { label: 'Dean\'s List', color: 'text-brand-500', icon: FiActivity },
-                { label: 'Honors', color: 'text-blue-500', icon: FiTrendingUp },
-                { label: 'Probation', color: 'text-red-500', icon: FiInfo }
+                { label: 'Dean\'s List (GPA 3.5+)', color: 'text-brand-500', icon: FiActivity, value: analyticsData.academicStats?.deansList || 0 },
+                { label: 'Honors (GPA 3.0-3.49)', color: 'text-blue-500', icon: FiTrendingUp, value: analyticsData.academicStats?.honors || 0 },
+                { label: 'Probation (GPA < 2.0)', color: 'text-red-500', icon: FiInfo, value: analyticsData.academicStats?.probation || 0 }
               ].map((item, index) => (
                 <Card key={index} className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl text-center hover:shadow-md transition-shadow group">
                   <CardContent className="pt-8 pb-6">
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 mb-4 group-hover:scale-110 transition-transform">
                       <item.icon className={`w-6 h-6 ${item.color}`} />
                     </div>
-                    <p className="text-[11px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-[0.2em]">{item.label}</p>
-                    <p className="text-4xl font-black text-gray-900 dark:text-white mt-3 tracking-tighter">0</p>
+                    <p className="text-[11px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest">{item.label}</p>
+                    <p className="text-4xl font-black text-gray-900 dark:text-white mt-3 tracking-tighter">{item.value}</p>
                     <p className="text-[13px] text-gray-400 dark:text-zinc-500 font-medium mt-2">Active Students</p>
                   </CardContent>
                 </Card>

@@ -98,11 +98,54 @@ class ReportsService {
             return { name: b, count: match ? match.count : 0 };
         });
 
+        // 5. Top 5 Performing Students
+        const topStudents = await Student.aggregate([
+            { $match: { gpa: { $ne: null } } },
+            { $sort: { gpa: -1 } },
+            { $limit: 5 },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'userDetails'
+                }
+            },
+            { $unwind: '$userDetails' },
+            {
+                $project: {
+                    _id: 0,
+                    firstname: '$userDetails.firstname',
+                    lastname: '$userDetails.lastname',
+                    gpa: 1,
+                    program: 1,
+                    year_level: 1
+                }
+            }
+        ]);
+
+        // 6. Academic Standing Counts
+        const academicStatsAggregation = await Student.aggregate([
+            {
+                $group: {
+                  _id: null,
+                  deansList: { $sum: { $cond: [{ $gte: ['$gpa', 3.5] }, 1, 0] } },
+                  honors: { $sum: { $cond: [{ $and: [{ $gte: ['$gpa', 3.0] }, { $lt: ['$gpa', 3.5] }] }, 1, 0] } },
+                  probation: { $sum: { $cond: [{ $lt: ['$gpa', 2.0] }, 1, 0] } }
+                }
+            }
+        ]);
+        const academicStats = academicStatsAggregation.length > 0 
+            ? academicStatsAggregation[0] 
+            : { deansList: 0, honors: 0, probation: 0 };
+
         return {
             enrollmentTrend: formattedTrend,
             departmentStats: departmentStats.filter(d => d.name),
             gradeDistribution,
-            averageGpa
+            averageGpa,
+            topStudents,
+            academicStats
         };
     }
 }
