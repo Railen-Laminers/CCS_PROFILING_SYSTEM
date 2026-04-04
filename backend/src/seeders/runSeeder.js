@@ -59,34 +59,6 @@ const seedData = async () => {
     });
 
     console.log('Admin user created...');
-
-    // Create Single Student
-    const studentUser = await User.create({
-      firstname: 'John',
-      middlename: 'D',
-      lastname: 'Student',
-      user_id: '0000001',
-      email: 'student@gmail.com',
-      password: 'password',
-      role: 'student',
-      birth_date: '2000-01-01',
-      contact_number: '09123456780',
-      gender: 'male',
-      address: 'Student Address',
-      is_active: true
-    });
-
-    await Student.create({
-      user_id: studentUser._id,
-      program: 'BSIT',
-      section: 'IT-A',
-      year_level: 1,
-      gpa: '3.50',
-      sports_activities: { sportsPlayed: ['Basketball'] },
-      organizations: { clubs: ['Computer Society'] }
-    });
-
-    console.log('Student user created...');
     
     // Create IT-related courses (Curriculum)
     const courseData = [
