@@ -339,9 +339,6 @@ const FacultyFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 <div className="md:col-span-2">
                                     {renderField('Address', 'address', 'textarea', false, null, null, 'Full address')}
                                 </div>
-                                <div className="md:col-span-2 mt-2">
-                                    {renderField('Active', 'is_active', 'checkbox')}
-                                </div>
                             </div>
                         </div>
 

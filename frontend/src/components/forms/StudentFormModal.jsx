@@ -389,9 +389,6 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 </div>
                                 {renderField('Parent/Guardian Name', 'parent_guardian_name', 'text', false, null, null, 'Full name of guardian')}
                                 {renderField('Emergency Contact', 'emergency_contact', 'tel', false, null, null, '09XXXXXXXXX')}
-                                <div className="md:col-span-2 mt-2">
-                                    {renderField('Active', 'is_active', 'checkbox')}
-                                </div>
                             </div>
                         </div>
 
