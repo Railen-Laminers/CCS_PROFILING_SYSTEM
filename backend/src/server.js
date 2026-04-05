@@ -20,6 +20,8 @@ const contactRoutes = require('./routes/contact.routes');
 const instructionRoutes = require('./routes/instruction.routes');
 const roomRoutes = require('./routes/room.routes');
 const reportsRoutes = require('./routes/reports.routes');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
 
 // Import middleware
