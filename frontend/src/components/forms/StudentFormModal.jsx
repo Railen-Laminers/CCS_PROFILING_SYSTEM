@@ -558,7 +558,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 <div className="bg-gray-50 dark:bg-[#181818] border-t border-gray-200 dark:border-gray-800 px-6 py-4 flex justify-end gap-3 shrink-0">
                     <button type="button" onClick={onClose} className="px-5 py-2.5 bg-white dark:bg-[#252525] border border-gray-300 dark:border-gray-700 rounded-lg text-[14px] font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] transition-colors flex items-center shadow-sm" disabled={isSaving}>Cancel</button>
                     <button type="submit" form="student-update-form" className="px-5 py-2.5 bg-[#F97316] text-white rounded-lg text-[14px] font-medium hover:bg-orange-600 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-60" disabled={isSaving}>
-                        {isSaving ? <Spinner className="border-white" /> : <FiSave />}
+                        {isSaving ? <Spinner className="border-white/40 border-t-white" /> : <FiSave className="w-[18px] h-[18px]" />}
                         <span>{mode === 'create' ? 'Create Student' : 'Save Changes'}</span>
                     </button>
                 </div>
