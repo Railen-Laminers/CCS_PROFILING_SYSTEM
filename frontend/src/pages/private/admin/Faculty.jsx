@@ -185,8 +185,6 @@ const FacultyPage = () => {
                     refresh();
                     showToast(`Faculty member ${modalMode === 'create' ? 'created' : 'updated'} successfully.`, 'success');
                 }}
-                departments={departments}
-                positions={positions}
             />
 
             {/* Faculty Cards Grid */}
