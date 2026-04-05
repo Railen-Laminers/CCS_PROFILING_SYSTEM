@@ -337,7 +337,6 @@ const StudentDetails = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div><SectionSubhead>Sports Played</SectionSubhead>{renderTags(profile?.sports_activities, "sportsPlayed", "orange")}</div>
                                         <div><SectionSubhead>Athletic Achievements</SectionSubhead>{renderTags(profile?.sports_activities, "achievements", "yellow")}</div>
-                                        <div><SectionSubhead>School Team Membership</SectionSubhead><div className="mt-1"><BulletList items={profile?.sports_activities?.schoolTeam} /></div></div>
                                         <div><SectionSubhead>Competitions Joined</SectionSubhead><div className="mt-1"><BulletList items={profile?.sports_activities?.competitions} /></div></div>
                                     </div>
                                 </div>
@@ -355,7 +354,6 @@ const StudentDetails = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                         <div><SectionSubhead>Clubs Joined</SectionSubhead>{renderTags(profile?.organizations, "clubs", "purple")}</div>
                                         <div><SectionSubhead>Student Council</SectionSubhead>{renderTags(profile?.organizations, "studentCouncil", "orange")}</div>
-                                        <div><SectionSubhead>Fraternities</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100 mt-1">{profile?.organizations?.fraternities || 'None recorded'}</p></div>
                                         <div><SectionSubhead>Leadership Roles</SectionSubhead><div className="mt-1"><BulletList items={profile?.organizations?.roles} /></div></div>
                                     </div>
                                 </div>

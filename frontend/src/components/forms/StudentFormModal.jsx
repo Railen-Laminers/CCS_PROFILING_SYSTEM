@@ -29,11 +29,9 @@ const DEFAULT_FORM_DATA = {
     allergies: '',
     sportsPlayed: '',
     athleticAchievements: '',
-    schoolTeam: '',
     competitions: '',
     clubs: '',
     studentCouncil: '',
-    fraternities: '',
     leadershipRoles: '',
     behavior_discipline_records: '',
     academic_awards: '',
@@ -70,14 +68,12 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 if (formattedData.sports_activities) {
                     formattedData.sportsPlayed = stringifyArray(formattedData.sports_activities.sportsPlayed);
                     formattedData.athleticAchievements = stringifyArray(formattedData.sports_activities.achievements);
-                    formattedData.schoolTeam = stringifyArray(formattedData.sports_activities.schoolTeam);
                     formattedData.competitions = stringifyArray(formattedData.sports_activities.competitions);
                 }
 
                 if (formattedData.organizations) {
                     formattedData.clubs = stringifyArray(formattedData.organizations.clubs);
                     formattedData.studentCouncil = stringifyArray(formattedData.organizations.studentCouncil);
-                    formattedData.fraternities = stringifyArray(formattedData.organizations.fraternities);
                     formattedData.leadershipRoles = stringifyArray(formattedData.organizations.roles);
                 }
                 setFormData(formattedData);
@@ -221,13 +217,11 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 sports_activities: {
                     sportsPlayed: typeof formData.sportsPlayed === 'string' ? formData.sportsPlayed.split(',').map(s => s.trim()).filter(Boolean) : [],
                     achievements: typeof formData.athleticAchievements === 'string' ? formData.athleticAchievements.split(',').map(s => s.trim()).filter(Boolean) : [],
-                    schoolTeam: typeof formData.schoolTeam === 'string' ? formData.schoolTeam.split(',').map(s => s.trim()).filter(Boolean) : [],
                     competitions: typeof formData.competitions === 'string' ? formData.competitions.split(',').map(s => s.trim()).filter(Boolean) : []
                 },
                 organizations: {
                     clubs: typeof formData.clubs === 'string' ? formData.clubs.split(',').map(s => s.trim()).filter(Boolean) : [],
                     studentCouncil: typeof formData.studentCouncil === 'string' ? formData.studentCouncil.split(',').map(s => s.trim()).filter(Boolean) : [],
-                    fraternities: typeof formData.fraternities === 'string' ? formData.fraternities.split(',').map(s => s.trim()).filter(Boolean) : [],
                     roles: typeof formData.leadershipRoles === 'string' ? formData.leadershipRoles.split(',').map(s => s.trim()).filter(Boolean) : []
                 },
                 academic_awards: typeof formData.academic_awards === 'string' ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : [],
@@ -514,11 +508,9 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
                                 {renderField('Sports Played', 'sportsPlayed', 'text', false, null, 'Separate with commas', 'e.g., Basketball, Volleyball')}
                                 {renderField('Athletic Achievements', 'athleticAchievements', 'text', false, null, 'Separate with commas', 'e.g., MVP 2023, Gold Medal')}
-                                {renderField('School Team Memberships', 'schoolTeam', 'text', false, null, 'Separate with commas', 'e.g., Varsity Team')}
                                 {renderField('Competitions Joined', 'competitions', 'text', false, null, 'Separate with commas', 'e.g., Intramurals 2023')}
                                 {renderField('Clubs Joined', 'clubs', 'text', false, null, 'Separate with commas', 'e.g., IT Club, Coding Society')}
                                 {renderField('Student Council', 'studentCouncil', 'text', false, null, 'Separate with commas', 'e.g., Year Representative')}
-                                {renderField('Fraternities/Sororities', 'fraternities', 'text', false, null, 'Separate with commas', 'e.g., Alpha Phi Omega, Tau Gamma Phi')}
                                 {renderField('Leadership Roles', 'leadershipRoles', 'text', false, null, 'Separate with commas', 'e.g., President, Secretary')}
                             </div>
                         </div>
