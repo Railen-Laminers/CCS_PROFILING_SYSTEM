@@ -97,7 +97,6 @@ const StudentPage = () => {
             behavior_discipline_records: s?.behavior_discipline_records || [],
             current_subjects: s?.current_subjects || [],
             academic_awards: s?.academic_awards || [],
-            events_participated: s?.events_participated || [],
         });
         setEditingId(student.user.id);
         setModalMode('edit');

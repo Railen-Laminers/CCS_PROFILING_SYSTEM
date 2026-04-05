@@ -159,7 +159,6 @@ const StudentReport = forwardRef(({ student, academicRecords }, ref) => {
                     <InfoRow label="Clubs/Organizations" value={profile?.organizations} />
                 </div>
                 <InfoRow label="Awards & Honors" value={profile?.academic_awards} />
-                <InfoRow label="Events/Competitions" value={profile?.events_participated} />
             </div>
 
             {/* Footer */}

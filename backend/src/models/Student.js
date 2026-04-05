@@ -45,10 +45,6 @@ const studentSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
-  events_participated: {
-    type: [String],
-    default: []
-  },
   quiz_bee_participations: {
     type: [String],
     default: []

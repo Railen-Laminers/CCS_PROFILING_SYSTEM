@@ -31,7 +31,6 @@ const DEFAULT_FORM_DATA = {
     organizations: '',
     behavior_discipline_records: '',
     academic_awards: '',
-    events_participated: '',
     warnings: 0,
     suspensions: 0,
     counseling: 0,
@@ -52,7 +51,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
         if (isOpen) {
             if (mode === 'edit' && initialData) {
                 const formattedData = { ...initialData };
-                const arrayFields = ['sports_activities', 'organizations', 'academic_awards', 'events_participated'];
+                const arrayFields = ['sports_activities', 'organizations', 'academic_awards'];
                 arrayFields.forEach(field => {
                     const value = formattedData[field];
                     if (Array.isArray(value)) {
@@ -206,7 +205,6 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 sports_activities: formData.sports_activities ? { sportsPlayed: (typeof formData.sports_activities === 'string' ? formData.sports_activities.split(',').map(s => s.trim()).filter(Boolean) : formData.sports_activities) } : null,
                 organizations: formData.organizations ? { clubs: (typeof formData.organizations === 'string' ? formData.organizations.split(',').map(s => s.trim()).filter(Boolean) : formData.organizations) } : null,
                 academic_awards: formData.academic_awards ? (typeof formData.academic_awards === 'string' ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : formData.academic_awards) : [],
-                events_participated: formData.events_participated ? (typeof formData.events_participated === 'string' ? formData.events_participated.split(',').map(s => s.trim()).filter(Boolean) : formData.events_participated) : [],
                 behavior_discipline_records: {
                     warnings: parseInt(formData.warnings) || 0,
                     suspensions: parseInt(formData.suspensions) || 0,
@@ -477,7 +475,6 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 {renderField('Incidents', 'incidents', 'textarea', false, null, null, 'Describe incidents')}
                                 {renderField('Counseling Records', 'counseling_records', 'textarea', false, null, null, 'Details of counseling')}
                                 {renderField('Academic Awards', 'academic_awards', 'text', false, null, 'Separate with commas', "e.g., Dean's Lister, Honor Roll")}
-                                {renderField('Events Participated', 'events_participated', 'text', false, null, 'Separate with commas', 'e.g., Seminar, Workshop')}
                             </div>
                         </div>
                     </form>

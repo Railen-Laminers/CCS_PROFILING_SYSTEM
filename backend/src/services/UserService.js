@@ -31,7 +31,7 @@ class UserService {
     'parent_guardian_name', 'emergency_contact', 'section', 'program',
     'year_level', 'gpa', 'current_subjects', 'academic_awards',
     'quiz_bee_participations', 'programming_contests',
-    'events_participated', 'blood_type', 'disabilities',
+    'blood_type', 'disabilities',
     'medical_condition', 'allergies', 'sports_activities',
     'organizations', 'behavior_discipline_records'
   ];

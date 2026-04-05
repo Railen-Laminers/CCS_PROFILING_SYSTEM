@@ -106,7 +106,6 @@ export const useStudentDetails = () => {
             behavior_discipline_records: Array.isArray(s?.behavior_discipline_records) ? s.behavior_discipline_records.join(', ') : s?.behavior_discipline_records || '',
             current_subjects: Array.isArray(s?.current_subjects) ? s.current_subjects.join(', ') : '',
             academic_awards: Array.isArray(s?.academic_awards) ? s.academic_awards.join(', ') : '',
-            events_participated: Array.isArray(s?.events_participated) ? s.events_participated.join(', ') : '',
         });
         setModalOpen(true);
     };
