@@ -330,7 +330,7 @@ const FacultyFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                     positions.map(p => ({ value: p, label: p }))
                                 )}
                                 <div className="md:col-span-2">
-                                    {renderField('Specialization', 'specialization', 'text', false, null, null, 'e.g. Artificial Intelligence, Data Science')}
+                                    {renderField('Specialization', 'specialization', 'text', false, null, 'Separate with commas', 'e.g. Artificial Intelligence, Data Science')}
                                 </div>
 
                                 <div className="md:col-span-2 mt-4 mb-2 text-sm font-bold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-800 pb-2">Contact Information</div>
