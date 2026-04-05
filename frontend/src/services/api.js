@@ -100,6 +100,15 @@ export const userAPI = {
     const response = await axiosInstance.get('/faculty', { signal });
     return response.data.faculty;
   },
+
+  importStudents: async (formData) => {
+    const response = await axiosInstance.post('/users/import-students', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response;
+  },
 };
 
 // ─── Course API ──────────────────────────────────────────────────────────────
@@ -297,5 +306,7 @@ export const instructionAPI = {
     await axiosInstance.delete(`/instruction/materials/${id}`);
   },
 };
+
+
 
 export default authAPI;

@@ -191,6 +191,53 @@ class UserController {
       next(error);
     }
   }
+
+  // static async importStudents(req, res, next) {
+  //     try {
+  //         // Check if file exists
+  //         if (!req.file) {
+  //             return res.status(400).json({ message: 'No file uploaded.' });
+  //         }
+          
+  //         // Process the Excel file and create users
+  //         const result = await UserService.importStudentsFromExcel(req.file);
+          
+  //         res.status(200).json({
+  //             message: `Successfully imported ${result.importedCount} students.`,
+  //             importedCount: result.importedCount,
+  //             errors: result.errors
+  //         });
+  //     } catch (error) {
+  //         next(error);
+  //     }
+  // }
+
+  // UPDATE this method in UserController.js
+  static async importStudents(req, res, next) {
+      try {
+          // Check if file exists
+          if (!req.file) {
+              return res.status(400).json({ message: 'No file uploaded.' });
+          }
+          
+          // Process the Excel file and create users
+          const result = await UserService.importStudentsFromExcel(req.file);
+          
+          // MODIFIED: Return more detailed response
+          const responseMessage = result.errors.length > 0 
+              ? `Successfully imported ${result.importedCount} students, but failed to import ${result.errors.length} students.`
+              : `Successfully imported ${result.importedCount} students.`;
+          
+          res.status(200).json({
+              message: responseMessage,
+              importedCount: result.importedCount,
+              failedCount: result.errors.length,
+              errors: result.errors // This will help debug which rows failed
+          });
+      } catch (error) {
+          next(error);
+      }
+  }
 }
 
 module.exports = UserController;
