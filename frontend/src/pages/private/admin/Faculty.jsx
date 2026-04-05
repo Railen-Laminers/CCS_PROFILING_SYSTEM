@@ -45,6 +45,7 @@ const FacultyPage = () => {
     const [modalData, setModalData] = useState(null);
     const [editingId, setEditingId] = useState(null);
     const [isExporting, setIsExporting] = useState(false);
+    const [togglingUserId, setTogglingUserId] = useState(null);
 
     if (user?.role !== 'admin') {
         return <div className="p-6 text-red-500 dark:text-red-400">You do not have permission to view this page.</div>;
@@ -78,6 +79,23 @@ const FacultyPage = () => {
             showToast(err.response?.data?.message || 'Failed to delete faculty.', 'error');
         } finally {
             setDeletingUserId(null);
+        }
+    };
+
+    const handleToggleStatus = async (member) => {
+        const newStatus = !member.user.is_active;
+        const action = newStatus ? 'activate' : 'deactivate';
+        if (!window.confirm(`Are you sure you want to ${action} ${member.user.firstname} ${member.user.lastname}?`)) return;
+
+        setTogglingUserId(member.user.id);
+        try {
+            await userAPI.updateUser(member.user.id, { is_active: newStatus });
+            refresh();
+            showToast(`${member.user.firstname}'s status updated to ${newStatus ? 'Active' : 'Inactive'}.`, 'success');
+        } catch (err) {
+            showToast(err.response?.data?.message || `Failed to ${action} faculty member.`, 'error');
+        } finally {
+            setTogglingUserId(null);
         }
     };
 
@@ -179,6 +197,8 @@ const FacultyPage = () => {
                 handleEdit={handleEdit}
                 handleDelete={handleDelete}
                 deletingUserId={deletingUserId}
+                handleToggleStatus={handleToggleStatus}
+                togglingUserId={togglingUserId}
             />
 
             {/* Pagination */}

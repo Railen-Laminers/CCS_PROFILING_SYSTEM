@@ -1,14 +1,15 @@
 import React from 'react';
-import { FiUsers, FiMail, FiPhone, FiMapPin, FiTrash2 } from 'react-icons/fi';
+import { FiUsers, FiMail, FiPhone, FiMapPin, FiTrash2, FiPower } from 'react-icons/fi';
 import EditIcon from '@/components/ui/EditIcon';
 import { Spinner } from '@/components/ui/Skeleton.jsx';
 import EmptyState from '@/components/ui/EmptyState';
 import { parseList } from '@/lib/facultyHelpers';
 
-const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserId }) => {
+const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserId, handleToggleStatus, togglingUserId }) => {
     const fullName = `${member.user.firstname} ${member.user.lastname}`;
     const initials = member.user.firstname?.[0] || 'F';
     const research = parseList(member.faculty?.research_projects);
+    const isActive = member.user.is_active;
 
     const MAX_RESEARCH = 2;
 
@@ -23,15 +24,21 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
                     <div className="flex-1 min-w-0">
                         <h3 className="text-[16px] font-bold text-gray-900 dark:text-white truncate leading-snug">{fullName}</h3>
                         <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-0.5 font-medium">{member.user.user_id}</p>
-                        {member.faculty?.position ? (
-                            <span className="mt-2 inline-block text-[13px] font-semibold text-brand-600 dark:text-brand-400 border border-brand-300 dark:border-brand-500/40 bg-brand-50 dark:bg-brand-500/10 px-3 py-1 rounded-md text-left">
-                                {member.faculty.position}
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            {member.faculty?.position ? (
+                                <span className="inline-block text-[13px] font-semibold text-brand-600 dark:text-brand-400 border border-brand-300 dark:border-brand-500/40 bg-brand-50 dark:bg-brand-500/10 px-3 py-1 rounded-md text-left">
+                                    {member.faculty.position}
+                                </span>
+                            ) : (
+                                <span className="inline-block text-[13px] font-medium text-gray-400 dark:text-zinc-600 border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/50 px-3 py-1 rounded-md italic text-left">
+                                    No position
+                                </span>
+                            )}
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[13px] font-semibold border ${isActive ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20' : 'bg-gray-100 dark:bg-zinc-500/10 text-gray-600 dark:text-zinc-400 border-gray-200 dark:border-zinc-500/20'}`}>
+                                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>}
+                                {isActive ? 'Active' : 'Inactive'}
                             </span>
-                        ) : (
-                            <span className="mt-2 inline-block text-[13px] font-medium text-gray-400 dark:text-zinc-600 border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/50 px-3 py-1 rounded-md italic text-left">
-                                No position
-                            </span>
-                        )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -111,17 +118,27 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
                 >
                     View Details
                 </button>
+                <button
+                    onClick={() => handleToggleStatus(member)}
+                    className={`w-9 h-9 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-lg transition-all ${isActive ? 'text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20' : 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'}`}
+                    title={isActive ? 'Deactivate' : 'Activate'}
+                    disabled={togglingUserId !== null}
+                >
+                    {togglingUserId === member.user.id ? <Spinner className="w-4 h-4" /> : <FiPower className="w-[18px] h-[18px]" />}
+                </button>
                 <button 
                     onClick={() => handleEdit(member)}
                     className="w-9 h-9 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-lg text-gray-500 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-brand-500 active:scale-[0.97] transition-all"
                     title="Edit"
+                    disabled={togglingUserId !== null || deletingUserId !== null}
                 >
                     <EditIcon className="w-[18px] h-[18px]" />
                 </button>
                 <button 
                     onClick={() => handleDelete(member.user.id)}
-                    className="w-9 h-9 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 active:scale-[0.97] transition-all"
-                    title="Delete"
+                    className={`w-9 h-9 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-lg active:scale-[0.97] transition-all ${isActive ? 'text-gray-400 cursor-not-allowed' : 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'}`}
+                    title={isActive ? 'Must deactivate before deletion' : 'Delete'}
+                    disabled={isActive || deletingUserId !== null || togglingUserId !== null}
                 >
                     {deletingUserId === member.user.id ? <Spinner className="w-4 h-4" /> : <FiTrash2 className="w-[18px] h-[18px]" />}
                 </button>
@@ -130,7 +147,7 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
     );
 };
 
-const FacultyGrid = ({ faculty, loading, navigate, handleEdit, handleDelete, deletingUserId }) => {
+const FacultyGrid = ({ faculty, loading, navigate, handleEdit, handleDelete, deletingUserId, handleToggleStatus, togglingUserId }) => {
     if (loading) {
         return (
             <div className="flex justify-center items-center py-20 min-h-[400px]">
@@ -160,6 +177,8 @@ const FacultyGrid = ({ faculty, loading, navigate, handleEdit, handleDelete, del
                     handleEdit={handleEdit}
                     handleDelete={handleDelete}
                     deletingUserId={deletingUserId}
+                    handleToggleStatus={handleToggleStatus}
+                    togglingUserId={togglingUserId}
                 />
             ))}
         </div>
