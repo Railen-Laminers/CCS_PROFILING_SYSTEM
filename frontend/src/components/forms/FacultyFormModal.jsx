@@ -303,11 +303,11 @@ const FacultyFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
 
                 <div className="overflow-y-auto w-full p-6 text-left">
                     <form id="faculty-update-form" onSubmit={handleSubmit} className="space-y-8">
-                        {/* Basic Info */}
+                        {/* 1. Personal Information */}
                         <div>
                             <div className="flex items-center gap-3 mb-5">
                                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">01</span>
-                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Account & Identity</h3>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Personal Information</h3>
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
@@ -315,34 +315,40 @@ const FacultyFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 {renderField('Middle Name', 'middlename', 'text', false, null, 'Maximum 255 characters', 'Enter middle name')}
                                 {renderField('Last Name', 'lastname', 'text', true, null, 'Maximum 255 characters', 'Enter last name')}
                                 {renderField('Faculty ID', 'user_id', 'text', true, null, 'Exactly 7 digits', 'e.g. 2024001')}
-                                {renderField('Email', 'email', 'email', true, null, 'Valid email address', 'faculty@example.com')}
-                            </div>
-                        </div>
-
-                        {/* Personal Details */}
-                        <div>
-                            <div className="flex items-center gap-3 mb-5">
-                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">02</span>
-                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Personal Biography</h3>
-                                <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                                {renderField('Birth Date', 'birth_date', 'date')}
-                                {renderField('Contact Number', 'contact_number', 'tel', false, null, '11-digit mobile number', '09XXXXXXXXX')}
                                 {renderField('Gender', 'gender', 'select', false, [
                                     { value: 'male', label: 'Male' },
                                     { value: 'female', label: 'Female' },
                                     { value: 'other', label: 'Other' }
                                 ])}
-                                {renderField('Address', 'address', 'textarea', false, null, null, 'Full address')}
-                                {renderField('Active', 'is_active', 'checkbox')}
+                                {renderField('Birth Date', 'birth_date', 'date')}
+
+                                <div className="md:col-span-2 mt-4 mb-2 text-sm font-bold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-800 pb-2">Professional Details</div>
+                                {renderField('Department', 'department', 'select', false, 
+                                    departments.map(d => ({ value: d, label: d }))
+                                )}
+                                {renderField('Position / Rank', 'position', 'select', false,
+                                    positions.map(p => ({ value: p, label: p }))
+                                )}
+                                <div className="md:col-span-2">
+                                    {renderField('Specialization', 'specialization', 'text', false, null, null, 'e.g. Artificial Intelligence, Data Science')}
+                                </div>
+
+                                <div className="md:col-span-2 mt-4 mb-2 text-sm font-bold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-800 pb-2">Contact Information</div>
+                                {renderField('Email', 'email', 'email', true, null, 'Valid email address', 'faculty@example.com')}
+                                {renderField('Contact Number', 'contact_number', 'tel', false, null, '11-digit mobile number', '09XXXXXXXXX')}
+                                <div className="md:col-span-2">
+                                    {renderField('Address', 'address', 'textarea', false, null, null, 'Full address')}
+                                </div>
+                                <div className="md:col-span-2 mt-2">
+                                    {renderField('Active', 'is_active', 'checkbox')}
+                                </div>
                             </div>
                         </div>
 
-                        {/* Security */}
+                        {/* 2. Security Credentials */}
                         <div>
                             <div className="flex items-center gap-3 mb-5">
-                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">03</span>
+                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">02</span>
                                 <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Security Credentials</h3>
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
@@ -399,21 +405,14 @@ const FacultyFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                             </div>
                         </div>
 
-                        {/* Faculty Profile */}
+                        {/* 3. Research Projects */}
                         <div>
                             <div className="flex items-center gap-3 mb-5">
-                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">04</span>
-                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Faculty Profile & Records</h3>
+                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">03</span>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Research Projects</h3>
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                                {renderField('Department', 'department', 'select', false, 
-                                    departments.map(d => ({ value: d, label: d }))
-                                )}
-                                {renderField('Position / Rank', 'position', 'select', false,
-                                    positions.map(p => ({ value: p, label: p }))
-                                )}
-                                {renderField('Specialization', 'specialization', 'text', false, null, null, 'e.g. Artificial Intelligence')}
+                            <div className="grid grid-cols-1 md:grid-cols-1 gap-5 pl-11">
                                 {renderField('Research Projects', 'research_projects', 'textarea', false, null, 'Separate with commas', 'e.g. Neural Networks, Machine Learning')}
                             </div>
                         </div>
