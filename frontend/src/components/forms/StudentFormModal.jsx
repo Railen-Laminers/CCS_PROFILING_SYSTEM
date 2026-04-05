@@ -362,46 +362,43 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
 
                 <div className="overflow-y-auto w-full p-6 text-left">
                     <form id="student-update-form" onSubmit={handleSubmit} className="space-y-8">
-                        {/* Basic Info */}
+                        {/* 1. Student Information */}
                         <div>
                             <div className="flex items-center gap-3 mb-5">
                                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">01</span>
-                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Account & Identity</h3>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Student Information</h3>
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                            {renderField('First Name', 'firstname', 'text', true, null, 'Maximum 255 characters', 'Enter first name')}
-                            {renderField('Middle Name', 'middlename', 'text', false, null, 'Maximum 255 characters', 'Enter middle name')}
-                            {renderField('Last Name', 'lastname', 'text', true, null, 'Maximum 255 characters', 'Enter last name')}
-                            {renderField('Student ID', 'user_id', 'text', true, null, 'Exactly 7 digits (e.g., 2024001)', 'e.g., 2024001')}
-                            {renderField('Email', 'email', 'email', true, null, 'Valid email address', 'student@example.com')}
+                                {renderField('First Name', 'firstname', 'text', true, null, 'Maximum 255 characters', 'Enter first name')}
+                                {renderField('Middle Name', 'middlename', 'text', false, null, 'Maximum 255 characters', 'Enter middle name')}
+                                {renderField('Last Name', 'lastname', 'text', true, null, 'Maximum 255 characters', 'Enter last name')}
+                                {renderField('Student ID', 'user_id', 'text', true, null, 'Exactly 7 digits (e.g., 2024001)', 'e.g., 2024001')}
+                                {renderField('Gender', 'gender', 'select', false, [
+                                    { value: 'male', label: 'Male' },
+                                    { value: 'female', label: 'Female' },
+                                    { value: 'other', label: 'Other' }
+                                ])}
+                                {renderField('Birth Date', 'birth_date', 'date')}
+                                
+                                <div className="md:col-span-2 mt-4 mb-2 text-sm font-bold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-800 pb-2">Contact & Emergency Details</div>
+                                {renderField('Email', 'email', 'email', true, null, 'Valid email address', 'student@example.com')}
+                                {renderField('Contact Number', 'contact_number', 'tel', false, null, '11-digit mobile number', '09XXXXXXXXX')}
+                                <div className="md:col-span-2">
+                                    {renderField('Address', 'address', 'textarea', false, null, null, 'Full address')}
+                                </div>
+                                {renderField('Parent/Guardian Name', 'parent_guardian_name', 'text', false, null, null, 'Full name of guardian')}
+                                {renderField('Emergency Contact', 'emergency_contact', 'tel', false, null, null, '09XXXXXXXXX')}
+                                <div className="md:col-span-2 mt-2">
+                                    {renderField('Active', 'is_active', 'checkbox')}
+                                </div>
                             </div>
                         </div>
 
-                        {/* Personal Details */}
+                        {/* 2. Security Credentials */}
                         <div>
                             <div className="flex items-center gap-3 mb-5">
                                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">02</span>
-                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Personal Biography</h3>
-                                <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                            {renderField('Birth Date', 'birth_date', 'date')}
-                            {renderField('Contact Number', 'contact_number', 'tel', false, null, '11-digit mobile number', '09XXXXXXXXX')}
-                            {renderField('Gender', 'gender', 'select', false, [
-                                { value: 'male', label: 'Male' },
-                                { value: 'female', label: 'Female' },
-                                { value: 'other', label: 'Other' }
-                            ])}
-                            {renderField('Address', 'address', 'textarea', false, null, null, 'Full address')}
-                            {renderField('Active', 'is_active', 'checkbox')}
-                            </div>
-                        </div>
-
-                        {/* Security */}
-                        <div>
-                            <div className="flex items-center gap-3 mb-5">
-                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">03</span>
                                 <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Security Credentials</h3>
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
@@ -458,16 +455,14 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                             </div>
                         </div>
 
-                        {/* Academic Summary */}
+                        {/* 3. Academic Record */}
                         <div>
                             <div className="flex items-center gap-3 mb-5">
-                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">04</span>
-                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Academic & Records</h3>
+                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">03</span>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Academic Record</h3>
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                                {renderField('Parent/Guardian Name', 'parent_guardian_name', 'text', false, null, null, 'Full name of guardian')}
-                                {renderField('Emergency Contact', 'emergency_contact', 'tel', false, null, null, '09XXXXXXXXX')}
                                 {renderField('Program', 'program', 'select', false, [
                                     { value: 'BSIT', label: 'BS Information Technology' },
                                     { value: 'BSCS', label: 'BS Computer Science' }
@@ -480,38 +475,85 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                     { value: '4', label: '4th Year' }
                                 ])}
                                 {renderField('GPA', 'gpa', 'number', false, null, 'Range: 0.00 to 5.00', 'e.g., 1.25', 0, 5, 0.01)}
+                                <div className="md:col-span-2">
+                                    {renderField('Academic Awards', 'academic_awards', 'text', false, null, 'Separate with commas', "e.g., Dean's Lister, Honor Roll")}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 4. Medical Record */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-5">
+                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">04</span>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Medical Record</h3>
+                                <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
                                 {renderField('Blood Type', 'blood_type', 'select', false, [
                                     { value: 'A+', label: 'A+' }, { value: 'A-', label: 'A-' },
                                     { value: 'B+', label: 'B+' }, { value: 'B-', label: 'B-' },
                                     { value: 'AB+', label: 'AB+' }, { value: 'AB-', label: 'AB-' },
                                     { value: 'O+', label: 'O+' }, { value: 'O-', label: 'O-' }
                                 ])}
-                                {renderField('Disabilities', 'disabilities', 'text', false, null, 'Separate with commas', 'e.g., Visual, Hearing')}
-                                {renderField('Medical Condition', 'medical_condition', 'textarea', false, null, null, 'Describe any conditions')}
                                 {renderField('Allergies', 'allergies', 'text', false, null, 'Separate with commas', 'e.g., Peanuts, Dust')}
-                                {renderField('Warnings', 'warnings', 'number', false, null, null, '0', 0)}
-                                {renderField('Suspensions', 'suspensions', 'number', false, null, null, '0', 0)}
-                                {renderField('Counseling Sessions', 'counseling', 'number', false, null, null, '0', 0)}
-                                {renderField('Incidents', 'incidents', 'textarea', false, null, null, 'Describe incidents')}
-                                {renderField('Counseling Records', 'counseling_records', 'textarea', false, null, null, 'Details of counseling')}
-                                {renderField('Academic Awards', 'academic_awards', 'text', false, null, 'Separate with commas', "e.g., Dean's Lister, Honor Roll")}
+                                <div className="md:col-span-2">
+                                    {renderField('Medical Condition', 'medical_condition', 'textarea', false, null, null, 'Describe any conditions')}
+                                </div>
+                                <div className="md:col-span-2">
+                                    {renderField('Disabilities', 'disabilities', 'text', false, null, 'Separate with commas', 'e.g., Visual, Hearing')}
+                                </div>
                             </div>
                         </div>
 
-                        {/* Extracurricular & Organizations */}
+                        {/* 5. Sports & Activities */}
                         <div>
                             <div className="flex items-center gap-3 mb-5">
                                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">05</span>
-                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Extracurricular & Organizations</h3>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Sports & Activities</h3>
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
                                 {renderField('Sports Played', 'sportsPlayed', 'text', false, null, 'Separate with commas', 'e.g., Basketball, Volleyball')}
                                 {renderField('Athletic Achievements', 'athleticAchievements', 'text', false, null, 'Separate with commas', 'e.g., MVP 2023, Gold Medal')}
-                                {renderField('Competitions Joined', 'competitions', 'text', false, null, 'Separate with commas', 'e.g., Intramurals 2023')}
+                                <div className="md:col-span-2">
+                                    {renderField('Competitions Joined', 'competitions', 'text', false, null, 'Separate with commas', 'e.g., Intramurals 2023')}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 6. Organizations */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-5">
+                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">06</span>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Organizations</h3>
+                                <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
                                 {renderField('Clubs Joined', 'clubs', 'text', false, null, 'Separate with commas', 'e.g., IT Club, Coding Society')}
                                 {renderField('Student Council', 'studentCouncil', 'text', false, null, 'Separate with commas', 'e.g., Year Representative')}
-                                {renderField('Leadership Roles', 'leadershipRoles', 'text', false, null, 'Separate with commas', 'e.g., President, Secretary')}
+                                <div className="md:col-span-2">
+                                    {renderField('Leadership Roles', 'leadershipRoles', 'text', false, null, 'Separate with commas', 'e.g., President, Secretary')}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 7. Behavior & Discipline */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-5">
+                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">07</span>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Behavior & Discipline</h3>
+                                <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pl-11">
+                                {renderField('Warnings', 'warnings', 'number', false, null, null, '0', 0)}
+                                {renderField('Suspensions', 'suspensions', 'number', false, null, null, '0', 0)}
+                                {renderField('Counseling', 'counseling', 'number', false, null, null, '0', 0)}
+                                <div className="md:col-span-3">
+                                    {renderField('Incidents', 'incidents', 'textarea', false, null, null, 'Describe incidents')}
+                                </div>
+                                <div className="md:col-span-3">
+                                    {renderField('Counseling Records', 'counseling_records', 'textarea', false, null, null, 'Details of counseling')}
+                                </div>
                             </div>
                         </div>
                     </form>
