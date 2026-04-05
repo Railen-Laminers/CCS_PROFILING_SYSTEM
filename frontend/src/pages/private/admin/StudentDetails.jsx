@@ -320,7 +320,7 @@ const StudentDetails = () => {
                                         <div><SectionSubhead>Blood Type</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.blood_type || 'Not Provided'}</p></div>
                                         <div><SectionSubhead>Allergies</SectionSubhead>{renderTags(profile?.allergies, null, "red")}</div>
                                         <div><SectionSubhead>Medical Conditions</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.medical_condition || 'None reported'}</p></div>
-                                        <div><SectionSubhead>Disabilities</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.disabilities || 'None reported'}</p></div>
+                                        <div><SectionSubhead>Disabilities</SectionSubhead>{renderTags(profile?.disabilities, null, "blue")}</div>
                                     </div>
                                 </div>
                             </div>
