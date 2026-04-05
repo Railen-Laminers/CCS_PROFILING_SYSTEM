@@ -128,7 +128,7 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
                 </button>
                 <button 
                     onClick={() => handleEdit(member)}
-                    className="w-9 h-9 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-lg text-gray-500 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-brand-500 active:scale-[0.97] transition-all"
+                    className="w-9 h-9 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-lg text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 active:scale-[0.97] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Edit"
                     disabled={togglingUserId !== null || deletingUserId !== null}
                 >
