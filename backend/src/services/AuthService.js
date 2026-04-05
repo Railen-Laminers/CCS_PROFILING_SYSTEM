@@ -30,9 +30,14 @@ expiresIn: '7d'
     }
 
     // Check password
+    // const isMatch = await user.comparePassword(password);
+    // if (!isMatch) {
+    //   throw new Error('The provided credentials are invalid.');
+    // }
+    // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      throw new Error('The provided credentials are invalid.');
+      throw new Error(`Password mismatch - Input: "${password}" | DB Hash: "${user.password}" | User: ${user.email}`);
     }
 
     // Update last login

@@ -139,7 +139,7 @@ class UserService {
   static async createUser(data) {
     // Hash password
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(data.password, salt);
+    // const hashedPassword = await bcrypt.hash(data.password, salt); <======================Tinanggal kasi nagdodouble hashed
 
     // Create user
     const user = await User.create({
@@ -148,7 +148,7 @@ class UserService {
       lastname: data.lastname,
       user_id: data.user_id,
       email: data.email,
-      password: hashedPassword,
+      password: data.password,
       role: data.role,
       birth_date: data.birth_date || null,
       contact_number: data.contact_number || null,
