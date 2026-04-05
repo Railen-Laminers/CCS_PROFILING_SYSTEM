@@ -233,8 +233,9 @@ const FacultyDetails = () => {
                                         <FiClock className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
                                     </div>
-                                    <BulletList items={teachingSchedule.map(s => s.display)} />
-                                    {teachingSchedule.length === 0 && (
+                                    {teachingSchedule.length > 0 ? (
+                                        <BulletList items={teachingSchedule.map(s => s.display)} />
+                                    ) : (
                                         <EmptyState 
                                             size="md"
                                             icon={FiClock}
@@ -265,8 +266,9 @@ const FacultyDetails = () => {
                                         <FiBookOpen className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>
                                     </div>
-                                    {renderTags(subjectsHandled.join(', '), "orange")}
-                                    {subjectsHandled.length === 0 && (
+                                    {subjectsHandled.length > 0 ? (
+                                        renderTags(subjectsHandled.join(', '), "orange")
+                                    ) : (
                                         <EmptyState 
                                             size="md"
                                             icon={FiBookOpen}
