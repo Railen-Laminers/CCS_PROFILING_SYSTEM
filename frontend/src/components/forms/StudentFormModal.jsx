@@ -27,8 +27,14 @@ const DEFAULT_FORM_DATA = {
     disabilities: '',
     medical_condition: '',
     allergies: '',
-    sports_activities: '',
-    organizations: '',
+    sportsPlayed: '',
+    athleticAchievements: '',
+    schoolTeam: '',
+    competitions: '',
+    clubs: '',
+    studentCouncil: '',
+    fraternities: '',
+    leadershipRoles: '',
     behavior_discipline_records: '',
     academic_awards: '',
     warnings: 0,
@@ -51,19 +57,29 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
         if (isOpen) {
             if (mode === 'edit' && initialData) {
                 const formattedData = { ...initialData };
-                const arrayFields = ['sports_activities', 'organizations', 'academic_awards'];
-                arrayFields.forEach(field => {
-                    const value = formattedData[field];
-                    if (Array.isArray(value)) {
-                        formattedData[field] = value.join(', ');
-                    } else if (value && typeof value === 'object') {
-                        // Handle nested objects for sports and organizations
-                        const innerArray = value.sportsPlayed || value.clubs;
-                        if (Array.isArray(innerArray)) {
-                            formattedData[field] = innerArray.join(', ');
-                        }
-                    }
-                });
+                const stringifyArray = (val) => {
+                    if (Array.isArray(val)) return val.join(', ');
+                    if (typeof val === 'string') return val;
+                    return '';
+                };
+
+                formattedData.academic_awards = stringifyArray(formattedData.academic_awards);
+                formattedData.disabilities = stringifyArray(formattedData.disabilities);
+                formattedData.allergies = stringifyArray(formattedData.allergies);
+
+                if (formattedData.sports_activities) {
+                    formattedData.sportsPlayed = stringifyArray(formattedData.sports_activities.sportsPlayed);
+                    formattedData.athleticAchievements = stringifyArray(formattedData.sports_activities.achievements);
+                    formattedData.schoolTeam = stringifyArray(formattedData.sports_activities.schoolTeam);
+                    formattedData.competitions = stringifyArray(formattedData.sports_activities.competitions);
+                }
+
+                if (formattedData.organizations) {
+                    formattedData.clubs = stringifyArray(formattedData.organizations.clubs);
+                    formattedData.studentCouncil = stringifyArray(formattedData.organizations.studentCouncil);
+                    formattedData.fraternities = stringifyArray(formattedData.organizations.fraternities);
+                    formattedData.leadershipRoles = stringifyArray(formattedData.organizations.roles);
+                }
                 setFormData(formattedData);
             } else {
                 setFormData(DEFAULT_FORM_DATA);
@@ -199,12 +215,22 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 year_level: formData.year_level ? parseInt(formData.year_level) : null,
                 gpa: formData.gpa ? parseFloat(formData.gpa) : null,
                 blood_type: formData.blood_type,
-                disabilities: formData.disabilities,
+                disabilities: typeof formData.disabilities === 'string' ? formData.disabilities.split(',').map(s => s.trim()).filter(Boolean) : [],
                 medical_condition: formData.medical_condition,
-                allergies: formData.allergies,
-                sports_activities: formData.sports_activities ? { sportsPlayed: (typeof formData.sports_activities === 'string' ? formData.sports_activities.split(',').map(s => s.trim()).filter(Boolean) : formData.sports_activities) } : null,
-                organizations: formData.organizations ? { clubs: (typeof formData.organizations === 'string' ? formData.organizations.split(',').map(s => s.trim()).filter(Boolean) : formData.organizations) } : null,
-                academic_awards: formData.academic_awards ? (typeof formData.academic_awards === 'string' ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : formData.academic_awards) : [],
+                allergies: typeof formData.allergies === 'string' ? formData.allergies.split(',').map(s => s.trim()).filter(Boolean) : [],
+                sports_activities: {
+                    sportsPlayed: typeof formData.sportsPlayed === 'string' ? formData.sportsPlayed.split(',').map(s => s.trim()).filter(Boolean) : [],
+                    achievements: typeof formData.athleticAchievements === 'string' ? formData.athleticAchievements.split(',').map(s => s.trim()).filter(Boolean) : [],
+                    schoolTeam: typeof formData.schoolTeam === 'string' ? formData.schoolTeam.split(',').map(s => s.trim()).filter(Boolean) : [],
+                    competitions: typeof formData.competitions === 'string' ? formData.competitions.split(',').map(s => s.trim()).filter(Boolean) : []
+                },
+                organizations: {
+                    clubs: typeof formData.clubs === 'string' ? formData.clubs.split(',').map(s => s.trim()).filter(Boolean) : [],
+                    studentCouncil: typeof formData.studentCouncil === 'string' ? formData.studentCouncil.split(',').map(s => s.trim()).filter(Boolean) : [],
+                    fraternities: typeof formData.fraternities === 'string' ? formData.fraternities.split(',').map(s => s.trim()).filter(Boolean) : [],
+                    roles: typeof formData.leadershipRoles === 'string' ? formData.leadershipRoles.split(',').map(s => s.trim()).filter(Boolean) : []
+                },
+                academic_awards: typeof formData.academic_awards === 'string' ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : [],
                 behavior_discipline_records: {
                     warnings: parseInt(formData.warnings) || 0,
                     suspensions: parseInt(formData.suspensions) || 0,
@@ -466,15 +492,34 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                     { value: 'AB+', label: 'AB+' }, { value: 'AB-', label: 'AB-' },
                                     { value: 'O+', label: 'O+' }, { value: 'O-', label: 'O-' }
                                 ])}
-                                {renderField('Disabilities', 'disabilities', 'textarea', false, null, null, 'Describe any disabilities')}
+                                {renderField('Disabilities', 'disabilities', 'text', false, null, 'Separate with commas', 'e.g., Visual, Hearing')}
                                 {renderField('Medical Condition', 'medical_condition', 'textarea', false, null, null, 'Describe any conditions')}
-                                {renderField('Allergies', 'allergies', 'textarea', false, null, null, 'List known allergies')}
+                                {renderField('Allergies', 'allergies', 'text', false, null, 'Separate with commas', 'e.g., Peanuts, Dust')}
                                 {renderField('Warnings', 'warnings', 'number', false, null, null, '0', 0)}
                                 {renderField('Suspensions', 'suspensions', 'number', false, null, null, '0', 0)}
                                 {renderField('Counseling Sessions', 'counseling', 'number', false, null, null, '0', 0)}
                                 {renderField('Incidents', 'incidents', 'textarea', false, null, null, 'Describe incidents')}
                                 {renderField('Counseling Records', 'counseling_records', 'textarea', false, null, null, 'Details of counseling')}
                                 {renderField('Academic Awards', 'academic_awards', 'text', false, null, 'Separate with commas', "e.g., Dean's Lister, Honor Roll")}
+                            </div>
+                        </div>
+
+                        {/* Extracurricular & Organizations */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-5">
+                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">05</span>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Extracurricular & Organizations</h3>
+                                <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
+                                {renderField('Sports Played', 'sportsPlayed', 'text', false, null, 'Separate with commas', 'e.g., Basketball, Volleyball')}
+                                {renderField('Athletic Achievements', 'athleticAchievements', 'text', false, null, 'Separate with commas', 'e.g., MVP 2023, Gold Medal')}
+                                {renderField('School Team Memberships', 'schoolTeam', 'text', false, null, 'Separate with commas', 'e.g., Varsity Team')}
+                                {renderField('Competitions Joined', 'competitions', 'text', false, null, 'Separate with commas', 'e.g., Intramurals 2023')}
+                                {renderField('Clubs Joined', 'clubs', 'text', false, null, 'Separate with commas', 'e.g., IT Club, Coding Society')}
+                                {renderField('Student Council', 'studentCouncil', 'text', false, null, 'Separate with commas', 'e.g., Year Representative')}
+                                {renderField('Fraternities/Sororities', 'fraternities', 'text', false, null, 'Separate with commas', 'e.g., Alpha Phi Omega, Tau Gamma Phi')}
+                                {renderField('Leadership Roles', 'leadershipRoles', 'text', false, null, 'Separate with commas', 'e.g., President, Secretary')}
                             </div>
                         </div>
                     </form>

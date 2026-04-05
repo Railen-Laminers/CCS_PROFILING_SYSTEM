@@ -59,9 +59,8 @@ const studentSchema = new mongoose.Schema({
     default: null
   },
   disabilities: {
-    type: String,
-    trim: true,
-    default: null
+    type: [String],
+    default: []
   },
   medical_condition: {
     type: String,
@@ -69,9 +68,8 @@ const studentSchema = new mongoose.Schema({
     default: null
   },
   allergies: {
-    type: String,
-    trim: true,
-    default: null
+    type: [String],
+    default: []
   },
   sports_activities: {
     type: mongoose.Schema.Types.Mixed,
