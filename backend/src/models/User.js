@@ -53,8 +53,20 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ['male', 'female', 'other'],
-    default: null
+    default: null,
+    // Custom validator: accepts any case, but only 'male'/'female'/'other' (case‑insensitive)
+    validate: {
+      validator: function (v) {
+        if (!v) return true; // null is allowed
+        return ['male', 'female', 'other'].includes(v.toLowerCase());
+      },
+      message: 'Gender must be male, female, or other'
+    },
+    // Setter automatically lowercases the value before saving
+    set: function (v) {
+      if (v && typeof v === 'string') return v.toLowerCase();
+      return v;
+    }
   },
   address: {
     type: String,
@@ -103,8 +115,16 @@ userSchema.virtual('faculty', {
   justOne: true
 });
 
+// Pre-save middleware to ensure gender is lowercase (extra safety)
+userSchema.pre('save', function (next) {
+  if (this.gender && typeof this.gender === 'string') {
+    this.gender = this.gender.toLowerCase();
+  }
+  next();
+});
+
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
   }
@@ -114,15 +134,15 @@ userSchema.pre('save', async function(next) {
 });
 
 // Method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // Method to get user with profile
-userSchema.methods.toJSONWithProfile = async function() {
+userSchema.methods.toJSONWithProfile = async function () {
   const user = this.toObject();
   delete user.password;
-  
+
   if (this.role === 'student') {
     await this.populate('student');
     user.student = this.student;
@@ -130,7 +150,7 @@ userSchema.methods.toJSONWithProfile = async function() {
     await this.populate('faculty');
     user.faculty = this.faculty;
   }
-  
+
   return user;
 };
 
