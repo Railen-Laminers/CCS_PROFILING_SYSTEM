@@ -2,8 +2,10 @@ import React from 'react';
 import { FaEye, FaEyeSlash, FaUser, FaLock, FaChartLine, FaEnvelope } from 'react-icons/fa';
 import loginBg from '../../assets/Bagong_Cabuyao_Hall.jpg';
 import { useLogin } from '../../hooks/useLogin';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const LoginPage = () => {
+    const { systemTitle, logoUrl } = useTheme();
     const {
         identifier,
         password,
@@ -49,11 +51,19 @@ const LoginPage = () => {
                     
                     <div className="space-y-6 relative z-10">
                         <div className="flex items-center gap-3">
-                            <FaChartLine className="text-3xl md:text-4xl text-white/90" />
+                            {logoUrl ? (
+                                <img
+                                    src={logoUrl}
+                                    alt="System logo"
+                                    className="h-11 w-11 rounded-2xl object-contain bg-white/15 border border-white/20 p-2"
+                                />
+                            ) : (
+                                <FaChartLine className="text-3xl md:text-4xl text-white/90" />
+                            )}
                         </div>
                         <div className="space-y-4 mt-8">
                             <h2 className="text-3xl md:text-4xl font-bold leading-tight">
-                                CCS Comprehensive Profiling System
+                                {systemTitle || 'CCS Comprehensive Profiling System'}
                             </h2>
                             <p className="text-white/90 text-lg leading-relaxed">
                                 Secure platform for managing and profiling students of the institution.

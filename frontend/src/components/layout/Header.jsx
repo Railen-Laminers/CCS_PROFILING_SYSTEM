@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 
 export const Header = () => {
   const { user, logout, isProcessing } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, systemTitle, logoUrl } = useTheme();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -35,8 +35,15 @@ export const Header = () => {
     <header className="bg-white dark:bg-[#1E1E1E] backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 h-[76px] flex justify-between items-center sticky top-0 z-40 transition-colors duration-300 shadow-sm relative flex-shrink-0">
       {/* Decorative subtle top border/glow if needed, but no inner ring since it's flat now */}
       <div className="flex items-center gap-2">
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt="System logo"
+            className="h-9 w-9 rounded-xl object-contain bg-white/60 dark:bg-zinc-900/30 border border-gray-200 dark:border-gray-800 p-1"
+          />
+        ) : null}
         <h1 className="text-xl font-bold text-gray-800 dark:text-zinc-100 tracking-tight">
-          CCS Comprehensive Profiling System
+          {systemTitle || 'CCS Comprehensive Profiling System'}
         </h1>
       </div>
       <div className="flex items-center gap-4">

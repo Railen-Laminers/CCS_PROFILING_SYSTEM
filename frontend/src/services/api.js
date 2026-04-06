@@ -242,6 +242,36 @@ export const contactAPI = {
   },
 };
 
+// ─── System Settings API ──────────────────────────────────────────────────────
+export const systemSettingsAPI = {
+  get: async (signal) => {
+    const response = await axiosInstance.get('/system-settings', { signal });
+    return response.data.settings;
+  },
+  update: async (data) => {
+    // If `logo` is a File, send multipart. Otherwise send JSON.
+    if (data?.logo instanceof File) {
+      const formData = new FormData();
+      if (data.systemTitle !== undefined) formData.append('systemTitle', data.systemTitle);
+      if (data.institutionName !== undefined) formData.append('institutionName', data.institutionName);
+      if (data.interfaceLanguage !== undefined) formData.append('interfaceLanguage', data.interfaceLanguage);
+      formData.append('logo', data.logo);
+
+      const response = await axiosInstance.put('/system-settings', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data.settings;
+    }
+
+    const response = await axiosInstance.put('/system-settings', {
+      systemTitle: data?.systemTitle,
+      institutionName: data?.institutionName,
+      interfaceLanguage: data?.interfaceLanguage,
+    });
+    return response.data.settings;
+  },
+};
+
 // ─── Room API ────────────────────────────────────────────────────────────────
 export const roomAPI = {
   getRooms: async (signal) => {

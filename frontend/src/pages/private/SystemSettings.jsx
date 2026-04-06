@@ -1,6 +1,8 @@
-import { useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext'; // Hide admin related data
+import { systemSettingsAPI } from '../../services/api';
+import axios from 'axios'; // Import axios for isCancel check
 import {
   FiUsers,
   FiDatabase,
@@ -45,9 +47,18 @@ const TabNavigation = ({ tabs, activeTab, setActiveTab }) => (
 );
 
 const SystemSettings = () => {
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { theme, toggleTheme, isDark, refreshBranding } = useTheme();
   const { user, loading: authLoading } = useAuth(); // <-- get user and loading state
   const [activeTab, setActiveTab] = useState(0);
+
+  const [systemTitle, setSystemTitle] = useState('');
+  const [institutionName, setInstitutionName] = useState('');
+  const [interfaceLanguage, setInterfaceLanguage] = useState('English - North America');
+  const [storedLogoUrl, setStoredLogoUrl] = useState(null);
+  const [loadingSettings, setLoadingSettings] = useState(true);
+  const [savingGeneral, setSavingGeneral] = useState(false);
+  const [savingAppearance, setSavingAppearance] = useState(false);
+  const [saveError, setSaveError] = useState(null);
   const [notificationSettings, setNotificationSettings] = useState([
     { id: 1, title: 'Email Notifications', description: 'Receive email notifications for important updates', enabled: true },
     { id: 2, title: 'Push Notifications', description: 'Receive push notifications on your device', enabled: false },
@@ -140,6 +151,97 @@ const SystemSettings = () => {
   const inputClasses = "w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-[14px]";
   const labelClasses = "block text-[12px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-2 ml-1";
 
+  const apiOrigin = useMemo(() => {
+    const base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    return base.replace(/\/api\/?$/, '');
+  }, []);
+
+  const resolvedLogoPreview = useMemo(() => {
+    if (logoPreview) return logoPreview;
+    if (!storedLogoUrl) return null;
+    if (storedLogoUrl.startsWith('http')) return storedLogoUrl;
+    return `${apiOrigin}${storedLogoUrl}`;
+  }, [logoPreview, storedLogoUrl, apiOrigin]);
+
+  // UPDATED: Handle CanceledError properly
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadSettings = async () => {
+      try {
+        setLoadingSettings(true);
+        const settings = await systemSettingsAPI.get(controller.signal);
+        setSystemTitle(settings?.systemTitle || '');
+        setInstitutionName(settings?.institutionName || '');
+        setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
+        setStoredLogoUrl(settings?.logoUrl || null);
+      } catch (err) {
+        // Only log errors that aren't cancelation errors
+        if (axios.isCancel(err)) {
+          // This is expected - request was cancelled, do nothing
+          return;
+        }
+        // Keep defaults if settings can't load
+        console.error('Failed to load settings:', err);
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoadingSettings(false);
+        }
+      }
+    };
+
+    loadSettings();
+    return () => controller.abort();
+  }, []);
+
+  const handleSaveGeneral = async () => {
+    setSaveError(null);
+    setSavingGeneral(true);
+    try {
+      const settings = await systemSettingsAPI.update({
+        systemTitle,
+        institutionName,
+        interfaceLanguage,
+      });
+      setSystemTitle(settings?.systemTitle || '');
+      setInstitutionName(settings?.institutionName || '');
+      setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
+      setStoredLogoUrl(settings?.logoUrl || null);
+      await refreshBranding?.();
+    } catch (err) {
+      const msg = err?.response?.data?.message || 'Failed to save system settings';
+      setSaveError(msg);
+      console.error('Save general settings error:', err);
+    } finally {
+      setSavingGeneral(false);
+    }
+  };
+
+  const handleSaveAppearance = async () => {
+    if (!logoFile) return;
+    setSaveError(null);
+    setSavingAppearance(true);
+    try {
+      const settings = await systemSettingsAPI.update({
+        systemTitle,
+        institutionName,
+        interfaceLanguage,
+        logo: logoFile,
+      });
+      setStoredLogoUrl(settings?.logoUrl || null);
+      setLogoFile(null);
+      setLogoPreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      await refreshBranding?.();
+    } catch (err) {
+      const msg = err?.response?.data?.message || 'Failed to upload logo';
+      setSaveError(msg);
+      console.error('Save appearance error:', err);
+    } finally {
+      setSavingAppearance(false);
+    }
+  };
+
   // Show loading indicator while auth state is being determined
   if (authLoading) {
     return (
@@ -182,6 +284,11 @@ const SystemSettings = () => {
 
       {/* Main Content Area */}
       <div className="space-y-10">
+        {saveError && (
+          <div className="mb-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-semibold text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300">
+            {saveError}
+          </div>
+        )}
         {activeTab === 0 && (
           <div className="space-y-10">
             <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -197,12 +304,33 @@ const SystemSettings = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label className={labelClasses}>System Title</label>
-                    <input type="text" className={inputClasses} placeholder="CCS Profiling System" />
+                    <input
+                      type="text"
+                      className={inputClasses}
+                      placeholder="CCS Profiling System"
+                      value={systemTitle}
+                      onChange={(e) => setSystemTitle(e.target.value)}
+                      disabled={loadingSettings || savingGeneral}
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className={labelClasses}>Institution Name</label>
-                    <input type="text" className={inputClasses} placeholder="College of Computer Studies" />
+                    <input
+                      type="text"
+                      className={inputClasses}
+                      placeholder="College of Computer Studies"
+                      value={institutionName}
+                      onChange={(e) => setInstitutionName(e.target.value)}
+                      disabled={loadingSettings || savingGeneral}
+                    />
                   </div>
+                  {/*
+                    Not needed yet:
+                    - Academic period (Year)
+                    - Current Semester
+                    - System Localization (Time Zone)
+                  */}
+                  {/*
                   <div className="space-y-2">
                     <label className={labelClasses}>Academic period (Year)</label>
                     <input type="text" className={inputClasses} placeholder="2024-2025" />
@@ -222,9 +350,15 @@ const SystemSettings = () => {
                       <option>(GMT+00:00) Universal Coordinated Time</option>
                     </select>
                   </div>
+                  */}
                   <div className="space-y-2">
                     <label className={labelClasses}>Interface Language</label>
-                    <select className={inputClasses}>
+                    <select
+                      className={inputClasses}
+                      value={interfaceLanguage}
+                      onChange={(e) => setInterfaceLanguage(e.target.value)}
+                      disabled={loadingSettings || savingGeneral}
+                    >
                       <option>English - North America</option>
                       <option>Filipino - PH</option>
                     </select>
@@ -232,9 +366,13 @@ const SystemSettings = () => {
                 </div>
                 <div className="mt-10 flex justify-end">
                   <button
+                    onClick={handleSaveGeneral}
+                    disabled={loadingSettings || savingGeneral}
                     className="relative group overflow-hidden rounded-xl bg-brand-500 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
                   >
-                    <span className="relative z-10">Save Environmental Variables</span>
+                    <span className="relative z-10">
+                      {savingGeneral ? 'Saving…' : 'Save General Settings'}
+                    </span>
                     <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
                   </button>
                 </div>
@@ -466,7 +604,7 @@ const SystemSettings = () => {
                         <div className="relative inline-block animate-in zoom-in-95 duration-200">
                           <div className="p-4 bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 ring-4 ring-brand-500/5">
                             <img
-                              src={logoPreview}
+                              src={resolvedLogoPreview}
                               alt="Logo preview"
                               className="max-h-40 mx-auto rounded-xl"
                             />
@@ -500,9 +638,13 @@ const SystemSettings = () => {
 
                 <div className="flex justify-end pt-8 border-t border-gray-100 dark:border-gray-800">
                   <button
+                    onClick={handleSaveAppearance}
+                    disabled={!logoFile || savingAppearance}
                     className="relative group overflow-hidden rounded-xl bg-brand-500 px-12 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2"
                   >
-                    <span className="relative z-10">Synchronize Visual Branding</span>
+                    <span className="relative z-10">
+                      {savingAppearance ? 'Uploading…' : 'Synchronize Visual Branding'}
+                    </span>
                     <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
                   </button>
                 </div>

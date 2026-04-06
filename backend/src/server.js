@@ -20,9 +20,7 @@ const contactRoutes = require('./routes/contact.routes');
 const instructionRoutes = require('./routes/instruction.routes');
 const roomRoutes = require('./routes/room.routes');
 const reportsRoutes = require('./routes/reports.routes');
-const multer = require('multer');
-const upload = multer({ storage: multer.memoryStorage() });
-
+const systemSettingsRoutes = require('./routes/systemSettings.routes');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -30,7 +28,9 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" } // Allow cross-origin resource sharing
+}));
 
 // CORS configuration
 app.use(cors({
@@ -47,8 +47,19 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Serve static uploads
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// Serve static uploads with CORS headers
+app.use('/uploads', (req, res, next) => {
+  // Set CORS headers for static files
+  res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'http://localhost:5173');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(__dirname, '../uploads'), {
+  setHeaders: (res, path, stat) => {
+    // Additional headers for images
+    res.set('Cache-Control', 'public, max-age=31536000');
+  }
+}));
 
 // API routes
 app.use('/api/auth', authRoutes);
@@ -64,7 +75,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/instruction', instructionRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/reports', reportsRoutes);
-
+app.use('/api/system-settings', systemSettingsRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
