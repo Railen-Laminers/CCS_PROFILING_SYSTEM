@@ -5,10 +5,27 @@ import { Spinner } from '@/components/ui/Skeleton.jsx';
 import EmptyState from '@/components/ui/EmptyState';
 import { parseList } from '@/lib/facultyHelpers';
 
+// Helper to safely render a research item (string or object)
+const formatResearchItem = (item) => {
+    if (!item) return '';
+    if (typeof item === 'string') return item;
+    if (typeof item === 'object') {
+        // Handle object with title, year, status
+        const { title, year, status } = item;
+        let result = title || '';
+        if (year) result += ` (${year})`;
+        if (status) result += ` – ${status}`;
+        return result;
+    }
+    return String(item);
+};
+
 const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserId, handleToggleStatus, togglingUserId }) => {
     const fullName = `${member.user.firstname} ${member.user.lastname}`;
     const initials = member.user.firstname?.[0] || 'F';
-    const research = parseList(member.faculty?.research_projects);
+    let research = parseList(member.faculty?.research_projects);
+    // Ensure each research item is properly formatted
+    research = research.map(formatResearchItem);
     const isActive = member.user.is_active;
 
     const MAX_RESEARCH = 2;
@@ -89,7 +106,7 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
                     </div>
                 </div>
 
-                {/* Research Projects */}
+                {/* Research Projects - FIXED for object items */}
                 <div className="pt-3.5 border-t border-gray-100 dark:border-gray-800">
                     <p className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest mb-2">Research Projects</p>
                     {research.length > 0 ? (
@@ -111,7 +128,7 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
 
             {/* Footer: Actions */}
             <div className="px-4 sm:px-5 pb-5 mt-auto flex gap-2.5">
-                <button 
+                <button
                     onClick={() => navigate(`/faculty/${member.user.id}`)}
                     className="flex-1 h-9 bg-brand-500 hover:bg-brand-400 text-white rounded-[8px] text-[13px] font-bold transition-all active:scale-[0.97] shadow-sm"
                 >
@@ -125,7 +142,7 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
                 >
                     {togglingUserId === member.user.id ? <Spinner className="w-4 h-4" /> : <FiPower className="w-[18px] h-[18px]" />}
                 </button>
-                <button 
+                <button
                     onClick={() => handleEdit(member)}
                     className="w-9 h-9 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-[8px] text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 active:scale-[0.97] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Edit"
@@ -133,7 +150,7 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
                 >
                     <EditIcon className="w-[18px] h-[18px]" />
                 </button>
-                <button 
+                <button
                     onClick={() => handleDelete(member.user.id)}
                     className={`w-9 h-9 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-[8px] active:scale-[0.97] transition-all ${isActive ? 'text-gray-400 cursor-not-allowed' : 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'}`}
                     title={isActive ? 'Must deactivate before deletion' : 'Delete'}
@@ -157,7 +174,7 @@ const FacultyGrid = ({ faculty, loading, navigate, handleEdit, handleDelete, del
 
     if (faculty.length === 0) {
         return (
-            <EmptyState 
+            <EmptyState
                 icon={FiUsers}
                 title="No Faculty Members"
                 description="We couldn't find any faculty members matching your criteria. Try adjusting your search query or filters to find what you're looking for."
@@ -169,9 +186,9 @@ const FacultyGrid = ({ faculty, loading, navigate, handleEdit, handleDelete, del
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {faculty.map((member) => (
-                <FacultyCard 
-                    key={member.user.id} 
-                    member={member} 
+                <FacultyCard
+                    key={member.user.id}
+                    member={member}
                     navigate={navigate}
                     handleEdit={handleEdit}
                     handleDelete={handleDelete}
