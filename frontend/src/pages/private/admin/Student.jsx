@@ -294,6 +294,7 @@ const StudentPage = () => {
         filters,
         sports,
         organizations,
+        skills,
         isSearching,
         handleSearch,
         clearFilters,
@@ -531,6 +532,7 @@ const StudentPage = () => {
                 setTempFilters={setTempFilters}
                 sports={sports}
                 organizations={organizations}
+                skills={skills}
                 clearFilters={clearFilters}
                 searchQuery={searchQuery}
             />

@@ -20,6 +20,7 @@ export const useStudents = () => {
     const [filters, setFilters] = useState({
         sports: searchParams.getAll('sports') || [],
         organizations: searchParams.getAll('organizations') || [],
+        skills: searchParams.getAll('skills') || [],
         year_level: searchParams.get('year_level') || '',
         program: searchParams.get('program') || '',
         gender: searchParams.get('gender') || '',
@@ -31,6 +32,7 @@ export const useStudents = () => {
 
     const [sports, setSports] = useState([]);
     const [organizations, setOrganizations] = useState([]);
+    const [skills, setSkills] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const abortControllerRef = useRef(null);
     const isFirstMount = useRef(true);
@@ -53,6 +55,15 @@ export const useStudents = () => {
         }
     };
 
+    const fetchSkills = async () => {
+        try {
+            const data = await studentProfileAPI.getSkills();
+            setSkills(data || []);
+        } catch (err) {
+            console.error('Failed to fetch skills:', err);
+        }
+    };
+
     const syncUrlParams = useCallback((page, query, currentFilters) => {
         const params = new URLSearchParams();
         if (query) params.set('search', query);
@@ -63,6 +74,7 @@ export const useStudents = () => {
         if (currentFilters.gpa_max) params.set('gpa_max', currentFilters.gpa_max);
         currentFilters.sports.forEach(s => params.append('sports', s));
         currentFilters.organizations.forEach(o => params.append('organizations', o));
+        currentFilters.skills.forEach(skill => params.append('skills', skill));
         if (page > 1) params.set('page', page.toString());
         setSearchParams(params, { replace: true });
     }, [setSearchParams]);
@@ -74,6 +86,7 @@ export const useStudents = () => {
                 search: query || undefined,
                 sports: currentFilters.sports.length > 0 ? currentFilters.sports : undefined,
                 organizations: currentFilters.organizations.length > 0 ? currentFilters.organizations : undefined,
+                skills: currentFilters.skills.length > 0 ? currentFilters.skills : undefined,
                 year_level: currentFilters.year_level ? parseInt(currentFilters.year_level) : undefined,
                 program: currentFilters.program || undefined,
                 gender: currentFilters.gender || undefined,
@@ -134,6 +147,7 @@ export const useStudents = () => {
     useEffect(() => {
         fetchSports();
         fetchOrganizations();
+        fetchSkills();
     }, []);
 
     const handleSearch = () => {
@@ -147,6 +161,7 @@ export const useStudents = () => {
         const emptyFilters = {
             sports: [],
             organizations: [],
+            skills: [],
             year_level: '',
             program: '',
             gender: '',
@@ -167,6 +182,7 @@ export const useStudents = () => {
                 search: searchQuery || undefined,
                 sports: filters.sports.length > 0 ? filters.sports : undefined,
                 organizations: filters.organizations.length > 0 ? filters.organizations : undefined,
+                skills: filters.skills.length > 0 ? filters.skills : undefined,
                 year_level: filters.year_level ? parseInt(filters.year_level) : undefined,
                 program: filters.program || undefined,
                 gender: filters.gender || undefined,
@@ -204,6 +220,7 @@ export const useStudents = () => {
         filters,
         sports,
         organizations,
+        skills,
         isSearching,
         handleSearch,
         clearFilters,
@@ -213,9 +230,11 @@ export const useStudents = () => {
             fetchStudents(currentPage, searchQuery, filters, signal);
             fetchSports();
             fetchOrganizations();
+            fetchSkills();
         },
         fetchSports,
-        fetchOrganizations
+        fetchOrganizations,
+        fetchSkills
     };
 };
 

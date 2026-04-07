@@ -202,8 +202,12 @@ export const studentProfileAPI = {
     const response = await axiosInstance.get('/students/organizations');
     return response.data;
   },
-  getSections: async () => {
-    const response = await axiosInstance.get('/students/sections');
+  getSkills: async () => {
+    const response = await axiosInstance.get('/students/skills');
+    return response.data.skills;
+  },
+  getSections: async (params) => {
+    const response = await axiosInstance.get('/students/sections', { params });
     return response.data.sections;
   },
   searchStudents: async (params) => {

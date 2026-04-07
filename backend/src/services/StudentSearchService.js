@@ -74,6 +74,11 @@ class StudentSearchService {
       query['organizations.clubs'] = { $in: filters.organizations };
     }
 
+    // Filter by skills
+    if (filters.skills && filters.skills.length > 0) {
+      query['sports_activities.skills'] = { $in: filters.skills };
+    }
+
     // Execute query
     let studentsQuery = Student.find(query)
       .populate('user_id')
@@ -158,10 +163,22 @@ class StudentSearchService {
   }
 
   /**
+   * Get distinct skills from all students
+   */
+  static async getDistinctSkills() {
+    const skills = await Student.distinct('sports_activities.skills');
+    return skills.filter(s => s).sort();
+  }
+
+  /**
    * Get distinct sections from all students
    */
-  static async getDistinctSections() {
-    const sections = await Student.distinct('section');
+  static async getDistinctSections(program, year_level) {
+    let query = {};
+    if (program) query.program = program;
+    if (year_level) query.year_level = parseInt(year_level);
+    
+    const sections = await Student.distinct('section', query);
     return sections.filter(s => s).sort();
   }
 

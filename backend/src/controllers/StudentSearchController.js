@@ -45,11 +45,27 @@ class StudentSearchController {
   }
 
   /**
+   * List distinct skills from students' sports_activities JSON
+   */
+  static async skills(req, res, next) {
+    try {
+      const skills = await StudentSearchService.getDistinctSkills();
+
+      res.status(200).json({
+        skills
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * List distinct sections from students
    */
   static async sections(req, res, next) {
     try {
-      const sections = await StudentSearchService.getDistinctSections();
+      const { program, year_level } = req.query;
+      const sections = await StudentSearchService.getDistinctSections(program, year_level);
       res.status(200).json({ sections });
     } catch (error) {
       next(error);

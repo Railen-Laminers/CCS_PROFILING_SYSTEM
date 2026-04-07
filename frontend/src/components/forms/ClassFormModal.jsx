@@ -24,24 +24,40 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [capacityWarning, setCapacityWarning] = useState(null);
+  const [filters, setFilters] = useState({ program: '', year_level: '' });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [cData, fData, sData] = await Promise.all([
+        const [cData, fData] = await Promise.all([
           courseAPI.getCourses(),
-          userAPI.getFaculty(),
-          studentProfileAPI.getSections()
+          userAPI.getFaculty()
         ]);
         setCourses(cData);
         setFaculties(fData);
-        setSections(sData);
       } catch (err) {
         console.error(err);
       }
     };
     if (isOpen) fetchData();
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const fetchSections = async () => {
+      try {
+        const params = {};
+        if (filters.program) params.program = filters.program;
+        if (filters.year_level) params.year_level = filters.year_level;
+        
+        const sData = await studentProfileAPI.getSections(params);
+        setSections(sData);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSections();
+  }, [isOpen, filters.program, filters.year_level]);
 
   useEffect(() => {
     if (initialData) {
@@ -90,6 +106,36 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
     checkCapacity();
   }, [formData.section, roomCapacity]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      setFilters({ program: '', year_level: '' });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (initialData && courses.length > 0) {
+      const courseId = initialData.course_id?._id || initialData.course_id;
+      const course = courses.find(c => c._id === courseId);
+      if (course) {
+        setFilters({ program: course.program || '', year_level: course.year_level || '' });
+      }
+    }
+  }, [initialData, courses]);
+
+  const filteredCourses = courses.filter(c => {
+    if (filters.program && c.program !== filters.program) return false;
+    if (filters.year_level && c.year_level !== parseInt(filters.year_level)) return false;
+    return true;
+  });
+
+
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, course_id: '', section: '' }));
+  };
+
   if (!isOpen) return null;
 
   const handleChange = (e) => {
@@ -120,7 +166,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
     }
   };
 
-  const inputClass = "w-full h-11 pl-11 pr-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all";
+  const inputClass = "w-full h-11 pl-11 pr-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed";
   const labelClass = "text-[12px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-2 block ml-1";
 
   return (
@@ -169,13 +215,39 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2 md:col-span-1">
+              <label className={labelClass}>Program</label>
+              <div className="relative group">
+                <FiBook className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
+                <select name="program" className={`${inputClass} appearance-none`} value={filters.program} onChange={handleFilterChange} required>
+                  <option value="" disabled>Select Program</option>
+                  <option value="BSIT">BS Information Technology</option>
+                  <option value="BSCS">BS Computer Science</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-2 md:col-span-1">
+              <label className={labelClass}>Year Level</label>
+              <div className="relative group">
+                <FiUsers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
+                <select name="year_level" className={`${inputClass} appearance-none`} value={filters.year_level} onChange={handleFilterChange} disabled={!filters.program}>
+                  <option value="">All Year Levels</option>
+                  <option value="1">1st Year</option>
+                  <option value="2">2nd Year</option>
+                  <option value="3">3rd Year</option>
+                  <option value="4">4th Year</option>
+                </select>
+              </div>
+            </div>
+
             <div className="space-y-2">
               <label className={labelClass}>Course</label>
               <div className="relative group">
-                <FiBook className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
-                <select name="course_id" className={`${inputClass} appearance-none`} value={formData.course_id} onChange={handleChange} required>
+                <FiBook className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
+                <select name="course_id" className={`${inputClass} appearance-none`} value={formData.course_id} onChange={handleChange} required disabled={!filters.program}>
                   <option value="" disabled>Select Course</option>
-                  {courses.map(c => (
+                  {filteredCourses.map(c => (
                     <option key={c._id} value={c._id}>{c.course_code} - {c.course_title}</option>
                   ))}
                 </select>
@@ -185,8 +257,8 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
             <div className="space-y-2">
               <label className={labelClass}>Instructor</label>
               <div className="relative group">
-                <FiUsers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
-                <select name="instructor_id" className={`${inputClass} appearance-none`} value={formData.instructor_id} onChange={handleChange} required>
+                <FiUsers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
+                <select name="instructor_id" className={`${inputClass} appearance-none`} value={formData.instructor_id} onChange={handleChange} required disabled={!filters.program}>
                   <option value="" disabled>Select Faculty</option>
                   {faculties.map(f => (
                     <option key={f.faculty?._id} value={f.faculty?._id}>{f.user?.firstname} {f.user?.lastname}</option>
@@ -198,8 +270,8 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
             <div className="space-y-2">
               <label className={labelClass}>Section</label>
               <div className="relative group">
-                <FiUsers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
-                <select name="section" className={`${inputClass} appearance-none`} value={formData.section} onChange={handleChange} required>
+                <FiUsers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
+                <select name="section" className={`${inputClass} appearance-none`} value={formData.section} onChange={handleChange} required disabled={!filters.program}>
                   <option value="" disabled>Select Section</option>
                   {sections.map((s, idx) => (
                     <option key={idx} value={s}>{s}</option>
@@ -211,7 +283,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
             <div className="space-y-2">
               <label className={labelClass}>Class Date</label>
               <div className="relative group">
-                <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
+                <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
                 <input 
                   type="date" 
                   name="schedule.date" 
@@ -219,6 +291,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
                   value={formData.schedule.date} 
                   onChange={handleChange} 
                   required 
+                  disabled={!filters.program}
                 />
               </div>
             </div>
@@ -226,22 +299,22 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
             <div className="space-y-2">
               <label className={labelClass}>Start Time</label>
               <div className="relative group">
-                <FiClock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
-                <input type="time" name="schedule.startTime" className={inputClass} value={formData.schedule.startTime} onChange={handleChange} required />
+                <FiClock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
+                <input type="time" name="schedule.startTime" className={inputClass} value={formData.schedule.startTime} onChange={handleChange} required disabled={!filters.program} />
               </div>
             </div>
 
             <div className="space-y-2">
               <label className={labelClass}>End Time</label>
               <div className="relative group">
-                <FiClock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
-                <input type="time" name="schedule.endTime" className={inputClass} value={formData.schedule.endTime} onChange={handleChange} required />
+                <FiClock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
+                <input type="time" name="schedule.endTime" className={inputClass} value={formData.schedule.endTime} onChange={handleChange} required disabled={!filters.program} />
               </div>
             </div>
 
             {!initialData && (
               <>
-                <div className="md:col-span-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <div className={`md:col-span-2 pt-4 border-t border-gray-100 dark:border-gray-800 ${!filters.program ? 'opacity-50 pointer-events-none' : ''}`}>
                   <label className="flex items-center gap-3 cursor-pointer group w-fit">
                     <div className={`w-10 h-6 rounded-full p-1 transition-all duration-300 ${formData.repeat_weekly ? 'bg-brand-500' : 'bg-gray-200 dark:bg-zinc-800'} relative`}>
                       <div className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${formData.repeat_weekly ? 'translate-x-4' : 'translate-x-0'} shadow-sm`} />
@@ -252,6 +325,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
                       className="hidden" 
                       checked={formData.repeat_weekly} 
                       onChange={(e) => setFormData(prev => ({ ...prev, repeat_weekly: e.target.checked }))} 
+                      disabled={!filters.program}
                     />
                     <span className="text-sm font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-widest">Repeat every week</span>
                   </label>
@@ -261,7 +335,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
                   <div className="md:col-span-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                     <label className={labelClass}>Repeat Until</label>
                     <div className="relative group">
-                      <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
+                      <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
                       <input 
                         type="date" 
                         name="until_date" 
@@ -269,6 +343,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
                         value={formData.until_date} 
                         onChange={handleChange} 
                         required 
+                        disabled={!filters.program}
                       />
                     </div>
                     <p className="text-[11px] text-gray-500 dark:text-zinc-500 ml-1">
@@ -283,7 +358,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
 
           <div className="flex items-center gap-4 mt-10">
             <Button type="button" variant="ghost" onClick={onClose} className="flex-1 h-12 rounded-xl font-bold uppercase tracking-widest text-[11px]">Cancel</Button>
-            <Button type="submit" disabled={loading} className="flex-[2] h-12 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <Button type="submit" disabled={loading || !filters.program} className="flex-[2] h-12 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none">
               {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><FiSave className="w-4 h-4" /> Save Schedule</>}
             </Button>
           </div>

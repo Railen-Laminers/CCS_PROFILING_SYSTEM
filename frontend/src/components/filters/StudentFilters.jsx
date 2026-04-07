@@ -11,6 +11,7 @@ const StudentFilters = ({
     setTempFilters, 
     sports, 
     organizations, 
+    skills,
     clearFilters,
     searchQuery
 }) => {
@@ -19,6 +20,7 @@ const StudentFilters = ({
     const hasActiveFilters = searchQuery || 
         tempFilters.sports.length > 0 || 
         tempFilters.organizations.length > 0 || 
+        tempFilters.skills.length > 0 ||
         tempFilters.year_level || 
         tempFilters.program || 
         tempFilters.gender || 
@@ -27,6 +29,7 @@ const StudentFilters = ({
 
     const filterCount = (tempFilters.sports.length || 0) + 
         (tempFilters.organizations.length || 0) + 
+        (tempFilters.skills.length || 0) +
         (tempFilters.year_level ? 1 : 0) + 
         (tempFilters.program ? 1 : 0) + 
         (tempFilters.gender ? 1 : 0) + 
@@ -113,6 +116,22 @@ const StudentFilters = ({
                             >
                                 {organizations.map((org, idx) => (
                                     <option key={idx} value={org}>{org}</option>
+                                ))}
+                            </select>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Hold Ctrl/Cmd to select multiple</p>
+                        </div>
+
+                        {/* Skills Filter */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Skills</label>
+                            <select 
+                                multiple
+                                value={tempFilters.skills}
+                                onChange={(e) => setTempFilters({...tempFilters, skills: Array.from(e.target.selectedOptions, option => option.value)})}
+                                className="w-full h-[80px] px-3 py-2 bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 rounded-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+                            >
+                                {skills?.map((skill, idx) => (
+                                    <option key={idx} value={skill}>{skill}</option>
                                 ))}
                             </select>
                             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Hold Ctrl/Cmd to select multiple</p>
