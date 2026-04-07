@@ -30,6 +30,7 @@ const DEFAULT_FORM_DATA = {
     sportsPlayed: '',
     athleticAchievements: '',
     competitions: '',
+    skills: '',
     clubs: '',
     studentCouncil: '',
     leadershipRoles: '',
@@ -69,6 +70,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                     formattedData.sportsPlayed = stringifyArray(formattedData.sports_activities.sportsPlayed);
                     formattedData.athleticAchievements = stringifyArray(formattedData.sports_activities.achievements);
                     formattedData.competitions = stringifyArray(formattedData.sports_activities.competitions);
+                    formattedData.skills = stringifyArray(formattedData.sports_activities.skills);
                 }
 
                 if (formattedData.organizations) {
@@ -217,7 +219,8 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 sports_activities: {
                     sportsPlayed: typeof formData.sportsPlayed === 'string' ? formData.sportsPlayed.split(',').map(s => s.trim()).filter(Boolean) : [],
                     achievements: typeof formData.athleticAchievements === 'string' ? formData.athleticAchievements.split(',').map(s => s.trim()).filter(Boolean) : [],
-                    competitions: typeof formData.competitions === 'string' ? formData.competitions.split(',').map(s => s.trim()).filter(Boolean) : []
+                    competitions: typeof formData.competitions === 'string' ? formData.competitions.split(',').map(s => s.trim()).filter(Boolean) : [],
+                    skills: typeof formData.skills === 'string' ? formData.skills.split(',').map(s => s.trim()).filter(Boolean) : []
                 },
                 organizations: {
                     clubs: typeof formData.clubs === 'string' ? formData.clubs.split(',').map(s => s.trim()).filter(Boolean) : [],
@@ -512,9 +515,8 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
                                 {renderField('Sports Played', 'sportsPlayed', 'text', false, null, 'Separate with commas', 'e.g., Basketball, Volleyball')}
                                 {renderField('Athletic Achievements', 'athleticAchievements', 'text', false, null, 'Separate with commas', 'e.g., MVP 2023, Gold Medal')}
-                                <div className="md:col-span-2">
-                                    {renderField('Competitions Joined', 'competitions', 'text', false, null, 'Separate with commas', 'e.g., Intramurals 2023')}
-                                </div>
+                                {renderField('Competitions Joined', 'competitions', 'text', false, null, 'Separate with commas', 'e.g., Intramurals 2023')}
+                                {renderField('Skills', 'skills', 'text', false, null, 'Separate with commas', 'e.g., Programming, Writing, Designing')}
                             </div>
                         </div>
 

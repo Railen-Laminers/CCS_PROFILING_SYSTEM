@@ -338,6 +338,7 @@ const StudentDetails = () => {
                                         <div><SectionSubhead>Sports Played</SectionSubhead>{renderTags(profile?.sports_activities, "sportsPlayed", "orange")}</div>
                                         <div><SectionSubhead>Athletic Achievements</SectionSubhead>{renderTags(profile?.sports_activities, "achievements", "yellow")}</div>
                                         <div><SectionSubhead>Competitions Joined</SectionSubhead><div className="mt-1"><BulletList items={profile?.sports_activities?.competitions} /></div></div>
+                                        <div><SectionSubhead>Skills</SectionSubhead>{renderTags(profile?.sports_activities, "skills", "green")}</div>
                                     </div>
                                 </div>
                             </div>
