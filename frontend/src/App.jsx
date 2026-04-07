@@ -20,8 +20,16 @@ import Reports from './pages/private/admin/Reports';
 import Scheduling from './pages/private/admin/Scheduling';
 import SchedulingRoomDetail from './pages/private/admin/SchedulingRoomDetail';
 import SystemSettings from './pages/private/SystemSettings';
+import StudentDashboard from './pages/private/student/Dashboard';
+import MyEvents from './pages/private/student/MyEvents';
+import MySchedule from './pages/private/student/MySchedule';
+import MyCurriculum from './pages/private/student/MyCurriculum';
+import MyDetails from './pages/private/student/MyDetails';
+import FacultyDashboard from './pages/private/faculty/Dashboard';
+import FacultyMySchedule from './pages/private/faculty/MySchedule';
+import FacultyMyStudents from './pages/private/faculty/MyStudents';
+import FacultyMyDetails from './pages/private/faculty/MyDetails';
 
-// Loading component using the accent color
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen bg-gray-50">
     <div className="relative">
@@ -31,8 +39,25 @@ const LoadingSpinner = () => (
   </div>
 );
 
+// Wrapper component that redirects to role-based dashboard
+const RoleBasedDashboard = () => {
+  const { user } = useAuth();
+  
+  if (!user) return <Navigate to="/login" replace />;
+  
+  switch (user.role) {
+    case 'student':
+      return <StudentDashboard />;
+    case 'faculty':
+      return <FacultyDashboard />;
+    case 'admin':
+    default:
+      return <Dashboard />;
+  }
+};
+
 function AppContent() {
-  const { loading } = useAuth(); // Assume AuthContext provides a loading state
+  const { loading } = useAuth();
 
   if (loading) {
     return <LoadingSpinner />;
@@ -58,14 +83,126 @@ function AppContent() {
         }
       />
 
-      {/* Protected Routes */}
+      {/* Main Dashboard - redirects based on role */}
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
             <DashboardLayout>
-              <Dashboard />
+              <RoleBasedDashboard />
             </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Student-specific routes */}
+      <Route
+        path="/student/dashboard"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <DashboardLayout>
+                <StudentDashboard />
+              </DashboardLayout>
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/my-events"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <DashboardLayout>
+                <MyEvents />
+              </DashboardLayout>
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/my-schedule"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <DashboardLayout>
+                <MySchedule />
+              </DashboardLayout>
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/my-curriculum"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <DashboardLayout>
+                <MyCurriculum />
+              </DashboardLayout>
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/my-details"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <DashboardLayout>
+                <MyDetails />
+              </DashboardLayout>
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Faculty-specific routes */}
+      <Route
+        path="/faculty/dashboard"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['faculty']}>
+              <DashboardLayout>
+                <FacultyDashboard />
+              </DashboardLayout>
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/faculty/my-schedule"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['faculty']}>
+              <DashboardLayout>
+                <FacultyMySchedule />
+              </DashboardLayout>
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/faculty/my-students"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['faculty']}>
+              <DashboardLayout>
+                <FacultyMyStudents />
+              </DashboardLayout>
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/faculty/my-details"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['faculty']}>
+              <DashboardLayout>
+                <FacultyMyDetails />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -75,9 +212,11 @@ function AppContent() {
         path="/students"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <StudentPage />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <StudentPage />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -85,9 +224,11 @@ function AppContent() {
         path="/students/:id"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <StudentDetails />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <StudentDetails />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -95,9 +236,11 @@ function AppContent() {
         path="/faculty"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <FacultyPage />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <FacultyPage />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -105,9 +248,11 @@ function AppContent() {
         path="/faculty/:id"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <FacultyDetails />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <FacultyDetails />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -116,9 +261,11 @@ function AppContent() {
         path="/events"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <EventsPage />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <EventsPage />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -127,9 +274,11 @@ function AppContent() {
         path="/instruction"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <InstructionPage />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <InstructionPage />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -138,9 +287,11 @@ function AppContent() {
         path="/admin/instruction/course/:id"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <CourseDetail />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <CourseDetail />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -149,9 +300,11 @@ function AppContent() {
         path="/reports"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <Reports />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <Reports />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -160,9 +313,11 @@ function AppContent() {
         path="/scheduling"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <Scheduling />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <Scheduling />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -171,9 +326,11 @@ function AppContent() {
         path="/scheduling/room/:id"
         element={
           <ProtectedRoute>
-            <DashboardLayout>
-              <SchedulingRoomDetail />
-            </DashboardLayout>
+            <RoleBasedRoute allowedRoles={['admin']}>
+              <DashboardLayout>
+                <SchedulingRoomDetail />
+              </DashboardLayout>
+            </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
@@ -198,7 +355,7 @@ function AppContent() {
         element={
           <ProtectedRoute>
             <DashboardLayout>
-              <Dashboard />
+              <RoleBasedDashboard />
             </DashboardLayout>
           </ProtectedRoute>
         }

@@ -38,12 +38,12 @@ export const RoleBasedRoute = ({ children, allowedRoles }) => {
   }
 
   if (!allowedRoles.includes(user?.role)) {
-    return (
-      <div className="access-denied">
-        <h2>Access Denied</h2>
-        <p>You don't have permission to access this page.</p>
-      </div>
-    );
+    const redirectPath = user?.role === 'student' 
+      ? '/student/dashboard' 
+      : user?.role === 'faculty' 
+        ? '/faculty/dashboard' 
+        : '/dashboard';
+    return <Navigate to={redirectPath} replace />;
   }
 
   return children;
@@ -62,7 +62,8 @@ export const PublicRoute = ({ children }) => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    const redirectPath = '/dashboard';
+    return <Navigate to={redirectPath} replace />;
   }
 
   return children;
