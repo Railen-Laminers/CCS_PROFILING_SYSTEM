@@ -76,6 +76,26 @@ export function ThemeProvider({ children }) {
     return () => controller.abort();
   }, []);
 
+  // Sync browser tab title with system settings title
+  useEffect(() => {
+    document.title = systemTitle?.trim() || 'CCS Comprehensive Profiling System';
+  }, [systemTitle]);
+
+  // Sync favicon with uploaded system logo (fallback to default static icon)
+  useEffect(() => {
+    const defaultIcon = '/CCS_logo.png';
+    const iconHref = logoUrl || defaultIcon;
+
+    let favicon = document.querySelector("link[rel='icon']");
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.setAttribute('rel', 'icon');
+      document.head.appendChild(favicon);
+    }
+
+    favicon.setAttribute('href', iconHref);
+  }, [logoUrl]);
+
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
