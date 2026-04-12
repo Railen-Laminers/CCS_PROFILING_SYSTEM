@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiBell, FiSun, FiMoon, FiUser } from 'react-icons/fi';
+import { FiSearch, FiBell, FiSun, FiMoon, FiUser, FiMenu } from 'react-icons/fi';
 import { Button } from '@/components/ui/Button';
 
-export const Header = () => {
+export const Header = ({ onMenuClick }) => {
   const { user, logout, isProcessing } = useAuth();
   const { theme, toggleTheme, systemTitle, logoUrl } = useTheme();
   const navigate = useNavigate();
@@ -31,23 +31,35 @@ export const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Get profile picture URL (could be a cloud URL or Base64 string)
   const profilePicture = user?.profile_picture;
 
   return (
     <header className="bg-white dark:bg-[#1E1E1E] backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 h-[76px] flex justify-between items-center sticky top-0 z-40 transition-colors duration-300 shadow-sm relative flex-shrink-0">
-      <div className="flex items-center gap-2">
-        {logoUrl ? (
-          <img
-            src={logoUrl}
-            alt="System logo"
-            className="h-9 w-9 rounded-xl object-contain bg-white/60 dark:bg-zinc-900/30 border border-gray-200 dark:border-gray-800 p-1"
-          />
-        ) : null}
-        <h1 className="text-xl font-bold text-gray-800 dark:text-zinc-100 tracking-tight">
-          {systemTitle || 'CCS Comprehensive Profiling System'}
-        </h1>
+      <div className="flex items-center gap-4">
+        {/* Hamburger button – only visible on mobile/tablet */}
+        <button
+          onClick={onMenuClick}
+          className="lg:hidden p-2 -ml-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          aria-label="Open menu"
+        >
+          <FiMenu className="w-5 h-5" />
+        </button>
+
+        {/* Logo and title */}
+        <div className="flex items-center gap-2">
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt="System logo"
+              className="h-9 w-9 rounded-xl object-contain bg-white/60 dark:bg-zinc-900/30 border border-gray-200 dark:border-gray-800 p-1"
+            />
+          ) : null}
+          <h1 className="text-xl font-bold text-gray-800 dark:text-zinc-100 tracking-tight">
+            {systemTitle || 'CCS Comprehensive Profiling System'}
+          </h1>
+        </div>
       </div>
+
       <div className="flex items-center gap-4">
         {/* Search Button */}
         <Button
@@ -80,8 +92,7 @@ export const Header = () => {
             title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
             <div
-              className={`absolute w-[14px] h-[14px] bg-white dark:bg-slate-300 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${theme === 'dark' ? 'translate-x-[14px]' : 'translate-x-0'
-                }`}
+              className={`absolute w-[14px] h-[14px] bg-white dark:bg-slate-300 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${theme === 'dark' ? 'translate-x-[14px]' : 'translate-x-0'}`}
             />
           </button>
           <FiMoon className={`w-5 h-5 transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
@@ -108,7 +119,6 @@ export const Header = () => {
           {dropdownOpen && (
             <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-surface-secondary shadow-xl border border-gray-100 dark:border-border-dark py-1 z-50 overflow-hidden rounded-2xl ring-1 ring-black ring-opacity-5 origin-top-right transition-all animate-in fade-in zoom-in-95 duration-200">
               <div className="px-4 py-3 border-b border-gray-100 dark:border-border-dark bg-gray-50/50 dark:bg-surface-dark/50 flex items-center gap-3">
-                {/* Small avatar in dropdown */}
                 {profilePicture ? (
                   <img
                     src={profilePicture}
@@ -139,6 +149,16 @@ export const Header = () => {
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800/60 transition-colors duration-150"
                 >
                   Profile
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    navigate('/settings');
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800/60 transition-colors duration-150 flex items-center gap-2"
+                >
+                  Settings
                 </button>
                 <button
                   onClick={handleLogout}
