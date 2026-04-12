@@ -31,9 +31,11 @@ export const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Get profile picture URL (could be a cloud URL or Base64 string)
+  const profilePicture = user?.profile_picture;
+
   return (
     <header className="bg-white dark:bg-[#1E1E1E] backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 h-[76px] flex justify-between items-center sticky top-0 z-40 transition-colors duration-300 shadow-sm relative flex-shrink-0">
-      {/* Decorative subtle top border/glow if needed, but no inner ring since it's flat now */}
       <div className="flex items-center gap-2">
         {logoUrl ? (
           <img
@@ -48,7 +50,7 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-4">
         {/* Search Button */}
-        <Button 
+        <Button
           variant="ghost"
           size="icon"
           className="text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl"
@@ -58,14 +60,13 @@ export const Header = () => {
         </Button>
 
         {/* Notifications Button */}
-        <Button 
+        <Button
           variant="ghost"
           size="icon"
           className="relative text-gray-500 dark:text-zinc-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl transition-colors"
           aria-label="Notifications"
         >
           <FiBell className="w-5 h-5 stroke-[2]" />
-          {/* Notification Badge */}
           <span className="absolute top-2 right-2 block w-[6px] h-[6px] bg-brand-500 rounded-full border-[1.5px] border-white dark:border-surface-dark shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></span>
         </Button>
 
@@ -78,11 +79,9 @@ export const Header = () => {
             aria-label="Toggle theme"
             title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
-            {/* Sliding indicator */}
             <div
-              className={`absolute w-[14px] h-[14px] bg-white dark:bg-slate-300 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${
-                theme === 'dark' ? 'translate-x-[14px]' : 'translate-x-0'
-              }`}
+              className={`absolute w-[14px] h-[14px] bg-white dark:bg-slate-300 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${theme === 'dark' ? 'translate-x-[14px]' : 'translate-x-0'
+                }`}
             />
           </button>
           <FiMoon className={`w-5 h-5 transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
@@ -93,23 +92,54 @@ export const Header = () => {
           <Button
             variant="primary"
             size="icon"
-            className="w-8 h-8 rounded-full shadow-sm"
+            className="w-8 h-8 rounded-full shadow-sm overflow-hidden"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
-            {/* Person silhouette avatar */}
-            <FiUser className="w-4 h-4 stroke-[2.5]" />
+            {profilePicture ? (
+              <img
+                src={profilePicture}
+                alt={`${user?.firstname} ${user?.lastname}`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <FiUser className="w-4 h-4 stroke-[2.5]" />
+            )}
           </Button>
           {dropdownOpen && (
             <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-surface-secondary shadow-xl border border-gray-100 dark:border-border-dark py-1 z-50 overflow-hidden rounded-2xl ring-1 ring-black ring-opacity-5 origin-top-right transition-all animate-in fade-in zoom-in-95 duration-200">
-              <div className="px-4 py-3 border-b border-gray-100 dark:border-border-dark bg-gray-50/50 dark:bg-surface-dark/50">
-                <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 truncate">
-                  {user?.firstname} {user?.lastname}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5 capitalize">
-                  {user?.role || 'User'}
-                </p>
+              <div className="px-4 py-3 border-b border-gray-100 dark:border-border-dark bg-gray-50/50 dark:bg-surface-dark/50 flex items-center gap-3">
+                {/* Small avatar in dropdown */}
+                {profilePicture ? (
+                  <img
+                    src={profilePicture}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                    <FiUser className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 truncate">
+                    {user?.firstname} {user?.lastname}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5 capitalize">
+                    {user?.role || 'User'}
+                  </p>
+                </div>
               </div>
               <div className="py-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    navigate('/profile');
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800/60 transition-colors duration-150"
+                >
+                  Profile
+                </button>
                 <button
                   onClick={handleLogout}
                   disabled={isProcessing}

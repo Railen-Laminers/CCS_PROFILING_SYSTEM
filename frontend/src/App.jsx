@@ -20,6 +20,7 @@ import Reports from './pages/private/admin/Reports';
 import Scheduling from './pages/private/admin/Scheduling';
 import SchedulingRoomDetail from './pages/private/admin/SchedulingRoomDetail';
 import SystemSettings from './pages/private/SystemSettings';
+import Profile from './pages/private/Profile';
 import StudentDashboard from './pages/private/student/Dashboard';
 import MyEvents from './pages/private/student/MyEvents';
 import MySchedule from './pages/private/student/MySchedule';
@@ -341,6 +342,17 @@ function AppContent() {
           <ProtectedRoute>
             <DashboardLayout>
               <SystemSettings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <Profile />
             </DashboardLayout>
           </ProtectedRoute>
         }

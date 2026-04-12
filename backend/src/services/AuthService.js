@@ -99,6 +99,64 @@ expiresIn: '7d'
   }
 
   /**
+   * Update the authenticated user's own profile (user model fields + optional password change).
+   * Does not allow changing user_id, role, or is_active from this endpoint.
+   */
+  static async updateProfile(userId, body) {
+    const user = await User.findById(userId).select('+password');
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    const allowed = [
+      'firstname',
+      'middlename',
+      'lastname',
+      'email',
+      'contact_number',
+      'gender',
+      'address',
+      'birth_date',
+      'profile_picture'
+    ];
+
+    for (const key of allowed) {
+      if (body[key] === undefined) continue;
+      if (key === 'birth_date' && (body[key] === '' || body[key] === null)) {
+        user.birth_date = null;
+        continue;
+      }
+      if (key === 'middlename' && body[key] === '') {
+        user.middlename = null;
+        continue;
+      }
+      if (key === 'profile_picture' && body[key] === '') {
+        user.profile_picture = null;
+        continue;
+      }
+      user[key] = body[key];
+    }
+
+    if (body.newPassword) {
+      if (!body.currentPassword) {
+        throw new Error('Current password is required to change password.');
+      }
+      const isMatch = await user.comparePassword(body.currentPassword);
+      if (!isMatch) {
+        throw new Error('Current password is incorrect.');
+      }
+      if (String(body.newPassword).length < 6) {
+        throw new Error('New password must be at least 6 characters.');
+      }
+      user.password = body.newPassword;
+    }
+
+    await user.save();
+    const fresh = await User.findById(userId);
+    return await this.formatUserWithProfile(fresh);
+  }
+
+  /**
    * Send password reset token to email
    */
   static async forgotPassword(email) {

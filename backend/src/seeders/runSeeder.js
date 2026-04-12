@@ -42,6 +42,12 @@ const seedData = async () => {
 
     console.log('Data cleared...');
 
+    // -----------------------------------------------------------------
+    // IMPORTANT: Do NOT hash passwords manually.
+    // The User model's pre('save') middleware will automatically hash
+    // the plain text password.
+    // -----------------------------------------------------------------
+
     // Create Admin User
     const admin = await User.create({
       firstname: 'Admin',
@@ -61,7 +67,8 @@ const seedData = async () => {
     console.log('Admin user created...');
 
     // Create 5 Students with skills, sports, and other data
-    const studentUsers = [
+    // NOTE: Using User.create() (not insertMany) so that pre('save') middleware runs
+    const studentUsersData = [
       {
         firstname: 'John Michael',
         middlename: 'Rodriguez',
@@ -134,7 +141,8 @@ const seedData = async () => {
       }
     ];
 
-    const createdStudentUsers = await User.insertMany(studentUsers);
+    // ✅ FIX: Use create() instead of insertMany() to trigger pre('save') hooks
+    const createdStudentUsers = await User.create(studentUsersData);
 
     const studentProfiles = [
       {
@@ -243,7 +251,7 @@ const seedData = async () => {
     console.log('5 Students created with skills, sports, and other data...');
 
     // Create Faculty with all fields populated
-    const facultyUser = await User.create({
+    const facultyUserData = {
       firstname: 'Dr. Elena',
       middlename: 'Perez',
       lastname: 'Villanueva',
@@ -256,7 +264,8 @@ const seedData = async () => {
       gender: 'female',
       address: '999 University Avenue, Manila',
       is_active: true
-    });
+    };
+    const facultyUser = await User.create(facultyUserData);
 
     await Faculty.create({
       user_id: facultyUser._id,
@@ -275,7 +284,7 @@ const seedData = async () => {
       ]
     });
     console.log('Faculty created with all fields populated...');
-    
+
     // Create IT-related courses (Curriculum)
     const courseData = [
       { units: 3, course_code: 'IT 101', course_title: 'Introduction to Computing', year_level: 1, semester: 1, syllabus: 'Week 1: History of Computing\nWeek 2: Hardware Basics\nWeek 3: Operating Systems Overview' },
@@ -290,10 +299,7 @@ const seedData = async () => {
     ];
 
     await Course.insertMany(courseData);
-
     console.log('Curriculum Courses created...');
-
-
 
     // Create sample events
     await Event.create({
@@ -332,7 +338,7 @@ const seedData = async () => {
     });
 
     console.log('Events created...');
-    
+
     console.log('Seed data completed successfully!');
     process.exit(0);
   } catch (error) {

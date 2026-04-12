@@ -58,6 +58,10 @@ export const authAPI = {
     const response = await axiosInstance.get('/auth/me', { signal });
     return response.data.user;
   },
+  updateProfile: async (payload) => {
+    const response = await axiosInstance.put('/auth/profile', payload);
+    return response.data.user;
+  },
   forgotPassword: async (email) => {
     const response = await axiosInstance.post('/auth/forgot-password', { email });
     return response.data;
