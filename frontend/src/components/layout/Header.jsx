@@ -4,6 +4,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiBell, FiSun, FiMoon, FiUser, FiMenu } from 'react-icons/fi';
 import { Button } from '@/components/ui/Button';
+import { useToast } from '@/contexts/ToastContext';
 
 export const Header = ({ onMenuClick }) => {
   const { user, logout, isProcessing } = useAuth();
@@ -11,13 +12,16 @@ export const Header = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const { showToast } = useToast();
 
   const handleLogout = async () => {
     try {
       await logout();
+      showToast('Logged out successfully', 'success');
       navigate('/login');
     } catch (err) {
       console.error('Logout error:', err);
+      showToast(err.message || 'Logout failed. Please try again.', 'error');
     }
   };
 

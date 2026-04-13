@@ -4,6 +4,7 @@ import {
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiAlertCircle,
     FiAward, FiActivity, FiUsers, FiAlertTriangle, FiCalendar, FiFileText, FiUser, FiMapPin
 } from 'react-icons/fi';
+
 import StudentFormModal from '../../../components/forms/StudentFormModal';
 import StudentReport from '../../../components/reports/StudentReport';
 import { useStudentDetails } from '../../../hooks/useStudentDetails';
@@ -34,7 +35,7 @@ const formatYearLevel = (level) => {
 const StudentDetails = () => {
     const navigate = useNavigate();
     const {
-        student,
+        student: rawStudent,
         loading,
         error,
         activeTab,
@@ -57,6 +58,12 @@ const StudentDetails = () => {
         showToast,
     } = useStudentDetails();
 
+    // Flatten the student data if it comes as { user, student }
+    const student = rawStudent?.user ? {
+        ...rawStudent.user,
+        student: rawStudent.student,
+    } : rawStudent;
+
     // ── Loading State ────────────────────────────────────────────
     if (loading) {
         return (
@@ -70,7 +77,7 @@ const StudentDetails = () => {
     if (error) {
         return (
             <div className="max-w-7xl mx-auto py-12">
-                <button 
+                <button
                     onClick={() => navigate('/students')}
                     className="flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-2 transition-colors"
                 >
@@ -100,7 +107,7 @@ const StudentDetails = () => {
     return (
         <div className="max-w-7xl mx-auto pb-12 animate-in fade-in duration-300">
             {/* Header / Back */}
-            <button 
+            <button
                 onClick={() => navigate('/students')}
                 className="group flex items-center gap-2.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-6 transition-all duration-200"
             >
@@ -115,9 +122,18 @@ const StudentDetails = () => {
                 <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/5 pointer-events-none"></div>
                 <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6 relative z-10">
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                        <div className="w-[120px] h-[120px] rounded-[32px] bg-gradient-to-br from-violet-500 to-brand-400 text-white flex items-center justify-center text-5xl font-bold shadow-xl flex-shrink-0 ring-4 ring-white dark:ring-[#1E1E1E] hover:rotate-3 transition-transform duration-300">
-                            {initials}
-                        </div>
+                        {/* Profile Picture or Initials */}
+                        {student.profile_picture ? (
+                            <img
+                                src={student.profile_picture}
+                                alt={fullName}
+                                className="w-[120px] h-[120px] rounded-[32px] object-cover shadow-xl flex-shrink-0 ring-4 ring-white dark:ring-[#1E1E1E] hover:rotate-3 transition-transform duration-300"
+                            />
+                        ) : (
+                            <div className="w-[120px] h-[120px] rounded-[32px] bg-gradient-to-br from-violet-500 to-brand-400 text-white flex items-center justify-center text-5xl font-bold shadow-xl flex-shrink-0 ring-4 ring-white dark:ring-[#1E1E1E] hover:rotate-3 transition-transform duration-300">
+                                {initials}
+                            </div>
+                        )}
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1 tracking-tight">{fullName}</h1>
                             <p className="text-base font-medium text-gray-500 dark:text-gray-400 mb-4">{student.user_id}</p>
@@ -132,34 +148,33 @@ const StudentDetails = () => {
                                         {yearSection}
                                     </span>
                                 )}
-                                <span className={`px-2.5 py-1 rounded-md text-xs font-bold border ${
-                                    isActive
+                                <span className={`px-2.5 py-1 rounded-md text-xs font-bold border ${isActive
                                         ? 'bg-[#00C950] dark:bg-green-500/10 text-[#fff] dark:text-green-400 border-green-200 dark:border-green-500/20'
                                         : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'
-                                }`}>
+                                    }`}>
                                     {isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
                             <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-6 text-sm text-gray-600 dark:text-gray-400 font-normal">
                                 <div className="flex items-center gap-2.5">
-                                    <FiMail className="w-4 h-4 text-[#F97316]" /> 
+                                    <FiMail className="w-4 h-4 text-[#F97316]" />
                                     <span>{student.email}</span>
                                 </div>
                                 <div className="flex items-center gap-2.5">
-                                    <FiPhone className="w-4 h-4 text-[#F97316]" /> 
+                                    <FiPhone className="w-4 h-4 text-[#F97316]" />
                                     <span>{student.contact_number || 'Not Provided'}</span>
                                 </div>
                                 <div className="flex items-center gap-2.5">
-                                    <FiMapPin className="w-4 h-4 text-[#F97316]" /> 
+                                    <FiMapPin className="w-4 h-4 text-[#F97316]" />
                                     <span>{student.address || 'Not Provided'}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
-                        <Button 
-                            variant="secondary" 
+                        <Button
+                            variant="secondary"
                             className="flex-1 md:flex-none gap-2"
                             onClick={handlePrintRequest}
                         >
@@ -179,8 +194,8 @@ const StudentDetails = () => {
                         key={tab}
                         onClick={() => handleTabChange(tab)}
                         className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-[1.25rem] relative z-10 focus:outline-none ${activeTab === tab
-                                ? 'bg-white dark:bg-[#1E1E1E] text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10 backdrop-blur-md'
-                                : 'text-zinc-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-[#2C2C2C]'
+                            ? 'bg-white dark:bg-[#1E1E1E] text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10 backdrop-blur-md'
+                            : 'text-zinc-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-[#2C2C2C]'
                             }`}
                     >
                         {tab}
@@ -249,11 +264,11 @@ const StudentDetails = () => {
                                         {academicError}
                                     </div>
                                 ) : academicRecords.length === 0 ? (
-                                    <EmptyState 
+                                    <EmptyState
                                         size="md"
-                                        icon={FiFileText} 
-                                        title="No Academic Records" 
-                                        description="There are no academic records on file for this student." 
+                                        icon={FiFileText}
+                                        title="No Academic Records"
+                                        description="There are no academic records on file for this student."
                                     />
                                 ) : (
                                     <div className="space-y-6">
@@ -470,23 +485,23 @@ const StudentDetails = () => {
             </Card>
 
             {/* Edit Profile Modal */}
-            <StudentFormModal 
-                isOpen={modalOpen} 
-                onClose={() => setModalOpen(false)} 
-                mode="edit" 
+            <StudentFormModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                mode="edit"
                 initialData={modalData}
                 userId={student.id}
                 onSuccess={() => {
                     fetchStudent();
                     showToast('Student profile updated successfully.', 'success');
-                }} 
+                }}
             />
 
             {/* Hidden Printable Component */}
             <div className="print:block hidden overflow-hidden h-0 w-0 absolute left-0 top-0">
-                <StudentReport 
-                    ref={componentRef} 
-                    student={student} 
+                <StudentReport
+                    ref={componentRef}
+                    student={student}
                     academicRecords={academicRecords}
                 />
             </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiX, FiSave, FiEye, FiEyeOff } from 'react-icons/fi';
 import { userAPI } from '../../services/api';
-
 import { Spinner } from '@/components/ui/Skeleton.jsx';
 
 const DEFAULT_FORM_DATA = {
@@ -52,33 +51,58 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    // Helper to convert arrays to comma-separated strings (for form fields)
+    const stringifyArray = (val) => {
+        if (Array.isArray(val)) return val.join(', ');
+        if (typeof val === 'string') return val;
+        return '';
+    };
+
     useEffect(() => {
         if (isOpen) {
             if (mode === 'edit' && initialData) {
+                // Normalise initialData to ensure all fields are strings (never undefined)
                 const formattedData = { ...initialData };
-                const stringifyArray = (val) => {
-                    if (Array.isArray(val)) return val.join(', ');
-                    if (typeof val === 'string') return val;
-                    return '';
-                };
 
+                // Convert array fields to comma strings
                 formattedData.academic_awards = stringifyArray(formattedData.academic_awards);
                 formattedData.disabilities = stringifyArray(formattedData.disabilities);
                 formattedData.allergies = stringifyArray(formattedData.allergies);
 
+                // Handle sports_activities object
                 if (formattedData.sports_activities) {
                     formattedData.sportsPlayed = stringifyArray(formattedData.sports_activities.sportsPlayed);
                     formattedData.athleticAchievements = stringifyArray(formattedData.sports_activities.achievements);
                     formattedData.competitions = stringifyArray(formattedData.sports_activities.competitions);
                     formattedData.skills = stringifyArray(formattedData.sports_activities.skills);
+                } else {
+                    formattedData.sportsPlayed = '';
+                    formattedData.athleticAchievements = '';
+                    formattedData.competitions = '';
+                    formattedData.skills = '';
                 }
 
+                // Handle organizations object
                 if (formattedData.organizations) {
                     formattedData.clubs = stringifyArray(formattedData.organizations.clubs);
                     formattedData.studentCouncil = stringifyArray(formattedData.organizations.studentCouncil);
                     formattedData.leadershipRoles = stringifyArray(formattedData.organizations.roles);
+                } else {
+                    formattedData.clubs = '';
+                    formattedData.studentCouncil = '';
+                    formattedData.leadershipRoles = '';
                 }
-                setFormData(formattedData);
+
+                // Ensure all fields are present (fallback to empty string if missing)
+                const safeData = { ...DEFAULT_FORM_DATA, ...formattedData };
+                // Convert numeric fields that might be null/undefined to empty string
+                safeData.year_level = safeData.year_level ?? '';
+                safeData.gpa = safeData.gpa ?? '';
+                safeData.warnings = safeData.warnings ?? 0;
+                safeData.suspensions = safeData.suspensions ?? 0;
+                safeData.counseling = safeData.counseling ?? 0;
+
+                setFormData(safeData);
             } else {
                 setFormData(DEFAULT_FORM_DATA);
             }
@@ -196,6 +220,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
         setIsSaving(true);
         setError('');
         try {
+            // Build the data to submit - matches backend expectations
             const dataToSubmit = {
                 firstname: formData.firstname,
                 middlename: formData.middlename,
@@ -243,11 +268,12 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 dataToSubmit.role = 'student';
                 await userAPI.createUser(dataToSubmit);
             } else {
+                // For update, only include fields that are present (backend handles partial)
                 if (formData.password) dataToSubmit.password = formData.password;
-                dataToSubmit.user_id = formData.user_id; // Add user_id just in case, though backend might ignore
+                // user_id is not updated in edit mode (backend may ignore)
                 await userAPI.updateUser(userId, dataToSubmit);
             }
-            
+
             if (onSuccess) await onSuccess();
             onClose();
         } catch (err) {
@@ -268,21 +294,19 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
         const showError = touched[name] || error;
         const isSuccess = touched[name] && !error && value && value.toString().trim() !== '';
 
-        const baseInputClass = `w-full h-11 px-4 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${
-            error && showError 
-                ? 'border-red-500 ring-red-500/10' 
-                : isSuccess 
-                    ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]' 
+        const baseInputClass = `w-full h-11 px-4 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${error && showError
+                ? 'border-red-500 ring-red-500/10'
+                : isSuccess
+                    ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
                     : 'border-gray-300 dark:border-gray-600'
-        } shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-[#1E1E1E] transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500`;
+            } shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-[#1E1E1E] transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500`;
 
-        const textareaClass = `w-full px-4 py-2.5 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${
-            error && showError 
-                ? 'border-red-500 ring-red-500/10' 
-                : isSuccess 
-                    ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]' 
+        const textareaClass = `w-full px-4 py-2.5 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${error && showError
+                ? 'border-red-500 ring-red-500/10'
+                : isSuccess
+                    ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
                     : 'border-gray-300 dark:border-gray-600'
-        } shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-[#1E1E1E] transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 !resize-none min-h-[100px]`;
+            } shadow-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-[#1E1E1E] transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 !resize-none min-h-[100px]`;
 
         const finalPlaceholder = placeholder || (required ? `Enter ${label.toLowerCase()}...` : `Enter ${label.toLowerCase()} (Optional)`);
 
@@ -356,7 +380,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                         <FiX className="w-5 h-5" />
                     </button>
                 </div>
-                
+
                 {error && (
                     <div className="mx-6 mt-4 bg-red-100 dark:bg-red-900/50 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded">
                         {error}
@@ -383,7 +407,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                     { value: 'other', label: 'Other' }
                                 ])}
                                 {renderField('Birth Date', 'birth_date', 'date')}
-                                
+
                                 <div className="md:col-span-2 mt-4 mb-2 text-sm font-bold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-800 pb-2">Contact & Emergency Details</div>
                                 {renderField('Email', 'email', 'email', true, null, 'Valid email address', 'student@example.com')}
                                 {renderField('Contact Number', 'contact_number', 'tel', false, null, '11-digit mobile number', '09XXXXXXXXX')}
@@ -403,55 +427,55 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                            <div className="text-left">
-                                <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5 focus:outline-none">
-                                    Password {mode === 'create' && <span className="text-red-500">*</span>}
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleInputChange}
-                                        onBlur={() => handleBlur('password')}
-                                        placeholder="Minimum 8 characters"
-                                        className={`w-full h-11 pl-4 pr-11 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${fieldErrors.password && (touched.password || fieldErrors.password) ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 rounded-lg transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-500`}
-                                    />
-                                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 focus:outline-none">
-                                        {showPassword ? <FiEyeOff /> : <FiEye />}
-                                    </button>
+                                <div className="text-left">
+                                    <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5 focus:outline-none">
+                                        Password {mode === 'create' && <span className="text-red-500">*</span>}
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            name="password"
+                                            value={formData.password}
+                                            onChange={handleInputChange}
+                                            onBlur={() => handleBlur('password')}
+                                            placeholder="Minimum 8 characters"
+                                            className={`w-full h-11 pl-4 pr-11 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${fieldErrors.password && (touched.password || fieldErrors.password) ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 rounded-lg transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-500`}
+                                        />
+                                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 focus:outline-none">
+                                            {showPassword ? <FiEyeOff /> : <FiEye />}
+                                        </button>
+                                    </div>
+                                    {!fieldErrors.password && (
+                                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 text-left">
+                                            At least 8 characters, including uppercase, lowercase, and number.
+                                        </p>
+                                    )}
+                                    {fieldErrors.password && (touched.password || fieldErrors.password) && (
+                                        <p className="mt-1 text-xs text-red-500 text-left">{fieldErrors.password}</p>
+                                    )}
                                 </div>
-                                {!fieldErrors.password && (
-                                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 text-left">
-                                        At least 8 characters, including uppercase, lowercase, and number.
-                                    </p>
-                                )}
-                                {fieldErrors.password && (touched.password || fieldErrors.password) && (
-                                    <p className="mt-1 text-xs text-red-500 text-left">{fieldErrors.password}</p>
-                                )}
-                            </div>
-                            <div className="text-left">
-                                <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5 focus:outline-none">
-                                    Confirm Password {mode === 'create' && <span className="text-red-500">*</span>}
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        type={showConfirmPassword ? 'text' : 'password'}
-                                        name="password_confirmation"
-                                        value={formData.password_confirmation}
-                                        onChange={handleInputChange}
-                                        onBlur={() => handleBlur('password_confirmation')}
-                                        placeholder="Re-enter password"
-                                        className={`w-full h-11 pl-4 pr-11 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${fieldErrors.password_confirmation && (touched.password_confirmation || fieldErrors.password_confirmation) ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 rounded-lg transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-500`}
-                                    />
-                                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 focus:outline-none">
-                                        {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-                                    </button>
+                                <div className="text-left">
+                                    <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5 focus:outline-none">
+                                        Confirm Password {mode === 'create' && <span className="text-red-500">*</span>}
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type={showConfirmPassword ? 'text' : 'password'}
+                                            name="password_confirmation"
+                                            value={formData.password_confirmation}
+                                            onChange={handleInputChange}
+                                            onBlur={() => handleBlur('password_confirmation')}
+                                            placeholder="Re-enter password"
+                                            className={`w-full h-11 pl-4 pr-11 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border ${fieldErrors.password_confirmation && (touched.password_confirmation || fieldErrors.password_confirmation) ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'} shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 rounded-lg transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-500`}
+                                        />
+                                        <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 focus:outline-none">
+                                            {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                                        </button>
+                                    </div>
+                                    {fieldErrors.password_confirmation && (touched.password_confirmation || fieldErrors.password_confirmation) && (
+                                        <p className="mt-1 text-xs text-red-500 text-left">{fieldErrors.password_confirmation}</p>
+                                    )}
                                 </div>
-                                {fieldErrors.password_confirmation && (touched.password_confirmation || fieldErrors.password_confirmation) && (
-                                    <p className="mt-1 text-xs text-red-500 text-left">{fieldErrors.password_confirmation}</p>
-                                )}
-                            </div>
                             </div>
                         </div>
 
