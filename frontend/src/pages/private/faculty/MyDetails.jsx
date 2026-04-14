@@ -1,75 +1,124 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { FaUser, FaEnvelope, FaPhone, FaVenusMars, FaMapMarkerAlt, FaBriefcase, FaBook, FaUsers } from 'react-icons/fa';
+import { useTheme } from '@/contexts/ThemeContext';
+import { FiMail, FiPhone, FiMapPin, FiBriefcase, FiEdit, FiUser } from 'react-icons/fi';
 
 export const MyDetails = () => {
   const { user } = useAuth();
+  const { isDark } = useTheme();
+  const [isEditing, setIsEditing] = useState(false);
 
   if (!user) {
-    return <div className="p-6 text-gray-600 dark:text-gray-400">Loading...</div>;
+    return <div className="p-6 text-gray-500">Loading...</div>;
   }
 
   const facultyProfile = user.faculty || {};
-  const infoSections = [
-    {
-      title: 'Personal Information',
-      icon: FaUser,
-      fields: [
-        { label: 'Full Name', value: `${user.firstname} ${user.middlename || ''} ${user.lastname}`.trim() },
-        { label: 'Email', value: user.email },
-        { label: 'User ID', value: user.user_id },
-        { label: 'Gender', value: user.gender || 'N/A', icon: FaVenusMars },
-        { label: 'Birth Date', value: user.birth_date ? new Date(user.birth_date).toLocaleDateString() : 'N/A' },
-        { label: 'Contact', value: user.contact_number || 'N/A', icon: FaPhone },
-        { label: 'Address', value: user.address || 'N/A', icon: FaMapMarkerAlt },
-      ]
-    },
-    {
-      title: 'Professional Information',
-      icon: FaBriefcase,
-      fields: [
-        { label: 'Department', value: facultyProfile.department || 'N/A', icon: FaUsers },
-        { label: 'Position', value: facultyProfile.position || 'N/A', icon: FaBriefcase },
-        { label: 'Specialization', value: facultyProfile.specialization || 'N/A', icon: FaBook },
-      ]
-    },
-    {
-      title: 'Subjects Handled',
-      icon: FaBook,
-      fields: [
-        { label: 'Subjects', value: facultyProfile.subjects_handled?.length ? facultyProfile.subjects_handled.join(', ') : 'None assigned' },
-      ]
-    }
-  ];
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">
-        My Details
-      </h1>
+    <div className={`min-h-screen ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'} p-6 lg:p-8`}>
+      <div className="max-w-3xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white">
+            Faculty Information
+          </h1>
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#ff6b00] hover:bg-orange-600 text-white font-medium rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/25"
+          >
+            <FiEdit className="w-4 h-4" />
+            <span>Edit Profile</span>
+          </button>
+        </div>
 
-      <div className="space-y-6">
-        {infoSections.map((section, index) => (
-          <div key={index} className="bg-white dark:bg-surface-secondary border border-gray-200 dark:border-gray-700 rounded-xl p-5 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <section.icon className="w-5 h-5 text-brand-500" />
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                {section.title}
-              </h2>
+        <div className={`${isDark ? 'bg-[#1e1e1e]' : 'bg-white'} rounded-2xl p-8 shadow-xl`}>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <FiUser className="w-4 h-4" />
+                  First Name
+                </label>
+                <p className="text-gray-800 dark:text-white text-lg font-semibold">
+                  {user.firstname || 'John'}
+                </p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <FiUser className="w-4 h-4" />
+                  Last Name
+                </label>
+                <p className="text-gray-800 dark:text-white text-lg font-semibold">
+                  {user.lastname || 'Smith'}
+                </p>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {section.fields.map((field, fieldIndex) => (
-                <div key={fieldIndex} className="flex items-start gap-3">
-                  {field.icon && <field.icon className="w-4 h-4 text-gray-400 mt-1" />}
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{field.label}</p>
-                    <p className="text-gray-800 dark:text-gray-200 font-medium">{field.value}</p>
-                  </div>
-                </div>
-              ))}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <FiMail className="w-4 h-4" />
+                  Email
+                </label>
+                <a
+                  href={`mailto:${user.email}`}
+                  className="text-gray-800 dark:text-white text-lg font-semibold hover:text-[#ff6b00] transition-colors"
+                >
+                  {user.email || 'john.smith@university.edu'}
+                </a>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <FiPhone className="w-4 h-4" />
+                  Phone
+                </label>
+                <p className="text-gray-800 dark:text-white text-lg font-semibold">
+                  {user.contact_number || '+1 (555) 123-4567'}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <FiBriefcase className="w-4 h-4" />
+                  Department
+                </label>
+                <p className="text-gray-800 dark:text-white text-lg font-semibold">
+                  {facultyProfile.department || 'Computer Science'}
+                </p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <FiBriefcase className="w-4 h-4" />
+                  Position
+                </label>
+                <p className="text-gray-800 dark:text-white text-lg font-semibold">
+                  {facultyProfile.position || 'Associate Professor'}
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <label className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                <FiMapPin className="w-4 h-4" />
+                Office Location
+              </label>
+              <p className="text-gray-800 dark:text-white text-lg font-semibold">
+                {facultyProfile.office_location || 'Building A, Room 301'}
+              </p>
+            </div>
+
+            <div>
+              <label className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                <FiBriefcase className="w-4 h-4" />
+                Bio
+              </label>
+              <p className="text-gray-800 dark:text-white text-base font-medium leading-relaxed">
+                {facultyProfile.specialization || 'Specialized in artificial intelligence and machine learning with over 10 years of teaching experience.'}
+              </p>
             </div>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );

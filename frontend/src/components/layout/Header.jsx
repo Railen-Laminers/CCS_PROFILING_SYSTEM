@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiBell, FiSun, FiMoon, FiUser, FiMenu } from 'react-icons/fi';
+import { FiSearch, FiBell, FiSun, FiMoon, FiUser, FiMenu, FiInfo } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/contexts/ToastContext';
 
@@ -40,7 +41,6 @@ export const Header = ({ onMenuClick }) => {
   return (
     <header className="bg-white dark:bg-[#1E1E1E] backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 h-[76px] flex justify-between items-center sticky top-0 z-40 transition-colors duration-300 shadow-sm relative flex-shrink-0">
       <div className="flex items-center gap-4">
-        {/* Hamburger button – only visible on mobile/tablet */}
         <button
           onClick={onMenuClick}
           className="lg:hidden p-2 -ml-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -49,7 +49,6 @@ export const Header = ({ onMenuClick }) => {
           <FiMenu className="w-5 h-5" />
         </button>
 
-        {/* Logo and title */}
         <div className="flex items-center gap-2">
           {logoUrl ? (
             <img
@@ -65,7 +64,6 @@ export const Header = ({ onMenuClick }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Search Button */}
         <Button
           variant="ghost"
           size="icon"
@@ -75,7 +73,6 @@ export const Header = ({ onMenuClick }) => {
           <FiSearch className="w-5 h-5 stroke-[2]" />
         </Button>
 
-        {/* Notifications Button */}
         <Button
           variant="ghost"
           size="icon"
@@ -86,7 +83,6 @@ export const Header = ({ onMenuClick }) => {
           <span className="absolute top-2 right-2 block w-[6px] h-[6px] bg-brand-500 rounded-full border-[1.5px] border-white dark:border-surface-dark shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></span>
         </Button>
 
-        {/* Theme Toggle Switch */}
         <div className="flex items-center gap-2">
           <FiSun className={`w-5 h-5 transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
           <button
@@ -102,12 +98,11 @@ export const Header = ({ onMenuClick }) => {
           <FiMoon className={`w-5 h-5 transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
         </div>
 
-        {/* User Profile Dropdown */}
         <div className="relative pl-1 sm:pl-0" ref={dropdownRef}>
           <Button
             variant="primary"
             size="icon"
-            className="w-8 h-8 rounded-full shadow-sm overflow-hidden"
+            className="w-8 h-8 rounded-full shadow-sm"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             {profilePicture ? (

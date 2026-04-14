@@ -139,9 +139,8 @@ const seedData = async () => {
         address: '654 Bonifacio Street, Makati City',
         is_active: true
       }
-    ];
+];
 
-    // ✅ FIX: Use create() instead of insertMany() to trigger pre('save') hooks
     const createdStudentUsers = await User.create(studentUsersData);
 
     const studentProfiles = [
@@ -250,40 +249,160 @@ const seedData = async () => {
     await Student.insertMany(studentProfiles);
     console.log('5 Students created with skills, sports, and other data...');
 
-    // Create Faculty with all fields populated
-    const facultyUserData = {
-      firstname: 'Dr. Elena',
-      middlename: 'Perez',
-      lastname: 'Villanueva',
-      user_id: 'FACULTY001',
-      email: 'elena.villanueva@ccs.edu',
-      password: 'password',
-      role: 'faculty',
-      birth_date: '1985-03-12',
-      contact_number: '09123456799',
-      gender: 'female',
-      address: '999 University Avenue, Manila',
-      is_active: true
-    };
-    const facultyUser = await User.create(facultyUserData);
+    // Create Faculty Users
+    const facultyUsersData = [
+      {
+        firstname: 'Dr. Elena',
+        middlename: 'Perez',
+        lastname: 'Villanueva',
+        user_id: 'FACULTY001',
+        email: 'elena.villanueva@ccs.edu',
+        password: 'password',
+        role: 'faculty',
+        birth_date: '1985-03-12',
+        contact_number: '09123456799',
+        gender: 'female',
+        address: '999 University Avenue, Manila',
+        is_active: true
+      },
+      {
+        firstname: 'Prof. Mark',
+        middlename: 'Thomas',
+        lastname: 'Angeles',
+        user_id: 'FACULTY002',
+        email: 'mark.angeles@ccs.edu',
+        password: 'password',
+        role: 'faculty',
+        birth_date: '1988-07-22',
+        contact_number: '09123456798',
+        gender: 'male',
+        address: '456 College Road, Manila',
+        is_active: true
+      },
+      {
+        firstname: 'Ms. Sarah',
+        middlename: 'Jane',
+        lastname: 'Castillo',
+        user_id: 'FACULTY003',
+        email: 'sarah.castillo@ccs.edu',
+        password: 'password',
+        role: 'faculty',
+        birth_date: '1992-11-05',
+        contact_number: '09123456797',
+        gender: 'female',
+        address: '789 Education Street, Quezon City',
+        is_active: true
+      },
+      {
+        firstname: 'Engr. James',
+        middlename: 'Michael',
+        lastname: 'Ramos',
+        user_id: 'FACULTY004',
+        email: 'james.ramos@ccs.edu',
+        password: 'password',
+        role: 'faculty',
+        birth_date: '1990-04-18',
+        contact_number: '09123456796',
+        gender: 'male',
+        address: '321 Science Avenue, Makati City',
+        is_active: true
+      },
+      {
+        firstname: 'Dr. Grace',
+        middlename: 'Ann',
+        lastname: 'Diaz',
+        user_id: 'FACULTY005',
+        email: 'grace.diaz@ccs.edu',
+        password: 'password',
+        role: 'faculty',
+        birth_date: '1987-09-30',
+        contact_number: '09123456795',
+        gender: 'female',
+        address: '654 Technology Lane, Mandaluyong City',
+        is_active: true
+      }
+    ];
 
-    await Faculty.create({
-      user_id: facultyUser._id,
-      department: 'College of Computer Studies',
-      position: 'Associate Professor',
-      specialization: 'Database Systems and Data Science',
-      subjects_handled: ['IT 301 - Database Management Systems 1', 'IT 201 - Data Structures & Algorithms', 'CS 101 - Fundamental of Computing'],
-      teaching_schedule: [
-        { day: 'Monday', time: '08:00 - 10:00', room: 'Lab 101' },
-        { day: 'Wednesday', time: '08:00 - 10:00', room: 'Lab 101' },
-        { day: 'Friday', time: '10:00 - 12:00', room: 'Room 201' }
-      ],
-      research_projects: [
-        { title: 'AI-Based Academic Performance Prediction System', year: 2024, status: 'Completed' },
-        { title: 'Machine Learning Applications in Education', year: 2025, status: 'Ongoing' }
-      ]
-    });
-    console.log('Faculty created with all fields populated...');
+    const createdFacultyUsers = await User.create(facultyUsersData);
+
+    const facultyProfiles = [
+      {
+        user_id: createdFacultyUsers[0]._id,
+        department: 'College of Computer Studies',
+        position: 'Associate Professor',
+        specialization: 'Database Systems and Data Science',
+        subjects_handled: ['IT 301 - Database Management Systems 1', 'IT 201 - Data Structures & Algorithms', 'CS 101 - Fundamental of Computing'],
+        teaching_schedule: [
+          { day: 'Monday', time: '08:00 - 10:00', room: 'Lab 101' },
+          { day: 'Wednesday', time: '08:00 - 10:00', room: 'Lab 101' },
+          { day: 'Friday', time: '10:00 - 12:00', room: 'Room 201' }
+        ],
+        research_projects: [
+          { title: 'AI-Based Academic Performance Prediction System', year: 2024, status: 'Completed' },
+          { title: 'Machine Learning Applications in Education', year: 2025, status: 'Ongoing' }
+        ]
+      },
+      {
+        user_id: createdFacultyUsers[1]._id,
+        department: 'College of Computer Studies',
+        position: 'Assistant Professor',
+        specialization: 'Web Development and Mobile Apps',
+        subjects_handled: ['IT 205 - Web Development Fundamentals', 'IT 350 - Software Engineering', 'IT 405 - Integrative Programming'],
+        teaching_schedule: [
+          { day: 'Tuesday', time: '09:00 - 12:00', room: 'Lab 102' },
+          { day: 'Thursday', time: '09:00 - 12:00', room: 'Lab 102' }
+        ],
+        research_projects: [
+          { title: 'Progressive Web Applications', year: 2024, status: 'Completed' }
+        ]
+      },
+      {
+        user_id: createdFacultyUsers[2]._id,
+        department: 'College of Computer Studies',
+        position: 'Instructor',
+        specialization: 'Computer Programming',
+        subjects_handled: ['IT 101 - Introduction to Computing', 'IT 102 - Computer Programming 1', 'IT 103 - Discrete Mathematics'],
+        teaching_schedule: [
+          { day: 'Monday', time: '13:00 - 16:00', room: 'Room 301' },
+          { day: 'Wednesday', time: '13:00 - 16:00', room: 'Room 301' },
+          { day: 'Friday', time: '08:00 - 11:00', room: 'Lab 103' }
+        ],
+        research_projects: []
+      },
+      {
+        user_id: createdFacultyUsers[3]._id,
+        department: 'College of Computer Studies',
+        position: 'Assistant Professor',
+        specialization: 'Computer Networks and Security',
+        subjects_handled: ['IT 401 - Computer Networks', 'IT 440 - Capstone Project 1', 'IT 450 - Information Security'],
+        teaching_schedule: [
+          { day: 'Tuesday', time: '14:00 - 17:00', room: 'Lab 104' },
+          { day: 'Thursday', time: '14:00 - 17:00', room: 'Lab 104' }
+        ],
+        research_projects: [
+          { title: 'Network Security Analysis', year: 2025, status: 'Ongoing' }
+        ]
+      },
+      {
+        user_id: createdFacultyUsers[4]._id,
+        department: 'College of Computer Studies',
+        position: 'Associate Professor',
+        specialization: 'Data Science and Analytics',
+        subjects_handled: ['IT 301 - Database Management Systems 1', 'IT 355 - Data Science', 'IT 360 - Business Intelligence'],
+        teaching_schedule: [
+          { day: 'Monday', time: '10:00 - 13:00', room: 'Lab 105' },
+          { day: 'Wednesday', time: '10:00 - 13:00', room: 'Lab 105' },
+          { day: 'Friday', time: '14:00 - 17:00', room: 'Lab 105' }
+        ],
+        research_projects: [
+          { title: 'Big Data Analytics in Education', year: 2024, status: 'Completed' },
+          { title: 'Predictive Analytics for Student Success', year: 2025, status: 'Ongoing' }
+        ]
+      }
+    ];
+
+    await Faculty.insertMany(facultyProfiles);
+    console.log('5 Faculty members created with all fields populated...');
 
     // Create IT-related courses (Curriculum)
     const courseData = [
