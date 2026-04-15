@@ -6,20 +6,12 @@ import AcademicPerformanceForm from '@/components/forms/AcademicPerformanceForm'
 const AcademicPerformance = () => {
   const navigate = useNavigate();
 
-  const handleCancel = () => {
-    navigate('/student/dashboard');
-  };
-
-  const handleBack = () => {
-    navigate('/student/dashboard');
-  };
+  const handleCancel = () => navigate('/student/dashboard');
+  const handleBack = () => navigate('/student/dashboard');
 
   return (
     <DashboardLayout>
-      <AcademicPerformanceForm 
-        onCancel={handleCancel}
-        onBack={handleBack}
-      />
+      <AcademicPerformanceForm onCancel={handleCancel} onBack={handleBack} />
     </DashboardLayout>
   );
 };

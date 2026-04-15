@@ -10,10 +10,10 @@ const inputClasses = (error, touched, value) => {
   const hasError = error && touched;
   const isValid = touched && !error && value && value.toString().trim() !== '';
   return `w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white border ${hasError
-      ? 'border-red-500 ring-red-500/10'
-      : isValid
-        ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
-        : 'border-gray-200 dark:border-gray-800'
+    ? 'border-red-500 ring-red-500/10'
+    : isValid
+      ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
+      : 'border-gray-200 dark:border-gray-800'
     } rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all outline-none placeholder-gray-400 dark:placeholder-gray-500 text-[14px]`;
 };
 
@@ -34,7 +34,7 @@ const Profile = () => {
   const fileInputRef = useRef(null);
   const modalFileInputRef = useRef(null);
 
-  // Form fields
+  // Form fields (only used when role is not student)
   const [firstname, setFirstname] = useState('');
   const [middlename, setMiddlename] = useState('');
   const [lastname, setLastname] = useState('');
@@ -44,15 +44,15 @@ const Profile = () => {
   const [address, setAddress] = useState('');
   const [birthDate, setBirthDate] = useState('');
 
-  // Profile picture states
+  // Profile picture states (only used when role is not student)
   const [originalProfilePicture, setOriginalProfilePicture] = useState('');
   const [currentBase64, setCurrentBase64] = useState(null);
   const [displayUrl, setDisplayUrl] = useState('');
 
-  // Modal state
+  // Modal state (only used when role is not student)
   const [showModal, setShowModal] = useState(false);
 
-  // Password states
+  // Password states (always used)
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -64,37 +64,44 @@ const Profile = () => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
 
+  const isStudent = user?.role === 'student';
+
   // Load user data
   useEffect(() => {
     if (!user) {
       setLoading(false);
       return;
     }
-    setFirstname(user.firstname || '');
-    setMiddlename(user.middlename || '');
-    setLastname(user.lastname || '');
-    setEmail(user.email || '');
-    setContactNumber(user.contact_number || '');
-    setGender(user.gender || '');
-    setAddress(user.address || '');
-    setBirthDate(formatDateInput(user.birth_date));
-    const originalPic = user.profile_picture || '';
-    setOriginalProfilePicture(originalPic);
-    setCurrentBase64(null);
-    setDisplayUrl(originalPic);
+    // Only load personal info fields if not a student (students don't see them)
+    if (!isStudent) {
+      setFirstname(user.firstname || '');
+      setMiddlename(user.middlename || '');
+      setLastname(user.lastname || '');
+      setEmail(user.email || '');
+      setContactNumber(user.contact_number || '');
+      setGender(user.gender || '');
+      setAddress(user.address || '');
+      setBirthDate(formatDateInput(user.birth_date));
+      const originalPic = user.profile_picture || '';
+      setOriginalProfilePicture(originalPic);
+      setCurrentBase64(null);
+      setDisplayUrl(originalPic);
+    }
     setLoading(false);
     setFieldErrors({});
     setTouched({});
-  }, [user]);
+  }, [user, isStudent]);
 
-  // Cleanup object URL
+  // Cleanup object URL (only when not student)
   useEffect(() => {
-    return () => {
-      if (displayUrl && displayUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(displayUrl);
-      }
-    };
-  }, [displayUrl]);
+    if (!isStudent) {
+      return () => {
+        if (displayUrl && displayUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(displayUrl);
+        }
+      };
+    }
+  }, [displayUrl, isStudent]);
 
   // Validation functions
   const validateField = (name, value) => {
@@ -144,17 +151,17 @@ const Profile = () => {
 
   const validateForm = () => {
     const errors = {};
-    const fieldMap = {
-      firstname,
-      lastname,
-      email,
-      contactNumber,
-    };
-    Object.entries(fieldMap).forEach(([field, value]) => {
-      const error = validateField(field, value);
-      if (error) errors[field] = error;
-    });
 
+    // Only validate personal info if not student
+    if (!isStudent) {
+      const fieldMap = { firstname, lastname, email, contactNumber };
+      Object.entries(fieldMap).forEach(([field, value]) => {
+        const error = validateField(field, value);
+        if (error) errors[field] = error;
+      });
+    }
+
+    // Always validate password fields if any are filled
     if (currentPassword || newPassword || confirmPassword) {
       const currError = validateField('currentPassword', currentPassword);
       if (currError) errors.currentPassword = currError;
@@ -194,7 +201,7 @@ const Profile = () => {
     }
   };
 
-  // Profile picture helpers
+  // Profile picture helpers (only used when not student)
   const hasUnsavedPhoto = () => currentBase64 !== null;
 
   const processFile = (file) => {
@@ -272,22 +279,24 @@ const Profile = () => {
 
     setSaving(true);
     try {
-      const payload = {
-        firstname: firstname.trim(),
-        middlename: middlename.trim() || null,
-        lastname: lastname.trim(),
-        email: email.trim().toLowerCase(),
-        contact_number: contactNumber.trim() || null,
-        gender: gender || null,
-        address: address.trim() || null,
-        birth_date: birthDate || null,
-      };
+      const payload = {};
 
-      // ✅ Only include profile_picture if a new one was uploaded
-      if (currentBase64) {
-        payload.profile_picture = currentBase64;
+      // Only include personal info if not student
+      if (!isStudent) {
+        payload.firstname = firstname.trim();
+        payload.middlename = middlename.trim() || null;
+        payload.lastname = lastname.trim();
+        payload.email = email.trim().toLowerCase();
+        payload.contact_number = contactNumber.trim() || null;
+        payload.gender = gender || null;
+        payload.address = address.trim() || null;
+        payload.birth_date = birthDate || null;
+        if (currentBase64) {
+          payload.profile_picture = currentBase64;
+        }
       }
 
+      // Always include password change if provided
       if (newPassword && currentPassword) {
         payload.currentPassword = currentPassword;
         payload.newPassword = newPassword;
@@ -318,7 +327,7 @@ const Profile = () => {
     );
   }
 
-  // Helper to render field with error handling
+  // Helper to render field with error handling (only used when not student)
   const renderField = (label, field, type = 'text', required = false, placeholder = '') => {
     let value, setter, error, isTouched;
     switch (field) {
@@ -380,99 +389,108 @@ const Profile = () => {
 
   return (
     <div className="w-full max-w-3xl mx-auto space-y-8">
+      {/* Conditional header based on role */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">My profile</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+          {isStudent ? 'Change Password' : 'My Profile'}
+        </h1>
         <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">
-          Update your account details and password. User ID and role cannot be changed here.
+          {isStudent
+            ? 'Update your password. Your personal information can be edited in "My Details".'
+            : 'Update your account details and password. User ID and role cannot be changed here.'}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
-          <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-            <CardTitle className="text-[16px] font-bold flex items-center gap-3">
-              <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
-                <FiUser className="w-5 h-5 text-brand-500" />
-              </div>
-              Account information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-8 space-y-6">
-            {/* Profile Picture Section */}
-            <div className="flex flex-col sm:flex-row items-start gap-6 pb-4 border-b border-gray-100 dark:border-gray-800">
-              <div className="relative">
-                <div className="w-28 h-28 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-                  {displayUrl ? (
-                    <img
-                      src={displayUrl}
-                      alt="Profile preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/112?text=Error';
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <FiUser className="w-10 h-10" />
-                    </div>
-                  )}
+        {/* Account information card - only shown for non‑students */}
+        {!isStudent && (
+          <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+            <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+              <CardTitle className="text-[16px] font-bold flex items-center gap-3">
+                <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                  <FiUser className="w-5 h-5 text-brand-500" />
                 </div>
-                <button
-                  type="button"
-                  onClick={triggerUpload}
-                  className="absolute bottom-0 right-0 bg-brand-500 hover:bg-brand-600 text-white p-1.5 rounded-full shadow-md transition-colors"
-                  title="Upload photo"
-                >
-                  <FiCamera className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Profile Photo
+                Account information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
+              {/* Profile Picture Section */}
+              <div className="flex flex-col sm:flex-row items-start gap-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+                <div className="relative">
+                  <div className="w-28 h-28 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+                    {displayUrl ? (
+                      <img
+                        src={displayUrl}
+                        alt="Profile preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/112?text=Error';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <FiUser className="w-10 h-10" />
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={triggerUpload}
+                    className="absolute bottom-0 right-0 bg-brand-500 hover:bg-brand-600 text-white p-1.5 rounded-full shadow-md transition-colors"
+                    title="Upload photo"
+                  >
+                    <FiCamera className="w-4 h-4" />
+                  </button>
                 </div>
-                <div className="flex gap-2">
-                  {hasUnsavedPhoto() && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={removeProfilePicture}
-                      className="gap-1 text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
-                    >
-                      <FiX className="w-3.5 h-3.5" />
-                      Remove
-                    </Button>
-                  )}
+                <div className="flex flex-col gap-2">
+                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Profile Photo
+                  </div>
+                  <div className="flex gap-2">
+                    {hasUnsavedPhoto() && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={removeProfilePicture}
+                        className="gap-1 text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
+                      >
+                        <FiX className="w-3.5 h-3.5" />
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
+                    JPG, PNG or WEBP. Max 2MB.
+                  </p>
                 </div>
-                <p className="text-xs text-gray-400 dark:text-gray-500">
-                  JPG, PNG or WEBP. Max 2MB.
-                </p>
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className={labelClasses}>User ID</label>
-                <input type="text" className={inputClasses(false, false, null)} value={user.user_id || ''} disabled readOnly />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className={labelClasses}>User ID</label>
+                  <input type="text" className={inputClasses(false, false, null)} value={user.user_id || ''} disabled readOnly />
+                </div>
+                <div className="space-y-2">
+                  <label className={labelClasses}>Role</label>
+                  <input type="text" className={inputClasses(false, false, null)} value={user.role || ''} disabled readOnly />
+                </div>
+                {renderField('First name', 'firstname', 'text', true, 'Enter first name')}
+                {renderField('Middle name', 'middlename', 'text', false, 'Enter middle name (optional)')}
+                {renderField('Last name', 'lastname', 'text', true, 'Enter last name')}
+                {renderField('Email', 'email', 'email', true, 'your@email.com')}
+                {renderField('Contact number', 'contactNumber', 'tel', false, '09XXXXXXXXX')}
+                {renderField('Gender', 'gender', 'select')}
+                {renderField('Birth date', 'birthDate', 'date')}
+                <div className="md:col-span-2">
+                  {renderField('Address', 'address', 'textarea', false, 'Your address')}
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className={labelClasses}>Role</label>
-                <input type="text" className={inputClasses(false, false, null)} value={user.role || ''} disabled readOnly />
-              </div>
-              {renderField('First name', 'firstname', 'text', true, 'Enter first name')}
-              {renderField('Middle name', 'middlename', 'text', false, 'Enter middle name (optional)')}
-              {renderField('Last name', 'lastname', 'text', true, 'Enter last name')}
-              {renderField('Email', 'email', 'email', true, 'your@email.com')}
-              {renderField('Contact number', 'contactNumber', 'tel', false, '09XXXXXXXXX')}
-              {renderField('Gender', 'gender', 'select')}
-              {renderField('Birth date', 'birthDate', 'date')}
-              <div className="md:col-span-2">
-                {renderField('Address', 'address', 'textarea', false, 'Your address')}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
+        {/* Change password card - always shown */}
         <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
           <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
             <CardTitle className="text-[16px] font-bold flex items-center gap-3">
@@ -578,24 +596,28 @@ const Profile = () => {
         </div>
       </form>
 
-      {/* Hidden file inputs */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileSelect}
-        accept="image/jpeg,image/png,image/jpg,image/webp"
-        className="hidden"
-      />
-      <input
-        type="file"
-        ref={modalFileInputRef}
-        onChange={handleModalFileSelect}
-        accept="image/jpeg,image/png,image/jpg,image/webp"
-        className="hidden"
-      />
+      {/* Hidden file inputs - only used when not student */}
+      {!isStudent && (
+        <>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept="image/jpeg,image/png,image/jpg,image/webp"
+            className="hidden"
+          />
+          <input
+            type="file"
+            ref={modalFileInputRef}
+            onChange={handleModalFileSelect}
+            accept="image/jpeg,image/png,image/jpg,image/webp"
+            className="hidden"
+          />
+        </>
+      )}
 
-      {/* Modal for previewing and uploading new photo */}
-      {showModal && (
+      {/* Modal for previewing and uploading new photo - only used when not student */}
+      {!isStudent && showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl max-w-md w-full mx-4 overflow-hidden">
             <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">

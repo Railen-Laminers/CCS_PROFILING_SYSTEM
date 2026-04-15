@@ -6,20 +6,12 @@ import SportsActivitiesForm from '@/components/forms/SportsActivitiesForm';
 const SportsActivities = () => {
   const navigate = useNavigate();
 
-  const handleCancel = () => {
-    navigate('/student/dashboard');
-  };
-
-  const handleBack = () => {
-    navigate('/student/dashboard');
-  };
+  const handleCancel = () => navigate('/student/dashboard');
+  const handleBack = () => navigate('/student/dashboard');
 
   return (
     <DashboardLayout>
-      <SportsActivitiesForm 
-        onCancel={handleCancel}
-        onBack={handleBack}
-      />
+      <SportsActivitiesForm onCancel={handleCancel} onBack={handleBack} />
     </DashboardLayout>
   );
 };

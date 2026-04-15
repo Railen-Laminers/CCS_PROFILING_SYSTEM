@@ -6,20 +6,12 @@ import MedicalRecordsForm from '@/components/forms/MedicalRecordsForm';
 const MedicalRecords = () => {
   const navigate = useNavigate();
 
-  const handleCancel = () => {
-    navigate('/student/dashboard');
-  };
-
-  const handleBack = () => {
-    navigate('/student/dashboard');
-  };
+  const handleCancel = () => navigate('/student/dashboard');
+  const handleBack = () => navigate('/student/dashboard');
 
   return (
     <DashboardLayout>
-      <MedicalRecordsForm 
-        onCancel={handleCancel}
-        onBack={handleBack}
-      />
+      <MedicalRecordsForm onCancel={handleCancel} onBack={handleBack} />
     </DashboardLayout>
   );
 };

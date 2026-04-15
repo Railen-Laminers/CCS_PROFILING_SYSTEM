@@ -16,6 +16,7 @@ import {
   FiAward,
   FiFile,
   FiStar,
+  FiUser,
 } from 'react-icons/fi';
 import { HiOutlineAcademicCap } from 'react-icons/hi';
 
@@ -62,17 +63,17 @@ const useDesktop = () => {
   return isDesktop;
 };
 
-const GraduationIcon = ({ className }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="currentColor" 
-    className={className}
-  >
-    <path fillRule="evenodd" d="M12 2.25c-3.503 0-6.47.934-8.643 2.535l1.488-1.488a.75.75 0 011.06 0l1.992 1.992a.75.75 0 001.06 0l1.992-1.992a.75.75 0 011.06 0l1.992 1.992a.75.75 0 001.06 0l1.992-1.992a.75.75 0 011.06 0l1.488 1.488C17.63 3.17 15.37 2.25 12 2.25zM7.5 7.547c0-.862.377-1.635 1.047-2.185a4.477 4.477 0 016.906 0c.67.55 1.047 1.323 1.047 2.185v.994c0 2.69-1.603 4.872-3.914 5.786l-.36.264a.75.75 0 01-.732.002l-.36-.264C9.103 13.413 7.5 11.231 7.5 8.541v-.994z" clipRule="evenodd" />
-    <path d="M7.5 9c0-2.69 1.603-4.872 3.914-5.786l.36-.264a.75.75 0 01.732-.002l.36.264C14.397 4.128 16 6.31 16 9v.994c0 .862-.377 1.635-1.047 2.185a4.477 4.477 0 01-6.906 0c-.67-.55-1.047-1.323-1.047-2.185V9z" />
-  </svg>
-);
+// Subtle role badge - hidden in collapsed state
+const RoleBadge = ({ collapsed, roleInfo }) => {
+  if (collapsed) return null;
+
+  return (
+    <div className="flex items-center gap-2 px-3 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+      <FiUser className="w-4 h-4" />
+      <span className="text-sm font-medium capitalize">{roleInfo.full}</span>
+    </div>
+  );
+};
 
 const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
   const { user } = useAuth();
@@ -91,6 +92,18 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
   const menuItems = getMenuItems();
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
 
+  const getRoleInfo = () => {
+    if (!user) return { full: 'User', initial: 'U' };
+    switch (user.role) {
+      case 'admin': return { full: 'Admin', initial: 'A' };
+      case 'student': return { full: 'Student', initial: 'S' };
+      case 'faculty': return { full: 'Faculty', initial: 'F' };
+      default: return { full: 'User', initial: 'U' };
+    }
+  };
+
+  const roleInfo = getRoleInfo();
+
   useEffect(() => {
     if (isMobileDrawerOpen) setMobileDrawerOpen(false);
   }, [location.pathname]);
@@ -103,40 +116,26 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
         "transition-[width] duration-300 ease-in-out will-change-[width] transform-gpu"
       )}
     >
-      {/* Logo Header - Show for students */}
-      {user?.role === 'student' && !desktopCollapsed && (
-        <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-          <div className="flex items-center gap-3">
-           <h2 className="text-lg font-bold text-gray-800 dark:text-white">Student Portal</h2>
-            <div>
-              
-             
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Collapse Button - Hide for students */}
-      {user?.role !== 'student' && (
-        <div
-          className={cn(
-            "flex p-2 border-b border-gray-200 dark:border-gray-800 transition-all duration-300",
-            desktopCollapsed ? "justify-center" : "justify-end"
-          )}
+      {/* Top bar with role badge and collapse button */}
+      <div
+        className={cn(
+          "flex items-center border-b border-gray-200 dark:border-gray-800 p-3 transition-all duration-300",
+          desktopCollapsed ? "flex-col justify-center gap-2" : "justify-between"
+        )}
+      >
+        <RoleBadge collapsed={desktopCollapsed} roleInfo={roleInfo} />
+        <button
+          onClick={() => setDesktopCollapsed(!desktopCollapsed)}
+          className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <button
-            onClick={() => setDesktopCollapsed(!desktopCollapsed)}
-            className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {desktopCollapsed ? (
-              <FiChevronRight className="w-5 h-5" />
-            ) : (
-              <FiChevronLeft className="w-5 h-5" />
-            )}
-          </button>
-        </div>
-      )}
+          {desktopCollapsed ? (
+            <FiChevronRight className="w-5 h-5" />
+          ) : (
+            <FiChevronLeft className="w-5 h-5" />
+          )}
+        </button>
+      </div>
 
       <nav className="flex-1 pt-4 pb-4 overflow-x-hidden">
         <ul className="space-y-1.5 px-2">
@@ -147,17 +146,13 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
                   <div
                     className={cn(
                       "relative flex items-center h-11 text-[15px] rounded-xl transition-all duration-200 group",
-                      user?.role === 'student'
-                        ? isActive
-                          ? "bg-[#FF6B00] text-white"
-                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                        : isActive
-                          ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
-                          : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary hover:text-gray-900 dark:hover:text-zinc-100",
+                      isActive
+                        ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
+                        : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary hover:text-gray-900 dark:hover:text-zinc-100",
                       desktopCollapsed ? "justify-center px-0" : "justify-start px-4 gap-3"
                     )}
                   >
-                    {user?.role !== 'student' && isActive && (
+                    {isActive && (
                       <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
                     )}
                     <item.icon
@@ -192,8 +187,9 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
           isMobileDrawerOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
+        {/* Mobile header: subtle role badge (always expanded style) */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Menu</h2>
+          <RoleBadge collapsed={false} roleInfo={roleInfo} />
           <button
             onClick={() => setMobileDrawerOpen(false)}
             className="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -208,17 +204,17 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
               <li key={item.name}>
                 <NavLink to={item.path} onClick={() => setMobileDrawerOpen(false)}>
                   {({ isActive }) => (
-                      <div
-                        className={cn(
-                          "relative flex items-center gap-3 px-4 h-11 text-[15px] rounded-xl transition-all duration-200",
-                          isActive
-                            ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
-                            : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary"
-                        )}
-                      >
-                        {isActive && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
-                        )}
+                    <div
+                      className={cn(
+                        "relative flex items-center gap-3 px-4 h-11 text-[15px] rounded-xl transition-all duration-200",
+                        isActive
+                          ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
+                          : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary"
+                      )}
+                    >
+                      {isActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
+                      )}
                       <item.icon className={cn("w-5 h-5", isActive ? "text-[#FF6B00]" : "")} />
                       <span>{item.name}</span>
                     </div>

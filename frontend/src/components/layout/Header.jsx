@@ -37,6 +37,7 @@ export const Header = ({ onMenuClick }) => {
   }, []);
 
   const profilePicture = user?.profile_picture;
+  const isStudent = user?.role === 'student';
 
   return (
     <header className="bg-white dark:bg-[#1E1E1E] backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 h-[76px] flex justify-between items-center sticky top-0 z-40 transition-colors duration-300 shadow-sm relative flex-shrink-0">
@@ -102,14 +103,14 @@ export const Header = ({ onMenuClick }) => {
           <Button
             variant="primary"
             size="icon"
-            className="w-8 h-8 rounded-full shadow-sm"
+            className="w-8 h-8 rounded-full shadow-sm ring-1 ring-[#FF6B00] ring-offset-1 ring-offset-white dark:ring-offset-gray-900 shadow-lg shadow-[#FF6B00]/30"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             {profilePicture ? (
               <img
                 src={profilePicture}
                 alt={`${user?.firstname} ${user?.lastname}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-full"
               />
             ) : (
               <FiUser className="w-4 h-4 stroke-[2.5]" />
@@ -143,11 +144,11 @@ export const Header = ({ onMenuClick }) => {
                   type="button"
                   onClick={() => {
                     setDropdownOpen(false);
-                    navigate('/profile');
+                    navigate('/profile'); // Always go to profile page
                   }}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800/60 transition-colors duration-150"
                 >
-                  Profile
+                  {isStudent ? 'Change Password' : 'Profile'}
                 </button>
                 <button
                   type="button"
