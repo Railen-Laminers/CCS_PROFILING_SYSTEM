@@ -1,140 +1,158 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
-import { FiPlus, FiX } from 'react-icons/fi';
+import { useAuth } from '@/contexts/AuthContext';
+import { FiBriefcase, FiBook, FiCalendar, FiFolder, FiAward, FiCpu } from 'react-icons/fi';
 
-const SkillCategory = ({ title, skills, onDelete, onProficiencyChange }) => {
+const SectionCard = ({ icon: Icon, title, children }) => {
     const { isDark } = useTheme();
-    
     return (
-        <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-500 dark:text-gray-400">{title}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {skills.map((skill, index) => (
-                    <div key={index} className={`relative p-4 ${isDark ? 'bg-[#181818]' : 'bg-white'} rounded-xl border border-gray-200 dark:border-gray-800`}>
-                        <button 
-                            onClick={() => onDelete(index)}
-                            className="absolute top-3 right-3 p-1 rounded-full text-gray-500 dark:text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                        >
-                            <FiX className="w-4 h-4" />
-                        </button>
-                        <div className="pr-8">
-                            <p className="text-gray-800 dark:text-white font-semibold text-lg mb-3">{skill.name}</p>
-                            <div className="flex flex-wrap gap-2">
-                                <span className="text-sm text-gray-500 dark:text-gray-400 mr-2">Proficiency</span>
-                                {['Beginner', 'Intermediate', 'Advanced', 'Expert'].map((level) => (
-                                    <button
-                                        key={level}
-                                        onClick={() => onProficiencyChange(index, level)}
-                                        className={`px-3 py-1 text-sm rounded-full transition-all ${
-                                            skill.proficiency === level
-                                                ? 'bg-[#ff6b00] text-white'
-                                                : isDark 
-                                                    ? 'bg-gray-800 text-white hover:bg-gray-700'
-                                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                        }`}
-                                    >
-                                        {level}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                ))}
+        <div className={`${isDark ? 'bg-[#181818]' : 'bg-white'} rounded-xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm hover:shadow-md transition-shadow`}>
+            <div className="flex items-center gap-3 mb-4">
+                <Icon className="w-5 h-5 text-[#ff6b00]" />
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
             </div>
+            {children}
         </div>
     );
 };
 
+const TagList = ({ items, emptyText = "None" }) => (
+    <div className="flex flex-wrap gap-2">
+        {items && items.length > 0 ? (
+            items.map((item, idx) => (
+                <span key={idx} className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full">
+                    {item}
+                </span>
+            ))
+        ) : (
+            <span className="text-sm text-gray-500 dark:text-gray-400">{emptyText}</span>
+        )}
+    </div>
+);
+
+const InfoRow = ({ label, value }) => (
+    <div className="flex flex-wrap py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-32">{label}</span>
+        <span className="text-sm text-gray-800 dark:text-white flex-1">{value || '—'}</span>
+    </div>
+);
+
 export const FacultySkills = () => {
     const { isDark } = useTheme();
-    const [skills, setSkills] = useState({
-        'Programming Languages': [
-            { name: 'Python', proficiency: 'Expert' },
-            { name: 'JavaScript', proficiency: 'Advanced' },
-            { name: 'Java', proficiency: 'Intermediate' },
-            { name: 'C++', proficiency: 'Advanced' },
-        ],
-        'Research Areas': [
-            { name: 'Machine Learning', proficiency: 'Expert' },
-            { name: 'Artificial Intelligence', proficiency: 'Expert' },
-            { name: 'Data Science', proficiency: 'Advanced' },
-            { name: 'Computer Vision', proficiency: 'Advanced' },
-        ],
-        'Frameworks': [
-            { name: 'React', proficiency: 'Advanced' },
-            { name: 'TensorFlow', proficiency: 'Expert' },
-            { name: 'PyTorch', proficiency: 'Expert' },
-            { name: 'Node.js', proficiency: 'Intermediate' },
-        ],
-        'Teaching Methods': [
-            { name: 'Project-Based Learning', proficiency: 'Expert' },
-            { name: 'Flipped Classroom', proficiency: 'Advanced' },
-            { name: 'Laboratory Experiments', proficiency: 'Expert' },
-            { name: 'Online Teaching', proficiency: 'Advanced' },
-        ],
-    });
+    const { user, loading } = useAuth();
+    const [faculty, setFaculty] = useState(null);
 
-    const handleDelete = (category, index) => {
-        setSkills(prev => ({
-            ...prev,
-            [category]: prev[category].filter((_, i) => i !== index)
-        }));
-    };
+    useEffect(() => {
+        if (user && user.role === 'faculty' && user.faculty) {
+            setFaculty(user.faculty);
+        }
+    }, [user]);
 
-    const handleProficiencyChange = (category, index, level) => {
-        setSkills(prev => ({
-            ...prev,
-            [category]: prev[category].map((skill, i) => 
-                i === index ? { ...skill, proficiency: level } : skill
-            )
-        }));
-    };
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0a0a]">
+                <div className="text-gray-500 dark:text-gray-400">Loading faculty information...</div>
+            </div>
+        );
+    }
 
-    const handleAddSkill = () => {
-        console.log('Add skill clicked');
-    };
+    if (!user || user.role !== 'faculty') {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0a0a]">
+                <div className="text-red-500">Access denied. Faculty only area.</div>
+            </div>
+        );
+    }
+
+    const data = faculty || {};
+    const subjectsHandled = data.subjects_handled || [];
+    const teachingSchedule = data.teaching_schedule || [];
+    const researchProjects = data.research_projects || [];
+
+    // Combine specialization and subjects into a skills list
+    const skillsList = [];
+    if (data.specialization) {
+        skillsList.push(...data.specialization.split(',').map(s => s.trim()));
+    }
+    skillsList.push(...subjectsHandled);
 
     return (
         <div className={`min-h-screen ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'} p-6 lg:p-8`}>
-            <div className="max-w-4xl mx-auto">
-                <div className="flex items-center justify-between mb-8">
+            <div className="max-w-5xl mx-auto">
+                <div className="mb-8">
                     <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white">
                         Skills & Expertise
                     </h1>
-                    <button 
-                        onClick={handleAddSkill}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-[#ff6b00] hover:bg-orange-600 text-white font-medium rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/25"
-                    >
-                        <FiPlus className="w-5 h-5" />
-                        <span>+ Add Skill</span>
-                    </button>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">
+                        Your professional competencies and academic specialties
+                    </p>
                 </div>
 
-                <div className="space-y-8">
-                    <SkillCategory 
-                        title="Programming Languages"
-                        skills={skills['Programming Languages']}
-                        onDelete={(index) => handleDelete('Programming Languages', index)}
-                        onProficiencyChange={(index, level) => handleProficiencyChange('Programming Languages', index, level)}
-                    />
-                    <SkillCategory 
-                        title="Research Areas"
-                        skills={skills['Research Areas']}
-                        onDelete={(index) => handleDelete('Research Areas', index)}
-                        onProficiencyChange={(index, level) => handleProficiencyChange('Research Areas', index, level)}
-                    />
-                    <SkillCategory 
-                        title="Frameworks"
-                        skills={skills['Frameworks']}
-                        onDelete={(index) => handleDelete('Frameworks', index)}
-                        onProficiencyChange={(index, level) => handleProficiencyChange('Frameworks', index, level)}
-                    />
-                    <SkillCategory 
-                        title="Teaching Methods"
-                        skills={skills['Teaching Methods']}
-                        onDelete={(index) => handleDelete('Teaching Methods', index)}
-                        onProficiencyChange={(index, level) => handleProficiencyChange('Teaching Methods', index, level)}
-                    />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Professional Details */}
+                    <SectionCard icon={FiBriefcase} title="Professional Information">
+                        <InfoRow label="Department" value={data.department} />
+                        <InfoRow label="Position" value={data.position} />
+                        <InfoRow label="Specialization" value={data.specialization} />
+                    </SectionCard>
+
+                    {/* Subjects Handled */}
+                    <SectionCard icon={FiBook} title="Subjects Handled">
+                        <TagList items={subjectsHandled} emptyText="No subjects assigned" />
+                    </SectionCard>
+
+                    {/* Teaching Schedule */}
+                    <SectionCard icon={FiCalendar} title="Teaching Schedule">
+                        {teachingSchedule.length > 0 ? (
+                            <div className="space-y-3">
+                                {teachingSchedule.map((sched, idx) => (
+                                    <div key={idx} className="border-b border-gray-100 dark:border-gray-800 last:border-0 pb-2 last:pb-0">
+                                        <div className="text-sm font-medium text-gray-800 dark:text-white">
+                                            {sched.courseCode || sched.course || `Course ${idx + 1}`}
+                                        </div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                            {sched.day || sched.date} • {sched.startTime} – {sched.endTime}
+                                            {sched.room && ` • Room: ${sched.room}`}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-500 dark:text-gray-400">No teaching schedule available.</p>
+                        )}
+                    </SectionCard>
+
+                    {/* Research Projects */}
+                    <SectionCard icon={FiFolder} title="Research Projects">
+                        {researchProjects.length > 0 ? (
+                            <div className="space-y-4">
+                                {researchProjects.map((project, idx) => (
+                                    <div key={idx} className="border-b border-gray-100 dark:border-gray-800 last:border-0 pb-3 last:pb-0">
+                                        <div className="text-sm font-semibold text-gray-800 dark:text-white">
+                                            {project.title || `Project ${idx + 1}`}
+                                        </div>
+                                        {project.description && (
+                                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{project.description}</p>
+                                        )}
+                                        {project.role && (
+                                            <span className="inline-block mt-1 text-xs bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full text-gray-700 dark:text-gray-300">
+                                                Role: {project.role}
+                                            </span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-500 dark:text-gray-400">No research projects recorded.</p>
+                        )}
+                    </SectionCard>
+                </div>
+
+                {/* Consolidated Skills & Expertise */}
+                <div className="mt-6">
+                    <SectionCard icon={FiAward} title="Skills & Competencies">
+                        <TagList items={[...new Set(skillsList)]} emptyText="No skills listed" />
+                    </SectionCard>
                 </div>
             </div>
         </div>

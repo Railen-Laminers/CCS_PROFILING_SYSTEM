@@ -1,3 +1,5 @@
+// src/pages/Profile.jsx
+
 import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
@@ -10,10 +12,10 @@ const inputClasses = (error, touched, value) => {
   const hasError = error && touched;
   const isValid = touched && !error && value && value.toString().trim() !== '';
   return `w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white border ${hasError
-    ? 'border-red-500 ring-red-500/10'
-    : isValid
-      ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
-      : 'border-gray-200 dark:border-gray-800'
+      ? 'border-red-500 ring-red-500/10'
+      : isValid
+        ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
+        : 'border-gray-200 dark:border-gray-800'
     } rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all outline-none placeholder-gray-400 dark:placeholder-gray-500 text-[14px]`;
 };
 
@@ -34,7 +36,7 @@ const Profile = () => {
   const fileInputRef = useRef(null);
   const modalFileInputRef = useRef(null);
 
-  // Form fields (only used when role is not student)
+  // Form fields (only used when role is admin)
   const [firstname, setFirstname] = useState('');
   const [middlename, setMiddlename] = useState('');
   const [lastname, setLastname] = useState('');
@@ -44,12 +46,12 @@ const Profile = () => {
   const [address, setAddress] = useState('');
   const [birthDate, setBirthDate] = useState('');
 
-  // Profile picture states (only used when role is not student)
+  // Profile picture states (only used when role is admin)
   const [originalProfilePicture, setOriginalProfilePicture] = useState('');
   const [currentBase64, setCurrentBase64] = useState(null);
   const [displayUrl, setDisplayUrl] = useState('');
 
-  // Modal state (only used when role is not student)
+  // Modal state (only used when role is admin)
   const [showModal, setShowModal] = useState(false);
 
   // Password states (always used)
@@ -64,7 +66,9 @@ const Profile = () => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  const isStudent = user?.role === 'student';
+  // Determine if the user should see the full profile edit (admin) or only password (student/faculty)
+  const isRestrictedRole = user?.role === 'student' || user?.role === 'faculty';
+  const canEditPersonalInfo = user?.role === 'admin';
 
   // Load user data
   useEffect(() => {
@@ -72,8 +76,8 @@ const Profile = () => {
       setLoading(false);
       return;
     }
-    // Only load personal info fields if not a student (students don't see them)
-    if (!isStudent) {
+    // Only load personal info fields if admin (students and faculty see only password change)
+    if (canEditPersonalInfo) {
       setFirstname(user.firstname || '');
       setMiddlename(user.middlename || '');
       setLastname(user.lastname || '');
@@ -90,18 +94,18 @@ const Profile = () => {
     setLoading(false);
     setFieldErrors({});
     setTouched({});
-  }, [user, isStudent]);
+  }, [user, canEditPersonalInfo]);
 
-  // Cleanup object URL (only when not student)
+  // Cleanup object URL (only when admin)
   useEffect(() => {
-    if (!isStudent) {
+    if (canEditPersonalInfo) {
       return () => {
         if (displayUrl && displayUrl.startsWith('blob:')) {
           URL.revokeObjectURL(displayUrl);
         }
       };
     }
-  }, [displayUrl, isStudent]);
+  }, [displayUrl, canEditPersonalInfo]);
 
   // Validation functions
   const validateField = (name, value) => {
@@ -152,8 +156,8 @@ const Profile = () => {
   const validateForm = () => {
     const errors = {};
 
-    // Only validate personal info if not student
-    if (!isStudent) {
+    // Only validate personal info if admin
+    if (canEditPersonalInfo) {
       const fieldMap = { firstname, lastname, email, contactNumber };
       Object.entries(fieldMap).forEach(([field, value]) => {
         const error = validateField(field, value);
@@ -201,7 +205,7 @@ const Profile = () => {
     }
   };
 
-  // Profile picture helpers (only used when not student)
+  // Profile picture helpers (only used when admin)
   const hasUnsavedPhoto = () => currentBase64 !== null;
 
   const processFile = (file) => {
@@ -281,8 +285,8 @@ const Profile = () => {
     try {
       const payload = {};
 
-      // Only include personal info if not student
-      if (!isStudent) {
+      // Only include personal info if admin
+      if (canEditPersonalInfo) {
         payload.firstname = firstname.trim();
         payload.middlename = middlename.trim() || null;
         payload.lastname = lastname.trim();
@@ -327,7 +331,7 @@ const Profile = () => {
     );
   }
 
-  // Helper to render field with error handling (only used when not student)
+  // Helper to render field with error handling (only used when admin)
   const renderField = (label, field, type = 'text', required = false, placeholder = '') => {
     let value, setter, error, isTouched;
     switch (field) {
@@ -392,18 +396,18 @@ const Profile = () => {
       {/* Conditional header based on role */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
-          {isStudent ? 'Change Password' : 'My Profile'}
+          {isRestrictedRole ? 'Change Password' : 'My Profile'}
         </h1>
         <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">
-          {isStudent
+          {isRestrictedRole
             ? 'Update your password. Your personal information can be edited in "My Details".'
             : 'Update your account details and password. User ID and role cannot be changed here.'}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Account information card - only shown for non‑students */}
-        {!isStudent && (
+        {/* Account information card - only shown for admin */}
+        {canEditPersonalInfo && (
           <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
             <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
               <CardTitle className="text-[16px] font-bold flex items-center gap-3">
@@ -596,8 +600,8 @@ const Profile = () => {
         </div>
       </form>
 
-      {/* Hidden file inputs - only used when not student */}
-      {!isStudent && (
+      {/* Hidden file inputs - only used when admin */}
+      {canEditPersonalInfo && (
         <>
           <input
             type="file"
@@ -616,8 +620,8 @@ const Profile = () => {
         </>
       )}
 
-      {/* Modal for previewing and uploading new photo - only used when not student */}
-      {!isStudent && showModal && (
+      {/* Modal for previewing and uploading new photo - only used when admin */}
+      {canEditPersonalInfo && showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl max-w-md w-full mx-4 overflow-hidden">
             <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
