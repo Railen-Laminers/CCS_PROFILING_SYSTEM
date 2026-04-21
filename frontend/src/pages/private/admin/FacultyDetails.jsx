@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
+import {
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiMapPin,
-    FiCalendar, FiBookOpen, FiUser, FiAward, FiClock
+    FiBookOpen, FiUser, FiClock
 } from 'react-icons/fi';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -47,7 +47,7 @@ const FacultyDetails = () => {
     if (error || !faculty) {
         return (
             <div className="max-w-7xl mx-auto py-12">
-                <button 
+                <button
                     onClick={() => navigate('/faculty')}
                     className="flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-2 transition-colors"
                 >
@@ -67,11 +67,12 @@ const FacultyDetails = () => {
     const f = faculty.faculty;
     const fullName = [u.firstname, u.middlename, u.lastname].filter(Boolean).join(' ');
     const initials = u.firstname?.[0] || 'F';
+    const profilePic = u.profile_picture;
 
     return (
         <div className="max-w-7xl mx-auto pb-12 animate-in fade-in duration-300">
             {/* Header / Back */}
-            <button 
+            <button
                 onClick={() => navigate('/faculty')}
                 className="group flex items-center gap-2.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-all duration-200 focus:outline-none"
             >
@@ -86,9 +87,17 @@ const FacultyDetails = () => {
                 <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/5 pointer-events-none"></div>
                 <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6 relative z-10">
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                        <div className="w-[120px] h-[120px] rounded-[32px] bg-gradient-to-br from-violet-500 to-brand-400 text-white flex items-center justify-center text-5xl font-bold shadow-xl flex-shrink-0 ring-4 ring-white dark:ring-[#1E1E1E] hover:rotate-3 transition-transform duration-300">
-                            {initials}
-                        </div>
+                        {profilePic ? (
+                            <img
+                                src={profilePic}
+                                alt={fullName}
+                                className="w-[120px] h-[120px] rounded-[32px] object-cover shadow-xl flex-shrink-0 ring-4 ring-white dark:ring-[#1E1E1E] hover:rotate-3 transition-transform duration-300"
+                            />
+                        ) : (
+                            <div className="w-[120px] h-[120px] rounded-[32px] bg-gradient-to-br from-violet-500 to-brand-400 text-white flex items-center justify-center text-5xl font-bold shadow-xl flex-shrink-0 ring-4 ring-white dark:ring-[#1E1E1E] hover:rotate-3 transition-transform duration-300">
+                                {initials}
+                            </div>
+                        )}
                         <div className="text-left">
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1 tracking-tight leading-tight">{fullName}</h1>
                             <p className="text-base font-medium text-gray-500 dark:text-gray-400 mb-4">{u.user_id}</p>
@@ -104,32 +113,32 @@ const FacultyDetails = () => {
                                     </span>
                                 )}
                                 <span className={`px-2.5 py-1 rounded-md text-xs font-bold border tracking-wide ${u.is_active
-                                        ? 'bg-[#00C950] dark:bg-green-500/10 text-[#fff] dark:text-green-400 border-green-200 dark:border-green-500/20'
-                                        : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'
+                                    ? 'bg-[#00C950] dark:bg-green-500/10 text-[#fff] dark:text-green-400 border-green-200 dark:border-green-500/20'
+                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'
                                     }`}>
                                     {u.is_active ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
                             <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-6 text-sm text-gray-600 dark:text-gray-400 font-normal">
                                 <div className="flex items-center gap-2.5">
-                                    <FiMail className="w-4 h-4 text-brand-500" /> 
+                                    <FiMail className="w-4 h-4 text-brand-500" />
                                     <span>{u.email}</span>
                                 </div>
                                 <div className="flex items-center gap-2.5">
-                                    <FiPhone className="w-4 h-4 text-brand-500" /> 
+                                    <FiPhone className="w-4 h-4 text-brand-500" />
                                     <span>{u.contact_number || 'Not Provided'}</span>
                                 </div>
                                 <div className="flex items-center gap-2.5">
-                                    <FiMapPin className="w-4 h-4 text-brand-500" /> 
+                                    <FiMapPin className="w-4 h-4 text-brand-500" />
                                     <span>{u.address || 'Not Provided'}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
-                        <Button 
-                            variant="secondary" 
+                        <Button
+                            variant="secondary"
                             className="flex-1 md:flex-none gap-2"
                             onClick={handlePrintRequest}
                         >
@@ -148,10 +157,10 @@ const FacultyDetails = () => {
                     <button
                         key={tab}
                         onClick={() => handleTabChange(tab)}
-                        className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-[1.25rem] relative z-10 focus:outline-none ${activeTab === tab 
-                                ? 'bg-white dark:bg-[#1E1E1E] text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10 backdrop-blur-md' 
-                                : 'text-zinc-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-[#2C2C2C]'
-                        }`}
+                        className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-[1.25rem] relative z-10 focus:outline-none ${activeTab === tab
+                            ? 'bg-white dark:bg-[#1E1E1E] text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10 backdrop-blur-md'
+                            : 'text-zinc-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-[#2C2C2C]'
+                            }`}
                     >
                         {tab}
                     </button>
@@ -167,7 +176,7 @@ const FacultyDetails = () => {
                     </div>
                 ) : (
                     <div className="animate-in fade-in duration-300 text-left">
-                        
+
                         {activeTab === 'Personal Information' && (
                             <div className="space-y-6">
                                 <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
@@ -236,7 +245,7 @@ const FacultyDetails = () => {
                                     {teachingSchedule.length > 0 ? (
                                         <BulletList items={teachingSchedule.map(s => s.display)} />
                                     ) : (
-                                        <EmptyState 
+                                        <EmptyState
                                             size="md"
                                             icon={FiClock}
                                             title="No Classes Scheduled"
@@ -269,7 +278,7 @@ const FacultyDetails = () => {
                                     {subjectsHandled.length > 0 ? (
                                         renderTags(subjectsHandled.join(', '), "orange")
                                     ) : (
-                                        <EmptyState 
+                                        <EmptyState
                                             size="md"
                                             icon={FiBookOpen}
                                             title="No Subjects Assigned"
@@ -284,24 +293,24 @@ const FacultyDetails = () => {
             </Card>
 
             {/* Edit Profile Modal */}
-            <FacultyFormModal 
-                isOpen={modalOpen} 
-                onClose={() => setModalOpen(false)} 
-                mode="edit" 
+            <FacultyFormModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                mode="edit"
                 initialData={modalData}
                 userId={u?.id}
                 onSuccess={() => {
                     fetchFaculty();
-                }} 
+                }}
                 departments={departments}
                 positions={positions}
             />
 
             {/* Hidden Printable Component */}
             <div className="print:block hidden overflow-hidden h-0 w-0 absolute left-0 top-0">
-                <FacultyReport 
-                    ref={componentRef} 
-                    faculty={faculty} 
+                <FacultyReport
+                    ref={componentRef}
+                    faculty={faculty}
                 />
             </div>
         </div>

@@ -3,15 +3,15 @@ import { FiUsers, FiPower, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { Spinner } from '@/components/ui/Skeleton.jsx';
 import EmptyState from '@/components/ui/EmptyState';
 
-const StudentTable = ({ 
-    students, 
-    loading, 
-    navigate, 
-    handleToggleStatus, 
-    handleEdit, 
-    handleDelete, 
-    togglingUserId, 
-    deletingUserId 
+const StudentTable = ({
+    students,
+    loading,
+    navigate,
+    handleToggleStatus,
+    handleEdit,
+    handleDelete,
+    togglingUserId,
+    deletingUserId
 }) => {
     if (loading) {
         return (
@@ -25,7 +25,7 @@ const StudentTable = ({
 
     if (students.length === 0) {
         return (
-            <EmptyState 
+            <EmptyState
                 icon={FiUsers}
                 title="No Students Found"
                 description="The student database is currently empty or no students match your search criteria. Please check your spelling or add a new student record."
@@ -56,16 +56,25 @@ const StudentTable = ({
                             const fullName = [student.user.firstname, student.user.middlename, student.user.lastname].filter(Boolean).join(' ');
                             const initials = student.user.firstname?.[0] || 'S';
                             const isActive = student.user.is_active;
+                            const profilePic = student.user.profile_picture;
                             return (
-                                <tr 
-                                    key={student.user.id} 
+                                <tr
+                                    key={student.user.id}
                                     onClick={() => navigate(`/students/${student.user.id}`)}
                                     className="hover:bg-brand-500/10 transition-all duration-200 h-[64px] cursor-pointer group hover:shadow-[inset_0_0_20px_rgba(249,115,22,0.05)] relative z-10"
                                 >
                                     <td className="py-2 px-1 pr-4 whitespace-nowrap pl-2">
-                                        <div className="w-9 h-9 rounded-[10px] bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-[13px] font-bold border border-brand-200 dark:border-brand-500/20 shadow-sm">
-                                            {initials}
-                                        </div>
+                                        {profilePic ? (
+                                            <img
+                                                src={profilePic}
+                                                alt={fullName}
+                                                className="w-9 h-9 rounded-[10px] object-cover border border-brand-200 dark:border-brand-500/20 shadow-sm"
+                                            />
+                                        ) : (
+                                            <div className="w-9 h-9 rounded-[10px] bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-[13px] font-bold border border-brand-200 dark:border-brand-500/20 shadow-sm">
+                                                {initials}
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-900 dark:text-gray-100 font-medium">{student.user.user_id}</td>
                                     <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-300 group-hover:text-gray-900 dark:group-hover:text-zinc-100 transition-colors">{fullName}</td>
@@ -73,7 +82,10 @@ const StudentTable = ({
                                     <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.year_level ? `${student.student.year_level} Year` : 'N/A'}</td>
                                     <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.section || 'N/A'}</td>
                                     <td className="py-2 pr-4 whitespace-nowrap">
-                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${isActive ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20' : 'bg-gray-100 dark:bg-zinc-500/10 text-gray-600 dark:text-zinc-400 border-gray-200 dark:border-zinc-500/20'}`}>
+                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${isActive
+                                                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
+                                                : 'bg-gray-100 dark:bg-zinc-500/10 text-gray-600 dark:text-zinc-400 border-gray-200 dark:border-zinc-500/20'
+                                            }`}>
                                             {isActive && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>}
                                             {isActive ? 'Active' : 'Inactive'}
                                         </span>
@@ -82,7 +94,10 @@ const StudentTable = ({
                                         <div className="flex justify-start gap-3 items-center">
                                             <button
                                                 onClick={() => handleToggleStatus(student)}
-                                                className={`p-1.5 rounded-md transition-colors ${isActive ? 'text-yellow-600 hover:bg-yellow-100 dark:hover:bg-yellow-900/20' : 'text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20'}`}
+                                                className={`p-1.5 rounded-md transition-colors ${isActive
+                                                        ? 'text-yellow-600 hover:bg-yellow-100 dark:hover:bg-yellow-900/20'
+                                                        : 'text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20'
+                                                    }`}
                                                 title={isActive ? 'Deactivate' : 'Activate'}
                                                 disabled={togglingUserId !== null}
                                             >
@@ -98,7 +113,10 @@ const StudentTable = ({
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(student.user.id)}
-                                                className={`p-1.5 rounded-md transition-colors ${isActive ? 'text-gray-400 cursor-not-allowed' : 'text-red-500 hover:bg-red-100 dark:hover:bg-red-900/20'}`}
+                                                className={`p-1.5 rounded-md transition-colors ${isActive
+                                                        ? 'text-gray-400 cursor-not-allowed'
+                                                        : 'text-red-500 hover:bg-red-100 dark:hover:bg-red-900/20'
+                                                    }`}
                                                 title={isActive ? 'Must deactivate before deletion' : 'Delete Student'}
                                                 disabled={isActive || deletingUserId !== null || togglingUserId !== null}
                                             >

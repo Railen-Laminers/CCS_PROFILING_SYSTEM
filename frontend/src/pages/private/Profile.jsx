@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiUser, FiSave, FiLoader, FiCamera, FiX } from 'react-icons/fi';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useToast } from '../../../contexts/ToastContext';
-import { authAPI } from '../../../services/api';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
+// src/pages/Profile.jsx
 
-// Reusable input styling (same as Profile page)
-const labelClasses = 'block text-[12px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-2 ml-1';
+import { useEffect, useState, useRef } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
+import { authAPI } from '../../services/api';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { FiUser, FiLock, FiSave, FiEye, FiEyeOff, FiCamera, FiX } from 'react-icons/fi';
 
 const inputClasses = (error, touched, value) => {
   const hasError = error && touched;
   const isValid = touched && !error && value && value.toString().trim() !== '';
   return `w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white border ${hasError
-    ? 'border-red-500 ring-red-500/10'
-    : isValid
-      ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
-      : 'border-gray-200 dark:border-gray-800'
+      ? 'border-red-500 ring-red-500/10'
+      : isValid
+        ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
+        : 'border-gray-200 dark:border-gray-800'
     } rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all outline-none placeholder-gray-400 dark:placeholder-gray-500 text-[14px]`;
 };
+
+const labelClasses = 'block text-[12px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-2 ml-1';
 
 const formatDateInput = (value) => {
   if (!value) return '';
@@ -28,17 +28,15 @@ const formatDateInput = (value) => {
   return d.toISOString().slice(0, 10);
 };
 
-const PersonalInfoForm = () => {
-  const navigate = useNavigate();
-  const { user: currentUser, refreshUser } = useAuth();
+const Profile = () => {
+  const { user, refreshUser } = useAuth();
   const { showToast } = useToast();
-
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef(null);
   const modalFileInputRef = useRef(null);
 
-  // Form fields
+  // Form fields (only used when role is admin)
   const [firstname, setFirstname] = useState('');
   const [middlename, setMiddlename] = useState('');
   const [lastname, setLastname] = useState('');
@@ -47,59 +45,69 @@ const PersonalInfoForm = () => {
   const [gender, setGender] = useState('');
   const [address, setAddress] = useState('');
   const [birthDate, setBirthDate] = useState('');
-  const [parentGuardianName, setParentGuardianName] = useState('');
-  const [emergencyContact, setEmergencyContact] = useState('');
 
-  // Profile picture states
+  // Profile picture states (only used when role is admin)
   const [originalProfilePicture, setOriginalProfilePicture] = useState('');
   const [currentBase64, setCurrentBase64] = useState(null);
   const [displayUrl, setDisplayUrl] = useState('');
 
-  // Modal state
+  // Modal state (only used when role is admin)
   const [showModal, setShowModal] = useState(false);
+
+  // Password states (always used)
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Validation states
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
 
+  // Determine if the user should see the full profile edit (admin) or only password (student/faculty)
+  const isRestrictedRole = user?.role === 'student' || user?.role === 'faculty';
+  const canEditPersonalInfo = user?.role === 'admin';
+
   // Load user data
   useEffect(() => {
-    if (!currentUser) {
+    if (!user) {
       setLoading(false);
       return;
     }
-
-    setFirstname(currentUser.firstname || '');
-    setMiddlename(currentUser.middlename || '');
-    setLastname(currentUser.lastname || '');
-    setEmail(currentUser.email || '');
-    setContactNumber(currentUser.contact_number || '');
-    setGender(currentUser.gender || '');
-    setAddress(currentUser.address || '');
-    setBirthDate(formatDateInput(currentUser.birth_date));
-    setParentGuardianName(currentUser.student?.parent_guardian_name || '');
-    setEmergencyContact(currentUser.student?.emergency_contact || '');
-
-    const originalPic = currentUser.profile_picture || '';
-    setOriginalProfilePicture(originalPic);
-    setCurrentBase64(null);
-    setDisplayUrl(originalPic);
-
+    // Only load personal info fields if admin (students and faculty see only password change)
+    if (canEditPersonalInfo) {
+      setFirstname(user.firstname || '');
+      setMiddlename(user.middlename || '');
+      setLastname(user.lastname || '');
+      setEmail(user.email || '');
+      setContactNumber(user.contact_number || '');
+      setGender(user.gender || '');
+      setAddress(user.address || '');
+      setBirthDate(formatDateInput(user.birth_date));
+      const originalPic = user.profile_picture || '';
+      setOriginalProfilePicture(originalPic);
+      setCurrentBase64(null);
+      setDisplayUrl(originalPic);
+    }
     setLoading(false);
     setFieldErrors({});
     setTouched({});
-  }, [currentUser]);
+  }, [user, canEditPersonalInfo]);
 
-  // Cleanup object URL
+  // Cleanup object URL (only when admin)
   useEffect(() => {
-    return () => {
-      if (displayUrl && displayUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(displayUrl);
-      }
-    };
-  }, [displayUrl]);
+    if (canEditPersonalInfo) {
+      return () => {
+        if (displayUrl && displayUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(displayUrl);
+        }
+      };
+    }
+  }, [displayUrl, canEditPersonalInfo]);
 
-  // Validation
+  // Validation functions
   const validateField = (name, value) => {
     switch (name) {
       case 'firstname':
@@ -119,6 +127,26 @@ const PersonalInfoForm = () => {
           return 'Invalid Philippine mobile number (e.g., 09123456789 or +639123456789).';
         }
         break;
+      case 'currentPassword':
+        if (newPassword || confirmPassword) {
+          if (!value) return 'Current password is required when changing password.';
+        }
+        break;
+      case 'newPassword':
+        if (currentPassword || confirmPassword) {
+          if (!value) return 'New password is required when changing password.';
+          if (value.length < 8) return 'Password must be at least 8 characters.';
+          if (!/[A-Z]/.test(value)) return 'Password must contain at least one uppercase letter.';
+          if (!/[a-z]/.test(value)) return 'Password must contain at least one lowercase letter.';
+          if (!/\d/.test(value)) return 'Password must contain at least one number.';
+        }
+        break;
+      case 'confirmPassword':
+        if (currentPassword || newPassword) {
+          if (!value) return 'Please confirm your new password.';
+          if (value !== newPassword) return 'Passwords do not match.';
+        }
+        break;
       default:
         break;
     }
@@ -127,11 +155,25 @@ const PersonalInfoForm = () => {
 
   const validateForm = () => {
     const errors = {};
-    const fieldsToValidate = { firstname, lastname, email, contactNumber };
-    Object.entries(fieldsToValidate).forEach(([field, value]) => {
-      const error = validateField(field, value);
-      if (error) errors[field] = error;
-    });
+
+    // Only validate personal info if admin
+    if (canEditPersonalInfo) {
+      const fieldMap = { firstname, lastname, email, contactNumber };
+      Object.entries(fieldMap).forEach(([field, value]) => {
+        const error = validateField(field, value);
+        if (error) errors[field] = error;
+      });
+    }
+
+    // Always validate password fields if any are filled
+    if (currentPassword || newPassword || confirmPassword) {
+      const currError = validateField('currentPassword', currentPassword);
+      if (currError) errors.currentPassword = currError;
+      const newError = validateField('newPassword', newPassword);
+      if (newError) errors.newPassword = newError;
+      const confirmError = validateField('confirmPassword', confirmPassword);
+      if (confirmError) errors.confirmPassword = confirmError;
+    }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -144,6 +186,9 @@ const PersonalInfoForm = () => {
       case 'lastname': value = lastname; break;
       case 'email': value = email; break;
       case 'contactNumber': value = contactNumber; break;
+      case 'currentPassword': value = currentPassword; break;
+      case 'newPassword': value = newPassword; break;
+      case 'confirmPassword': value = confirmPassword; break;
       default: return;
     }
     const error = validateField(field, value);
@@ -155,9 +200,12 @@ const PersonalInfoForm = () => {
     if (fieldErrors[field]) {
       setFieldErrors(prev => ({ ...prev, [field]: undefined }));
     }
+    if (['currentPassword', 'newPassword', 'confirmPassword'].includes(field)) {
+      setFieldErrors(prev => ({ ...prev, currentPassword: undefined, newPassword: undefined, confirmPassword: undefined }));
+    }
   };
 
-  // Profile picture helpers
+  // Profile picture helpers (only used when admin)
   const hasUnsavedPhoto = () => currentBase64 !== null;
 
   const processFile = (file) => {
@@ -235,45 +283,55 @@ const PersonalInfoForm = () => {
 
     setSaving(true);
     try {
-      const payload = {
-        firstname: firstname.trim(),
-        middlename: middlename.trim() || null,
-        lastname: lastname.trim(),
-        email: email.trim().toLowerCase(),
-        contact_number: contactNumber.trim() || null,
-        gender: gender || null,
-        address: address.trim() || null,
-        birth_date: birthDate || null,
-        parent_guardian_name: parentGuardianName.trim() || null,
-        emergency_contact: emergencyContact.trim() || null,
-      };
+      const payload = {};
 
-      if (currentBase64) {
-        payload.profile_picture = currentBase64;
+      // Only include personal info if admin
+      if (canEditPersonalInfo) {
+        payload.firstname = firstname.trim();
+        payload.middlename = middlename.trim() || null;
+        payload.lastname = lastname.trim();
+        payload.email = email.trim().toLowerCase();
+        payload.contact_number = contactNumber.trim() || null;
+        payload.gender = gender || null;
+        payload.address = address.trim() || null;
+        payload.birth_date = birthDate || null;
+        if (currentBase64) {
+          payload.profile_picture = currentBase64;
+        }
+      }
+
+      // Always include password change if provided
+      if (newPassword && currentPassword) {
+        payload.currentPassword = currentPassword;
+        payload.newPassword = newPassword;
       }
 
       await authAPI.updateProfile(payload);
       await refreshUser();
 
+      // Reset password fields and clear unsaved photo state
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
       setCurrentBase64(null);
-      showToast('Personal information updated successfully.', 'success');
+      showToast('Profile updated successfully.', 'success');
     } catch (err) {
-      const msg = err.response?.data?.message || 'Failed to update information';
+      const msg = err.response?.data?.message || 'Failed to update profile';
       showToast(msg, 'error');
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading || !currentUser) {
+  if (loading || !user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 flex items-center justify-center">
-        <FiLoader className="w-8 h-8 animate-spin text-orange-500 dark:text-orange-400" />
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500" />
       </div>
     );
   }
 
-  // Helper to render field with consistent styling
+  // Helper to render field with error handling (only used when admin)
   const renderField = (label, field, type = 'text', required = false, placeholder = '') => {
     let value, setter, error, isTouched;
     switch (field) {
@@ -285,11 +343,8 @@ const PersonalInfoForm = () => {
       case 'gender': value = gender; setter = setGender; error = fieldErrors.gender; isTouched = touched.gender; break;
       case 'address': value = address; setter = setAddress; error = fieldErrors.address; isTouched = touched.address; break;
       case 'birthDate': value = birthDate; setter = setBirthDate; error = fieldErrors.birthDate; isTouched = touched.birthDate; break;
-      case 'parentGuardianName': value = parentGuardianName; setter = setParentGuardianName; error = fieldErrors.parentGuardianName; isTouched = touched.parentGuardianName; break;
-      case 'emergencyContact': value = emergencyContact; setter = setEmergencyContact; error = fieldErrors.emergencyContact; isTouched = touched.emergencyContact; break;
       default: return null;
     }
-
     const hasError = error && isTouched;
     const isValid = isTouched && !error && value && value.toString().trim() !== '';
     const inputClass = `w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white border ${hasError ? 'border-red-500 ring-red-500/10' : isValid ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]' : 'border-gray-200 dark:border-gray-800'
@@ -300,7 +355,16 @@ const PersonalInfoForm = () => {
         <label className={labelClasses}>
           {label} {required && <span className="text-red-500">*</span>}
         </label>
-        {type === 'select' ? (
+        {type === 'textarea' ? (
+          <textarea
+            rows={3}
+            className={`${inputClass} h-auto py-3 resize-y min-h-[88px]`}
+            value={value}
+            onChange={(e) => handleFieldChange(setter, field, e.target.value)}
+            onBlur={() => handleBlur(field)}
+            placeholder={placeholder}
+          />
+        ) : type === 'select' ? (
           <select
             className={inputClass}
             value={value}
@@ -312,15 +376,6 @@ const PersonalInfoForm = () => {
             <option value="female">Female</option>
             <option value="other">Other</option>
           </select>
-        ) : type === 'textarea' ? (
-          <textarea
-            rows={3}
-            className={`${inputClass} h-auto py-3 resize-y min-h-[88px]`}
-            value={value}
-            onChange={(e) => handleFieldChange(setter, field, e.target.value)}
-            onBlur={() => handleBlur(field)}
-            placeholder={placeholder}
-          />
         ) : (
           <input
             type={type}
@@ -337,31 +392,29 @@ const PersonalInfoForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 p-4 md:p-8">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-6 transition-colors"
-      >
-        <FiArrowLeft className="w-4 h-4 mr-2" />
-        Back to Dashboard
-      </button>
+    <div className="w-full max-w-3xl mx-auto space-y-8">
+      {/* Conditional header based on role */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+          {isRestrictedRole ? 'Change Password' : 'My Profile'}
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">
+          {isRestrictedRole
+            ? 'Update your password. Your personal information can be edited in "My Details".'
+            : 'Update your account details and password. User ID and role cannot be changed here.'}
+        </p>
+      </div>
 
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">My Details</h1>
-          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">
-            Update your personal information and profile photo.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Account information card - only shown for admin */}
+        {canEditPersonalInfo && (
           <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
             <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
               <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                 <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
                   <FiUser className="w-5 h-5 text-brand-500" />
                 </div>
-                Personal Information
+                Account information
               </CardTitle>
             </CardHeader>
             <CardContent className="p-8 space-y-6">
@@ -419,14 +472,12 @@ const PersonalInfoForm = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className={labelClasses}>Student ID</label>
-                  <input
-                    type="text"
-                    className={inputClasses(false, false, null)}
-                    value={currentUser.user_id || ''}
-                    disabled
-                    readOnly
-                  />
+                  <label className={labelClasses}>User ID</label>
+                  <input type="text" className={inputClasses(false, false, null)} value={user.user_id || ''} disabled readOnly />
+                </div>
+                <div className="space-y-2">
+                  <label className={labelClasses}>Role</label>
+                  <input type="text" className={inputClasses(false, false, null)} value={user.role || ''} disabled readOnly />
                 </div>
                 {renderField('First name', 'firstname', 'text', true, 'Enter first name')}
                 {renderField('Middle name', 'middlename', 'text', false, 'Enter middle name (optional)')}
@@ -436,41 +487,141 @@ const PersonalInfoForm = () => {
                 {renderField('Gender', 'gender', 'select')}
                 {renderField('Birth date', 'birthDate', 'date')}
                 <div className="md:col-span-2">
-                  {renderField('Complete address', 'address', 'textarea', false, 'Street, Barangay, City, Province, Zip Code')}
+                  {renderField('Address', 'address', 'textarea', false, 'Your address')}
                 </div>
-                {renderField('Parent/Guardian name', 'parentGuardianName', 'text', false, 'Full name of parent or guardian')}
-                {renderField('Emergency contact number', 'emergencyContact', 'tel', false, '+63 XXX XXX XXXX')}
               </div>
             </CardContent>
           </Card>
+        )}
 
-          <div className="flex justify-end">
-            <Button type="submit" disabled={saving} className="gap-2 min-w-[160px]">
-              <FiSave className="w-4 h-5" />
-              {saving ? 'Saving…' : 'Save changes'}
-            </Button>
-          </div>
-        </form>
-      </div>
+        {/* Change password card - always shown */}
+        <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+          <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+            <CardTitle className="text-[16px] font-bold flex items-center gap-3">
+              <div className="bg-orange-500/10 p-2 rounded-lg border border-orange-500/20">
+                <FiLock className="w-5 h-5 text-orange-500" />
+              </div>
+              Change password
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-8 space-y-6">
+            <p className="text-sm text-gray-500 dark:text-zinc-400">
+              Leave password fields empty to keep your current password.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Current password */}
+              <div className="space-y-2 md:col-span-2">
+                <label className={labelClasses}>Current password</label>
+                <div className="relative">
+                  <input
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    className={`${inputClasses(!!fieldErrors.currentPassword, touched.currentPassword, currentPassword)} pr-10`}
+                    value={currentPassword}
+                    onChange={(e) => handleFieldChange(setCurrentPassword, 'currentPassword', e.target.value)}
+                    onBlur={() => handleBlur('currentPassword')}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  >
+                    {showCurrentPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {fieldErrors.currentPassword && touched.currentPassword && (
+                  <p className="mt-1 text-xs text-red-500">{fieldErrors.currentPassword}</p>
+                )}
+              </div>
 
-      {/* Hidden file inputs */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileSelect}
-        accept="image/jpeg,image/png,image/jpg,image/webp"
-        className="hidden"
-      />
-      <input
-        type="file"
-        ref={modalFileInputRef}
-        onChange={handleModalFileSelect}
-        accept="image/jpeg,image/png,image/jpg,image/webp"
-        className="hidden"
-      />
+              {/* New password */}
+              <div className="space-y-2">
+                <label className={labelClasses}>New password</label>
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    className={`${inputClasses(!!fieldErrors.newPassword, touched.newPassword, newPassword)} pr-10`}
+                    value={newPassword}
+                    onChange={(e) => handleFieldChange(setNewPassword, 'newPassword', e.target.value)}
+                    onBlur={() => handleBlur('newPassword')}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  >
+                    {showNewPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {!fieldErrors.newPassword && (newPassword || touched.newPassword) && (
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Min 8 chars, uppercase, lowercase, number.
+                  </p>
+                )}
+                {fieldErrors.newPassword && touched.newPassword && (
+                  <p className="mt-1 text-xs text-red-500">{fieldErrors.newPassword}</p>
+                )}
+              </div>
 
-      {/* Modal for profile picture preview/upload */}
-      {showModal && (
+              {/* Confirm password */}
+              <div className="space-y-2">
+                <label className={labelClasses}>Confirm new password</label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    className={`${inputClasses(!!fieldErrors.confirmPassword, touched.confirmPassword, confirmPassword)} pr-10`}
+                    value={confirmPassword}
+                    onChange={(e) => handleFieldChange(setConfirmPassword, 'confirmPassword', e.target.value)}
+                    onBlur={() => handleBlur('confirmPassword')}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {fieldErrors.confirmPassword && touched.confirmPassword && (
+                  <p className="mt-1 text-xs text-red-500">{fieldErrors.confirmPassword}</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end">
+          <Button type="submit" disabled={saving} className="gap-2 min-w-[160px]">
+            <FiSave className="w-4 h-5" />
+            {saving ? 'Saving…' : 'Save changes'}
+          </Button>
+        </div>
+      </form>
+
+      {/* Hidden file inputs - only used when admin */}
+      {canEditPersonalInfo && (
+        <>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept="image/jpeg,image/png,image/jpg,image/webp"
+            className="hidden"
+          />
+          <input
+            type="file"
+            ref={modalFileInputRef}
+            onChange={handleModalFileSelect}
+            accept="image/jpeg,image/png,image/jpg,image/webp"
+            className="hidden"
+          />
+        </>
+      )}
+
+      {/* Modal for previewing and uploading new photo - only used when admin */}
+      {canEditPersonalInfo && showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl max-w-md w-full mx-4 overflow-hidden">
             <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
@@ -511,4 +662,4 @@ const PersonalInfoForm = () => {
   );
 };
 
-export default PersonalInfoForm;
+export default Profile;

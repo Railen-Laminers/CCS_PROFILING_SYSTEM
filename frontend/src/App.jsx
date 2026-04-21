@@ -20,15 +20,23 @@ import Reports from './pages/private/admin/Reports';
 import Scheduling from './pages/private/admin/Scheduling';
 import SchedulingRoomDetail from './pages/private/admin/SchedulingRoomDetail';
 import SystemSettings from './pages/private/SystemSettings';
+import Profile from './pages/private/Profile';
 import StudentDashboard from './pages/private/student/Dashboard';
 import MyEvents from './pages/private/student/MyEvents';
 import MySchedule from './pages/private/student/MySchedule';
 import MyCurriculum from './pages/private/student/MyCurriculum';
 import MyDetails from './pages/private/student/MyDetails';
+import AcademicPerformance from './pages/private/student/AcademicPerformance';
+import MedicalRecords from './pages/private/student/MedicalRecords';
+import SportsActivities from './pages/private/student/SportsActivities';
+import Organizations from './pages/private/student/Organizations';
+import BehaviorRecords from './pages/private/student/BehaviorRecords';
+import Events from './pages/private/student/Events';
 import FacultyDashboard from './pages/private/faculty/Dashboard';
 import FacultyMySchedule from './pages/private/faculty/MySchedule';
 import FacultyMyStudents from './pages/private/faculty/MyStudents';
 import FacultyMyDetails from './pages/private/faculty/MyDetails';
+import FacultySkills from './pages/private/faculty/Skills';
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -109,12 +117,12 @@ function AppContent() {
         }
       />
       <Route
-        path="/student/my-events"
+        path="/student/my-details"
         element={
           <ProtectedRoute>
             <RoleBasedRoute allowedRoles={['student']}>
               <DashboardLayout>
-                <MyEvents />
+                <MyDetails />
               </DashboardLayout>
             </RoleBasedRoute>
           </ProtectedRoute>
@@ -125,9 +133,7 @@ function AppContent() {
         element={
           <ProtectedRoute>
             <RoleBasedRoute allowedRoles={['student']}>
-              <DashboardLayout>
-                <MySchedule />
-              </DashboardLayout>
+              <MySchedule />
             </RoleBasedRoute>
           </ProtectedRoute>
         }
@@ -137,21 +143,67 @@ function AppContent() {
         element={
           <ProtectedRoute>
             <RoleBasedRoute allowedRoles={['student']}>
-              <DashboardLayout>
-                <MyCurriculum />
-              </DashboardLayout>
+              <MyCurriculum />
             </RoleBasedRoute>
           </ProtectedRoute>
         }
       />
       <Route
-        path="/student/my-details"
+        path="/student/academic"
         element={
           <ProtectedRoute>
             <RoleBasedRoute allowedRoles={['student']}>
-              <DashboardLayout>
-                <MyDetails />
-              </DashboardLayout>
+              <AcademicPerformance />
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/medical"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <MedicalRecords />
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/sports"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <SportsActivities />
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/organizations"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <Organizations />
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/behavior"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <BehaviorRecords />
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/events"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['student']}>
+              <Events />
             </RoleBasedRoute>
           </ProtectedRoute>
         }
@@ -201,6 +253,18 @@ function AppContent() {
             <RoleBasedRoute allowedRoles={['faculty']}>
               <DashboardLayout>
                 <FacultyMyDetails />
+              </DashboardLayout>
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/faculty/skills"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={['faculty']}>
+              <DashboardLayout>
+                <FacultySkills />
               </DashboardLayout>
             </RoleBasedRoute>
           </ProtectedRoute>
@@ -341,6 +405,17 @@ function AppContent() {
           <ProtectedRoute>
             <DashboardLayout>
               <SystemSettings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <Profile />
             </DashboardLayout>
           </ProtectedRoute>
         }

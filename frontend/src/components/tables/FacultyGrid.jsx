@@ -10,7 +10,6 @@ const formatResearchItem = (item) => {
     if (!item) return '';
     if (typeof item === 'string') return item;
     if (typeof item === 'object') {
-        // Handle object with title, year, status
         const { title, year, status } = item;
         let result = title || '';
         if (year) result += ` (${year})`;
@@ -24,9 +23,9 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
     const fullName = `${member.user.firstname} ${member.user.lastname}`;
     const initials = member.user.firstname?.[0] || 'F';
     let research = parseList(member.faculty?.research_projects);
-    // Ensure each research item is properly formatted
     research = research.map(formatResearchItem);
     const isActive = member.user.is_active;
+    const profilePic = member.user.profile_picture;
 
     const MAX_RESEARCH = 2;
 
@@ -35,9 +34,17 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
             {/* Header: Avatar + Name + Position */}
             <div className="p-4 sm:p-5 pb-4 border-b border-gray-100 dark:border-gray-800">
                 <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white text-xl font-bold shadow-sm shrink-0 group-hover:scale-105 transition-transform duration-300">
-                        {initials}
-                    </div>
+                    {profilePic ? (
+                        <img
+                            src={profilePic}
+                            alt={fullName}
+                            className="w-14 h-14 rounded-xl object-cover shadow-sm shrink-0 group-hover:scale-105 transition-transform duration-300"
+                        />
+                    ) : (
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white text-xl font-bold shadow-sm shrink-0 group-hover:scale-105 transition-transform duration-300">
+                            {initials}
+                        </div>
+                    )}
                     <div className="flex-1 min-w-0">
                         <h3 className="text-[16px] font-bold text-gray-900 dark:text-white truncate leading-snug">{fullName}</h3>
                         <p className="text-[13px] text-gray-500 dark:text-zinc-500 mt-0.5 font-medium">{member.user.user_id}</p>
@@ -106,7 +113,7 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
                     </div>
                 </div>
 
-                {/* Research Projects - FIXED for object items */}
+                {/* Research Projects */}
                 <div className="pt-3.5 border-t border-gray-100 dark:border-gray-800">
                     <p className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest mb-2">Research Projects</p>
                     {research.length > 0 ? (

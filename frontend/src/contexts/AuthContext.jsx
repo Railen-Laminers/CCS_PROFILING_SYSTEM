@@ -71,6 +71,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const refreshUser = async () => {
+    if (!authAPI.isAuthenticated()) return;
+    const currentUser = await authAPI.getMe();
+    setUser(currentUser);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -80,6 +86,7 @@ export const AuthProvider = ({ children }) => {
         error,
         login,
         logout,
+        refreshUser,
         isAuthenticated: !!user,
       }}
     >

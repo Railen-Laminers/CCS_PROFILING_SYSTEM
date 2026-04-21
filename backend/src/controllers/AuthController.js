@@ -47,6 +47,39 @@ class AuthController {
   }
 
   /**
+   * Update the authenticated user's profile
+   */
+  static async updateProfile(req, res, next) {
+    try {
+      const user = await AuthService.updateProfile(req.user._id, req.body);
+      res.status(200).json({ user });
+    } catch (error) {
+      if (
+        error.message === 'User not found.' ||
+        error.message === 'User not found'
+      ) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      if (
+        error.message.includes('Current password') ||
+        error.message.includes('incorrect') ||
+        error.message.includes('at least 6')
+      ) {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.code === 11000) {
+        const field = Object.keys(error.keyValue || {})[0] || 'field';
+        return res.status(400).json({ message: `Duplicate value for field: ${field}` });
+      }
+      if (error.name === 'ValidationError') {
+        const message = Object.values(error.errors).map((e) => e.message).join(', ');
+        return res.status(400).json({ message });
+      }
+      next(error);
+    }
+  }
+
+  /**
    * Logout the authenticated user
    */
   static async logout(req, res, next) {
