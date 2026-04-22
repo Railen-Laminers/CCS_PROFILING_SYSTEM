@@ -3,6 +3,7 @@ const Assignment = require('../models/Assignment');
 const LessonPlan = require('../models/LessonPlan');
 const Material = require('../models/Material');
 const Faculty = require('../models/Faculty');
+const NotificationService = require('../services/NotificationService');
 const crypto = require('crypto');
 
 class InstructionController {
@@ -189,6 +190,43 @@ class InstructionController {
         req.body.attached_file = `/uploads/${req.file.filename}`;
       }
       const lessonPlan = await LessonPlan.create(req.body);
+
+      // Notify admins and faculty about new lesson plan
+      try {
+        const Course = require('../models/Course');
+        const User = require('../models/User');
+
+        let courseTitle = 'Course';
+        if (lessonPlan.course_id) {
+          const course = await Course.findById(lessonPlan.course_id).select('course_title');
+          if (course) courseTitle = course.course_title;
+        }
+
+        // Get current faculty member if exists
+        const faculty = await Faculty.findOne({ user_id: req.user._id });
+        const notifyUserIds = [];
+
+        if (faculty) {
+          notifyUserIds.push(faculty.user_id);
+        }
+
+        // Notify admins
+        const adminIds = await NotificationService.getAdminUsers();
+        notifyUserIds.push(...adminIds);
+
+        if (notifyUserIds.length > 0) {
+          const uniqueUserIds = [...new Set(notifyUserIds.map(id => id.toString()))];
+          await NotificationService.notifyLessonCreated(
+            lessonPlan._id,
+            lessonPlan.topic,
+            lessonPlan.course_id,
+            uniqueUserIds
+          );
+        }
+      } catch (notificationError) {
+        console.error('Notification error:', notificationError);
+      }
+
       res.status(201).json(lessonPlan);
     } catch (error) {
       next(error);

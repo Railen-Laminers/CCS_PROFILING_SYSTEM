@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiBell, FiSun, FiMoon, FiUser, FiMenu, FiInfo } from 'react-icons/fi';
+import { FiSearch, FiSun, FiMoon, FiUser, FiMenu, FiInfo } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
+import { NotificationDropdown } from '@/components/ui/NotificationDropdown';
 import { useToast } from '@/contexts/ToastContext';
 
 export const Header = ({ onMenuClick }) => {
@@ -65,24 +66,9 @@ export const Header = ({ onMenuClick }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl"
-          aria-label="Search"
-        >
-          <FiSearch className="w-5 h-5 stroke-[2]" />
-        </Button>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative text-gray-500 dark:text-zinc-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl transition-colors"
-          aria-label="Notifications"
-        >
-          <FiBell className="w-5 h-5 stroke-[2]" />
-          <span className="absolute top-2 right-2 block w-[6px] h-[6px] bg-brand-500 rounded-full border-[1.5px] border-white dark:border-surface-dark shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></span>
-        </Button>
+
+        <NotificationDropdown />
 
         <div className="flex items-center gap-2">
           <FiSun className={`w-5 h-5 transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />

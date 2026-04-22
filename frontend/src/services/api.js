@@ -346,5 +346,5 @@ export const instructionAPI = {
 };
 
 
-
+export { axiosInstance };
 export default authAPI;

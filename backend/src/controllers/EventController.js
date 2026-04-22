@@ -1,4 +1,5 @@
 const EventService = require('../services/EventService');
+const NotificationService = require('../services/NotificationService');
 
 class EventController {
   /**
@@ -68,6 +69,17 @@ class EventController {
     try {
       const event = await EventService.create(req.body);
 
+      // Notify admins about new event
+      try {
+        await NotificationService.notifyEventCreated(
+          event._id,
+          event.title,
+          event.description
+        );
+      } catch (notificationError) {
+        console.error('Notification error:', notificationError);
+      }
+
       res.status(201).json({
         message: 'Event created successfully',
         event: {
@@ -102,6 +114,18 @@ class EventController {
     try {
       const { id } = req.params;
       const event = await EventService.update(id, req.body);
+
+      // Notify admins and participants about event update
+      try {
+        const participantIds = event.participants?.map(p => p._id || p) || [];
+        await NotificationService.notifyEventUpdated(
+          event._id,
+          event.title,
+          participantIds
+        );
+      } catch (notificationError) {
+        console.error('Notification error:', notificationError);
+      }
 
       res.status(200).json({
         message: 'Event updated successfully',
@@ -139,7 +163,29 @@ class EventController {
   static async destroy(req, res, next) {
     try {
       const { id } = req.params;
+      
+      // Get event details before deletion to notify participants
+      const Event = require('../models/Event');
+      const eventToDelete = await Event.findById(id).select('title participants');
+      
       await EventService.delete(id);
+      
+      // Notify participants about event cancellation
+      if (eventToDelete) {
+        try {
+          const participantIds = eventToDelete.participants?.map(p => p._id || p) || [];
+          if (participantIds.length > 0) {
+            await NotificationService.notifyEventCancellation(
+              participantIds,
+              eventToDelete._id,
+              eventToDelete.title
+            );
+          }
+        } catch (notificationError) {
+          console.error('Notification error:', notificationError);
+        }
+      }
+      
       res.status(200).json({ message: 'Event deleted successfully' });
     } catch (error) {
       if (error.message === 'Event not found') {
@@ -167,6 +213,30 @@ class EventController {
       }
 
       const event = await EventService.registerParticipant(id, user_id);
+      
+      // Send notification to student
+      try {
+        await NotificationService.notifyEventRegistration(user_id, event._id, event.title);
+      } catch (notificationError) {
+        console.error('Notification error:', notificationError);
+      }
+
+      // Notify admins about student registration
+      try {
+        const User = require('../models/User');
+        const student = await User.findById(user_id).select('firstname lastname');
+        if (student) {
+          await NotificationService.notifyAdminStudentRegistered(
+            user_id,
+            event._id,
+            event.title,
+            `${student.firstname} ${student.lastname}`
+          );
+        }
+      } catch (notificationError) {
+        console.error('Notification error:', notificationError);
+      }
+
       res.status(200).json({
         message: 'Student registered successfully.',
         participant_count: event.participants.length,
@@ -200,6 +270,30 @@ class EventController {
       }
 
       const event = await EventService.unregisterParticipant(id, user_id);
+      
+      // Send notification to student
+      try {
+        await NotificationService.notifyEventUnregistration(user_id, event._id, event.title);
+      } catch (notificationError) {
+        console.error('Notification error:', notificationError);
+      }
+
+      // Notify admins about student unregistration
+      try {
+        const User = require('../models/User');
+        const student = await User.findById(user_id).select('firstname lastname');
+        if (student) {
+          await NotificationService.notifyAdminStudentUnregistered(
+            user_id,
+            event._id,
+            event.title,
+            `${student.firstname} ${student.lastname}`
+          );
+        }
+      } catch (notificationError) {
+        console.error('Notification error:', notificationError);
+      }
+
       res.status(200).json({
         message: 'Student unregistered successfully.',
         participant_count: event.participants.length,
