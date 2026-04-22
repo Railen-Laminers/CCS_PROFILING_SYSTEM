@@ -36,9 +36,9 @@ const CustomEvent = ({ event }) => {
         {start} - {end}
       </div>
 
-      <div className="text-[9px] font-medium text-gray-600 dark:text-gray-400 leading-tight">
-        {cls.section} • {cls.instructor_id?.user?.lastname || 'Instructor'}
-      </div>
+<div className="text-[9px] font-medium text-gray-600 dark:text-gray-400 leading-tight">
+          {cls.section} • {cls.instructor_id?.user_id?.lastname || cls.instructor_id?.user?.lastname || 'Instructor'}
+        </div>
     </div>
   );
 };

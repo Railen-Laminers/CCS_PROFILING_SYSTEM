@@ -175,11 +175,29 @@ class StudentSearchService {
    */
   static async getDistinctSections(program, year_level) {
     let query = {};
-    if (program) query.program = program;
-    if (year_level) query.year_level = parseInt(year_level);
     
-    const sections = await Student.distinct('section', query);
-    return sections.filter(s => s).sort();
+    if (program && typeof program === 'string') {
+      const trimmedProgram = program.trim();
+      // Normalize program: support both BSIT and full name
+      const normalizedProgram = trimmedProgram === 'BSIT' ? 
+        { $in: ['BSIT', 'Bachelor of Science in Information Technology'] } :
+        trimmedProgram === 'BSCS' ?
+        { $in: ['BSCS', 'Bachelor of Science in Computer Science'] } :
+        trimmedProgram;
+      query.program = normalizedProgram;
+    }
+    
+    if (year_level && !isNaN(parseInt(year_level, 10))) {
+      query.year_level = parseInt(year_level, 10);
+    }
+    
+    try {
+      const sections = await Student.distinct('section', query);
+      return (sections || []).filter(s => s && typeof s === 'string').sort();
+    } catch (error) {
+      console.error('Error fetching distinct sections:', error);
+      return [];
+    }
   }
 
   /**
