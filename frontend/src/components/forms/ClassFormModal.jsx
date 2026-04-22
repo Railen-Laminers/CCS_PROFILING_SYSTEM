@@ -246,7 +246,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
               <div className="relative group">
                 <FiBook className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
                 <select name="course_id" className={`${inputClass} appearance-none`} value={formData.course_id} onChange={handleChange} required disabled={!filters.program}>
-                  <option value="" disabled>Select Course</option>
+                  <option value="" disabled>{!filters.program ? 'Select Program First' : filteredCourses.length > 0 ? 'Select Course' : 'No Courses Found'}</option>
                   {filteredCourses.map(c => (
                     <option key={c._id} value={c._id}>{c.course_code} - {c.course_title}</option>
                   ))}
@@ -272,7 +272,9 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
               <div className="relative group">
                 <FiUsers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
                 <select name="section" className={`${inputClass} appearance-none`} value={formData.section} onChange={handleChange} required disabled={!filters.program}>
-                  <option value="" disabled>Select Section</option>
+                  <option value="" disabled>
+                    {!filters.program ? 'Select Program First' : sections.length > 0 ? 'Select Section' : 'No Sections Found'}
+                  </option>
                   {sections.map((s, idx) => (
                     <option key={idx} value={s}>{s}</option>
                   ))}
