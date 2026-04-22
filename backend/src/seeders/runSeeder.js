@@ -18,11 +18,14 @@ const Room = require('../models/Room');
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`Error: ${error.message}`);
     process.exit(1);
   }
+};
+
+// Helper function to generate section based on year level and section letter
+const generateSection = (yearLevel, sectionLetter) => {
+  return `${yearLevel}IT-${sectionLetter}`;
 };
 
 // Seed data
@@ -40,14 +43,6 @@ const seedData = async () => {
     await Material.deleteMany({});
     await Room.deleteMany({});
 
-    console.log('Data cleared...');
-
-    // -----------------------------------------------------------------
-    // IMPORTANT: Do NOT hash passwords manually.
-    // The User model's pre('save') middleware will automatically hash
-    // the plain text password.
-    // -----------------------------------------------------------------
-
     // Create Admin User
     const admin = await User.create({
       firstname: 'Admin',
@@ -64,16 +59,13 @@ const seedData = async () => {
       is_active: true
     });
 
-    console.log('Admin user created...');
-
-    // Create 5 Students with skills, sports, and other data
-    // NOTE: Using User.create() (not insertMany) so that pre('save') middleware runs
+    // Create Students with proper year levels and sections
     const studentUsersData = [
       {
         firstname: 'John Michael',
         middlename: 'Rodriguez',
         lastname: 'Cruz',
-        user_id: '2021001',
+        user_id: '2023001', // 3rd year
         email: 'john.cruz@ccs.edu',
         password: 'password',
         role: 'student',
@@ -87,7 +79,7 @@ const seedData = async () => {
         firstname: 'Maria Angelica',
         middlename: 'Santos',
         lastname: 'Lim',
-        user_id: '2021002',
+        user_id: '2023002', // 3rd year
         email: 'maria.lim@ccs.edu',
         password: 'password',
         role: 'student',
@@ -101,7 +93,7 @@ const seedData = async () => {
         firstname: 'Carlos',
         middlename: 'Miguel',
         lastname: 'Bautista',
-        user_id: '2021003',
+        user_id: '2024001', // 2nd year
         email: 'carlos.bautista@ccs.edu',
         password: 'password',
         role: 'student',
@@ -115,7 +107,7 @@ const seedData = async () => {
         firstname: 'Sofia',
         middlename: 'Garcia',
         lastname: 'Mendoza',
-        user_id: '2021004',
+        user_id: '2023003', // 3rd year
         email: 'sofia.mendoza@ccs.edu',
         password: 'password',
         role: 'student',
@@ -129,7 +121,7 @@ const seedData = async () => {
         firstname: 'Nathaniel',
         middlename: 'Torres',
         lastname: 'Franco',
-        user_id: '2021005',
+        user_id: '2024002', // 2nd year
         email: 'nathaniel.franco@ccs.edu',
         password: 'password',
         role: 'student',
@@ -139,7 +131,7 @@ const seedData = async () => {
         address: '654 Bonifacio Street, Makati City',
         is_active: true
       }
-];
+    ];
 
     const createdStudentUsers = await User.create(studentUsersData);
 
@@ -148,8 +140,8 @@ const seedData = async () => {
         user_id: createdStudentUsers[0]._id,
         parent_guardian_name: 'Roberto Cruz',
         emergency_contact: '09123456711',
-        section: 'IT-1A',
-        program: 'BSIT',
+        section: generateSection(3, 'A'), // 3IT-A
+        program: 'Bachelor of Science in Information Technology',
         year_level: 3,
         gpa: 1.75,
         current_subjects: ['IT 301 - Database Management Systems 1', 'IT 350 - Software Engineering', 'IT 205 - Web Development Fundamentals'],
@@ -168,8 +160,8 @@ const seedData = async () => {
         user_id: createdStudentUsers[1]._id,
         parent_guardian_name: 'Antonio Lim',
         emergency_contact: '09123456712',
-        section: 'IT-1B',
-        program: 'BSIT',
+        section: generateSection(3, 'B'), // 3IT-B
+        program: 'Bachelor of Science in Information Technology',
         year_level: 3,
         gpa: 1.5,
         current_subjects: ['IT 301 - Database Management Systems 1', 'IT 350 - Software Engineering', 'IT 205 - Web Development Fundamentals'],
@@ -188,8 +180,8 @@ const seedData = async () => {
         user_id: createdStudentUsers[2]._id,
         parent_guardian_name: 'Roberto Bautista',
         emergency_contact: '09123456713',
-        section: 'IT-2A',
-        program: 'BSIT',
+        section: generateSection(2, 'A'), // 2IT-A
+        program: 'Bachelor of Science in Information Technology',
         year_level: 2,
         gpa: 2.0,
         current_subjects: ['IT 201 - Data Structures & Algorithms', 'IT 205 - Web Development Fundamentals', 'IT 102 - Computer Programming 1'],
@@ -208,8 +200,8 @@ const seedData = async () => {
         user_id: createdStudentUsers[3]._id,
         parent_guardian_name: 'Ricardo Mendoza',
         emergency_contact: '09123456714',
-        section: 'IT-1A',
-        program: 'BSIT',
+        section: generateSection(3, 'A'), // 3IT-A (Sofia's section)
+        program: 'Bachelor of Science in Information Technology',
         year_level: 3,
         gpa: 1.25,
         current_subjects: ['IT 301 - Database Management Systems 1', 'IT 350 - Software Engineering', 'IT 205 - Web Development Fundamentals'],
@@ -228,8 +220,8 @@ const seedData = async () => {
         user_id: createdStudentUsers[4]._id,
         parent_guardian_name: 'Manuel Franco',
         emergency_contact: '09123456715',
-        section: 'IT-2B',
-        program: 'BSIT',
+        section: generateSection(2, 'B'), // 2IT-B
+        program: 'Bachelor of Science in Information Technology',
         year_level: 2,
         gpa: 1.0,
         current_subjects: ['IT 201 - Data Structures & Algorithms', 'IT 205 - Web Development Fundamentals', 'IT 102 - Computer Programming 1'],
@@ -247,7 +239,6 @@ const seedData = async () => {
     ];
 
     await Student.insertMany(studentProfiles);
-    console.log('5 Students created with skills, sports, and other data...');
 
     // Create Faculty Users
     const facultyUsersData = [
@@ -402,7 +393,6 @@ const seedData = async () => {
     ];
 
     await Faculty.insertMany(facultyProfiles);
-    console.log('5 Faculty members created with all fields populated...');
 
     // Create IT-related courses (Curriculum)
     const courseData = [
@@ -418,7 +408,6 @@ const seedData = async () => {
     ];
 
     await Course.insertMany(courseData);
-    console.log('Curriculum Courses created...');
 
     // Create sample events
     await Event.create({
@@ -456,12 +445,8 @@ const seedData = async () => {
       end_datetime: '2026-07-22 20:00:00'
     });
 
-    console.log('Events created...');
-
-    console.log('Seed data completed successfully!');
     process.exit(0);
   } catch (error) {
-    console.error(`Error: ${error.message}`);
     process.exit(1);
   }
 };

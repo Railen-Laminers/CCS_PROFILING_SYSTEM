@@ -277,7 +277,7 @@ const SportsActivitiesForm = ({ onCancel, onBack }) => {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                        Year / Details
+                        Year
                       </label>
                       <input
                         type="text"
