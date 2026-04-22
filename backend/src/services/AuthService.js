@@ -130,7 +130,7 @@ class AuthService {
     }
     await user.save();
 
-    // 3. Update role-specific profile (Student only – extend for faculty if needed)
+    // 3. Update role-specific profile (Student)
     if (user.role === 'student') {
       const Student = require('../models/Student');
       let student = await Student.findOne({ user_id: user._id });
@@ -138,7 +138,6 @@ class AuthService {
         student = new Student({ user_id: user._id });
       }
 
-      // All fields a student may edit via frontend forms
       const allowedStudentFields = [
         'parent_guardian_name', 'emergency_contact',
         'blood_type', 'medical_condition', 'allergies', 'disabilities',
@@ -150,13 +149,11 @@ class AuthService {
       let updated = false;
       for (const key of allowedStudentFields) {
         if (body[key] !== undefined) {
-          // Handle empty strings (convert to null for scalar fields, empty arrays for arrays)
           if (body[key] === '' && !Array.isArray(body[key]) && typeof body[key] !== 'object') {
             student[key] = null;
           } else if (Array.isArray(body[key])) {
             student[key] = body[key].filter(v => v !== '');
           } else if (typeof body[key] === 'object' && body[key] !== null) {
-            // For sports_activities and organizations, replace with the sent object
             student[key] = body[key];
           } else {
             student[key] = body[key];
@@ -169,7 +166,43 @@ class AuthService {
       }
     }
 
-    // 4. Return fresh user data with populated profile
+    // 4. Update role-specific profile (Faculty) – NEW BLOCK
+    if (user.role === 'faculty') {
+      const Faculty = require('../models/Faculty');
+      let faculty = await Faculty.findOne({ user_id: user._id });
+      if (!faculty) {
+        faculty = new Faculty({ user_id: user._id });
+      }
+
+      // Allowed faculty fields for self‑update
+      const allowedFacultyFields = [
+        'specialization',
+        'subjects_handled',
+        'research_projects'
+        // Add 'department', 'position' here if you want faculty to edit them as well
+      ];
+
+      let updated = false;
+      for (const key of allowedFacultyFields) {
+        if (body[key] !== undefined) {
+          if (Array.isArray(body[key])) {
+            // For subjects_handled (array of strings) or research_projects (array of objects)
+            faculty[key] = body[key].filter(v => v !== '');
+          } else if (typeof body[key] === 'string') {
+            faculty[key] = body[key];
+          } else if (typeof body[key] === 'object' && body[key] !== null) {
+            // For research_projects if sent as an object (though it should be an array)
+            faculty[key] = body[key];
+          }
+          updated = true;
+        }
+      }
+      if (updated) {
+        await faculty.save();
+      }
+    }
+
+    // 5. Return fresh user data with populated profile
     const fresh = await User.findById(userId);
     return await this.formatUserWithProfile(fresh);
   }

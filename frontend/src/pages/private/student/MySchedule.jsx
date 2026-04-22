@@ -1,118 +1,121 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { FaClock, FaBook, FaMapMarkerAlt, FaUser } from 'react-icons/fa';
+import { useTheme } from '@/contexts/ThemeContext';
+import { instructionAPI } from '@/services/api';
+import { FiClock, FiBook, FiMapPin } from 'react-icons/fi';
 
 export const MySchedule = () => {
     const { user } = useAuth();
-    const [schedule, setSchedule] = useState([]);
+    const { isDark } = useTheme();
+    const [classes, setClasses] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchSchedule = async () => {
-            if (!user || user.role !== 'student') return;
+        const fetchClasses = async () => {
+            if (!user || user.role !== 'faculty') return;
             setLoading(true);
             try {
-                const scheduleData = user.student?.current_subjects || [];
-                setSchedule(scheduleData.map(subject => ({
-                    subject,
-                    time: 'TBA',
-                    room: 'TBA',
-                    instructor: 'TBA'
-                })));
+                // No need to pass instructor_id – backend uses logged‑in user
+                const data = await instructionAPI.getClasses();
+                setClasses(data || []);
             } catch (err) {
                 console.error('Failed to fetch schedule:', err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchSchedule();
+        fetchClasses();
     }, [user]);
+
+    // Group classes by day (schedule.date stores day name)
+    const scheduleByDay = classes.reduce((acc, cls) => {
+        const day = cls.schedule?.date || 'TBA';
+        if (!acc[day]) acc[day] = [];
+        acc[day].push(cls);
+        return acc;
+    }, {});
+
+    // Sort classes within each day by start time
+    const sortByTime = (a, b) => {
+        const timeA = a.schedule?.startTime || '00:00';
+        const timeB = b.schedule?.startTime || '00:00';
+        return timeA.localeCompare(timeB);
+    };
+
+    // Desired order of weekdays
+    const daysOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const sortedDays = Object.keys(scheduleByDay).sort(
+        (a, b) => daysOrder.indexOf(a) - daysOrder.indexOf(b)
+    );
 
     if (loading) {
         return (
-            <div className="p-6">
+            <div className={`min-h-screen ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'} p-6 lg:p-8`}>
                 <div className="animate-pulse space-y-4">
-                    <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                    <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                    <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-8 bg-gray-200 dark:bg-gray-800 rounded w-1/4"></div>
+                    <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded"></div>
+                    <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded"></div>
                 </div>
             </div>
         );
     }
 
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
     return (
-        <div className="max-w-5xl">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">
-                My Schedule
-            </h1>
+        <div className={`min-h-screen ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'} p-6 lg:p-8`}>
+            <div className="max-w-5xl mx-auto">
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mb-8">
+                    My Teaching Schedule
+                </h1>
 
-            <div className="bg-white dark:bg-surface-secondary border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="bg-gray-50 dark:bg-surface-dark border-b border-gray-200 dark:border-gray-700">
-                                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                                    Day
-                                </th>
-                                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                                    Subject
-                                </th>
-                                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                                    Time
-                                </th>
-                                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                                    Room
-                                </th>
-                                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">
-                                    Instructor
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {schedule.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="py-8 text-center text-gray-500 dark:text-gray-400">
-                                        No schedule available
-                                    </td>
-                                </tr>
-                            ) : (
-                                schedule.map((item, index) => (
-                                    <tr key={index} className="border-b border-gray-100 dark:border-gray-700 last:border-0">
-                                        <td className="py-3 px-4 text-sm text-gray-800 dark:text-gray-200">
-                                            {days[index] || '-'}
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-gray-800 dark:text-gray-200">
-                                            <div className="flex items-center gap-2">
-                                                <FaBook className="w-4 h-4 text-brand-500" />
-                                                {item.subject}
+                {classes.length === 0 ? (
+                    <div className={`text-center py-12 ${isDark ? 'bg-[#181818]' : 'bg-white'} rounded-xl border border-gray-200 dark:border-gray-800`}>
+                        <FiClock className="mx-auto text-5xl text-gray-500 dark:text-gray-600 mb-4" />
+                        <p className="text-gray-500">No classes assigned yet.</p>
+                    </div>
+                ) : (
+                    <div className="space-y-6">
+                        {sortedDays.map(day => {
+                            const dayClasses = scheduleByDay[day];
+                            if (!dayClasses.length) return null;
+                            const sorted = [...dayClasses].sort(sortByTime);
+                            return (
+                                <div key={day} className={`${isDark ? 'bg-[#181818]' : 'bg-white'} rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800`}>
+                                    <div className={`${isDark ? 'bg-[#1f1f1f]' : 'bg-gray-50'} px-5 py-3 border-b border-gray-200 dark:border-gray-800`}>
+                                        <h2 className="font-semibold text-gray-800 dark:text-white">{day}</h2>
+                                    </div>
+                                    <div className="p-5 space-y-4">
+                                        {sorted.map((cls, idx) => (
+                                            <div key={idx} className={`p-4 ${isDark ? 'bg-[#1f1f1f]' : 'bg-gray-50'} rounded-xl border border-gray-200 dark:border-gray-800`}>
+                                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                                                    <h3 className="text-gray-800 dark:text-white font-semibold text-lg">
+                                                        {cls.course_id?.course_code || 'N/A'} – {cls.course_id?.course_title || 'Course'}
+                                                    </h3>
+                                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                                        Section: {cls.section || 'N/A'}
+                                                    </span>
+                                                </div>
+                                                <div className="flex flex-wrap gap-4 text-gray-500 dark:text-gray-400 text-sm">
+                                                    <span className="flex items-center gap-2">
+                                                        <FiClock className="w-4 h-4" />
+                                                        {cls.schedule?.startTime || '??:??'} – {cls.schedule?.endTime || '??:??'}
+                                                    </span>
+                                                    <span className="flex items-center gap-2">
+                                                        <FiMapPin className="w-4 h-4" />
+                                                        {cls.room_id?.name || 'Room not assigned'}
+                                                    </span>
+                                                    <span className="flex items-center gap-2">
+                                                        <FiBook className="w-4 h-4" />
+                                                        {cls.course_id?.units || '?'} units
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                            <div className="flex items-center gap-2">
-                                                <FaClock className="w-4 h-4" />
-                                                {item.time}
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                            <div className="flex items-center gap-2">
-                                                <FaMapMarkerAlt className="w-4 h-4" />
-                                                {item.room}
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                            <div className="flex items-center gap-2">
-                                                <FaUser className="w-4 h-4" />
-                                                {item.instructor}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </div>
     );

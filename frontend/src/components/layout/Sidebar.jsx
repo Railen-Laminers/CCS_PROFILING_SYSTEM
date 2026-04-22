@@ -45,7 +45,6 @@ const facultyMenuItems = [
   { name: 'Dashboard', path: '/faculty/dashboard', icon: FiGrid },
   { name: 'Profile', path: '/faculty/my-details', icon: FiUsers },
   { name: 'Scheduling', path: '/faculty/my-schedule', icon: FiClock },
-  { name: 'Grades', path: '/faculty/my-students', icon: FiFile },
   { name: 'Skills', path: '/faculty/skills', icon: FiStar },
 ];
 

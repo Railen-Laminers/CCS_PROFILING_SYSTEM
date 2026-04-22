@@ -1,20 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { 
-  FiGrid, 
-  FiClock, 
-  FiUsers, 
-  FiUser, 
-  FiBook, 
+import { instructionAPI } from '@/services/api';
+import {
+  FiClock,
+  FiUsers,
+  FiBook,
   FiCalendar,
   FiCheckCircle,
-  FiAlertCircle,
-  FiPlusCircle,
-  FiEye,
-  FiFileText,
-  FiChevronRight
+  FiChevronRight,
+  FiLoader,
 } from 'react-icons/fi';
 
 const StatCard = ({ icon: Icon, label, value, color }) => (
@@ -59,134 +55,156 @@ const ClassItem = ({ course, day, time, room, students }) => (
   </div>
 );
 
-const ActivityItem = ({ icon: Icon, text, time, type }) => (
-  <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 transition-all duration-300 hover:bg-gray-100 dark:hover:bg-white/10">
-    <div className={`p-2 rounded-lg ${type === 'success' ? 'bg-green-100 dark:bg-green-500/20' : 'bg-yellow-100 dark:bg-yellow-500/20'}`}>
-      <Icon className={`w-5 h-5 ${type === 'success' ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`} />
-    </div>
-    <div className="flex-1">
-      <p className="text-gray-800 dark:text-white font-medium">{text}</p>
-      <p className="text-gray-500 dark:text-gray-400 text-sm mt-0.5">{time}</p>
-    </div>
-  </div>
-);
-
-const QuickAction = ({ icon: Icon, label, to }) => (
-  <Link
-    to={to}
-    className="group relative flex flex-col items-center justify-center p-6 bg-white/50 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl transition-all duration-300 hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/10 hover:-translate-y-1"
-  >
-    <div className="relative">
-      <div className="p-4 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg group-hover:scale-110 group-hover:shadow-orange-500/30 transition-all duration-300">
-        <Icon className="w-7 h-7 text-white" />
-      </div>
-      <p className="mt-4 text-gray-800 dark:text-white font-semibold text-center">{label}</p>
-    </div>
-  </Link>
-);
-
 export const FacultyDashboard = () => {
   const { user } = useAuth();
   const { isDark } = useTheme();
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const upcomingClasses = [
-    { course: 'CS 101 - Introduction to Programming', day: 'Monday', time: '9:00 AM - 11:00 AM', room: 'Room 301', students: 35 },
-    { course: 'CS 201 - Data Structures', day: 'Tuesday', time: '1:00 PM - 3:00 PM', room: 'Room 205', students: 28 },
-    { course: 'CS 301 - Algorithm Design', day: 'Wednesday', time: '9:00 AM - 11:00 AM', room: 'Room 301', students: 22 },
-    { course: 'CS 401 - Capstone Project', day: 'Thursday', time: '2:00 PM - 4:00 PM', room: 'Lab 102', students: 15 },
-  ];
+  const facultyInfo = user?.faculty || {};
+  const facultyId = facultyInfo._id;
 
-  const recentActivity = [
-    { icon: FiCheckCircle, text: 'Grades submitted for CS 101', time: '2 hours ago', type: 'success' },
-    { icon: FiCheckCircle, text: 'Schedule request approved', time: '5 hours ago', type: 'success' },
-    { icon: FiAlertCircle, text: 'Pending schedule review - CS 301', time: '1 day ago', type: 'warning' },
-    { icon: FiCheckCircle, text: 'Attendance report uploaded', time: '2 days ago', type: 'success' },
-  ];
+  useEffect(() => {
+    const fetchClasses = async () => {
+      if (!facultyId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const data = await instructionAPI.getClasses({ instructor_id: facultyId });
+        setClasses(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error('Failed to fetch classes:', err);
+        setError(err.message || 'Failed to load schedule');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchClasses();
+  }, [facultyId]);
 
-  const quickActions = [
-    { icon: FiFileText, label: 'Submit Grades', to: '/faculty/my-students' },
-    { icon: FiPlusCircle, label: 'Add Schedule', to: '/faculty/my-schedule' },
-    { icon: FiUsers, label: 'View Students', to: '/faculty/my-students' },
-    { icon: FiCalendar, label: 'View Schedule', to: '/faculty/my-schedule' },
-  ];
+  const totalCourses = new Set(classes.map(c => c.course_id?._id).filter(Boolean)).size;
+  const totalStudents = classes.reduce((sum, c) => sum + (c.students_count || 0), 0);
+  const totalClasses = classes.length;
 
-  if (!user) {
-    return <div className="p-6 text-gray-500">Loading...</div>;
+  const today = new Date().toISOString().split('T')[0];
+  const upcomingClasses = classes
+    .filter(c => c.schedule?.date >= today)
+    .sort((a, b) => a.schedule?.date.localeCompare(b.schedule?.date))
+    .slice(0, 4);
+
+  const getDayName = (dateStr) => {
+    if (!dateStr) return 'TBD';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { weekday: 'long' });
+  };
+
+  const formatTimeRange = (start, end) => {
+    if (!start || !end) return 'TBD';
+    return `${start} - ${end}`;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <FiLoader className="w-8 h-8 animate-spin text-orange-500" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 text-center text-red-500">
+        <p>Error loading dashboard: {error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg"
+        >
+          Retry
+        </button>
+      </div>
+    );
   }
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
       <div className="p-6 lg:p-8 space-y-8">
+        {/* Header with faculty brief info */}
         <div>
           <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 dark:text-white">
             Dashboard
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">
-            Overview
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard 
-            icon={FiBook} 
-            label="Active Courses" 
-            value="4" 
-            color="from-orange-500 to-orange-600" 
-          />
-          <StatCard 
-            icon={FiUsers} 
-            label="Total Students" 
-            value="127" 
-            color="from-blue-500 to-blue-600" 
-          />
-          <StatCard 
-            icon={FiClock} 
-            label="Pending Schedules" 
-            value="2" 
-            color="from-yellow-500 to-yellow-600" 
-          />
-          <StatCard 
-            icon={FiCheckCircle} 
-            label="Approved Schedules" 
-            value="12" 
-            color="from-green-500 to-green-600" 
-          />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white">Upcoming Classes</h2>
-              <Link to="/faculty/my-schedule" className="flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm font-medium transition-colors">
-                View All <FiChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {upcomingClasses.map((cls, index) => (
-                <ClassItem key={index} {...cls} />
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white">Recent Activity</h2>
-              <Link to="/faculty/my-details" className="flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm font-medium transition-colors">
-                View All <FiChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {recentActivity.map((activity, index) => (
-                <ActivityItem key={index} {...activity} />
-              ))}
-            </div>
+          <div className="mt-2 flex flex-wrap gap-2 text-gray-500 dark:text-gray-400">
+            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm">
+              {facultyInfo.department || 'Department not set'}
+            </span>
+            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm">
+              {facultyInfo.position || 'Position not set'}
+            </span>
+            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm">
+              {facultyInfo.specialization || 'Specialization not set'}
+            </span>
           </div>
         </div>
 
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {quickActions.map((action, index) => (
-            <QuickAction key={index} {...action} />
-          ))}
+          <StatCard
+            icon={FiBook}
+            label="Active Courses"
+            value={totalCourses}
+            color="from-orange-500 to-orange-600"
+          />
+          <StatCard
+            icon={FiUsers}
+            label="Total Students"
+            value={totalStudents}
+            color="from-blue-500 to-blue-600"
+          />
+          <StatCard
+            icon={FiClock}
+            label="Total Classes"
+            value={totalClasses}
+            color="from-yellow-500 to-yellow-600"
+          />
+          <StatCard
+            icon={FiCheckCircle}
+            label="Upcoming Classes"
+            value={upcomingClasses.length}
+            color="from-green-500 to-green-600"
+          />
+        </div>
+
+        {/* Upcoming Classes Section */}
+        <div className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">Upcoming Classes</h2>
+            <Link
+              to="/faculty/my-schedule"
+              className="flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm font-medium transition-colors"
+            >
+              View All <FiChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {upcomingClasses.length === 0 ? (
+              <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                No upcoming classes scheduled.
+              </p>
+            ) : (
+              upcomingClasses.map((cls) => (
+                <ClassItem
+                  key={cls._id}
+                  course={cls.course_id?.course_title || 'Untitled Course'}
+                  day={getDayName(cls.schedule?.date)}
+                  time={formatTimeRange(cls.schedule?.startTime, cls.schedule?.endTime)}
+                  room={cls.room_id?.name || 'No room assigned'}
+                  students={cls.students_count || 0}
+                />
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>

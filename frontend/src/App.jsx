@@ -34,7 +34,6 @@ import BehaviorRecords from './pages/private/student/BehaviorRecords';
 import Events from './pages/private/student/Events';
 import FacultyDashboard from './pages/private/faculty/Dashboard';
 import FacultyMySchedule from './pages/private/faculty/MySchedule';
-import FacultyMyStudents from './pages/private/faculty/MyStudents';
 import FacultyMyDetails from './pages/private/faculty/MyDetails';
 import FacultySkills from './pages/private/faculty/Skills';
 
@@ -50,9 +49,9 @@ const LoadingSpinner = () => (
 // Wrapper component that redirects to role-based dashboard
 const RoleBasedDashboard = () => {
   const { user } = useAuth();
-  
+
   if (!user) return <Navigate to="/login" replace />;
-  
+
   switch (user.role) {
     case 'student':
       return <StudentDashboard />;
@@ -235,18 +234,6 @@ function AppContent() {
         }
       />
       <Route
-        path="/faculty/my-students"
-        element={
-          <ProtectedRoute>
-            <RoleBasedRoute allowedRoles={['faculty']}>
-              <DashboardLayout>
-                <FacultyMyStudents />
-              </DashboardLayout>
-            </RoleBasedRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
         path="/faculty/my-details"
         element={
           <ProtectedRoute>
@@ -333,7 +320,7 @@ function AppContent() {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/instruction"
         element={
@@ -385,7 +372,7 @@ function AppContent() {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/scheduling/room/:id"
         element={

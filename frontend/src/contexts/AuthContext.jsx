@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   // Check if user is already authenticated on mount
   useEffect(() => {
     const controller = new AbortController();
-    
+
     const checkAuth = async () => {
       try {
         if (authAPI.isAuthenticated()) {
@@ -21,10 +21,7 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (err) {
         if (err.name !== 'AbortError' && err.name !== 'CanceledError') {
-          // Only clear token if explicitly unauthorized (401).
-          // Don't clear on 500 or network errors to persist session.
           if (err.response?.status === 401) {
-            // localStorage.removeItem('authToken');
             sessionStorage.removeItem('authToken');
           }
         }
@@ -71,10 +68,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // --- NEW: refreshUser method ---
   const refreshUser = async () => {
     if (!authAPI.isAuthenticated()) return;
-    const currentUser = await authAPI.getMe();
-    setUser(currentUser);
+    try {
+      const currentUser = await authAPI.getMe();
+      setUser(currentUser);
+    } catch (err) {
+      console.error('Failed to refresh user:', err);
+    }
   };
 
   return (
@@ -86,7 +88,7 @@ export const AuthProvider = ({ children }) => {
         error,
         login,
         logout,
-        refreshUser,
+        refreshUser,   // exposed
         isAuthenticated: !!user,
       }}
     >

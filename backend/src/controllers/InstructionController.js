@@ -2,23 +2,35 @@ const Class = require('../models/Class');
 const Assignment = require('../models/Assignment');
 const LessonPlan = require('../models/LessonPlan');
 const Material = require('../models/Material');
+const Faculty = require('../models/Faculty');
 const crypto = require('crypto');
 
 class InstructionController {
   static async getClasses(req, res, next) {
     try {
       const filter = {};
+
+      // If the user is a faculty member, default to their own classes
+      if (req.user.role === 'faculty') {
+        const faculty = await Faculty.findOne({ user_id: req.user._id });
+        if (faculty) {
+          filter.instructor_id = faculty._id;
+        }
+      }
+
+      // Override if a specific instructor_id is provided in query (e.g., for admin)
       if (req.query.instructor_id) {
         filter.instructor_id = req.query.instructor_id;
       }
 
       const classes = await Class.find(filter)
-        .populate('course_id', 'course_code course_title')
+        .populate('course_id', 'course_code course_title units')
         .populate({
           path: 'instructor_id',
           populate: { path: 'user_id', select: 'firstname lastname' }
         })
         .populate('room_id', 'name type');
+
       res.status(200).json(classes);
     } catch (error) {
       next(error);
@@ -29,16 +41,13 @@ class InstructionController {
     const { room_id, instructor_id, schedule } = classData;
     const { date, startTime, endTime } = schedule;
 
-    // Build conflict query
     const conflictQuery = {
       'schedule.date': date,
       $or: [
         { room_id },
         { instructor_id }
       ],
-      // Exclude current class if updating
       _id: { $ne: currentId },
-      // Overlap logic: (newStart < existingEnd) && (existingStart < newEnd)
       'schedule.startTime': { $lt: endTime },
       'schedule.endTime': { $gt: startTime }
     };
@@ -67,7 +76,6 @@ class InstructionController {
     try {
       const { repeat_weekly, until_date } = req.body;
 
-      // Handle Single Creation
       if (!repeat_weekly) {
         const conflictMsg = await InstructionController.hasConflict(req.body);
         if (conflictMsg) {
@@ -77,7 +85,6 @@ class InstructionController {
         return res.status(201).json(newClass);
       }
 
-      // Handle Recurring Creation
       if (!until_date) {
         return res.status(400).json({ message: 'Until date is required for recurring classes.', errors: { until_date: ['Required'] } });
       }
@@ -91,7 +98,6 @@ class InstructionController {
         return res.status(400).json({ message: 'Until date must be after start date.', errors: { until_date: ['Must be after start date'] } });
       }
 
-      // 1. Collect all dates and validate conflicts for each
       while (currentDate <= endDate) {
         const dateStr = currentDate.toISOString().split('T')[0];
         const classOccurrence = {
@@ -105,9 +111,9 @@ class InstructionController {
 
         const conflictMsg = await InstructionController.hasConflict(classOccurrence);
         if (conflictMsg) {
-          return res.status(400).json({ 
-            message: `Conflict on ${dateStr}: ${conflictMsg}`, 
-            errors: { global: [`Conflict on ${dateStr}: ${conflictMsg}`] } 
+          return res.status(400).json({
+            message: `Conflict on ${dateStr}: ${conflictMsg}`,
+            errors: { global: [`Conflict on ${dateStr}: ${conflictMsg}`] }
           });
         }
 
@@ -115,11 +121,10 @@ class InstructionController {
         currentDate.setDate(currentDate.getDate() + 7);
       }
 
-      // 2. Perform bulk creation
       const createdClasses = await Class.insertMany(occurrences);
-      res.status(201).json({ 
+      res.status(201).json({
         message: `Successfully scheduled ${createdClasses.length} sessions.`,
-        classes: createdClasses 
+        classes: createdClasses
       });
 
     } catch (error) {
@@ -239,7 +244,6 @@ class InstructionController {
         return res.status(400).json({ message: 'Section is required' });
       }
 
-      // Find all unique course titles for the given section
       const classes = await Class.find({ section })
         .populate('course_id', 'course_title');
 

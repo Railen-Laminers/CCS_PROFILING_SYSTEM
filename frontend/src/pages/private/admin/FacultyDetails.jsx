@@ -263,7 +263,12 @@ const FacultyDetails = () => {
                                         <FiBookOpen className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Research Projects</h3>
                                     </div>
-                                    <BulletList items={parseList(f?.research_projects)} />
+                                    {/* FIX: Convert objects to strings before rendering */}
+                                    <BulletList
+                                        items={(parseList(f?.research_projects) || []).map(project =>
+                                            `${project.title || 'Untitled'} (${project.year || 'N/A'}) – ${project.status || 'Unknown'}`
+                                        )}
+                                    />
                                 </div>
                             </div>
                         )}
