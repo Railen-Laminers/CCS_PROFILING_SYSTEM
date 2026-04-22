@@ -17,7 +17,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
     repeat_weekly: false,
     until_date: ''
   });
-  
+
   const [courses, setCourses] = useState([]);
   const [faculties, setFaculties] = useState([]);
   const [sections, setSections] = useState([]);
@@ -44,7 +44,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
 
   useEffect(() => {
     if (!isOpen || !filters.program) return;
-    
+
     const fetchSections = async () => {
       try {
         const params = {};
@@ -52,7 +52,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
         if (filters.year_level && filters.year_level !== '') {
           params.year_level = parseInt(filters.year_level, 10);
         }
-        
+
         const sData = await studentProfileAPI.getSections(params);
         setSections(sData || []);
       } catch (err) {
@@ -125,8 +125,8 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
       }
     } else if (initialData && initialData.section && !filters.program) {
       const sectionPrefix = initialData.section.substring(0, 4);
-      const program = sectionPrefix === 'IT-1' || sectionPrefix === 'IT-2' ? 'BSIT' : 
-                   sectionPrefix === 'CS-' ? 'BSCS' : '';
+      const program = sectionPrefix === 'IT-1' || sectionPrefix === 'IT-2' ? 'BSIT' :
+        sectionPrefix === 'CS-' ? 'BSCS' : '';
       if (program) {
         setFilters(prev => ({ ...prev, program }));
       }
@@ -138,8 +138,6 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
     if (filters.year_level && c.year_level !== parseInt(filters.year_level)) return false;
     return true;
   });
-
-
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -183,7 +181,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] animate-in fade-in duration-300" onClick={onClose} />
-      
+
       <div className="relative w-full max-w-2xl bg-white dark:bg-[#1E1E1E] rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-300">
         <div className="px-8 py-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-zinc-900/10">
           <div className="flex items-center gap-4">
@@ -283,17 +281,11 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
               <div className="relative group">
                 <FiUsers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
                 <select name="section" className={`${inputClass} appearance-none`} value={formData.section} onChange={handleChange} required disabled={!filters.program}>
-<<<<<<< HEAD
-                  <option value="" disabled>Select Section</option>
-                  {sections.map(s => (
-                    <option key={s} value={s}>{s}</option>
-=======
                   <option value="" disabled>
                     {!filters.program ? 'Select Program First' : sections.length > 0 ? 'Select Section' : 'No Sections Found'}
                   </option>
-                  {sections.map((s, idx) => (
-                    <option key={idx} value={s}>{s}</option>
->>>>>>> 16c68df7af0a7e5701613ae58e327c0d9f4c01bc
+                  {sections.map((s) => (
+                    <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
               </div>
@@ -303,13 +295,13 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
               <label className={labelClass}>Class Date</label>
               <div className="relative group">
                 <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
-                <input 
-                  type="date" 
-                  name="schedule.date" 
-                  className={inputClass} 
-                  value={formData.schedule.date} 
-                  onChange={handleChange} 
-                  required 
+                <input
+                  type="date"
+                  name="schedule.date"
+                  className={inputClass}
+                  value={formData.schedule.date}
+                  onChange={handleChange}
+                  required
                   disabled={!filters.program}
                 />
               </div>
@@ -338,12 +330,12 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
                     <div className={`w-10 h-6 rounded-full p-1 transition-all duration-300 ${formData.repeat_weekly ? 'bg-brand-500' : 'bg-gray-200 dark:bg-zinc-800'} relative`}>
                       <div className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${formData.repeat_weekly ? 'translate-x-4' : 'translate-x-0'} shadow-sm`} />
                     </div>
-                    <input 
-                      type="checkbox" 
-                      name="repeat_weekly" 
-                      className="hidden" 
-                      checked={formData.repeat_weekly} 
-                      onChange={(e) => setFormData(prev => ({ ...prev, repeat_weekly: e.target.checked }))} 
+                    <input
+                      type="checkbox"
+                      name="repeat_weekly"
+                      className="hidden"
+                      checked={formData.repeat_weekly}
+                      onChange={(e) => setFormData(prev => ({ ...prev, repeat_weekly: e.target.checked }))}
                       disabled={!filters.program}
                     />
                     <span className="text-sm font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-widest">Repeat every week</span>
@@ -355,13 +347,13 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
                     <label className={labelClass}>Repeat Until</label>
                     <div className="relative group">
                       <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
-                      <input 
-                        type="date" 
-                        name="until_date" 
-                        className={inputClass} 
-                        value={formData.until_date} 
-                        onChange={handleChange} 
-                        required 
+                      <input
+                        type="date"
+                        name="until_date"
+                        className={inputClass}
+                        value={formData.until_date}
+                        onChange={handleChange}
+                        required
                         disabled={!filters.program}
                       />
                     </div>
@@ -372,7 +364,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
                 )}
               </>
             )}
-            
+
           </div>
 
           <div className="flex items-center gap-4 mt-10">
@@ -386,4 +378,5 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
     </div>
   );
 };
+
 export default ClassFormModal;
