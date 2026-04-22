@@ -16,7 +16,7 @@ const Events = () => {
 
   return (
     <DashboardLayout>
-      <EventsForm 
+      <EventsForm
         onCancel={handleCancel}
         onBack={handleBack}
       />

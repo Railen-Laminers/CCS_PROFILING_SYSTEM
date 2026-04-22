@@ -27,7 +27,7 @@ export const MyEvents = () => {
             if (!user || user.role !== 'student') return;
             setLoading(true);
             try {
-                const data = await eventAPI.getStudentEvents(user._id);
+                const data = await eventAPI.getStudentEvents(user.id); // use user.id (ObjectId)
                 setEvents(data || []);
             } catch (err) {
                 console.error('Failed to fetch events:', err);
@@ -50,7 +50,8 @@ export const MyEvents = () => {
         );
     }
 
-    const registeredEvents = events.filter(e => e.status === 'Completed' || e.status === 'Upcoming');
+    // All events the student has registered for
+    const registeredEvents = events; // already filtered by API
     const curricularEvents = events.filter(e => e.category === 'Curricular');
     const displayEvents = activeTab === 'registered' ? registeredEvents : curricularEvents;
 
@@ -63,23 +64,21 @@ export const MyEvents = () => {
             <div className="flex gap-4 mb-6 border-b border-gray-200 dark:border-gray-700">
                 <button
                     onClick={() => setActiveTab('registered')}
-                    className={`pb-3 px-2 text-sm font-medium transition-colors ${
-                        activeTab === 'registered'
+                    className={`pb-3 px-2 text-sm font-medium transition-colors ${activeTab === 'registered'
                             ? 'text-brand-500 border-b-2 border-brand-500'
                             : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    }`}
+                        }`}
                 >
-                    Registered Events
+                    Registered Events ({registeredEvents.length})
                 </button>
                 <button
                     onClick={() => setActiveTab('curricular')}
-                    className={`pb-3 px-2 text-sm font-medium transition-colors ${
-                        activeTab === 'curricular'
+                    className={`pb-3 px-2 text-sm font-medium transition-colors ${activeTab === 'curricular'
                             ? 'text-brand-500 border-b-2 border-brand-500'
                             : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    }`}
+                        }`}
                 >
-                    Curricular Events
+                    Curricular Events ({curricularEvents.length})
                 </button>
             </div>
 
@@ -92,7 +91,7 @@ export const MyEvents = () => {
                 <div className="grid gap-4">
                     {displayEvents.map((event) => (
                         <div
-                            key={event._id}
+                            key={event.event_id} // API returns event_id
                             className="bg-white dark:bg-surface-secondary border border-gray-200 dark:border-gray-700 rounded-xl p-5 shadow-sm"
                         >
                             <div className="flex justify-between items-start">
@@ -104,11 +103,12 @@ export const MyEvents = () => {
                                         {event.description}
                                     </p>
                                 </div>
-                                <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                                    event.status === 'Upcoming'
+                                <span className={`px-3 py-1 text-xs font-medium rounded-full ${event.status === 'Upcoming'
                                         ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                        : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                                }`}>
+                                        : event.status === 'Completed'
+                                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                            : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                                    }`}>
                                     {event.status}
                                 </span>
                             </div>
@@ -125,7 +125,7 @@ export const MyEvents = () => {
                                 )}
                                 <div className="flex items-center gap-2">
                                     <FaUsers className="w-4 h-4" />
-                                    {event.participants?.length || 0} registered
+                                    {event.participant_count || 0} registered
                                 </div>
                             </div>
                         </div>

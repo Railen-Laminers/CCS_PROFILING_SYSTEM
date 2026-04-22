@@ -155,7 +155,12 @@ class EventController {
   static async register(req, res, next) {
     try {
       const { id } = req.params;
-      const { user_id } = req.body;
+      let { user_id } = req.body;
+
+      // If the authenticated user is a student, force user_id to be their own ID
+      if (req.user.role === 'student') {
+        user_id = req.user._id;
+      }
 
       if (!user_id) {
         return res.status(400).json({ message: 'user_id is required.' });
@@ -184,7 +189,11 @@ class EventController {
   static async unregister(req, res, next) {
     try {
       const { id } = req.params;
-      const { user_id } = req.body;
+      let { user_id } = req.body;
+
+      if (req.user.role === 'student') {
+        user_id = req.user._id;
+      }
 
       if (!user_id) {
         return res.status(400).json({ message: 'user_id is required.' });

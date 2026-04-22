@@ -1,11 +1,39 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { eventAPI } from '@/services/api';
 import { FiUser, FiBook, FiHeart, FiAward, FiUsers, FiAlertTriangle, FiCalendar, FiCheckCircle, FiInfo } from 'react-icons/fi';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [registeredCount, setRegisteredCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!user || user.role !== 'student') return;
+      try {
+        // Fetch all events (for upcoming events)
+        const allEvents = await eventAPI.getEvents();
+        // Filter upcoming events (status 'Upcoming' and start_datetime > now)
+        const now = new Date();
+        const upcoming = allEvents
+          .filter(e => e.status === 'Upcoming' && new Date(e.start_datetime) > now)
+          .slice(0, 3);
+        setUpcomingEvents(upcoming);
+
+        // Fetch student's registered events to get count
+        const registered = await eventAPI.getStudentEvents(user.id);
+        setRegisteredCount(registered.length);
+      } catch (err) {
+        console.error('Failed to load dashboard data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboardData();
+  }, [user]);
 
   // Profile sections (each links to its route)
   const profileSections = [
@@ -15,11 +43,6 @@ const StudentDashboard = () => {
     { title: 'Sports & Activities', icon: FiAward, path: '/student/sports', status: user?.student?.sports_activities ? 'completed' : 'not completed' },
     { title: 'Organizations', icon: FiUsers, path: '/student/organizations', status: user?.student?.organizations ? 'completed' : 'not completed' },
     { title: 'Behavior Records', icon: FiAlertTriangle, path: '/student/behavior', status: user?.student?.behavior_discipline_records ? 'completed' : 'not completed' }
-  ];
-
-  const upcomingEvents = [
-    { title: 'National Programming Competition', category: 'Programming' },
-    { title: 'Tech Summit 2026', category: 'Conference' }
   ];
 
   if (!user) {
@@ -77,26 +100,41 @@ const StudentDashboard = () => {
               View All
             </Link>
           </div>
-          <div className="space-y-3">
-            {upcomingEvents.map((event, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
-              >
-                <div className="w-10 h-10 bg-orange-100 dark:bg-orange-950/50 rounded-lg flex items-center justify-center">
-                  <FiCalendar className="w-5 h-5 text-[#FF6B00] dark:text-orange-400" />
+          {loading ? (
+            <div className="space-y-3">
+              <div className="h-16 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
+              <div className="h-16 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
+            </div>
+          ) : upcomingEvents.length === 0 ? (
+            <div className="text-center py-6">
+              <FiCalendar className="mx-auto text-3xl text-gray-300 dark:text-gray-600 mb-2" />
+              <p className="text-gray-500 dark:text-gray-400 text-sm">No upcoming events</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {upcomingEvents.map((event) => (
+                <div
+                  key={event.event_id}
+                  className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
+                >
+                  <div className="w-10 h-10 bg-orange-100 dark:bg-orange-950/50 rounded-lg flex items-center justify-center">
+                    <FiCalendar className="w-5 h-5 text-[#FF6B00] dark:text-orange-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-800 dark:text-gray-100">
+                      {event.title}
+                    </h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {new Date(event.start_datetime).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span className="px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 text-xs rounded-full">
+                    {event.category}
+                  </span>
                 </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-800 dark:text-gray-100">
-                    {event.title}
-                  </h4>
-                </div>
-                <span className="px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 text-xs rounded-full">
-                  {event.category}
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-5">
@@ -106,17 +144,33 @@ const StudentDashboard = () => {
               My Registrations
             </h2>
           </div>
-          <div className="flex flex-col items-center justify-center py-6">
-            <p className="text-gray-800 dark:text-gray-300 text-sm mb-3 text-center">
-              You haven't registered for any events yet
-            </p>
-            <Link
-              to="/student/events"
-              className="px-4 py-2 border border-gray-800 dark:border-gray-400 text-gray-800 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              Browse Events
-            </Link>
-          </div>
+          {loading ? (
+            <div className="h-24 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
+          ) : registeredCount > 0 ? (
+            <div>
+              <p className="text-gray-800 dark:text-gray-300 text-sm mb-3">
+                You have registered for <strong>{registeredCount}</strong> event{registeredCount !== 1 && 's'}.
+              </p>
+              <Link
+                to="/student/events"
+                className="inline-block px-4 py-2 bg-brand-500 text-white rounded-lg text-sm font-medium hover:bg-brand-600 transition-colors"
+              >
+                View My Events
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-6">
+              <p className="text-gray-800 dark:text-gray-300 text-sm mb-3 text-center">
+                You haven't registered for any events yet
+              </p>
+              <Link
+                to="/student/events"
+                className="px-4 py-2 border border-gray-800 dark:border-gray-400 text-gray-800 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                Browse Events
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
