@@ -43,17 +43,21 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
   }, [isOpen]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !filters.program) return;
+    
     const fetchSections = async () => {
       try {
         const params = {};
-        if (filters.program) params.program = filters.program;
-        if (filters.year_level) params.year_level = filters.year_level;
+        params.program = filters.program;
+        if (filters.year_level && filters.year_level !== '') {
+          params.year_level = parseInt(filters.year_level, 10);
+        }
         
         const sData = await studentProfileAPI.getSections(params);
-        setSections(sData);
+        setSections(sData || []);
       } catch (err) {
-        console.error(err);
+        console.error('Failed to fetch sections:', err);
+        setSections([]);
       }
     };
     fetchSections();
@@ -118,6 +122,13 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
       const course = courses.find(c => c._id === courseId);
       if (course) {
         setFilters({ program: course.program || '', year_level: course.year_level || '' });
+      }
+    } else if (initialData && initialData.section && !filters.program) {
+      const sectionPrefix = initialData.section.substring(0, 4);
+      const program = sectionPrefix === 'IT-1' || sectionPrefix === 'IT-2' ? 'BSIT' : 
+                   sectionPrefix === 'CS-' ? 'BSCS' : '';
+      if (program) {
+        setFilters(prev => ({ ...prev, program }));
       }
     }
   }, [initialData, courses]);
@@ -272,11 +283,17 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
               <div className="relative group">
                 <FiUsers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
                 <select name="section" className={`${inputClass} appearance-none`} value={formData.section} onChange={handleChange} required disabled={!filters.program}>
+<<<<<<< HEAD
+                  <option value="" disabled>Select Section</option>
+                  {sections.map(s => (
+                    <option key={s} value={s}>{s}</option>
+=======
                   <option value="" disabled>
                     {!filters.program ? 'Select Program First' : sections.length > 0 ? 'Select Section' : 'No Sections Found'}
                   </option>
                   {sections.map((s, idx) => (
                     <option key={idx} value={s}>{s}</option>
+>>>>>>> 16c68df7af0a7e5701613ae58e327c0d9f4c01bc
                   ))}
                 </select>
               </div>
