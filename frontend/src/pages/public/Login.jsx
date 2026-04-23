@@ -45,40 +45,63 @@ const LoginPage = () => {
 
                 {/* LEFT SIDE - Branding with solid color */}
                 <div 
-                    className="md:w-1/2 bg-brand-500 p-8 md:p-12 flex flex-col justify-between text-white relative overflow-hidden"
+                    className="md:w-1/2 p-8 md:p-12 flex flex-col text-white relative overflow-hidden bg-brand-600"
                 >
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-600 to-brand-500 z-0"></div>
+                    {/* Modern Mesh & Pattern Background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand-600 via-brand-500 to-brand-700 z-0"></div>
+                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+                        <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-white/10 blur-[100px]"></div>
+                        <div className="absolute bottom-[10%] -right-[20%] w-[60%] h-[60%] rounded-full bg-black/10 blur-[80px]"></div>
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvc3ZnPg==')] opacity-20"></div>
+                    </div>
                     
-                    <div className="space-y-6 relative z-10">
-                        <div className="flex items-center gap-3">
+                    {/* Brand Header */}
+                    <div className="relative z-10 flex items-center gap-4">
+                        <div className="p-2.5 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
                             {logoUrl ? (
                                 <img
                                     src={logoUrl}
                                     alt="System logo"
-                                    className="h-11 w-11 rounded-2xl object-contain bg-white/15 border border-white/20 p-2"
+                                    className="h-10 w-10 md:h-12 md:w-12 object-contain"
                                 />
                             ) : (
-                                <FaChartLine className="text-3xl md:text-4xl text-white/90" />
+                                <FaChartLine className="text-3xl md:text-4xl text-brand-600" />
                             )}
                         </div>
-                        <div className="space-y-4 mt-8">
-                            <h2 className="text-3xl md:text-4xl font-bold leading-tight">
-                                {systemTitle || 'CCS Comprehensive Profiling System'}
-                            </h2>
-                            <p className="text-white/90 text-lg leading-relaxed">
-                                Secure platform for managing and profiling students of the institution.
-                                Streamline academic records, track progress, and ensure data-driven insights.
-                            </p>
+                        <div className="flex flex-col">
+                            <span className="font-extrabold text-xl tracking-wider text-white leading-none uppercase">CCS</span>
+                            <span className="text-xs font-semibold tracking-[0.2em] text-white/70 uppercase mt-1">Department</span>
                         </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="relative z-10 space-y-5 mt-8 max-w-lg">
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight text-white drop-shadow-sm">
+                            {systemTitle || (
+                                <>
+                                    Comprehensive <br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">
+                                        Profiling System
+                                    </span>
+                                </>
+                            )}
+                        </h2>
+                        
+                        <div className="w-16 h-1.5 bg-gradient-to-r from-white/80 to-white/20 rounded-full my-6"></div>
+                        
+                        <p className="text-white/80 text-lg md:text-xl leading-relaxed font-light">
+                            A comprehensive platform for managing and profiling students. 
+                            Streamline academic records, track progress, and unlock data-driven insights.
+                        </p>
                     </div>
                 </div>
 
                 {/* RIGHT SIDE - Login Form */}
                 <div className="md:w-1/2 p-8 md:p-12 bg-white/40 backdrop-blur-sm transition-colors duration-500">
                     <div className="max-w-md mx-auto w-full">
-                        <div className="text-center mb-8">
-                            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 transition-colors duration-500">Welcome Back</h3>
-                            <p className="text-gray-500 mt-2 transition-colors duration-500">Sign in with your user ID or email</p>
+                        <div className="text-center mb-10">
+                            <h3 className="text-3xl md:text-4xl font-extrabold text-gray-800 tracking-tight">Welcome Back</h3>
+                            <p className="text-gray-500 mt-3 font-medium">Sign in with your user ID or email</p>
                         </div>
 
                         {/* Server error */}
