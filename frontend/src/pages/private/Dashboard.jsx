@@ -12,8 +12,6 @@ import {
   FiActivity,
   FiAward,
   FiBookOpen,
-  FiHeart,
-  FiAlertTriangle,
   FiPieChart,
   FiBarChart2
 } from 'react-icons/fi';
@@ -24,18 +22,12 @@ const Dashboard = () => {
   const { user } = useAuth();
   const {
     studentCount, facultyCount, courseCount, eventCount,
-    sportsCount, orgCount, medicalCount, disciplinaryCount,
+    sportsCount, orgCount,
     academicData, participationData, courseDistribution,
     loading: countsLoading
   } = useDashboardStats(user?.role);
 
-  const recentActivities = [
-    { id: 1, type: 'enrollment', message: 'New student John Doe enrolled in BS CS', time: '2 hours ago', icon: FiUsers, color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-900/30' },
-    { id: 2, type: 'event', message: 'CCS Week schedule updated', time: '5 hours ago', icon: FiCalendar, color: 'text-orange-500', bg: 'bg-orange-100 dark:bg-orange-900/30' },
-    { id: 3, type: 'achievement', message: 'Team Alpha won 1st Place in Hackathon', time: '1 day ago', icon: FiAward, color: 'text-yellow-500', bg: 'bg-yellow-100 dark:bg-yellow-900/30' },
-    { id: 4, type: 'academic', message: 'Midterm grades submitted by 80% of faculty', time: '2 days ago', icon: FiBookOpen, color: 'text-green-500', bg: 'bg-green-100 dark:bg-green-900/30' },
-    { id: 5, type: 'system', message: 'System maintenance completed successfully', time: '3 days ago', icon: FiActivity, color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30' },
-  ];
+
 
   const COLORS = ['#F97316', '#3B82F6', '#10B981', '#8B5CF6', '#EC4899'];
 
@@ -68,7 +60,7 @@ const Dashboard = () => {
       {user.role === 'admin' && (
         <>
           {/* Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Students */}
             <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl p-5 flex items-center justify-between">
               <div>
@@ -147,38 +139,14 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Medical Records */}
-            <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl p-5 flex items-center justify-between">
-              <div>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                  {countsLoading ? '...' : medicalCount !== null ? medicalCount.toLocaleString() : '0'}
-                </p>
-                <p className="text-xs font-semibold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mt-1">Medical Records</p>
-              </div>
-              <div className="bg-rose-100 rounded-xl p-3 shadow-inner">
-                <FiHeart className="h-6 w-6 text-rose-600" />
-              </div>
-            </div>
 
-            {/* Disciplinary Records */}
-            <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl p-5 flex items-center justify-between">
-              <div>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                  {countsLoading ? '...' : disciplinaryCount !== null ? disciplinaryCount.toLocaleString() : '0'}
-                </p>
-                <p className="text-xs font-semibold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mt-1">Disciplinary Records</p>
-              </div>
-              <div className="bg-amber-100 rounded-xl p-3 shadow-inner">
-                <FiAlertTriangle className="h-6 w-6 text-amber-600" />
-              </div>
-            </div>
           </div>
 
           {/* Main Grid Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             
-            {/* Left Column (Charts) */}
-            <div className="lg:col-span-2 space-y-6">
+            {/* Main Content (Charts) */}
+            <div className="space-y-6">
               
               {/* Row 1: Academic & Participation */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -299,40 +267,7 @@ const Dashboard = () => {
 
             </div>
 
-            {/* Right Column (Recent Activities) */}
-            <div className="lg:col-span-1">
-              <div className="bg-white dark:bg-[#1E1E1E] p-5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm h-full flex flex-col">
-                <div className="mb-6 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white">Recent Activities</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">System updates and logs</p>
-                  </div>
-                  <button className="text-xs text-brand-600 dark:text-brand-500 font-medium hover:underline">View All</button>
-                </div>
 
-                <div className="flex-1 overflow-hidden relative">
-                  <div className="absolute top-4 bottom-4 left-5 w-px bg-gray-200 dark:bg-gray-800"></div>
-                  <div className="space-y-6 relative z-10">
-                    {recentActivities.map((activity) => (
-                      <div key={activity.id} className="flex gap-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${activity.bg}`}>
-                          <activity.icon className={`w-5 h-5 ${activity.color}`} />
-                        </div>
-                        <div className="pt-1">
-                          <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-snug">
-                            {activity.message}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {activity.time}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-            </div>
 
           </div>
         </>

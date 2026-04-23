@@ -8,8 +8,7 @@ const useDashboardStats = (userRole) => {
     const [eventCount, setEventCount] = useState(null);
     const [sportsCount, setSportsCount] = useState(null);
     const [orgCount, setOrgCount] = useState(null);
-    const [medicalCount, setMedicalCount] = useState(null);
-    const [disciplinaryCount, setDisciplinaryCount] = useState(null);
+    const [orgCount, setOrgCount] = useState(null);
     const [academicData, setAcademicData] = useState([]);
     const [participationData, setParticipationData] = useState([]);
     const [courseDistribution, setCourseDistribution] = useState([]);
@@ -37,7 +36,7 @@ const useDashboardStats = (userRole) => {
                 setEventCount(events.length);
 
                 // Derive extra counts from student data
-                let sports = 0, orgs = 0, medical = 0, disciplinary = 0;
+                let sports = 0, orgs = 0;
 
                 // For chart computation
                 const gpaByYear = {}; 
@@ -62,15 +61,7 @@ const useDashboardStats = (userRole) => {
                         (typeof org === 'object' && !Array.isArray(org) && (org.clubs?.length > 0 || org.studentCouncil || org.fraternities?.length > 0))
                     )) orgs++;
 
-                    // Medical: check medical_condition, allergies, disabilities
-                    if (profile.medical_condition || (profile.allergies && profile.allergies.length > 0) || (profile.disabilities && profile.disabilities.length > 0)) medical++;
 
-                    // Disciplinary: behavior_discipline_records is Mixed type
-                    const bdr = profile.behavior_discipline_records;
-                    if (bdr && (
-                        (bdr.warnings > 0) || (bdr.suspensions > 0) || (bdr.counseling > 0) ||
-                        (bdr.incidents && bdr.incidents.length > 0) || (bdr.counselingRecords && bdr.counselingRecords.length > 0)
-                    )) disciplinary++;
 
                     // Academic Performance: GPA by year level
                     if (profile.year_level && profile.gpa != null) {
@@ -95,8 +86,7 @@ const useDashboardStats = (userRole) => {
 
                 setSportsCount(sports);
                 setOrgCount(orgs);
-                setMedicalCount(medical);
-                setDisciplinaryCount(disciplinary);
+                setOrgCount(orgs);
 
                 // Build academic performance chart data
                 const yearLabels = { 1: '1st Year', 2: '2nd Year', 3: '3rd Year', 4: '4th Year' };
@@ -148,8 +138,7 @@ const useDashboardStats = (userRole) => {
         eventCount,
         sportsCount,
         orgCount,
-        medicalCount,
-        disciplinaryCount,
+        orgCount,
         academicData,
         participationData,
         courseDistribution,
