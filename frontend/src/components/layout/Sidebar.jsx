@@ -121,14 +121,14 @@ const RoleBadge = ({ collapsed, roleInfo }) => {
       "flex items-center gap-3 transition-all duration-300 overflow-hidden",
       "px-1 flex-1"
     )}>
-      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF6B00] to-orange-600 flex items-center justify-center text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10">
-        <span className="text-sm font-bold">{roleInfo.initial}</span>
+      <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-[#FF6B00] to-orange-600 flex items-center justify-center text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10">
+        <span className="text-[15px] font-bold">{roleInfo.initial}</span>
       </div>
       <div className="flex flex-col min-w-0 flex-1">
-        <span className="text-sm font-semibold text-gray-900 dark:text-white truncate capitalize">
+        <span className="text-[15px] font-semibold text-gray-900 dark:text-white truncate capitalize">
           {roleInfo.full}
         </span>
-        <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
           Workspace
         </span>
       </div>
@@ -180,7 +180,7 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
     <aside
       className={cn(
         "hidden lg:flex flex-col bg-white dark:bg-[#1E1E1E] border-r border-gray-200 dark:border-gray-800 z-20 shadow-sm relative flex-shrink-0",
-        desktopCollapsed ? "w-20" : "w-64",
+        desktopCollapsed ? "w-20" : "w-[276px]",
         "transition-[width] duration-300 ease-in-out will-change-[width] transform-gpu"
       )}
     >
@@ -223,7 +223,7 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
                       {({ isActive }) => (
                         <div
                           className={cn(
-                            "relative flex items-center h-11 text-[15px] rounded-xl transition-all duration-200 group",
+                            "relative flex items-center h-[46px] text-[15.5px] rounded-xl transition-all duration-200 group",
                             isActive
                               ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
                               : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary hover:text-gray-900 dark:hover:text-zinc-100",
@@ -235,7 +235,7 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
                           )}
                           <item.icon
                             className={cn(
-                              "w-5 h-5 flex-shrink-0 transition-colors",
+                              "w-[22px] h-[22px] flex-shrink-0 transition-colors",
                               isActive ? "text-[#FF6B00]" : "group-hover:text-gray-900 dark:group-hover:text-zinc-100"
                             )}
                           />
@@ -264,7 +264,7 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
       />
       <aside
         className={cn(
-          "lg:hidden fixed top-0 left-0 h-full w-64 bg-white dark:bg-[#1E1E1E] shadow-xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col",
+          "lg:hidden fixed top-0 left-0 h-full w-[276px] bg-white dark:bg-[#1E1E1E] shadow-xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col",
           isMobileDrawerOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -295,7 +295,7 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
                         {({ isActive }) => (
                           <div
                             className={cn(
-                              "relative flex items-center gap-3 px-4 h-11 text-[15px] rounded-xl transition-all duration-200",
+                              "relative flex items-center gap-3 px-4 h-[46px] text-[15.5px] rounded-xl transition-all duration-200",
                               isActive
                                 ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
                                 : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary"
@@ -304,7 +304,7 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
                             {isActive && (
                               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
                             )}
-                            <item.icon className={cn("w-5 h-5", isActive ? "text-[#FF6B00]" : "")} />
+                            <item.icon className={cn("w-[22px] h-[22px]", isActive ? "text-[#FF6B00]" : "")} />
                             <span>{item.name}</span>
                           </div>
                         )}
