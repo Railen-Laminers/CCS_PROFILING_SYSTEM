@@ -197,7 +197,7 @@ const ParticipantModal = ({ event, students, isOpen, onClose, onInvite, onUnregi
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 min-h-[400px]">
           {activeTab === 'confirmed' && (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
               <div className="flex items-center justify-between mb-2">

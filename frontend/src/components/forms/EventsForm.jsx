@@ -243,7 +243,7 @@ const EventsForm = ({ onCancel, onBack }) => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[400px]">
           {filteredEvents.map((event) => (
             <div
               key={event.event_id}
