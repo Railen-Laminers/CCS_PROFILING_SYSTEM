@@ -64,6 +64,10 @@ const StudentDetails = () => {
         student: rawStudent.student,
     } : rawStudent;
 
+    // Separate current record from history
+    const currentRecord = academicRecords.length > 0 ? academicRecords[0] : null;
+    const historyRecords = academicRecords.length > 1 ? academicRecords.slice(1) : [];
+
     // ── Loading State ────────────────────────────────────────────
     if (loading) {
         return (
@@ -257,7 +261,7 @@ const StudentDetails = () => {
 
                                 {/* Current Academic Status (from Profile) */}
                                 <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                                         <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
                                             <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Course/Program</h4>
                                             <p className="text-xl font-bold text-gray-900 dark:text-white">{profile?.program || 'N/A'}</p>
@@ -265,6 +269,10 @@ const StudentDetails = () => {
                                         <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
                                             <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Year Level</h4>
                                             <p className="text-xl font-bold text-gray-900 dark:text-white">{formatYearLevel(profile?.year_level) || 'N/A'}</p>
+                                        </div>
+                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Semester</h4>
+                                            <p className="text-xl font-bold text-gray-900 dark:text-white">{currentRecord?.semester || 'N/A'}</p>
                                         </div>
                                         <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
                                             <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Current GPA</h4>
@@ -296,13 +304,13 @@ const StudentDetails = () => {
                                             <FiAlertTriangle className="w-8 h-8 mx-auto mb-2 text-red-400" />
                                             {academicError}
                                         </div>
-                                    ) : academicRecords.length === 0 ? (
+                                    ) : historyRecords.length === 0 ? (
                                         <div className="p-8 text-center bg-gray-50/50 dark:bg-gray-800/20 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 italic text-sm">
                                             No historical records found for this student.
                                         </div>
                                     ) : (
                                         <div className="space-y-6">
-                                            {academicRecords.map((record) => (
+                                            {historyRecords.map((record) => (
                                                 <div key={record.id} className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                                     <div className="flex justify-between items-start mb-6">
                                                         <div className="flex flex-col gap-0.5">

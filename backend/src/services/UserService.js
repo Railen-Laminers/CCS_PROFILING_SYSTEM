@@ -29,7 +29,7 @@ class UserService {
    */
   static STUDENT_FIELDS = [
     'parent_guardian_name', 'emergency_contact', 'section', 'program',
-    'year_level', 'gpa', 'current_subjects', 'academic_awards',
+    'year_level', 'gpa', 'academic_awards',
     'quiz_bee_participations', 'programming_contests',
     'blood_type', 'disabilities',
     'medical_condition', 'allergies', 'sports_activities',
@@ -49,8 +49,9 @@ class UserService {
    */
   static async getAllUsers() {
     const users = await User.find().populate('student').populate('faculty');
+    const usersWithPopulatedSubjects = await this._populateStudentSubjects(users);
 
-    return users.map(user => {
+    return usersWithPopulatedSubjects.map(user => {
       const userData = {};
       this.USER_FIELDS.forEach(field => {
         userData[field] = user[field];
@@ -67,10 +68,47 @@ class UserService {
   }
 
   /**
+   * Helper to populate current_subjects from Class schedule
+   */
+  static async _populateStudentSubjects(usersOrUser) {
+    const isArray = Array.isArray(usersOrUser);
+    const users = isArray ? usersOrUser : [usersOrUser];
+    
+    // Filter out students with sections
+    const students = users
+      .filter(u => u.role === 'student' && u.student && u.student.section)
+      .map(u => u.student);
+    
+    if (students.length === 0) return usersOrUser;
+
+    const sections = [...new Set(students.map(s => s.section))];
+    const classes = await Class.find({ section: { $in: sections } }).populate('course_id');
+    
+    const sectionToSubjects = {};
+    classes.forEach(c => {
+      if (c.course_id && c.course_id.course_title) {
+        if (!sectionToSubjects[c.section]) sectionToSubjects[c.section] = new Set();
+        sectionToSubjects[c.section].add(c.course_id.course_title);
+      }
+    });
+
+    students.forEach(s => {
+      if (sectionToSubjects[s.section]) {
+        s.current_subjects = Array.from(sectionToSubjects[s.section]);
+      } else {
+        s.current_subjects = [];
+      }
+    });
+
+    return usersOrUser;
+  }
+
+  /**
    * Get all students with their profiles
    */
   static async getAllStudents() {
     const users = await User.find({ role: 'student' }).populate('student');
+    await this._populateStudentSubjects(users);
 
     return users.map(user => {
       const userData = {};
@@ -118,6 +156,8 @@ class UserService {
     if (!user) {
       throw new Error('User not found');
     }
+
+    await this._populateStudentSubjects(user);
 
     const userData = {};
     this.USER_FIELDS.forEach(field => {
@@ -174,20 +214,11 @@ class UserService {
         studentData[field] = data[field] || null;
       });
 
-      // Automate Current Subjects based on Section Schedule
-      if (data.section) {
-        const classes = await Class.find({ section: data.section }).populate('course_id');
-        const sectionSubjects = [...new Set(classes
-          .filter(c => c.course_id)
-          .map(c => c.course_id.course_title))];
-        
-        if (sectionSubjects.length > 0) {
-          studentData.current_subjects = sectionSubjects;
-        }
-      }
-
       const studentProfile = await Student.create(studentData);
-      response.student = studentProfile;
+      
+      // Populate dynamic subjects for response
+      const populatedUser = await this._populateStudentSubjects({ role: 'student', student: studentProfile });
+      response.student = populatedUser.student;
 
       // Create initial academic record for history tracking
       await AcademicRecord.create({
@@ -196,7 +227,7 @@ class UserService {
         year_level: data.year_level || null,
         semester: 'First Semester',
         gpa: data.gpa || null,
-        current_subjects: studentData.current_subjects || [],
+        current_subjects: studentProfile.current_subjects || [],
         academic_awards: data.academic_awards || [],
         quiz_bee_participations: data.quiz_bee_participations || [],
         programming_contests: data.programming_contests || []
@@ -246,18 +277,9 @@ class UserService {
         await student.save();
         profile = student;
 
-        // Automate Current Subjects based on Section Schedule if section changed
-        if (profileData.section) {
-          const classes = await Class.find({ section: profileData.section }).populate('course_id');
-          const sectionSubjects = [...new Set(classes
-            .filter(c => c.course_id)
-            .map(c => c.course_id.course_title))];
-          
-          if (sectionSubjects.length > 0) {
-            student.current_subjects = sectionSubjects;
-            await student.save();
-          }
-        }
+        // Populate dynamic subjects for response
+        await this._populateStudentSubjects({ role: 'student', student: student });
+        profile = student;
 
         // Sync with the most recent academic record to maintain consistency
         const academicFields = [
@@ -339,7 +361,6 @@ class UserService {
 
     await user.deleteOne();
   }
-
 
   // static async importStudentsFromExcel(file) {
   //   const XLSX = require('xlsx');
