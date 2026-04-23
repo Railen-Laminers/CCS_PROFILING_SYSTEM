@@ -21,31 +21,71 @@ import {
 import { HiOutlineAcademicCap } from 'react-icons/hi';
 
 const adminMenuItems = [
-  { name: 'Dashboard', path: '/dashboard', icon: FiGrid },
-  { name: 'Students', path: '/students', icon: FiUsers },
-  { name: 'Faculty', path: '/faculty', icon: HiOutlineAcademicCap },
-  { name: 'Instruction', path: '/instruction', icon: FiBookOpen },
-  { name: 'Scheduling', path: '/scheduling', icon: FiClock },
-  { name: 'Events', path: '/events', icon: FiCalendar },
-  { name: 'Reports', path: '/reports', icon: FiFileText },
+  {
+    category: 'Overview',
+    items: [
+      { name: 'Dashboard', path: '/dashboard', icon: FiGrid },
+      { name: 'Reports', path: '/reports', icon: FiFileText },
+    ]
+  },
+  {
+    category: 'Management',
+    items: [
+      { name: 'Students', path: '/students', icon: FiUsers },
+      { name: 'Faculty', path: '/faculty', icon: HiOutlineAcademicCap },
+    ]
+  },
+  {
+    category: 'Operations',
+    items: [
+      { name: 'Instruction', path: '/instruction', icon: FiBookOpen },
+      { name: 'Scheduling', path: '/scheduling', icon: FiClock },
+      { name: 'Events', path: '/events', icon: FiCalendar },
+    ]
+  }
 ];
 
 const studentMenuItems = [
-  { name: 'Dashboard', path: '/student/dashboard', icon: FiGrid },
-  { name: 'Personal Info', path: '/student/my-details', icon: FiUsers },
-  { name: 'Academic', path: '/student/academic', icon: FiBookOpen },
-  { name: 'Medical', path: '/student/medical', icon: FiHeart },
-  { name: 'Sports & Activities', path: '/student/sports', icon: FiAward },
-  { name: 'Organizations', path: '/student/organizations', icon: FiUsers },
-  { name: 'Behavior', path: '/student/behavior', icon: FiAlertTriangle },
-  { name: 'Events & Competitions', path: '/student/events', icon: FiCalendar },
+  {
+    category: 'Overview',
+    items: [
+      { name: 'Dashboard', path: '/student/dashboard', icon: FiGrid },
+    ]
+  },
+  {
+    category: 'Records',
+    items: [
+      { name: 'Personal Info', path: '/student/my-details', icon: FiUsers },
+      { name: 'Academic', path: '/student/academic', icon: FiBookOpen },
+      { name: 'Medical', path: '/student/medical', icon: FiHeart },
+      { name: 'Behavior', path: '/student/behavior', icon: FiAlertTriangle },
+    ]
+  },
+  {
+    category: 'Activities',
+    items: [
+      { name: 'Sports & Activities', path: '/student/sports', icon: FiAward },
+      { name: 'Organizations', path: '/student/organizations', icon: FiUsers },
+      { name: 'Events & Competitions', path: '/student/events', icon: FiCalendar },
+    ]
+  }
 ];
 
 const facultyMenuItems = [
-  { name: 'Dashboard', path: '/faculty/dashboard', icon: FiGrid },
-  { name: 'Profile', path: '/faculty/my-details', icon: FiUsers },
-  { name: 'Scheduling', path: '/faculty/my-schedule', icon: FiClock },
-  { name: 'Skills', path: '/faculty/skills', icon: FiStar },
+  {
+    category: 'Overview',
+    items: [
+      { name: 'Dashboard', path: '/faculty/dashboard', icon: FiGrid },
+      { name: 'Profile', path: '/faculty/my-details', icon: FiUsers },
+    ]
+  },
+  {
+    category: 'Management',
+    items: [
+      { name: 'Scheduling', path: '/faculty/my-schedule', icon: FiClock },
+      { name: 'Skills', path: '/faculty/skills', icon: FiStar },
+    ]
+  }
 ];
 
 const useDesktop = () => {
@@ -62,14 +102,26 @@ const useDesktop = () => {
   return isDesktop;
 };
 
-// Subtle role badge - hidden in collapsed state
+// Premium User Profile Header
 const RoleBadge = ({ collapsed, roleInfo }) => {
   if (collapsed) return null;
 
   return (
-    <div className="flex items-center gap-2 px-3 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-      <FiUser className="w-4 h-4" />
-      <span className="text-sm font-medium capitalize">{roleInfo.full}</span>
+    <div className={cn(
+      "flex items-center gap-3 transition-all duration-300 overflow-hidden",
+      "px-1 flex-1"
+    )}>
+      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF6B00] to-orange-600 flex items-center justify-center text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10">
+        <span className="text-sm font-bold">{roleInfo.initial}</span>
+      </div>
+      <div className="flex flex-col min-w-0 flex-1">
+        <span className="text-sm font-semibold text-gray-900 dark:text-white truncate capitalize">
+          {roleInfo.full}
+        </span>
+        <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+          Workspace
+        </span>
+      </div>
     </div>
   );
 };
@@ -119,13 +171,13 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
       <div
         className={cn(
           "flex items-center border-b border-gray-200 dark:border-gray-800 p-3 transition-all duration-300",
-          desktopCollapsed ? "flex-col justify-center gap-2" : "justify-between"
+          desktopCollapsed ? "justify-center" : "justify-between"
         )}
       >
         <RoleBadge collapsed={desktopCollapsed} roleInfo={roleInfo} />
         <button
           onClick={() => setDesktopCollapsed(!desktopCollapsed)}
-          className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0"
           aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {desktopCollapsed ? (
@@ -137,36 +189,49 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
       </div>
 
       <nav className="flex-1 pt-4 pb-4 overflow-x-hidden">
-        <ul className="space-y-1.5 px-2">
-          {menuItems.map((item) => (
-            <li key={item.name}>
-              <NavLink to={item.path}>
-                {({ isActive }) => (
-                  <div
-                    className={cn(
-                      "relative flex items-center h-11 text-[15px] rounded-xl transition-all duration-200 group",
-                      isActive
-                        ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
-                        : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary hover:text-gray-900 dark:hover:text-zinc-100",
-                      desktopCollapsed ? "justify-center px-0" : "justify-start px-4 gap-3"
-                    )}
-                  >
-                    {isActive && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
-                    )}
-                    <item.icon
-                      className={cn(
-                        "w-5 h-5 flex-shrink-0 transition-colors",
-                        isActive ? "text-[#FF6B00]" : "group-hover:text-gray-900 dark:group-hover:text-zinc-100"
+        <div className="space-y-6">
+          {menuItems.map((group, groupIdx) => (
+            <div key={groupIdx}>
+              {!desktopCollapsed && (
+                <div className="px-6 mb-2 mt-1">
+                  <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                    {group.category}
+                  </p>
+                </div>
+              )}
+              <ul className="space-y-1.5 px-2">
+                {group.items.map((item) => (
+                  <li key={item.name}>
+                    <NavLink to={item.path}>
+                      {({ isActive }) => (
+                        <div
+                          className={cn(
+                            "relative flex items-center h-11 text-[15px] rounded-xl transition-all duration-200 group",
+                            isActive
+                              ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
+                              : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary hover:text-gray-900 dark:hover:text-zinc-100",
+                            desktopCollapsed ? "justify-center px-0" : "justify-start px-4 gap-3"
+                          )}
+                        >
+                          {isActive && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
+                          )}
+                          <item.icon
+                            className={cn(
+                              "w-5 h-5 flex-shrink-0 transition-colors",
+                              isActive ? "text-[#FF6B00]" : "group-hover:text-gray-900 dark:group-hover:text-zinc-100"
+                            )}
+                          />
+                          {!desktopCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
+                        </div>
                       )}
-                    />
-                    {!desktopCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
-                  </div>
-                )}
-              </NavLink>
-            </li>
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </nav>
     </aside>
   );
@@ -198,30 +263,41 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
           </button>
         </div>
         <nav className="flex-1 pt-4 pb-6 overflow-y-auto">
-          <ul className="space-y-1.5 px-3">
-            {menuItems.map((item) => (
-              <li key={item.name}>
-                <NavLink to={item.path} onClick={() => setMobileDrawerOpen(false)}>
-                  {({ isActive }) => (
-                    <div
-                      className={cn(
-                        "relative flex items-center gap-3 px-4 h-11 text-[15px] rounded-xl transition-all duration-200",
-                        isActive
-                          ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
-                          : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary"
-                      )}
-                    >
-                      {isActive && (
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
-                      )}
-                      <item.icon className={cn("w-5 h-5", isActive ? "text-[#FF6B00]" : "")} />
-                      <span>{item.name}</span>
-                    </div>
-                  )}
-                </NavLink>
-              </li>
+          <div className="space-y-6">
+            {menuItems.map((group, groupIdx) => (
+              <div key={groupIdx}>
+                <div className="px-6 mb-2 mt-1">
+                  <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                    {group.category}
+                  </p>
+                </div>
+                <ul className="space-y-1.5 px-3">
+                  {group.items.map((item) => (
+                    <li key={item.name}>
+                      <NavLink to={item.path} onClick={() => setMobileDrawerOpen(false)}>
+                        {({ isActive }) => (
+                          <div
+                            className={cn(
+                              "relative flex items-center gap-3 px-4 h-11 text-[15px] rounded-xl transition-all duration-200",
+                              isActive
+                                ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
+                                : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary"
+                            )}
+                          >
+                            {isActive && (
+                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
+                            )}
+                            <item.icon className={cn("w-5 h-5", isActive ? "text-[#FF6B00]" : "")} />
+                            <span>{item.name}</span>
+                          </div>
+                        )}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         </nav>
       </aside>
     </>
