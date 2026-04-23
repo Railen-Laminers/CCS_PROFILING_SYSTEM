@@ -232,6 +232,7 @@ const ClassFormModal = ({ isOpen, onClose, onSuccess, initialData = null, roomId
                   <option value="" disabled>Select Program</option>
                   <option value="BSIT">BS Information Technology</option>
                   <option value="BSCS">BS Computer Science</option>
+                  <option value="BSIS">BS Information Systems</option>
                 </select>
               </div>
             </div>

@@ -183,6 +183,8 @@ class StudentSearchService {
         { $in: ['BSIT', 'Bachelor of Science in Information Technology'] } :
         trimmedProgram === 'BSCS' ?
         { $in: ['BSCS', 'Bachelor of Science in Computer Science'] } :
+        trimmedProgram === 'BSIS' ?
+        { $in: ['BSIS', 'Bachelor of Science in Information Systems'] } :
         trimmedProgram;
       query.program = normalizedProgram;
     }

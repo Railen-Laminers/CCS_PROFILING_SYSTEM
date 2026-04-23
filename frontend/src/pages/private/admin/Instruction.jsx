@@ -123,6 +123,16 @@ const Instruction = () => {
             >
               BSCS
             </button>
+            <button
+              onClick={() => setSelectedProgram('BSIS')}
+              className={`px-4 py-1.5 text-xs font-bold uppercase tracking-widest rounded-lg transition-all ${
+                selectedProgram === 'BSIS' 
+                  ? 'bg-white dark:bg-[#252525] text-brand-500 shadow-sm border border-gray-200 dark:border-gray-700' 
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border border-transparent'
+              }`}
+            >
+              BSIS
+            </button>
           </div>
           <button
             onClick={() => handleAddClick(1, 1)}

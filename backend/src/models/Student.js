@@ -24,7 +24,7 @@ const studentSchema = new mongoose.Schema({
   },
   program: {
     type: String,
-    enum: ['BSIT', 'BSCS'],
+    enum: ['BSIT', 'BSCS', 'BSIS'],
     trim: true,
     default: null
   },

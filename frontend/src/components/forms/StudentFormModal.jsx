@@ -489,7 +489,8 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
                                 {renderField('Program', 'program', 'select', false, [
                                     { value: 'BSIT', label: 'BS Information Technology' },
-                                    { value: 'BSCS', label: 'BS Computer Science' }
+                                    { value: 'BSCS', label: 'BS Computer Science' },
+                                    { value: 'BSIS', label: 'BS Information Systems' }
                                 ])}
                                 {renderField('Section', 'section', 'text', false, null, null, 'e.g., IT-A')}
                                 {renderField('Year Level', 'year_level', 'select', false, [

@@ -42,7 +42,7 @@ const courseSchema = new mongoose.Schema({
   },
   program: {
     type: String,
-    enum: ['BSIT', 'BSCS'],
+    enum: ['BSIT', 'BSCS', 'BSIS'],
     required: [true, 'Program is required'],
     default: 'BSIT'
   }

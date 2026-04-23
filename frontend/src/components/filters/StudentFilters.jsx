@@ -164,6 +164,7 @@ const StudentFilters = ({
                                 <option value="">All Programs</option>
                                 <option value="BSCS">BS Computer Science</option>
                                 <option value="BSIT">BS Information Technology</option>
+                                <option value="BSIS">BS Information Systems</option>
                             </select>
                         </div>
 

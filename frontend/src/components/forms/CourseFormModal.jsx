@@ -217,6 +217,25 @@ const CourseFormModal = ({
               </div>
             </div>
 
+            {/* Program */}
+            <div className="space-y-2">
+              <label className={labelClass}>Program</label>
+              <div className="relative group">
+                <FiLayers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors z-10" />
+                <select 
+                  name="program"
+                  className={`${inputClass} appearance-none`}
+                  value={formData.program}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="BSIT">BS Information Technology</option>
+                  <option value="BSCS">BS Computer Science</option>
+                  <option value="BSIS">BS Information Systems</option>
+                </select>
+              </div>
+            </div>
+
             {/* Year Level */}
             <div className="space-y-2">
               <label className={labelClass}>Year Level</label>
