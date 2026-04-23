@@ -18,6 +18,7 @@ export const useScheduling = () => {
     });
 
     const [loading, setLoading] = useState(true);
+    const [isSearching, setIsSearching] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingRoom, setEditingRoom] = useState(null);
     const { showToast } = useToast();
@@ -93,7 +94,11 @@ export const useScheduling = () => {
         setEditingRoom(null);
     };
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
+        setIsSearching(true);
+        // Simulate search delay for UI feedback consistency
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         setSearchQuery(tempSearchQuery);
         setFilters(tempFilters);
         
@@ -110,6 +115,7 @@ export const useScheduling = () => {
         }
 
         setFilteredRooms(results);
+        setIsSearching(false);
     };
 
     const handleReset = () => {
@@ -129,6 +135,7 @@ export const useScheduling = () => {
         tempFilters,
         setTempFilters,
         loading,
+        isSearching,
         isModalOpen,
         editingRoom,
         setIsModalOpen,

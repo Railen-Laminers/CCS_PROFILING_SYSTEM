@@ -6,7 +6,7 @@ const SchedulingFilters = ({
     tempSearchQuery, 
     setTempSearchQuery, 
     handleSearch, 
-    loading, 
+    isSearching, 
     tempFilters, 
     setTempFilters, 
     handleReset,
@@ -36,10 +36,10 @@ const SchedulingFilters = ({
                 </div>
                 <button
                     onClick={handleSearch}
-                    disabled={loading}
+                    disabled={isSearching}
                     className="flex items-center justify-center min-w-[100px] h-10 px-4 bg-brand-500 text-white rounded-xl text-sm font-medium transition-all hover:bg-brand-400 active:scale-95 disabled:opacity-60 shadow-sm"
                 >
-                    {loading ? <Spinner className="border-white w-4 h-4" /> : <span>Search</span>}
+                    {isSearching ? <Spinner className="border-white w-4 h-4" /> : <span>Search</span>}
                 </button>
                 <button
                     onClick={() => setShowFilters(!showFilters)}

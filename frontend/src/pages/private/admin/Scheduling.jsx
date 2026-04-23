@@ -14,6 +14,7 @@ const Scheduling = () => {
         tempFilters,
         setTempFilters,
         loading,
+        isSearching,
         isModalOpen,
         editingRoom,
         setIsModalOpen,
@@ -55,7 +56,7 @@ const Scheduling = () => {
         handleReset={handleReset}
         searchQuery={searchQuery}
         filters={filters}
-        loading={loading}
+        isSearching={isSearching}
       />
 
       {loading ? (
