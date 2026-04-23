@@ -7,6 +7,7 @@ class EventService {
   static async getAll() {
     return await Event.find()
       .populate('participants', 'firstname lastname email')
+      .populate('invitations.user', 'firstname lastname email')
       .sort({ start_datetime: -1 });
   }
 
@@ -16,13 +17,16 @@ class EventService {
   static async findByIdentifier(search) {
     if (search.match(/^[0-9a-fA-F]{24}$/)) {
       const event = await Event.findById(search)
-        .populate('participants', 'firstname lastname email');
+        .populate('participants', 'firstname lastname email')
+        .populate('invitations.user', 'firstname lastname email');
       if (event) return event;
     }
 
     const event = await Event.findOne({
       title: { $regex: search, $options: 'i' }
-    }).populate('participants', 'firstname lastname email');
+    })
+    .populate('participants', 'firstname lastname email')
+    .populate('invitations.user', 'firstname lastname email');
 
     if (!event) {
       throw new Error('Event not found');
@@ -145,6 +149,82 @@ class EventService {
       participants: userId
     })
     .sort({ start_datetime: -1 });
+  }
+
+  /**
+   * Invite a student to an event
+   */
+  static async inviteParticipant(eventId, userId) {
+    const event = await Event.findById(eventId);
+    if (!event) throw new Error('Event not found');
+
+    // Check if already a participant
+    if (event.participants.includes(userId)) {
+      throw new Error('Student is already a participant in this event.');
+    }
+
+    // Check if already invited
+    const existingInvitation = event.invitations.find(inv => inv.user.toString() === userId.toString());
+    if (existingInvitation) {
+      if (existingInvitation.status === 'pending') {
+        throw new Error('Student already has a pending invitation.');
+      } else {
+        // Resend if declined
+        existingInvitation.status = 'pending';
+        existingInvitation.invited_at = Date.now();
+      }
+    } else {
+      event.invitations.push({ user: userId, status: 'pending' });
+    }
+
+    await event.save();
+    return await Event.findById(eventId)
+      .populate('participants', 'firstname lastname email')
+      .populate('invitations.user', 'firstname lastname email');
+  }
+
+  /**
+   * Respond to an event invitation
+   */
+  static async respondToInvitation(eventId, userId, response) {
+    const event = await Event.findById(eventId);
+    if (!event) throw new Error('Event not found');
+
+    const invitationIndex = event.invitations.findIndex(inv => inv.user.toString() === userId.toString());
+    if (invitationIndex === -1) {
+      throw new Error('No invitation found for this student.');
+    }
+
+    if (response === 'accepted') {
+      // Check capacity
+      if (event.max_participants !== null && event.participants.length >= event.max_participants) {
+        throw new Error(`This event has reached its maximum capacity.`);
+      }
+      
+      // Move from invitations to participants
+      event.participants.push(userId);
+      event.invitations.splice(invitationIndex, 1);
+    } else if (response === 'declined') {
+      event.invitations[invitationIndex].status = 'declined';
+    } else {
+      throw new Error('Invalid response. Must be "accepted" or "declined".');
+    }
+
+    await event.save();
+    return await Event.findById(eventId)
+      .populate('participants', 'firstname lastname email')
+      .populate('invitations.user', 'firstname lastname email');
+  }
+
+  /**
+   * Get all pending invitations for a student
+   */
+  static async getInvitationsByUserId(userId) {
+    return await Event.find({
+      'invitations.user': userId,
+      'invitations.status': 'pending'
+    })
+    .sort({ start_datetime: 1 });
   }
 }
 

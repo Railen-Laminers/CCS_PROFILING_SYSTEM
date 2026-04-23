@@ -168,6 +168,28 @@ class NotificationService {
   }
 
   /**
+   * Notify event invitation
+   */
+  static async notifyEventInvitation(userId, eventId, eventTitle) {
+    try {
+      return await this.create({
+        recipient: userId,
+        type: 'event_invitation',
+        title: 'New Event Invitation',
+        message: `You have been invited to participate in "${eventTitle}"`,
+        relatedEntity: {
+          model: 'Event',
+          id: eventId
+        },
+        actionUrl: '/student/events',
+        metadata: new Map([['eventTitle', eventTitle]])
+      });
+    } catch (error) {
+      throw new Error(`Failed to notify event invitation: ${error.message}`);
+    }
+  }
+
+  /**
    * Notify event unregistration
    */
   static async notifyEventUnregistration(userId, eventId, eventTitle) {

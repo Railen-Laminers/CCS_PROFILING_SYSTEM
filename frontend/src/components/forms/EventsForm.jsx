@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiArrowLeft, FiSearch, FiCalendar, FiUsers } from 'react-icons/fi';
+import { FiArrowLeft, FiSearch, FiCalendar, FiUsers, FiClock } from 'react-icons/fi';
 import { useTheme } from '@/contexts/ThemeContext';
 import { eventAPI } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -24,20 +24,24 @@ const EventsForm = ({ onCancel, onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [events, setEvents] = useState([]);
+  const [invitations, setInvitations] = useState([]);
   const [registeredEventIds, setRegisteredEventIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [registeringId, setRegisteringId] = useState(null);
+  const [respondingId, setRespondingId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [allEvents, studentEvents] = await Promise.all([
+        const [allEvents, studentEvents, studentInvitations] = await Promise.all([
           eventAPI.getEvents(),
-          user ? eventAPI.getStudentEvents(user.id) : Promise.resolve([])
+          user ? eventAPI.getStudentEvents(user.id) : Promise.resolve([]),
+          user ? eventAPI.getStudentInvitations(user.id) : Promise.resolve([])
         ]);
         setEvents(allEvents);
         const registeredIds = studentEvents.map(ev => ev.event_id);
         setRegisteredEventIds(registeredIds);
+        setInvitations(studentInvitations);
       } catch (error) {
         console.error('Failed to load events:', error);
         showToast('Failed to load events. Please try again.', 'error');
@@ -90,6 +94,30 @@ const EventsForm = ({ onCancel, onBack }) => {
       showToast(msg, 'error');
     } finally {
       setRegisteringId(null);
+    }
+  };
+
+  const handleRespond = async (eventId, response) => {
+    if (!user) return;
+    setRespondingId(eventId);
+    try {
+      await eventAPI.respondToInvitation(eventId, response);
+      setInvitations(prev => prev.filter(inv => inv.event_id !== eventId));
+      
+      if (response === 'accepted') {
+        setRegisteredEventIds(prev => [...prev, eventId]);
+        showToast('Invitation accepted! You are now registered.', 'success');
+        // Refresh all events to update participant count
+        const allEvents = await eventAPI.getEvents();
+        setEvents(allEvents);
+      } else {
+        showToast('Invitation declined.', 'info');
+      }
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Action failed.';
+      showToast(msg, 'error');
+    } finally {
+      setRespondingId(null);
     }
   };
 
@@ -158,6 +186,62 @@ const EventsForm = ({ onCancel, onBack }) => {
             ))}
           </div>
         </div>
+
+        {/* Invitations Section */}
+        {invitations.length > 0 && (
+          <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className={`text-lg font-bold flex items-center gap-2 ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>
+                <div className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse"></div>
+                Pending Invitations
+                <span className="ml-2 px-2 py-0.5 bg-brand-500/10 text-brand-500 text-[10px] font-black uppercase rounded-full border border-brand-500/20">
+                  {invitations.length} New
+                </span>
+              </h2>
+              {invitations.length > 3 && (
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest animate-pulse">Scroll →</span>
+              )}
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+              {invitations.map((inv) => (
+                <div 
+                  key={inv.event_id}
+                  className={`flex-shrink-0 w-[280px] sm:w-[320px] p-5 rounded-[1.5rem] border-2 border-brand-500/20 shadow-sm relative overflow-hidden snap-start transition-all hover:border-brand-500/40 group ${isDark ? 'bg-brand-500/5' : 'bg-brand-50/30'}`}
+                >
+                  <div className="absolute top-0 right-0 p-3">
+                    <FiCalendar className="w-4 h-4 text-brand-500/20 group-hover:text-brand-500/40 transition-colors" />
+                  </div>
+                  
+                  <div className="mb-4">
+                    <h3 className={`font-bold text-[15px] leading-tight mb-1 truncate ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>{inv.title}</h3>
+                    <p className="text-[11px] font-medium text-gray-500 flex items-center gap-1.5">
+                      <FiClock className="w-3 h-3" />
+                      {formatDate(inv.start_datetime)}
+                    </p>
+                  </div>
+                  
+                  <div className="flex gap-2.5">
+                    <button
+                      onClick={() => handleRespond(inv.event_id, 'accepted')}
+                      disabled={respondingId === inv.event_id}
+                      className="flex-[2] py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 disabled:opacity-50 shadow-sm shadow-brand-500/20"
+                    >
+                      {respondingId === inv.event_id ? '...' : 'Accept Invite'}
+                    </button>
+                    <button
+                      onClick={() => handleRespond(inv.event_id, 'declined')}
+                      disabled={respondingId === inv.event_id}
+                      className={`flex-1 py-2.5 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 disabled:opacity-50 ${isDark ? 'bg-zinc-800 text-gray-400 hover:text-gray-200' : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'}`}
+                    >
+                      Decline
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredEvents.map((event) => (

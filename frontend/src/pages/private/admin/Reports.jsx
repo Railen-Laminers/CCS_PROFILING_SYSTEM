@@ -103,7 +103,7 @@ const Reports = () => {
       <div className="space-y-8">
         {activeTab === 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
+            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm min-w-0">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 pb-4">
                 <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-blue-500/10 p-2 rounded-lg">
@@ -125,7 +125,7 @@ const Reports = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
+            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm min-w-0">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 pb-4">
                 <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-green-500/10 p-2 rounded-lg">
@@ -147,7 +147,7 @@ const Reports = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl lg:col-span-2 overflow-hidden shadow-sm">
+            <Card className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 rounded-2xl lg:col-span-2 overflow-hidden shadow-sm min-w-0">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 pb-4">
                 <CardTitle className="text-[16px] font-bold flex items-center gap-3">
                   <div className="bg-orange-500/10 p-2 rounded-lg">

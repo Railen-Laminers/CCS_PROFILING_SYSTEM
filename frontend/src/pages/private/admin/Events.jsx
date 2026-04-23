@@ -112,25 +112,36 @@ const EventItem = ({ event, onEdit, onDelete, onViewParticipants, formatDateTime
   </Card>
 );
 
-const ParticipantModal = ({ event, students, isOpen, onClose, onRegister, onUnregister }) => {
+const ParticipantModal = ({ event, students, isOpen, onClose, onInvite, onUnregister }) => {
+  const [activeTab, setActiveTab] = useState('invite');
   const [studentSearch, setStudentSearch] = useState('');
+  
   if (!isOpen || !event) return null;
 
   const participantIds = (event.participants || []).map(p => (typeof p === 'object' ? p._id : p));
+  const invitedIds = (event.invitations || []).map(i => (typeof i.user === 'object' ? i.user._id : i.user));
   
   const availableStudents = students.filter(s => {
     const userId = s.user?._id || s.user?.id;
     if (!userId) return false;
     const isRegistered = participantIds.includes(userId);
-    if (isRegistered) return false;
+    const isInvited = invitedIds.includes(userId);
+    if (isRegistered || isInvited) return false;
     if (!studentSearch.trim()) return true;
     const fullName = `${s.user?.firstname || ''} ${s.user?.lastname || ''}`.toLowerCase();
     return fullName.includes(studentSearch.toLowerCase());
   });
 
   const registeredParticipants = (event.participants || []).filter(p => typeof p === 'object');
+  const pendingInvitations = (event.invitations || []).filter(i => i.status === 'pending' && typeof i.user === 'object');
 
   const isFull = event.max_participants !== null && event.max_participants !== undefined && participantIds.length >= event.max_participants;
+
+  const tabs = [
+    { id: 'invite', label: 'Invite', icon: FiUserPlus, count: availableStudents.length },
+    { id: 'confirmed', label: 'Confirmed', icon: FiUsers, count: registeredParticipants.length },
+    { id: 'pending', label: 'Pending', icon: FiClock, count: pendingInvitations.length },
+  ];
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
@@ -141,16 +152,16 @@ const ParticipantModal = ({ event, students, isOpen, onClose, onRegister, onUnre
             <div className="w-12 h-12 rounded-2xl bg-brand-500/10 flex items-center justify-center border border-brand-500/20">
               <FiUsers className="w-6 h-6 text-brand-500" />
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Participants</h2>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest truncate max-w-xs">{event.title}</p>
+            <div className="min-w-0">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 tracking-tight truncate">Participants</h2>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest truncate max-w-[200px] sm:max-w-xs">{event.title}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-lg font-bold text-gray-900 dark:text-white">{participantIds.length}</p>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                {event.max_participants ? `/ ${event.max_participants}` : 'Registered'}
+            <div className="hidden sm:block text-right">
+              <p className="text-lg font-bold text-gray-900 dark:text-white leading-none">{participantIds.length}</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                {event.max_participants ? `/ ${event.max_participants} Limit` : 'Confirmed'}
               </p>
             </div>
             <button onClick={onClose} className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all">
@@ -159,88 +170,165 @@ const ParticipantModal = ({ event, students, isOpen, onClose, onRegister, onUnre
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* Registered Participants */}
-          <div>
-            <h3 className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3 ml-1">Registered Students</h3>
-            {registeredParticipants.length > 0 ? (
-              <div className="space-y-2">
-                {registeredParticipants.map(p => (
-                  <div key={p._id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#252525] rounded-xl border border-gray-100 dark:border-gray-800">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-brand-500/10 text-brand-500 flex items-center justify-center text-xs font-bold border border-brand-500/20">
-                        {p.firstname?.[0] || '?'}
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{p.firstname} {p.lastname}</p>
-                        <p className="text-[11px] text-gray-400">{p.email}</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => onUnregister(event.event_id, p._id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all active:scale-95"
-                    >
-                      <FiUserMinus className="w-3.5 h-3.5" /> Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-400 dark:text-zinc-500 italic pl-1">No students registered yet.</p>
-            )}
+        {/* Tab Switcher */}
+        <div className="px-6 pt-4 shrink-0">
+          <div className="flex p-1.5 bg-gray-100 dark:bg-zinc-800/50 rounded-2xl border border-gray-200 dark:border-gray-700/50">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-white dark:bg-[#1E1E1E] text-brand-500 shadow-sm ring-1 ring-black/5 dark:ring-white/10'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                }`}
+              >
+                <tab.icon className="w-3.5 h-3.5" />
+                {tab.label}
+                {tab.count > 0 && (
+                  <span className={`ml-1 px-1.5 py-0.5 rounded-md text-[10px] ${
+                    activeTab === tab.id ? 'bg-brand-500 text-white' : 'bg-gray-200 dark:bg-zinc-700 text-gray-500 dark:text-zinc-400'
+                  }`}>
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
+        </div>
 
-          {/* Add Students */}
-          <div>
-            <h3 className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3 ml-1">Add Students</h3>
-            {isFull && (
-              <div className="mb-3 p-3 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-xl text-sm font-medium text-yellow-700 dark:text-yellow-300">
-                This event has reached its maximum capacity of {event.max_participants} participants.
+        <div className="flex-1 overflow-y-auto p-6">
+          {activeTab === 'confirmed' && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Confirmed ({registeredParticipants.length})</h3>
               </div>
-            )}
-            <div className="relative group mb-3">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <FiSearch className="h-4 w-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search students by name..."
-                value={studentSearch}
-                onChange={(e) => setStudentSearch(e.target.value)}
-                className="block w-full h-10 pl-10 pr-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
-              />
-            </div>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {availableStudents.slice(0, 20).map(s => {
-                const userId = s.user?._id || s.user?.id;
-                return (
-                  <div key={userId} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#252525] rounded-xl border border-gray-100 dark:border-gray-800">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-zinc-700 text-gray-600 dark:text-zinc-300 flex items-center justify-center text-xs font-bold">
-                        {s.user?.firstname?.[0] || '?'}
+              {registeredParticipants.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {registeredParticipants.map(p => (
+                    <div key={p._id} className="flex items-center justify-between p-3 bg-white dark:bg-[#252525] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center text-xs font-bold border border-brand-500/20">
+                          {p.firstname?.[0] || '?'}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{p.firstname} {p.lastname}</p>
+                          <p className="text-[10px] text-gray-400 truncate">{p.email}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{s.user?.firstname} {s.user?.lastname}</p>
-                        <p className="text-[11px] text-gray-400">{s.student?.section || 'No section'}</p>
-                      </div>
+                      <button
+                        onClick={() => onUnregister(event.event_id, p._id)}
+                        className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                        title="Remove Participant"
+                      >
+                        <FiUserMinus className="w-4 h-4" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => onRegister(event.event_id, userId)}
-                      disabled={isFull}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-brand-500 hover:bg-brand-500/10 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      <FiUserPlus className="w-3.5 h-3.5" /> Add
-                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-12 flex flex-col items-center text-center">
+                  <div className="w-16 h-16 rounded-3xl bg-gray-50 dark:bg-zinc-800/50 flex items-center justify-center mb-4">
+                    <FiUsers className="w-8 h-8 text-gray-300" />
                   </div>
-                );
-              })}
-              {availableStudents.length === 0 && (
-                <p className="text-sm text-gray-400 dark:text-zinc-500 italic pl-1">
-                  {studentSearch ? 'No matching students found.' : 'All students are already registered.'}
-                </p>
+                  <p className="text-sm font-bold text-gray-400">No participants confirmed yet</p>
+                  <p className="text-[11px] text-gray-500 mt-1 max-w-[200px]">Send invitations to students to start building your list.</p>
+                </div>
               )}
             </div>
-          </div>
+          )}
+
+          {activeTab === 'pending' && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Pending ({pendingInvitations.length})</h3>
+              </div>
+              {pendingInvitations.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {pendingInvitations.map(inv => (
+                    <div key={inv.user._id} className="flex items-center gap-3 p-3 bg-white dark:bg-[#252525] rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 shadow-sm">
+                      <div className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-zinc-800 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200 dark:border-gray-700">
+                        {inv.user.firstname?.[0] || '?'}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-gray-400 dark:text-zinc-400 truncate">{inv.user.firstname} {inv.user.lastname}</p>
+                        <p className="text-[9px] font-black text-brand-500 uppercase tracking-widest mt-0.5">Awaiting Response</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-12 flex flex-col items-center text-center">
+                  <div className="w-16 h-16 rounded-3xl bg-gray-50 dark:bg-zinc-800/50 flex items-center justify-center mb-4">
+                    <FiClock className="w-8 h-8 text-gray-300" />
+                  </div>
+                  <p className="text-sm font-bold text-gray-400">No pending invitations</p>
+                  <p className="text-[11px] text-gray-500 mt-1">All invitations have been responded to.</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'invite' && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Invite Students</h3>
+                  {isFull && (
+                    <Badge variant="red" className="text-[9px] px-2 py-0.5">Capacity Reached</Badge>
+                  )}
+                </div>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <FiSearch className="h-4.5 w-4.5 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search students to invite..."
+                    value={studentSearch}
+                    onChange={(e) => setStudentSearch(e.target.value)}
+                    className="block w-full h-12 pl-11 pr-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-[1.25rem] text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                {availableStudents.length > 0 ? (
+                  availableStudents.slice(0, 50).map(s => {
+                    const userId = s.user?._id || s.user?.id;
+                    return (
+                      <div key={userId} className="flex items-center justify-between p-3.5 bg-white dark:bg-[#252525] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:border-brand-500/30 transition-all group">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 flex items-center justify-center text-xs font-bold border border-gray-200 dark:border-gray-700 group-hover:bg-brand-500 group-hover:text-white group-hover:border-brand-500 transition-all">
+                            {s.user?.firstname?.[0] || '?'}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{s.user?.firstname} {s.user?.lastname}</p>
+                            <p className="text-[11px] text-gray-500 font-medium truncate">{s.student?.program || 'N/A'} • {s.student?.section || 'No section'}</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => onInvite(event.event_id, userId)}
+                          disabled={isFull}
+                          className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 disabled:bg-gray-100 dark:disabled:bg-zinc-800 text-white disabled:text-gray-400 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all active:scale-95 disabled:scale-100 shadow-sm shadow-brand-500/20"
+                        >
+                          <FiUserPlus className="w-3.5 h-3.5" /> Invite
+                        </button>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="py-12 flex flex-col items-center text-center">
+                    <div className="w-16 h-16 rounded-3xl bg-gray-50 dark:bg-zinc-800/50 flex items-center justify-center mb-4">
+                      <FiSearch className="w-8 h-8 text-gray-300" />
+                    </div>
+                    <p className="text-sm font-bold text-gray-400">No students found</p>
+                    <p className="text-[11px] text-gray-500 mt-1">{studentSearch ? 'Try a different search term.' : 'All eligible students have been invited.'}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -280,6 +368,7 @@ const EventsPage = () => {
     handleSubmit,
     handleDelete,
     handleRegister,
+    handleInvite,
     handleUnregister,
     handleInputChange,
     formatDateTime,
@@ -382,7 +471,7 @@ const EventsPage = () => {
         students={allStudents}
         isOpen={participantModalOpen}
         onClose={closeParticipantModal}
-        onRegister={handleRegister}
+        onInvite={handleInvite}
         onUnregister={handleUnregister}
       />
     </div>

@@ -18,6 +18,7 @@ class EventController {
         max_participants: event.max_participants,
         participant_count: event.participants?.length || 0,
         participants: event.participants || [],
+        invitations: event.invitations || [],
         status: event.status,
         start_datetime: event.start_datetime,
         end_datetime: event.end_datetime
@@ -49,6 +50,7 @@ class EventController {
           max_participants: event.max_participants,
           participant_count: event.participants?.length || 0,
           participants: event.participants || [],
+          invitations: event.invitations || [],
           status: event.status,
           start_datetime: event.start_datetime,
           end_datetime: event.end_datetime
@@ -352,6 +354,108 @@ class EventController {
 
       res.status(200).json({
         events: transformedEvents
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Invite a student to an event
+   */
+  static async invite(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { user_id } = req.body;
+
+      if (!user_id) {
+        return res.status(400).json({ message: 'user_id is required.' });
+      }
+
+      const event = await EventService.inviteParticipant(id, user_id);
+      
+      // Notify student
+      try {
+        await NotificationService.notifyEventInvitation(user_id, event._id, event.title);
+      } catch (notificationError) {
+        console.error('Notification error:', notificationError);
+      }
+
+      res.status(200).json({
+        message: 'Invitation sent successfully.',
+        invitations: event.invitations
+      });
+    } catch (error) {
+      if (error.message.includes('already a participant') || error.message.includes('pending invitation')) {
+        return res.status(400).json({ message: error.message });
+      }
+      next(error);
+    }
+  }
+
+  /**
+   * Respond to an event invitation
+   */
+  static async respondInvitation(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { response } = req.body; // 'accepted' or 'declined'
+      const user_id = req.user._id;
+
+      const event = await EventService.respondToInvitation(id, user_id, response);
+      
+      // Notify admin if accepted
+      if (response === 'accepted') {
+        try {
+          const studentName = `${req.user.firstname} ${req.user.lastname}`;
+          await NotificationService.notifyAdminStudentRegistered(
+            user_id,
+            event._id,
+            event.title,
+            studentName
+          );
+        } catch (notificationError) {
+          console.error('Notification error:', notificationError);
+        }
+      }
+
+      res.status(200).json({
+        message: `Invitation ${response} successfully.`,
+        event: {
+          event_id: event._id,
+          participants: event.participants,
+          invitations: event.invitations
+        }
+      });
+    } catch (error) {
+      if (error.message.includes('No invitation found') || error.message.includes('capacity')) {
+        return res.status(400).json({ message: error.message });
+      }
+      next(error);
+    }
+  }
+
+  /**
+   * Get all invitations for the authenticated student
+   */
+  static async getStudentInvitations(req, res, next) {
+    try {
+      const userId = req.user._id;
+      const events = await EventService.getInvitationsByUserId(userId);
+
+      const transformedEvents = events.map(event => ({
+        event_id: event._id,
+        title: event.title,
+        description: event.description,
+        category: event.category,
+        venue: event.venue,
+        start_datetime: event.start_datetime,
+        end_datetime: event.end_datetime,
+        status: event.status
+      }));
+
+      res.status(200).json({
+        invitations: transformedEvents
       });
     } catch (error) {
       next(error);

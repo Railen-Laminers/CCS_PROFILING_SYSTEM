@@ -29,6 +29,11 @@ const eventSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  invitations: [{
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    status: { type: String, enum: ['pending', 'declined'], default: 'pending' },
+    invited_at: { type: Date, default: Date.now }
+  }],
   status: {
     type: String,
     enum: ['Upcoming', 'Ongoing', 'Completed', 'Cancelled'],

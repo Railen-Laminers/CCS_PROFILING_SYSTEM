@@ -183,7 +183,7 @@ const Dashboard = () => {
               {/* Row 1: Academic & Participation */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Academic Performance Chart */}
-                <div className="bg-white dark:bg-[#1E1E1E] p-5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+                <div className="bg-white dark:bg-[#1E1E1E] p-5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm min-w-0">
                   <div className="mb-4">
                     <h3 className="text-base font-semibold text-gray-900 dark:text-white">Academic Performance</h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Average GPA by Year Level</p>
@@ -212,7 +212,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Student Participation Pie Chart */}
-                <div className="bg-white dark:bg-[#1E1E1E] p-5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+                <div className="bg-white dark:bg-[#1E1E1E] p-5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm min-w-0">
                   <div className="mb-4">
                     <h3 className="text-base font-semibold text-gray-900 dark:text-white">Student Participation</h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Extracurricular involvement</p>
@@ -269,7 +269,7 @@ const Dashboard = () => {
               </div>
 
               {/* Course Distribution Chart */}
-              <div className="bg-white dark:bg-[#1E1E1E] p-5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+              <div className="bg-white dark:bg-[#1E1E1E] p-5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm min-w-0">
                 <div className="mb-4">
                   <h3 className="text-base font-semibold text-gray-900 dark:text-white">Course Distribution</h3>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Total enrolled students per course</p>

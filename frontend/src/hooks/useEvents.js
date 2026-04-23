@@ -212,6 +212,32 @@ const useEvents = () => {
         }
     };
 
+    const handleInvite = async (eventId, userId) => {
+        try {
+            await eventAPI.inviteStudent(eventId, userId);
+            showToast('Invitation sent successfully.', 'success');
+            await fetchEvents();
+            // Refresh selectedEvent if participant modal is open
+            if (selectedEvent && selectedEvent.event_id === eventId) {
+                const updated = await eventAPI.getEvents();
+                const refreshed = updated.find(e => e.event_id === eventId);
+                if (refreshed) setSelectedEvent(refreshed);
+            }
+        } catch (err) {
+            showToast(err.response?.data?.message || 'Failed to send invitation.', 'error');
+        }
+    };
+
+    const handleRespondInvitation = async (eventId, response) => {
+        try {
+            await eventAPI.respondToInvitation(eventId, response);
+            showToast(`Invitation ${response} successfully.`, 'success');
+            await fetchEvents();
+        } catch (err) {
+            showToast(err.response?.data?.message || 'Failed to respond to invitation.', 'error');
+        }
+    };
+
     const handleRegister = async (eventId, userId) => {
         try {
             await eventAPI.registerForEvent(eventId, userId);
@@ -311,6 +337,8 @@ const useEvents = () => {
         handleSubmit,
         handleDelete,
         handleRegister,
+        handleInvite,
+        handleRespondInvitation,
         handleUnregister,
         handleInputChange,
         formatDateTime,

@@ -40,4 +40,9 @@ router.get('/student/:userId/curricular', allowOwnStudentEvents, EventController
 router.post('/:id/register', allowStudent, EventController.register);
 router.delete('/:id/register', allowStudent, EventController.unregister);
 
+// Invitation management
+router.get('/student/:userId/invitations', allowOwnStudentEvents, EventController.getStudentInvitations);
+router.post('/:id/invite', authorize('admin'), EventController.invite);
+router.post('/:id/respond', allowStudent, EventController.respondInvitation);
+
 module.exports = router;

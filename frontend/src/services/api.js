@@ -173,6 +173,18 @@ export const eventAPI = {
     const response = await axiosInstance.get(`/events/student/${userId}`, { signal });
     return response.data.events;
   },
+  inviteStudent: async (eventId, userId) => {
+    const response = await axiosInstance.post(`/events/${eventId}/invite`, { user_id: userId });
+    return response.data;
+  },
+  respondToInvitation: async (eventId, response) => {
+    const res = await axiosInstance.post(`/events/${eventId}/respond`, { response });
+    return res.data;
+  },
+  getStudentInvitations: async (userId, signal) => {
+    const response = await axiosInstance.get(`/events/student/${userId}/invitations`, { signal });
+    return response.data.invitations;
+  },
 };
 
 // ─── Academic Record API ─────────────────────────────────────────────────────
