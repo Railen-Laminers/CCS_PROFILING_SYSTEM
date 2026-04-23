@@ -13,9 +13,12 @@ import {
   FiAward,
   FiBookOpen,
   FiHeart,
-  FiAlertTriangle
+  FiAlertTriangle,
+  FiPieChart,
+  FiBarChart2
 } from 'react-icons/fi';
 import { HiOutlineAcademicCap } from 'react-icons/hi';
+import EmptyState from '@/components/ui/EmptyState';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -186,15 +189,25 @@ const Dashboard = () => {
                     <p className="text-xs text-gray-500 dark:text-gray-400">Average GPA by Year Level</p>
                   </div>
                   <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={academicData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" opacity={0.15} />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9CA3AF' }} />
-                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9CA3AF' }} domain={[0, 4]} ticks={[0, 1, 2, 3, 4]} />
-                        <RechartsTooltip content={<CustomTooltip />} />
-                        <Bar dataKey="gpa" fill="#FF6B00" radius={[4, 4, 0, 0]} barSize={48} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    {academicData.some(d => d.gpa > 0) ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={academicData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" opacity={0.15} />
+                          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9CA3AF' }} />
+                          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9CA3AF' }} domain={[0, 4]} ticks={[0, 1, 2, 3, 4]} />
+                          <RechartsTooltip content={<CustomTooltip />} />
+                          <Bar dataKey="gpa" fill="#FF6B00" radius={[4, 4, 0, 0]} barSize={48} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <EmptyState 
+                        size="md"
+                        icon={FiBarChart2}
+                        title="No GPA data recorded"
+                        description="Complete academic records to see performance trends"
+                        className="border-none shadow-none bg-transparent py-0"
+                      />
+                    )}
                   </div>
                 </div>
 
@@ -205,42 +218,52 @@ const Dashboard = () => {
                     <p className="text-xs text-gray-500 dark:text-gray-400">Extracurricular involvement</p>
                   </div>
                   <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart margin={{ top: 20, right: 30, left: 30, bottom: 20 }}>
-                        <Pie
-                          data={participationData}
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={80}
-                          dataKey="value"
-                          labelLine={true}
-                          label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, name, index }) => {
-                            const RADIAN = Math.PI / 180;
-                            const radius = outerRadius + 25;
-                            const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                            const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                            return (
-                              <text 
-                                x={x} 
-                                y={y} 
-                                fill={COLORS[index % COLORS.length]} 
-                                textAnchor={x > cx ? 'start' : 'end'} 
-                                dominantBaseline="central"
-                                className="text-[10px] font-bold"
-                              >
-                                {`${name} ${(percent * 100).toFixed(0)}%`}
-                              </text>
-                            );
-                          }}
-                        >
-                          {participationData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <RechartsTooltip content={<CustomTooltip />} />
-                        <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-                      </PieChart>
-                    </ResponsiveContainer>
+                    {participationData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart margin={{ top: 20, right: 30, left: 30, bottom: 20 }}>
+                          <Pie
+                            data={participationData}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={80}
+                            dataKey="value"
+                            labelLine={true}
+                            label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, name, index }) => {
+                              const RADIAN = Math.PI / 180;
+                              const radius = outerRadius + 25;
+                              const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                              const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                              return (
+                                <text 
+                                  x={x} 
+                                  y={y} 
+                                  fill={COLORS[index % COLORS.length]} 
+                                  textAnchor={x > cx ? 'start' : 'end'} 
+                                  dominantBaseline="central"
+                                  className="text-[10px] font-bold"
+                                >
+                                  {`${name} ${(percent * 100).toFixed(0)}%`}
+                                </text>
+                              );
+                            }}
+                          >
+                            {participationData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <RechartsTooltip content={<CustomTooltip />} />
+                          <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <EmptyState 
+                        size="md"
+                        icon={FiPieChart}
+                        title="No participation data"
+                        description="Extracurricular involvement will appear here"
+                        className="border-none shadow-none bg-transparent py-0"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -252,15 +275,25 @@ const Dashboard = () => {
                   <p className="text-xs text-gray-500 dark:text-gray-400">Total enrolled students per course</p>
                 </div>
                 <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={courseDistribution} layout="vertical" margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#374151" opacity={0.2} />
-                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
-                      <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} width={50} />
-                      <RechartsTooltip content={<CustomTooltip />} />
-                      <Bar dataKey="students" fill="#3B82F6" radius={[0, 4, 4, 0]} barSize={24} />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  {courseDistribution.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={courseDistribution} layout="vertical" margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#374151" opacity={0.2} />
+                        <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
+                        <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} width={50} />
+                        <RechartsTooltip content={<CustomTooltip />} />
+                        <Bar dataKey="students" fill="#3B82F6" radius={[0, 4, 4, 0]} barSize={24} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <EmptyState 
+                      size="md"
+                      icon={FiBarChart2}
+                      title="No student distribution data"
+                      description="Enrolled students per program will be shown here"
+                      className="border-none shadow-none bg-transparent py-0"
+                    />
+                  )}
                 </div>
               </div>
 
