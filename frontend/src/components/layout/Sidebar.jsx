@@ -121,9 +121,6 @@ const RoleBadge = ({ collapsed, roleInfo }) => {
       "flex items-center gap-3 transition-all duration-300 overflow-hidden",
       "px-1 flex-1"
     )}>
-      <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-[#FF6B00] to-orange-600 flex items-center justify-center text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10">
-        <span className="text-[15px] font-bold">{roleInfo.initial}</span>
-      </div>
       <div className="flex flex-col min-w-0 flex-1">
         <span className="text-[15px] font-semibold text-gray-900 dark:text-white truncate capitalize">
           {roleInfo.full}
