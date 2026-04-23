@@ -25,7 +25,6 @@ const adminMenuItems = [
     category: 'Overview',
     items: [
       { name: 'Dashboard', path: '/dashboard', icon: FiGrid },
-      { name: 'Reports', path: '/reports', icon: FiFileText },
     ]
   },
   {
@@ -41,6 +40,12 @@ const adminMenuItems = [
       { name: 'Instruction', path: '/instruction', icon: FiBookOpen },
       { name: 'Scheduling', path: '/scheduling', icon: FiClock },
       { name: 'Events', path: '/events', icon: FiCalendar },
+    ]
+  },
+  {
+    category: 'Analytics',
+    items: [
+      { name: 'Reports', path: '/reports', icon: FiFileText },
     ]
   }
 ];
@@ -76,6 +81,11 @@ const facultyMenuItems = [
     category: 'Overview',
     items: [
       { name: 'Dashboard', path: '/faculty/dashboard', icon: FiGrid },
+    ]
+  },
+  {
+    category: 'Personal',
+    items: [
       { name: 'Profile', path: '/faculty/my-details', icon: FiUsers },
     ]
   },
@@ -141,7 +151,14 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
   };
 
   const menuItems = getMenuItems();
-  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState(() => {
+    const saved = localStorage.getItem('sidebarCollapsed');
+    return saved === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', desktopCollapsed);
+  }, [desktopCollapsed]);
 
   const getRoleInfo = () => {
     if (!user) return { full: 'User', initial: 'U' };
