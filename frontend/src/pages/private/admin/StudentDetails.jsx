@@ -254,72 +254,103 @@ const StudentDetails = () => {
                                     <FiAward className="w-5 h-5" />
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">Academic Performance</h3>
                                 </div>
-                                {isAcademicLoading ? (
-                                    <div className="flex justify-center items-center py-20">
-                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
+
+                                {/* Current Academic Status (from Profile) */}
+                                <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Course/Program</h4>
+                                            <p className="text-xl font-bold text-gray-900 dark:text-white">{profile?.program || 'N/A'}</p>
+                                        </div>
+                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Year Level</h4>
+                                            <p className="text-xl font-bold text-gray-900 dark:text-white">{formatYearLevel(profile?.year_level) || 'N/A'}</p>
+                                        </div>
+                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Current GPA</h4>
+                                            <p className="text-3xl font-extrabold text-[#F97316]">{profile?.gpa ? Number(profile.gpa).toFixed(2) : 'N/A'}</p>
+                                        </div>
                                     </div>
-                                ) : academicError ? (
-                                    <div className="text-center py-12 text-red-500 font-medium bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-200 dark:border-red-800">
-                                        <FiAlertTriangle className="w-8 h-8 mx-auto mb-2 text-red-400" />
-                                        {academicError}
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+                                        <div><SectionSubhead>Current Subjects</SectionSubhead>{renderTags(profile?.current_subjects, null, "white")}</div>
+                                        <div><SectionSubhead>Academic Awards</SectionSubhead>{renderTags(profile?.academic_awards, null, "yellow")}</div>
+                                        <div><SectionSubhead>Quiz Bee Participations</SectionSubhead>{renderTags(profile?.quiz_bee_participations, null, "indigo")}</div>
+                                        <div><SectionSubhead>Programming Contests</SectionSubhead>{renderTags(profile?.programming_contests, null, "orange")}</div>
                                     </div>
-                                ) : academicRecords.length === 0 ? (
-                                    <EmptyState
-                                        size="md"
-                                        icon={FiFileText}
-                                        title="No Academic Records"
-                                        description="There are no academic records on file for this student."
-                                    />
-                                ) : (
-                                    <div className="space-y-6">
-                                        {academicRecords.map((record) => (
-                                            <div key={record.id} className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                                <div className="flex justify-between items-start mb-6">
-                                                    <div className="flex flex-col gap-0.5">
-                                                        <p className="text-lg font-bold text-gray-900 dark:text-white">
-                                                            {formatYearLevel(record.year_level) || 'Year Level N/A'}
-                                                        </p>
-                                                        <p className="text-sm font-medium text-zinc-500 dark:text-gray-400">
-                                                            {record.semester || 'Semester N/A'}
-                                                        </p>
+                                </div>
+
+                                {/* Historical Records List */}
+                                <div className="pt-4">
+                                    <div className="flex items-center gap-2 mb-4 text-gray-500 dark:text-gray-400">
+                                        <FiFileText className="w-4 h-4" />
+                                        <h4 className="text-sm font-semibold uppercase tracking-wider">Historical Academic Records</h4>
+                                    </div>
+                                    
+                                    {isAcademicLoading ? (
+                                        <div className="flex justify-center items-center py-20">
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
+                                        </div>
+                                    ) : academicError ? (
+                                        <div className="text-center py-12 text-red-500 font-medium bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-200 dark:border-red-800">
+                                            <FiAlertTriangle className="w-8 h-8 mx-auto mb-2 text-red-400" />
+                                            {academicError}
+                                        </div>
+                                    ) : academicRecords.length === 0 ? (
+                                        <div className="p-8 text-center bg-gray-50/50 dark:bg-gray-800/20 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 italic text-sm">
+                                            No historical records found for this student.
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-6">
+                                            {academicRecords.map((record) => (
+                                                <div key={record.id} className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                                    <div className="flex justify-between items-start mb-6">
+                                                        <div className="flex flex-col gap-0.5">
+                                                            <p className="text-lg font-bold text-gray-900 dark:text-white">
+                                                                {formatYearLevel(record.year_level) || 'Year Level N/A'}
+                                                            </p>
+                                                            <p className="text-sm font-medium text-zinc-500 dark:text-gray-400">
+                                                                {record.semester || 'Semester N/A'}
+                                                            </p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">GPA</p>
+                                                            <p className="text-3xl font-extrabold text-[#F97316] leading-none">
+                                                                {record.gpa ? Number(record.gpa).toFixed(2) : 'N/A'}
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                    <div className="text-right">
-                                                        <p className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">GPA</p>
-                                                        <p className="text-3xl font-extrabold text-[#F97316] leading-none">
-                                                            {record.gpa ? Number(record.gpa).toFixed(2) : 'N/A'}
-                                                        </p>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                                                        <div>
+                                                            <SectionSubhead>Current Subjects</SectionSubhead>
+                                                            {record.current_subjects?.length > 0 ? (
+                                                                <div className="flex flex-wrap gap-2 mt-2">{record.current_subjects.map((sub, i) => <Badge key={i} variant="white">{sub}</Badge>)}</div>
+                                                            ) : <p className="text-sm text-gray-500">None recorded</p>}
+                                                        </div>
+                                                        <div>
+                                                            <SectionSubhead>Academic Awards</SectionSubhead>
+                                                            {record.academic_awards?.length > 0 ? (
+                                                                <div className="flex flex-wrap gap-2 mt-2">{record.academic_awards.map((award, i) => <Badge key={i} color="yellow">{award}</Badge>)}</div>
+                                                            ) : <p className="text-sm text-gray-500">None recorded</p>}
+                                                        </div>
+                                                        <div>
+                                                            <SectionSubhead>Curricular Participations</SectionSubhead>
+                                                            {curricularEvents && curricularEvents.length > 0 ? (
+                                                                <div className="flex flex-wrap gap-2 mt-2">
+                                                                    {curricularEvents.map((event, i) => (
+                                                                        <Badge key={i} color="indigo">{event.title}</Badge>
+                                                                    ))}
+                                                                </div>
+                                                            ) : (
+                                                                <p className="text-sm text-gray-500">No curricular events joined</p>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                                                    <div>
-                                                        <SectionSubhead>Current Subjects</SectionSubhead>
-                                                        {record.current_subjects?.length > 0 ? (
-                                                            <div className="flex flex-wrap gap-2 mt-2">{record.current_subjects.map((sub, i) => <Badge key={i} variant="white">{sub}</Badge>)}</div>
-                                                        ) : <p className="text-sm text-gray-500">None recorded</p>}
-                                                    </div>
-                                                    <div>
-                                                        <SectionSubhead>Academic Awards</SectionSubhead>
-                                                        {record.academic_awards?.length > 0 ? (
-                                                            <div className="flex flex-wrap gap-2 mt-2">{record.academic_awards.map((award, i) => <Badge key={i} color="yellow">{award}</Badge>)}</div>
-                                                        ) : <p className="text-sm text-gray-500">None recorded</p>}
-                                                    </div>
-                                                    <div>
-                                                        <SectionSubhead>Curricular Participations</SectionSubhead>
-                                                        {curricularEvents && curricularEvents.length > 0 ? (
-                                                            <div className="flex flex-wrap gap-2 mt-2">
-                                                                {curricularEvents.map((event, i) => (
-                                                                    <Badge key={i} color="indigo">{event.title}</Badge>
-                                                                ))}
-                                                            </div>
-                                                        ) : (
-                                                            <p className="text-sm text-gray-500">No curricular events joined</p>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
 
