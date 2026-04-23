@@ -374,20 +374,6 @@ const EventsPage = () => {
     formatDateTime,
   } = useEvents();
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="flex flex-col items-center gap-3">
-          <div className="relative">
-            <div className="w-12 h-12 rounded-full border-4 border-gray-200 dark:border-gray-800"></div>
-            <div className="w-12 h-12 rounded-full border-4 border-t-brand-500 border-r-brand-500 border-b-transparent border-l-transparent animate-spin absolute top-0 left-0"></div>
-          </div>
-          <p className="text-sm font-medium text-gray-400">Loading events...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full">
       {/* Header */}
@@ -429,7 +415,15 @@ const EventsPage = () => {
       />
 
       {/* Events List */}
-      {events.length > 0 ? (
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-[#1E1E1E] rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
+          <div className="relative">
+            <div className="w-12 h-12 rounded-full border-4 border-gray-200 dark:border-gray-800"></div>
+            <div className="w-12 h-12 rounded-full border-4 border-t-brand-500 border-r-brand-500 border-b-transparent border-l-transparent animate-spin absolute top-0 left-0"></div>
+          </div>
+          <p className="text-sm font-bold text-gray-400 mt-4 uppercase tracking-widest">Fetching Events...</p>
+        </div>
+      ) : events.length > 0 ? (
         <div className="space-y-4">
           {events.map((event) => (
             <EventItem 
