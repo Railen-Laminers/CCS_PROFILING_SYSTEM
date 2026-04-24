@@ -119,20 +119,6 @@ const FacultyDetails = () => {
                                     {u.is_active ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
-                            <div className="flex items-center flex-wrap gap-x-10 gap-y-3 mt-6 text-sm text-gray-600 dark:text-gray-400 font-normal">
-                                <div className="flex items-center gap-2.5">
-                                    <FiMail className="w-4 h-4 text-brand-500" />
-                                    <span>{u.email}</span>
-                                </div>
-                                <div className="flex items-center gap-2.5">
-                                    <FiPhone className="w-4 h-4 text-brand-500" />
-                                    <span>{u.contact_number || 'Not Provided'}</span>
-                                </div>
-                                <div className="flex items-center gap-2.5">
-                                    <FiMapPin className="w-4 h-4 text-brand-500" />
-                                    <span>{u.address || 'Not Provided'}</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -168,8 +154,7 @@ const FacultyDetails = () => {
             </div>
 
             {/* Tab Content Rendering */}
-            <Card className="p-6 bg-white dark:bg-[#1E1E1E] rounded-[1rem] shadow-sm border border-gray-200 dark:border-gray-800 relative overflow-hidden">
-                <div className="absolute inset-0 rounded-[1rem] ring-1 ring-inset ring-white/80 dark:ring-white/5 pointer-events-none"></div>
+            <div className="relative min-h-[400px]">
                 {isTabLoading ? (
                     <div className="flex justify-center items-center h-[300px]">
                         <Spinner className="h-8 w-8 border-brand-500" />
@@ -179,7 +164,7 @@ const FacultyDetails = () => {
 
                         {activeTab === 'Personal Information' && (
                             <div className="space-y-6">
-                                <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-brand-500">
                                         <FiUser className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
@@ -212,7 +197,7 @@ const FacultyDetails = () => {
                                     </div>
                                 </div>
 
-                                <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-brand-500">
                                         <FiPhone className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact Information</h3>
@@ -237,7 +222,7 @@ const FacultyDetails = () => {
 
                         {activeTab === 'Teaching Schedule' && (
                             <div className="space-y-6">
-                                <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-brand-500">
                                         <FiClock className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
@@ -258,7 +243,7 @@ const FacultyDetails = () => {
 
                         {activeTab === 'Research Projects' && (
                             <div className="space-y-6">
-                                <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-brand-500">
                                         <FiBookOpen className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Research Projects</h3>
@@ -275,7 +260,7 @@ const FacultyDetails = () => {
 
                         {activeTab === 'Subjects Handled' && (
                             <div className="space-y-6">
-                                <div className="p-6 rounded-[1rem] bg-gray-50 dark:bg-[#252525] border border-gray-200 dark:border-gray-800 shadow-sm relative">
+                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-brand-500">
                                         <FiBookOpen className="w-5 h-5" />
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>
@@ -295,7 +280,7 @@ const FacultyDetails = () => {
                         )}
                     </div>
                 )}
-            </Card>
+            </div>
 
             {/* Edit Profile Modal */}
             <FacultyFormModal
