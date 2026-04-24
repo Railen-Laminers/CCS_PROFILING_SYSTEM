@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import {
   FiGrid,
@@ -11,6 +12,8 @@ import {
   FiFileText,
   FiChevronLeft,
   FiChevronRight,
+  FiChevronsLeft,
+  FiChevronsRight,
   FiHeart,
   FiAlertTriangle,
   FiAward,
@@ -113,28 +116,24 @@ const useDesktop = () => {
 };
 
 // Premium User Profile Header
-const RoleBadge = ({ collapsed, roleInfo }) => {
+const RoleBadge = ({ collapsed, roleInfo, user }) => {
   if (collapsed) return null;
 
   return (
-    <div className={cn(
-      "flex items-center gap-3 transition-all duration-300 overflow-hidden",
-      "px-1 flex-1"
-    )}>
-      <div className="flex flex-col min-w-0 flex-1">
-        <span className="text-[15px] font-semibold text-gray-900 dark:text-white truncate capitalize">
-          {roleInfo.full}
-        </span>
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
-          Workspace
-        </span>
-      </div>
+    <div className="flex flex-col min-w-0 flex-1">
+      <span className="text-[14px] font-semibold text-gray-900 dark:text-gray-100 truncate">
+        {user?.firstname} {user?.lastname}
+      </span>
+      <span className="text-[10px] font-bold text-[#FF6B00] uppercase tracking-[0.15em] truncate">
+        {roleInfo.full} Workspace
+      </span>
     </div>
   );
 };
 
-const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
+const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen, collapsed }) => {
   const { user } = useAuth();
+  const { systemTitle, logoUrl } = useTheme();
   const location = useLocation();
   const isDesktop = useDesktop();
 
@@ -148,14 +147,7 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
   };
 
   const menuItems = getMenuItems();
-  const [desktopCollapsed, setDesktopCollapsed] = useState(() => {
-    const saved = localStorage.getItem('sidebarCollapsed');
-    return saved === 'true';
-  });
 
-  useEffect(() => {
-    localStorage.setItem('sidebarCollapsed', desktopCollapsed);
-  }, [desktopCollapsed]);
 
   const getRoleInfo = () => {
     if (!user) return { full: 'User', initial: 'U' };
@@ -177,66 +169,72 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
     <aside
       className={cn(
         "hidden lg:flex flex-col bg-white dark:bg-[#1E1E1E] border-r border-gray-200 dark:border-gray-800 z-20 shadow-sm relative flex-shrink-0",
-        desktopCollapsed ? "w-20" : "w-[276px]",
+        collapsed ? "w-20" : "w-[276px]",
         "transition-[width] duration-300 ease-in-out will-change-[width] transform-gpu"
       )}
     >
-      {/* Top bar with role badge and collapse button */}
+      {/* Minimal Brand Section */}
       <div
         className={cn(
-          "flex items-center border-b border-gray-200 dark:border-gray-800 p-3 transition-all duration-300",
-          desktopCollapsed ? "justify-center" : "justify-between"
+          "flex items-center transition-all duration-300",
+          collapsed ? "h-[76px] justify-center px-0" : "h-[88px] justify-between px-6"
         )}
       >
-        <RoleBadge collapsed={desktopCollapsed} roleInfo={roleInfo} />
-        <button
-          onClick={() => setDesktopCollapsed(!desktopCollapsed)}
-          className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0"
-          aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {desktopCollapsed ? (
-            <FiChevronRight className="w-5 h-5" />
-          ) : (
-            <FiChevronLeft className="w-5 h-5" />
+        <div className="flex items-center gap-3.5 overflow-hidden">
+          {logoUrl && (
+            <img
+              src={logoUrl}
+              alt="Logo"
+              className="h-11 w-11 object-contain transition-all duration-500 opacity-90"
+            />
           )}
-        </button>
+          
+          {!collapsed && (
+            <h1 className="text-[19px] font-bold text-gray-800 dark:text-gray-100 tracking-tight whitespace-nowrap">
+              CCS Profiling
+            </h1>
+          )}
+        </div>
       </div>
 
-      <nav className="flex-1 pt-4 pb-4 overflow-x-hidden">
-        <div className="space-y-6">
+      <nav className="flex-1 px-3 py-6 overflow-y-auto custom-scrollbar">
+        <div className={cn("space-y-9", collapsed && "space-y-3")}>
           {menuItems.map((group, groupIdx) => (
-            <div key={groupIdx}>
-              {!desktopCollapsed && (
-                <div className="px-6 mb-2 mt-1">
-                  <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+            <div key={groupIdx} className={cn("space-y-2", collapsed && "space-y-0")}>
+              {!collapsed && (
+                <div className="px-4 mb-2">
+                  <p className="text-[10px] font-bold text-gray-700 dark:text-gray-400 uppercase tracking-[0.2em]">
                     {group.category}
                   </p>
                 </div>
               )}
-              <ul className="space-y-1.5 px-2">
+              <ul className={cn("space-y-1", collapsed && "space-y-0.5")}>
                 {group.items.map((item) => (
                   <li key={item.name}>
                     <NavLink to={item.path}>
                       {({ isActive }) => (
                         <div
                           className={cn(
-                            "relative flex items-center h-[46px] text-[15.5px] rounded-xl transition-all duration-200 group",
+                            "relative flex items-center h-[48px] text-[15.5px] rounded-xl transition-all duration-200 group",
                             isActive
                               ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
-                              : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary hover:text-gray-900 dark:hover:text-zinc-100",
-                            desktopCollapsed ? "justify-center px-0" : "justify-start px-4 gap-3"
+                              : "text-gray-900 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-white/[0.03]",
+                            collapsed ? "justify-center px-0" : "px-4 gap-4"
                           )}
                         >
-                          {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
-                          )}
                           <item.icon
                             className={cn(
-                              "w-[22px] h-[22px] flex-shrink-0 transition-colors",
-                              isActive ? "text-[#FF6B00]" : "group-hover:text-gray-900 dark:group-hover:text-zinc-100"
+                              "w-[22px] h-[22px] transition-colors",
+                              isActive ? "text-[#FF6B00]" : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200"
                             )}
                           />
-                          {!desktopCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
+                          {!collapsed && <span className="truncate">{item.name}</span>}
+                          
+                          {collapsed && (
+                            <div className="fixed left-[70px] px-2.5 py-1.5 bg-gray-900 text-white text-[11px] rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 shadow-xl">
+                              {item.name}
+                            </div>
+                          )}
                         </div>
                       )}
                     </NavLink>
@@ -247,6 +245,37 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
           ))}
         </div>
       </nav>
+
+      {/* System Environment Footer */}
+      <div className="p-6 mt-auto border-t border-gray-100 dark:border-gray-800/50">
+        {!collapsed ? (
+          <div className="flex flex-col gap-4 animate-in fade-in duration-700">
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-[0.2em]">
+                Environment
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF6B00]" />
+                <span className="text-[11px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-wider">
+                  {roleInfo.full} Workspace
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <div 
+              className="w-8 h-8 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-gray-800 flex items-center justify-center group/env cursor-help relative"
+              title={`${roleInfo.full} Workspace`}
+            >
+              <span className="text-[10px] font-black text-[#FF6B00] uppercase">
+                {roleInfo.full.charAt(0)}
+              </span>
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#FF6B00] rounded-full border border-white dark:border-[#1E1E1E]" />
+            </div>
+          </div>
+        )}
+      </div>
     </aside>
   );
 
@@ -265,43 +294,42 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
           isMobileDrawerOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Mobile header: subtle role badge (always expanded style) */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-          <RoleBadge collapsed={false} roleInfo={roleInfo} />
+        {/* Mobile header */}
+        <div className="flex items-center justify-between px-6 h-[76px] border-b border-gray-200 dark:border-gray-800">
+          <div className="flex items-center gap-3">
+             {logoUrl && <img src={logoUrl} alt="Logo" className="h-8 w-8" />}
+             <h1 className="text-[16px] font-bold text-gray-800 dark:text-gray-100">CCS Profiling</h1>
+          </div>
           <button
             onClick={() => setMobileDrawerOpen(false)}
-            className="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-            aria-label="Close menu"
+            className="p-2 rounded-full text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5"
           >
             <FiChevronLeft className="w-5 h-5" />
           </button>
         </div>
-        <nav className="flex-1 pt-4 pb-6 overflow-y-auto">
-          <div className="space-y-6">
+        <nav className="flex-1 px-4 py-8 overflow-y-auto">
+          <div className="space-y-10">
             {menuItems.map((group, groupIdx) => (
-              <div key={groupIdx}>
-                <div className="px-6 mb-2 mt-1">
-                  <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+              <div key={groupIdx} className="space-y-3">
+                <div className="px-4">
+                  <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em]">
                     {group.category}
                   </p>
                 </div>
-                <ul className="space-y-1.5 px-3">
+                <ul className="space-y-1.5">
                   {group.items.map((item) => (
                     <li key={item.name}>
                       <NavLink to={item.path} onClick={() => setMobileDrawerOpen(false)}>
                         {({ isActive }) => (
                           <div
                             className={cn(
-                              "relative flex items-center gap-3 px-4 h-[46px] text-[15.5px] rounded-xl transition-all duration-200",
+                              "flex items-center gap-4 px-4 h-[44px] text-[15px] rounded-lg transition-all",
                               isActive
-                                ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/10"
-                                : "text-gray-600 dark:text-zinc-400 font-medium hover:bg-gray-100 dark:hover:bg-surface-secondary"
+                                ? "text-[#FF6B00] font-semibold bg-[#FF6B00]/5"
+                                : "text-gray-500 dark:text-gray-400"
                             )}
                           >
-                            {isActive && (
-                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FF6B00] rounded-r-full" />
-                            )}
-                            <item.icon className={cn("w-[22px] h-[22px]", isActive ? "text-[#FF6B00]" : "")} />
+                            <item.icon className={cn("w-[20px] h-[20px]", isActive ? "text-[#FF6B00]" : "text-gray-400")} />
                             <span>{item.name}</span>
                           </div>
                         )}
@@ -313,6 +341,16 @@ const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen }) => {
             ))}
           </div>
         </nav>
+        
+        {/* Mobile User Section */}
+        <div className="p-6 border-t border-gray-100 dark:border-gray-800/50">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+              <FiUser className="w-4 h-4 text-gray-400" />
+            </div>
+            <RoleBadge collapsed={false} roleInfo={roleInfo} user={user} />
+          </div>
+        </div>
       </aside>
     </>
   );

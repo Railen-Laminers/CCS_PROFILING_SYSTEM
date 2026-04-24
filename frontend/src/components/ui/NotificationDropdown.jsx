@@ -1,9 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FiBell, FiX, FiCheck, FiTrash2 } from 'react-icons/fi'; // Removed FiCheckDouble
+import { 
+    FiBell, 
+    FiX, 
+    FiCheck, 
+    FiTrash2, 
+    FiCalendar, 
+    FiUser, 
+    FiAlertCircle, 
+    FiInfo, 
+    FiPlusCircle,
+    FiSettings
+} from 'react-icons/fi';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
-export const NotificationDropdown = () => {
+export const NotificationDropdown = ({ size = 'md' }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
@@ -17,23 +29,18 @@ export const NotificationDropdown = () => {
         clearAllNotifications
     } = useNotifications();
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     const handleNotificationClick = (notification) => {
-        if (!notification.isRead) {
-            markAsRead(notification._id);
-        }
-
+        if (!notification.isRead) markAsRead(notification._id);
         if (notification.actionUrl) {
             navigate(notification.actionUrl);
             setIsOpen(false);
@@ -48,167 +55,151 @@ export const NotificationDropdown = () => {
         const diffHours = Math.floor(diffMs / 3600000);
         const diffDays = Math.floor(diffMs / 86400000);
 
-        if (diffMins < 1) return 'just now';
+        if (diffMins < 1) return 'Just now';
         if (diffMins < 60) return `${diffMins}m ago`;
         if (diffHours < 24) return `${diffHours}h ago`;
         if (diffDays < 7) return `${diffDays}d ago`;
         return notificationDate.toLocaleDateString();
     };
 
-    const getNotificationIcon = (type) => {
-        switch (type) {
-            case 'event_registration':
-                return '📝';
-            case 'event_creation':
-                return '✨';
-            case 'event_update':
-                return '📋';
-            case 'event_cancellation':
-                return '❌';
-            case 'event_reminder':
-                return '🔔';
-            case 'lesson_created':
-                return '📚';
-            case 'schedule_created':
-                return '📅';
-            case 'system_alert':
-                return '⚠️';
-            case 'user_action':
-                return '👤';
-            default:
-                return '📢';
-        }
+    const getNotificationConfig = (type) => {
+        const configs = {
+            event_registration: { icon: FiCheck, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-500/10' },
+            event_creation: { icon: FiPlusCircle, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-500/10' },
+            event_update: { icon: FiCalendar, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10' },
+            event_cancellation: { icon: FiX, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-500/10' },
+            event_reminder: { icon: FiBell, color: 'text-brand-500', bg: 'bg-brand-50 dark:bg-brand-500/10' },
+            system_alert: { icon: FiAlertCircle, color: 'text-red-600', bg: 'bg-red-100 dark:bg-red-500/10' },
+            user_action: { icon: FiUser, color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-500/10' },
+            default: { icon: FiInfo, color: 'text-gray-500', bg: 'bg-gray-50 dark:bg-gray-500/10' }
+        };
+        return configs[type] || configs.default;
     };
 
     return (
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative text-gray-500 dark:text-zinc-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl transition-colors p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-                aria-label="Notifications"
-                title="Notifications"
-            >
-                <FiBell className="w-5 h-5 stroke-[2]" />
-                {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 block w-[6px] h-[6px] bg-brand-500 rounded-full border-[1.5px] border-white dark:border-surface-dark shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></span>
+                className={cn(
+                    "relative text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 rounded-xl transition-all duration-300 hover:bg-gray-100 dark:hover:bg-white/5",
+                    size === 'sm' ? 'p-1.5' : 'p-2'
                 )}
+            >
+                <FiBell className={size === 'sm' ? 'w-[18px] h-[18px]' : 'w-5 h-5'} />
                 {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-brand-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
+                    <span className={cn(
+                        "absolute bg-brand-500 rounded-full border-[1.5px] border-white dark:border-[#1E1E1E] shadow-[0_0_8px_rgba(249,115,22,0.6)] animate-pulse",
+                        size === 'sm' ? 'top-1 right-1 w-[6px] h-[6px]' : 'top-1.5 right-1.5 w-2 h-2'
+                    )} />
                 )}
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-surface-secondary shadow-xl border border-gray-100 dark:border-border-dark rounded-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute right-0 mt-3 w-[380px] bg-white/95 dark:bg-[#1E1E1E]/95 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
                     {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-border-dark bg-gray-50/50 dark:bg-surface-dark/50">
-                        <div className="flex items-center gap-2">
-                            <FiBell className="w-5 h-5 text-brand-500" />
-                            <h3 className="text-sm font-semibold text-gray-900 dark:text-zinc-100">
+                    <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800/50">
+                        <div className="flex items-center gap-2.5">
+                            <h3 className="text-[15px] font-bold text-gray-900 dark:text-gray-100">
                                 Notifications
                             </h3>
                             {unreadCount > 0 && (
-                                <span className="text-xs bg-brand-500 text-white px-2 py-0.5 rounded-full font-medium">
-                                    {unreadCount} new
+                                <span className="bg-[#FF6B00] text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                    {unreadCount} New
                                 </span>
                             )}
                         </div>
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                        <button 
+                            onClick={markAllAsRead}
+                            className="text-[11px] font-bold text-[#FF6B00] hover:text-[#e66000] uppercase tracking-wider transition-colors disabled:opacity-30"
+                            disabled={unreadCount === 0}
                         >
-                            <FiX className="w-4 h-4" />
+                            Mark all as read
                         </button>
                     </div>
 
-                    {/* Notifications List */}
-                    <div className="max-h-96 overflow-y-auto">
+                    {/* List */}
+                    <div className="max-h-[440px] overflow-y-auto custom-scrollbar">
                         {loading ? (
-                            <div className="flex items-center justify-center py-8">
-                                <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+                            <div className="flex flex-col items-center justify-center py-12 gap-3">
+                                <div className="w-6 h-6 border-2 border-[#FF6B00] border-t-transparent rounded-full animate-spin" />
+                                <p className="text-xs font-medium text-gray-400">Syncing notifications...</p>
                             </div>
                         ) : notifications.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-12 px-4">
-                                <FiBell className="w-12 h-12 text-gray-300 dark:text-gray-700 mb-2" />
-                                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                                    No notifications yet
+                            <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+                                <div className="w-14 h-14 bg-gray-50 dark:bg-white/5 rounded-2xl flex items-center justify-center mb-4">
+                                    <FiBell className="w-6 h-6 text-gray-300 dark:text-gray-700" />
+                                </div>
+                                <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-1">All Caught Up!</h4>
+                                <p className="text-xs text-gray-500 dark:text-gray-500 max-w-[200px]">
+                                    We'll notify you when something important happens.
                                 </p>
                             </div>
                         ) : (
-                            <div className="divide-y divide-gray-100 dark:divide-border-dark">
-                                {notifications.map((notification) => (
-                                    <div
-                                        key={notification._id}
-                                        onClick={() => handleNotificationClick(notification)}
-                                        className={`px-4 py-3 cursor-pointer transition-colors ${notification.isRead
-                                                ? 'bg-white dark:bg-surface-secondary hover:bg-gray-50 dark:hover:bg-surface-dark'
-                                                : 'bg-blue-50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/20'
-                                            }`}
-                                    >
-                                        <div className="flex items-start gap-3">
-                                            <span className="text-xl mt-1 flex-shrink-0">
-                                                {getNotificationIcon(notification.type)}
-                                            </span>
-
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-start justify-between gap-2">
-                                                    <h4 className="text-sm font-semibold text-gray-900 dark:text-zinc-100">
-                                                        {notification.title}
-                                                    </h4>
-                                                    {!notification.isRead && (
-                                                        <div className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0 mt-1" />
-                                                    )}
+                            <div className="divide-y divide-gray-50 dark:divide-gray-800/30">
+                                {notifications.map((n) => {
+                                    const config = getNotificationConfig(n.type);
+                                    return (
+                                        <div
+                                            key={n._id}
+                                            onClick={() => handleNotificationClick(n)}
+                                            className={cn(
+                                                "group relative px-5 py-4 cursor-pointer transition-all duration-300 hover:bg-gray-50/80 dark:hover:bg-white/[0.02]",
+                                                !n.isRead && "bg-brand-50/30 dark:bg-brand-500/[0.03]"
+                                            )}
+                                        >
+                                            {!n.isRead && (
+                                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#FF6B00] shadow-[0_0_10px_rgba(255,107,0,0.4)]" />
+                                            )}
+                                            
+                                            <div className="flex gap-4">
+                                                <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 duration-300", config.bg)}>
+                                                    <config.icon className={cn("w-5 h-5", config.color)} />
                                                 </div>
 
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
-                                                    {notification.message}
-                                                </p>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center justify-between gap-2 mb-1">
+                                                        <h4 className="text-[13.5px] font-bold text-gray-900 dark:text-gray-100 truncate leading-tight">
+                                                            {n.title}
+                                                        </h4>
+                                                        <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                                                            {formatTime(n.createdAt)}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-[12px] text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
+                                                        {n.message}
+                                                    </p>
+                                                </div>
 
-                                                <span className="text-xs text-gray-500 dark:text-gray-500 mt-2 block">
-                                                    {formatTime(notification.createdAt)}
-                                                </span>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        deleteNotification(n._id);
+                                                    }}
+                                                    className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all"
+                                                >
+                                                    <FiTrash2 className="w-3.5 h-3.5" />
+                                                </button>
                                             </div>
-
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    deleteNotification(notification._id);
-                                                }}
-                                                className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors flex-shrink-0 mt-1"
-                                                title="Delete notification"
-                                            >
-                                                <FiTrash2 className="w-4 h-4" />
-                                            </button>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
 
-                    {/* Footer Actions */}
+                    {/* Footer */}
                     {notifications.length > 0 && (
-                        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-border-dark bg-gray-50/50 dark:bg-surface-dark/50">
-                            {unreadCount > 0 ? (
-                                <button
-                                    onClick={markAllAsRead}
-                                    className="flex items-center gap-1.5 text-xs font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors"
-                                >
-                                    <FiCheck className="w-4 h-4" /> {/* Replaced FiCheckDouble */}
-                                    Mark all as read
-                                </button>
-                            ) : (
-                                <span className="text-xs text-gray-500 dark:text-gray-400">All caught up!</span>
-                            )}
-
+                        <div className="px-5 py-3.5 border-t border-gray-100 dark:border-gray-800/50 bg-gray-50/50 dark:bg-white/[0.02] flex items-center justify-between">
                             <button
                                 onClick={clearAllNotifications}
-                                className="flex items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                                className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-wider"
                             >
-                                <FiTrash2 className="w-4 h-4" />
-                                Clear all
+                                <FiTrash2 className="w-3.5 h-3.5" />
+                                Clear History
                             </button>
+                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">
+                                {notifications.length} Total
+                            </span>
                         </div>
                     )}
                 </div>
