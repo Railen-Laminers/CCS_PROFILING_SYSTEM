@@ -392,17 +392,12 @@ const Profile = () => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-8">
-      {/* Conditional header based on role */}
-      <div>
+    <div className="w-full space-y-8 pb-12">
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
-          {isRestrictedRole ? 'Change Password' : 'My Profile'}
+          {isRestrictedRole ? 'Security Settings' : 'My Account'}
         </h1>
-        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">
-          {isRestrictedRole
-            ? 'Update your password. Your personal information can be edited in "My Details".'
-            : 'Update your account details and password. User ID and role cannot be changed here.'}
-        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -417,56 +412,60 @@ const Profile = () => {
                 Account information
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-8 space-y-6">
-              {/* Profile Picture Section */}
-              <div className="flex flex-col sm:flex-row items-start gap-6 pb-4 border-b border-gray-100 dark:border-gray-800">
-                <div className="relative">
-                  <div className="w-28 h-28 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <CardContent className="p-6 sm:p-8 space-y-8">
+              {/* Profile Photo Section */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 pb-8 border-b border-gray-100 dark:border-gray-800/50">
+                <div className="relative group">
+                  <div className="w-32 h-32 rounded-2xl overflow-hidden bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-gray-800 shadow-inner">
                     {displayUrl ? (
                       <img
                         src={displayUrl}
-                        alt="Profile preview"
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.src = 'https://via.placeholder.com/112?text=Error';
-                        }}
+                        alt="Profile"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <FiUser className="w-10 h-10" />
+                        <FiUser className="w-12 h-12" />
                       </div>
                     )}
                   </div>
                   <button
                     type="button"
                     onClick={triggerUpload}
-                    className="absolute bottom-0 right-0 bg-brand-500 hover:bg-brand-600 text-white p-1.5 rounded-full shadow-md transition-colors"
-                    title="Upload photo"
+                    className="absolute -bottom-2 -right-2 bg-[#FF6B00] hover:bg-[#E66000] text-white p-2.5 rounded-xl shadow-lg shadow-orange-500/20 transition-all duration-200 active:scale-90"
+                    title="Change photo"
                   >
-                    <FiCamera className="w-4 h-4" />
+                    <FiCamera className="w-5 h-5" />
                   </button>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Profile Photo
-                  </div>
-                  <div className="flex gap-2">
+                
+                <div className="flex-1 flex flex-col justify-center gap-3 text-center sm:text-left">
+                  <h4 className="text-[15px] font-bold text-gray-900 dark:text-gray-100">Profile Photo</h4>
+                  <p className="text-sm text-gray-500 dark:text-zinc-500 leading-relaxed max-w-xs">
+                    JPG, PNG or WEBP formats are supported. Max size of 2MB.
+                  </p>
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={triggerUpload}
+                      className="rounded-xl h-9 px-4 text-[13px] border-gray-200 dark:border-gray-800"
+                    >
+                      Upload New
+                    </Button>
                     {hasUnsavedPhoto() && (
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={removeProfilePicture}
-                        className="gap-1 text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
+                        className="rounded-xl h-9 px-4 text-[13px] text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
                       >
-                        <FiX className="w-3.5 h-3.5" />
                         Remove
                       </Button>
                     )}
                   </div>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
-                    JPG, PNG or WEBP. Max 2MB.
-                  </p>
                 </div>
               </div>
 
