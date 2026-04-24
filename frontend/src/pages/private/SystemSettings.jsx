@@ -42,7 +42,7 @@ const SystemSettings = () => {
 
   // General settings state
   const [systemTitle, setSystemTitle] = useState('');
-  const [institutionName, setInstitutionName] = useState('');
+  const [institutionName, setInstitutionName] = useState('College of Computing Studies');
   const [interfaceLanguage, setInterfaceLanguage] = useState('English - North America');
   const [storedLogoUrl, setStoredLogoUrl] = useState(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
@@ -132,7 +132,7 @@ const SystemSettings = () => {
         setLoadingSettings(true);
         const settings = await systemSettingsAPI.get(controller.signal);
         setSystemTitle(settings?.systemTitle || '');
-        setInstitutionName(settings?.institutionName || '');
+        setInstitutionName('College of Computing Studies');
         setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
         setStoredLogoUrl(settings?.logoUrl || null);
       } catch (err) {
@@ -156,11 +156,11 @@ const SystemSettings = () => {
     try {
       const settings = await systemSettingsAPI.update({
         systemTitle,
-        institutionName,
+        institutionName: 'College of Computing Studies',
         interfaceLanguage,
       });
       setSystemTitle(settings?.systemTitle || '');
-      setInstitutionName(settings?.institutionName || '');
+      setInstitutionName('College of Computing Studies');
       setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
       setStoredLogoUrl(settings?.logoUrl || null);
       await refreshBranding?.();
@@ -245,9 +245,14 @@ const SystemSettings = () => {
                     <label className={labelClasses}>System Title</label>
                     <input type="text" className={inputClasses} value={systemTitle} onChange={(e) => setSystemTitle(e.target.value)} disabled={loadingSettings || savingGeneral} />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 opacity-80">
                     <label className={labelClasses}>Institution Name</label>
-                    <input type="text" className={inputClasses} value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} disabled={loadingSettings || savingGeneral} />
+                    <input 
+                      type="text" 
+                      className={inputClasses} 
+                      value="College of Computing Studies" 
+                      disabled={true}
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className={labelClasses}>Interface Language</label>
