@@ -15,7 +15,7 @@ export const useFacultyDetails = () => {
     const [departments, setDepartments] = useState([]);
     const [positions, setPositions] = useState([]);
 
-    const [activeTab, setActiveTab] = useState('Personal Information');
+    const [activeTab, setActiveTab] = useState('Faculty Information');
     const [isTabLoading, setIsTabLoading] = useState(false);
 
     // Modal state

@@ -80,7 +80,7 @@ const StudentDetails = () => {
     // ── Error State ──────────────────────────────────────────────
     if (error) {
         return (
-            <div className="max-w-7xl mx-auto py-12">
+            <div className="py-12">
                 <button
                     onClick={() => navigate('/students')}
                     className="flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-2 transition-colors"
@@ -109,7 +109,7 @@ const StudentDetails = () => {
     const yearSection = [formatYearLevel(profile?.year_level), profile?.section ? `Section ${profile.section}` : null].filter(Boolean).join(' - ');
 
     return (
-        <div className="max-w-7xl mx-auto pb-12 animate-in fade-in duration-300">
+        <div className="pb-12 animate-in fade-in duration-300">
             {/* Header / Back */}
             <button
                 onClick={() => navigate('/students')}

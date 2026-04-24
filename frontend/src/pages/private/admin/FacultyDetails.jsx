@@ -46,7 +46,7 @@ const FacultyDetails = () => {
 
     if (error || !faculty) {
         return (
-            <div className="max-w-7xl mx-auto py-12">
+            <div className="py-12">
                 <button
                     onClick={() => navigate('/faculty')}
                     className="flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-2 transition-colors"
@@ -70,7 +70,7 @@ const FacultyDetails = () => {
     const profilePic = u.profile_picture;
 
     return (
-        <div className="max-w-7xl mx-auto pb-12 animate-in fade-in duration-300">
+        <div className="pb-12 animate-in fade-in duration-300">
             {/* Header / Back */}
             <button
                 onClick={() => navigate('/faculty')}
@@ -139,7 +139,7 @@ const FacultyDetails = () => {
 
             {/* Tabs Navigation */}
             <div className="flex space-x-2 mb-6 overflow-x-auto p-2 bg-gray-100 dark:bg-[#252525] rounded-[1.25rem] border border-gray-200 dark:border-gray-800 scrollbar-hide shadow-inner relative overflow-hidden">
-                {['Personal Information', 'Teaching Schedule', 'Research Projects', 'Subjects Handled'].map(tab => (
+                {['Faculty Information', 'Teaching Schedule', 'Research Projects', 'Subjects Handled'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => handleTabChange(tab)}
@@ -162,7 +162,7 @@ const FacultyDetails = () => {
                 ) : (
                     <div className="animate-in fade-in duration-300 text-left">
 
-                        {activeTab === 'Personal Information' && (
+                        {activeTab === 'Faculty Information' && (
                             <div className="space-y-6">
                                 <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
                                     <div className="flex items-center gap-2 mb-6 text-brand-500">
