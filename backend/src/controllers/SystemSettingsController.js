@@ -7,6 +7,8 @@ const pickPublicSettings = (doc) => ({
   systemTitle: doc?.systemTitle || '',
   institutionName: doc?.institutionName || '',
   interfaceLanguage: doc?.interfaceLanguage || 'English - North America',
+  academicYear: doc?.academicYear || '2023-2024',
+  semester: doc?.semester || '1st Semester',
   logoUrl: doc?.logoUrl || null,
 });
 
@@ -35,6 +37,8 @@ exports.updateSystemSettings = async (req, res, next) => {
       systemTitle: req.body.systemTitle ?? settings.systemTitle,
       institutionName: req.body.institutionName ?? settings.institutionName,
       interfaceLanguage: req.body.interfaceLanguage ?? settings.interfaceLanguage,
+      academicYear: req.body.academicYear ?? settings.academicYear,
+      semester: req.body.semester ?? settings.semester,
     };
 
     // If a new logo file is uploaded, store its URL and remove old file (best-effort)

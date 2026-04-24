@@ -44,6 +44,11 @@ const SystemSettings = () => {
   const [systemTitle, setSystemTitle] = useState('');
   const [institutionName, setInstitutionName] = useState('College of Computing Studies');
   const [interfaceLanguage, setInterfaceLanguage] = useState('English - North America');
+  const [academicYear, setAcademicYear] = useState(() => {
+    const currentYear = new Date().getFullYear();
+    return `${currentYear}-${currentYear + 1}`;
+  });
+  const [semester, setSemester] = useState('');
   const [storedLogoUrl, setStoredLogoUrl] = useState(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
   const [savingGeneral, setSavingGeneral] = useState(false);
@@ -134,6 +139,8 @@ const SystemSettings = () => {
         setSystemTitle(settings?.systemTitle || '');
         setInstitutionName('College of Computing Studies');
         setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
+        setAcademicYear(settings?.academicYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`);
+        setSemester(settings?.semester || '1st Semester');
         setStoredLogoUrl(settings?.logoUrl || null);
       } catch (err) {
         if (!axios.isCancel(err)) console.error('Failed to load settings:', err);
@@ -158,10 +165,14 @@ const SystemSettings = () => {
         systemTitle,
         institutionName: 'College of Computing Studies',
         interfaceLanguage,
+        academicYear,
+        semester,
       });
       setSystemTitle(settings?.systemTitle || '');
       setInstitutionName('College of Computing Studies');
       setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
+      setAcademicYear(settings?.academicYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`);
+      setSemester(settings?.semester || '1st Semester');
       setStoredLogoUrl(settings?.logoUrl || null);
       await refreshBranding?.();
     } catch (err) {
@@ -253,6 +264,43 @@ const SystemSettings = () => {
                       value="College of Computing Studies" 
                       disabled={true}
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <label className={labelClasses}>Academic Year (Start Year)</label>
+                    <div className="relative group">
+                      <input 
+                        type="number" 
+                        className={`${inputClasses} pr-24`}
+                        placeholder="e.g. 2025"
+                        value={academicYear.split('-')[0]} 
+                        onChange={(e) => {
+                          const start = e.target.value;
+                          if (!start) {
+                            setAcademicYear('');
+                            return;
+                          }
+                          const end = parseInt(start) + 1;
+                          setAcademicYear(`${start}-${end}`);
+                        }}
+                        disabled={loadingSettings || savingGeneral} 
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 bg-brand-500/10 border border-brand-500/20 rounded-lg text-brand-500 text-xs font-bold pointer-events-none">
+                        {academicYear.includes('-') ? `AY ${academicYear}` : 'SET YEAR'}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className={labelClasses}>Active Semester</label>
+                    <select 
+                      className={inputClasses} 
+                      value={semester} 
+                      onChange={(e) => setSemester(e.target.value)} 
+                      disabled={loadingSettings || savingGeneral}
+                    >
+                      <option>1st Semester</option>
+                      <option>2nd Semester</option>
+                      <option>Summer Term</option>
+                    </select>
                   </div>
                   <div className="space-y-2">
                     <label className={labelClasses}>Interface Language</label>
