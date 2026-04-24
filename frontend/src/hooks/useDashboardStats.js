@@ -8,7 +8,6 @@ const useDashboardStats = (userRole) => {
     const [eventCount, setEventCount] = useState(null);
     const [sportsCount, setSportsCount] = useState(null);
     const [orgCount, setOrgCount] = useState(null);
-    const [orgCount, setOrgCount] = useState(null);
     const [academicData, setAcademicData] = useState([]);
     const [participationData, setParticipationData] = useState([]);
     const [courseDistribution, setCourseDistribution] = useState([]);
@@ -86,7 +85,6 @@ const useDashboardStats = (userRole) => {
 
                 setSportsCount(sports);
                 setOrgCount(orgs);
-                setOrgCount(orgs);
 
                 // Build academic performance chart data
                 const yearLabels = { 1: '1st Year', 2: '2nd Year', 3: '3rd Year', 4: '4th Year' };
@@ -137,7 +135,6 @@ const useDashboardStats = (userRole) => {
         courseCount,
         eventCount,
         sportsCount,
-        orgCount,
         orgCount,
         academicData,
         participationData,
