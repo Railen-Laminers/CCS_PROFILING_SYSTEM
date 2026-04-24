@@ -39,6 +39,7 @@ export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
 
   const profilePicture = user?.profile_picture;
   const isStudent = user?.role === 'student';
+  const initials = `${user?.firstname?.[0] || ''}${user?.lastname?.[0] || ''}`.toUpperCase();
 
   return (
     <header className="bg-white dark:bg-[#1E1E1E] backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 h-[68px] flex justify-between items-center sticky top-0 z-40 transition-all duration-300 shadow-sm relative flex-shrink-0">
@@ -114,22 +115,22 @@ export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
             )}
           </Button>
           {dropdownOpen && (
-            <div className="absolute right-0 mt-3 w-64 bg-white/95 dark:bg-[#1E1E1E]/95 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-800 p-1.5 z-50 overflow-hidden rounded-2xl origin-top-right transition-all animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute right-0 mt-3 w-56 bg-white/95 dark:bg-[#1E1E1E]/95 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-800 p-1 z-50 overflow-hidden rounded-2xl origin-top-right transition-all animate-in fade-in zoom-in-95 duration-200">
               {/* User Identity Header */}
-              <div className="px-4 py-4 mb-1.5 border-b border-gray-100 dark:border-gray-800/50 flex items-center gap-3.5">
+              <div className="px-4 py-3.5 mb-1 border-b border-gray-100 dark:border-gray-800/50 flex items-center gap-3.5">
                 {profilePicture ? (
                   <img
                     src={profilePicture}
                     alt="Profile"
-                    className="w-10 h-10 rounded-xl object-cover ring-2 ring-gray-50 dark:ring-white/5"
+                    className="w-9 h-9 rounded-xl object-cover ring-2 ring-gray-50 dark:ring-white/5"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
-                    <FiUser className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <div className="w-9 h-9 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
+                    <span className="text-[13px] font-bold text-brand-500 tracking-wider">{initials}</span>
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[14.5px] font-bold text-gray-900 dark:text-gray-100 truncate leading-tight mb-1">
+                  <p className="text-[14px] font-bold text-gray-900 dark:text-gray-100 truncate leading-tight mb-0.5">
                     {user?.firstname} {user?.lastname}
                   </p>
                   <p className="text-[10px] font-black text-[#FF6B00] uppercase tracking-[0.15em] opacity-90">
@@ -145,10 +146,10 @@ export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
                     setDropdownOpen(false);
                     navigate('/profile');
                   }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#FF6B00] dark:hover:text-[#FF6B00] hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all duration-200 group"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#FF6B00] dark:hover:text-[#FF6B00] hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all duration-200 group"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-[#FF6B00]/10 transition-colors">
-                    <FiUser className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-[#FF6B00]/10 transition-colors">
+                    <FiUser className="w-3.5 h-3.5" />
                   </div>
                   <span>My Profile</span>
                 </button>
@@ -158,10 +159,10 @@ export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
                     setDropdownOpen(false);
                     navigate('/settings');
                   }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#FF6B00] dark:hover:text-[#FF6B00] hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all duration-200 group"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#FF6B00] dark:hover:text-[#FF6B00] hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all duration-200 group"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-[#FF6B00]/10 transition-colors">
-                    <FiSettings className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-[#FF6B00]/10 transition-colors">
+                    <FiSettings className="w-3.5 h-3.5" />
                   </div>
                   <span>Settings</span>
                 </button>
@@ -171,13 +172,13 @@ export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
                 <button
                   onClick={handleLogout}
                   disabled={isProcessing}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all duration-200 group disabled:opacity-50"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all duration-200 group disabled:opacity-50"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
+                  <div className="w-7 h-7 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
                     {isProcessing ? (
-                      <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
                     ) : (
-                      <FiLogOut className="w-4 h-4" />
+                      <FiLogOut className="w-3.5 h-3.5" />
                     )}
                   </div>
                   <span>{isProcessing ? 'Logging out...' : 'Logout'}</span>

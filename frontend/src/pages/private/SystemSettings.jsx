@@ -252,11 +252,11 @@ const SystemSettings = () => {
               </CardHeader>
               <CardContent className="p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2">
+                  <div>
                     <label className={labelClasses}>System Title</label>
                     <input type="text" className={inputClasses} value={systemTitle} onChange={(e) => setSystemTitle(e.target.value)} disabled={loadingSettings || savingGeneral} />
                   </div>
-                  <div className="space-y-2 opacity-80">
+                  <div className="opacity-80">
                     <label className={labelClasses}>Institution Name</label>
                     <input 
                       type="text" 
@@ -265,7 +265,7 @@ const SystemSettings = () => {
                       disabled={true}
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div>
                     <label className={labelClasses}>Academic Year (Start Year)</label>
                     <div className="relative group">
                       <input 
@@ -289,7 +289,7 @@ const SystemSettings = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-2">
+                  <div>
                     <label className={labelClasses}>Active Semester</label>
                     <select 
                       className={inputClasses} 
@@ -302,7 +302,7 @@ const SystemSettings = () => {
                       <option>Summer Term</option>
                     </select>
                   </div>
-                  <div className="space-y-2">
+                  <div>
                     <label className={labelClasses}>Interface Language</label>
                     <select className={inputClasses} value={interfaceLanguage} onChange={(e) => setInterfaceLanguage(e.target.value)} disabled={loadingSettings || savingGeneral}>
                       <option>English - North America</option>
