@@ -205,11 +205,11 @@ const StudentDetails = () => {
                         {/* 1. Student Information */}
                         {activeTab === 'Student Information' && (
                             <div className="space-y-6">
+                                <div className="flex items-center gap-2 text-[#F97316]">
+                                    <FiUser className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
+                                </div>
                                 <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="flex items-center gap-2 mb-6 text-[#F97316]">
-                                        <FiUser className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
-                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
                                         <div><SectionSubhead>Full Name</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{fullName}</p></div>
                                         <div><SectionSubhead>Student ID</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.user_id}</p></div>
@@ -218,11 +218,11 @@ const StudentDetails = () => {
                                     </div>
                                 </div>
 
+                                <div className="flex items-center gap-2 text-[#F97316]">
+                                    <FiPhone className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact & Emergency Details</h3>
+                                </div>
                                 <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="flex items-center gap-2 mb-6 text-[#F97316]">
-                                        <FiPhone className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact & Emergency Details</h3>
-                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                         <div><SectionSubhead>Contact Number</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.contact_number || 'Not Provided'}</p></div>
                                         <div><SectionSubhead>Email</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.email}</p></div>

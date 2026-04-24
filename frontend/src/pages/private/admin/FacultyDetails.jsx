@@ -164,11 +164,11 @@ const FacultyDetails = () => {
 
                         {activeTab === 'Faculty Information' && (
                             <div className="space-y-6">
+                                <div className="flex items-center gap-2 text-brand-500">
+                                    <FiUser className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
+                                </div>
                                 <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="flex items-center gap-2 mb-6 text-brand-500">
-                                        <FiUser className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
-                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-6">
                                         <div>
                                             <SectionSubhead>Full Name</SectionSubhead>
@@ -197,11 +197,11 @@ const FacultyDetails = () => {
                                     </div>
                                 </div>
 
+                                <div className="flex items-center gap-2 text-brand-500">
+                                    <FiPhone className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact Information</h3>
+                                </div>
                                 <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="flex items-center gap-2 mb-6 text-brand-500">
-                                        <FiPhone className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact Information</h3>
-                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                         <div>
                                             <SectionSubhead>Contact Number</SectionSubhead>
@@ -222,11 +222,11 @@ const FacultyDetails = () => {
 
                         {activeTab === 'Teaching Schedule' && (
                             <div className="space-y-6">
+                                <div className="flex items-center gap-2 text-brand-500">
+                                    <FiClock className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
+                                </div>
                                 <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="flex items-center gap-2 mb-6 text-brand-500">
-                                        <FiClock className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
-                                    </div>
                                     {teachingSchedule.length > 0 ? (
                                         <BulletList items={teachingSchedule.map(s => s.display)} />
                                     ) : (
@@ -243,11 +243,11 @@ const FacultyDetails = () => {
 
                         {activeTab === 'Research Projects' && (
                             <div className="space-y-6">
+                                <div className="flex items-center gap-2 text-brand-500">
+                                    <FiBookOpen className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Research Projects</h3>
+                                </div>
                                 <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="flex items-center gap-2 mb-6 text-brand-500">
-                                        <FiBookOpen className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Research Projects</h3>
-                                    </div>
                                     {/* FIX: Convert objects to strings before rendering */}
                                     <BulletList
                                         items={(parseList(f?.research_projects) || []).map(project =>
@@ -260,11 +260,11 @@ const FacultyDetails = () => {
 
                         {activeTab === 'Subjects Handled' && (
                             <div className="space-y-6">
+                                <div className="flex items-center gap-2 text-brand-500">
+                                    <FiBookOpen className="w-5 h-5" />
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>
+                                </div>
                                 <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="flex items-center gap-2 mb-6 text-brand-500">
-                                        <FiBookOpen className="w-5 h-5" />
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>
-                                    </div>
                                     {subjectsHandled.length > 0 ? (
                                         renderTags(subjectsHandled.join(', '), "orange")
                                     ) : (
