@@ -243,6 +243,30 @@ const SystemSettings = () => {
               <CardContent className="p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
+                      <label className={labelClasses}>
+                        System Title <span className="lowercase font-normal opacity-60 italic ml-1">(Read-only)</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        className={inputClasses} 
+                        value="CCS Profiling" 
+                        disabled 
+                        readOnly 
+                      />
+                    </div>
+                    <div>
+                      <label className={labelClasses}>
+                        Institution Name <span className="lowercase font-normal opacity-60 italic ml-1">(Read-only)</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        className={inputClasses} 
+                        value="College of Computing Studies" 
+                        disabled 
+                        readOnly 
+                      />
+                    </div>
+                    <div>
                       <label className={labelClasses}>Academic Year (Start Year)</label>
                       <div className="relative group">
                         <input 
