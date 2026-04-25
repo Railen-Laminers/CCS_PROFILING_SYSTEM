@@ -6,7 +6,8 @@ import axios from 'axios';
 import {
   FiUsers, FiDatabase, FiShield, FiHardDrive, FiUpload, FiPlus,
   FiSettings, FiMail, FiBell, FiLock, FiDroplet, FiGlobe, FiX,
-  FiActivity, FiCheck, FiLayout, FiMonitor, FiSearch, FiSun, FiMoon
+  FiActivity, FiCheck, FiLayout, FiMonitor, FiSearch, FiSun, FiMoon,
+  FiAlertTriangle, FiInfo
 } from 'react-icons/fi';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -46,6 +47,8 @@ const SystemSettings = () => {
   const [loadingSettings, setLoadingSettings] = useState(true);
   const [savingGeneral, setSavingGeneral] = useState(false);
   const [savingAppearance, setSavingAppearance] = useState(false);
+  const [initialSettings, setInitialSettings] = useState(null);
+  const [showRolloverModal, setShowRolloverModal] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
   const [logoFile, setLogoFile] = useState(null);
@@ -111,6 +114,10 @@ const SystemSettings = () => {
         setAcademicYear(settings?.academicYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`);
         setSemester(settings?.semester || '1st Semester');
         setStoredLogoUrl(settings?.logoUrl || null);
+        setInitialSettings({
+          academicYear: settings?.academicYear,
+          semester: settings?.semester
+        });
       } catch (err) {
         if (!axios.isCancel(err)) console.error('Failed to load settings:', err);
       } finally {
@@ -121,8 +128,18 @@ const SystemSettings = () => {
     return () => controller.abort();
   }, []);
 
-  const handleSaveGeneral = async () => {
+  const handleSaveGeneral = async (confirmed = false) => {
     if (!isAdmin) return;
+
+    // Detect if rollover (Term transition) is triggered
+    const isRolloverTriggered = (academicYear !== initialSettings?.academicYear) || 
+                                (semester !== initialSettings?.semester);
+
+    if (isRolloverTriggered && !confirmed) {
+      setShowRolloverModal(true);
+      return;
+    }
+
     setSaveError(null);
     setSavingGeneral(true);
     try {
@@ -131,10 +148,26 @@ const SystemSettings = () => {
         academicYear,
         semester,
       });
-      setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
-      setAcademicYear(settings?.academicYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`);
-      setSemester(settings?.semester || '1st Semester');
-      setStoredLogoUrl(settings?.logoUrl || null);
+      
+      const newSettings = {
+        interfaceLanguage: settings?.interfaceLanguage || 'English - North America',
+        academicYear: settings?.academicYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,
+        semester: settings?.semester || '1st Semester',
+        logoUrl: settings?.logoUrl || null
+      };
+
+      setInterfaceLanguage(newSettings.interfaceLanguage);
+      setAcademicYear(newSettings.academicYear);
+      setSemester(newSettings.semester);
+      setStoredLogoUrl(newSettings.logoUrl);
+      
+      // Update initial settings to match new state
+      setInitialSettings({
+        academicYear: newSettings.academicYear,
+        semester: newSettings.semester
+      });
+
+      setShowRolloverModal(false);
       await refreshBranding?.();
     } catch (err) {
       const msg = err?.response?.data?.message || 'Failed to save system settings';
@@ -183,6 +216,58 @@ const SystemSettings = () => {
       </div>
 
       <div className="space-y-10">
+        {/* Rollover Confirmation Modal */}
+        {showRolloverModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+            <Card className="w-full max-w-md overflow-hidden shadow-2xl border-none animate-in zoom-in-95 duration-200">
+              <CardHeader className="bg-amber-500/10 border-b border-amber-500/20 p-6">
+                <CardTitle className="text-amber-600 dark:text-amber-500 flex items-center gap-3">
+                  <div className="bg-amber-500/20 p-2 rounded-lg">
+                    <FiAlertTriangle className="w-6 h-6" />
+                  </div>
+                  System Rollover Warning
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8">
+                <p className="text-gray-600 dark:text-zinc-400 text-[14px] leading-relaxed">
+                  You are about to change the <span className="font-bold text-gray-900 dark:text-white">Academic Year</span> or <span className="font-bold text-gray-900 dark:text-white">Semester</span>. This will trigger a system-wide rollover:
+                </p>
+                <ul className="mt-4 space-y-3">
+                  <li className="flex items-start gap-3 text-[13px] text-gray-600 dark:text-zinc-400">
+                    <div className="mt-1 text-amber-500"><FiCheck className="w-4 h-4" /></div>
+                    Current student GPA and subjects will be <span className="font-semibold text-gray-900 dark:text-white">archived</span>.
+                  </li>
+                  <li className="flex items-start gap-3 text-[13px] text-gray-600 dark:text-zinc-400">
+                    <div className="mt-1 text-red-500"><FiX className="w-4 h-4" /></div>
+                    All current <span className="font-semibold text-gray-900 dark:text-white">Schedules, Lesson Plans, and Materials</span> will be deleted.
+                  </li>
+                  <li className="flex items-start gap-3 text-[13px] text-gray-600 dark:text-zinc-400">
+                    <div className="mt-1 text-amber-500"><FiInfo className="w-4 h-4" /></div>
+                    Student "Live" data will be reset to 0 for the new term.
+                  </li>
+                </ul>
+                <div className="mt-10 flex gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1" 
+                    onClick={() => setShowRolloverModal(false)}
+                    disabled={savingGeneral}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white" 
+                    onClick={() => handleSaveGeneral(true)}
+                    loading={savingGeneral}
+                  >
+                    Confirm Rollover
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {saveError && (
           <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-semibold text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300">
             {saveError}
