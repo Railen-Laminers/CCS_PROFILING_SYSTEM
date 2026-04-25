@@ -100,8 +100,8 @@ const SystemSettings = () => {
   };
   const handleChooseFileClick = () => fileInputRef.current?.click();
 
-  const inputClasses = "w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-[14px]";
-  const labelClasses = "block text-[12px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-2 ml-1";
+  const inputClasses = "w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-[13px]";
+  const labelClasses = "block text-[11px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-2 ml-1";
 
   const apiOrigin = useMemo(() => {
     const base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -220,7 +220,7 @@ const SystemSettings = () => {
           <div className="space-y-10">
             <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
+                <CardTitle className="text-[15px] font-bold flex items-center gap-3">
                   <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
                     <FiSettings className="w-5 h-5 text-brand-500" />
                   </div>
@@ -316,7 +316,7 @@ const SystemSettings = () => {
           <div className="space-y-10">
             <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
+                <CardTitle className="text-[15px] font-bold flex items-center gap-3">
                   <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
                     <FiShield className="w-5 h-5 text-brand-500" />
                   </div>
@@ -332,8 +332,8 @@ const SystemSettings = () => {
                           <FiLock className="w-4 h-4 text-gray-400 dark:text-zinc-600" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-[16px] text-gray-900 dark:text-white">{setting.title}</h3>
-                          <p className="text-[14px] text-gray-500 dark:text-zinc-400 mt-1">{setting.description}</p>
+                          <h3 className="font-bold text-[15px] text-gray-900 dark:text-white">{setting.title}</h3>
+                          <p className="text-[13px] text-gray-500 dark:text-zinc-400 mt-1">{setting.description}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
@@ -347,29 +347,6 @@ const SystemSettings = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
-              <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
-                  <div className="bg-blue-500/10 p-2 rounded-lg border border-blue-500/20">
-                    <FiActivity className="w-5 h-5 text-blue-500" />
-                  </div>
-                  Credential rotation (Password)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-8 space-y-8">
-                <div className="max-w-md"><div className="space-y-2"><label className={labelClasses}>Current administrative secret</label><input type="password" className={inputClasses} placeholder="••••••••" /></div></div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2"><label className={labelClasses}>New cryptographic password</label><input type="password" className={inputClasses} placeholder="••••••••" /></div>
-                  <div className="space-y-2"><label className={labelClasses}>Confirm secret synchronization</label><input type="password" className={inputClasses} placeholder="••••••••" /></div>
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <button className="relative group overflow-hidden rounded-xl bg-brand-500 px-10 py-2.5 text-sm font-semibold text-white shadow-lg active:scale-95 transition-all flex items-center gap-2">
-                    <span className="relative z-10">Synchronize Passwords</span>
-                    <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         )}
 
@@ -377,7 +354,7 @@ const SystemSettings = () => {
         {(activeTab === (isAdmin ? 2 : 0)) && (
           <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
             <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-              <CardTitle className="text-[16px] font-bold flex items-center gap-3">
+              <CardTitle className="text-[15px] font-bold flex items-center gap-3">
                 <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
                   <FiDroplet className="w-5 h-5 text-brand-500" />
                 </div>
@@ -388,8 +365,8 @@ const SystemSettings = () => {
               {/* Theme Mode Selection - always visible */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
                 <div className="md:col-span-1">
-                  <h4 className="text-[15px] font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Theme Preference</h4>
-                  <p className="text-[13px] text-gray-500 dark:text-zinc-500 mt-1">
+                  <h4 className="text-[14px] font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Theme Preference</h4>
+                  <p className="text-[12px] text-gray-500 dark:text-zinc-500 mt-1">
                     Choose between light and dark interface appearance.
                     {!isAdmin && ' Your preference is saved locally on this device.'}
                   </p>
@@ -414,8 +391,8 @@ const SystemSettings = () => {
                   <hr className="border-gray-100 dark:border-gray-800" />
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
                     <div className="md:col-span-1">
-                      <h4 className="text-[15px] font-bold text-gray-900 dark:text-zinc-100 tracking-tight">System Identity (Logo)</h4>
-                      <p className="text-[13px] text-gray-500 dark:text-zinc-500 mt-1">Uploaded image will appear in the navigation bar and authentication screens.</p>
+                      <h4 className="text-[14px] font-bold text-gray-900 dark:text-zinc-100 tracking-tight">System Identity (Logo)</h4>
+                      <p className="text-[12px] text-gray-500 dark:text-zinc-500 mt-1">Uploaded image will appear in the navigation bar and authentication screens.</p>
                     </div>
                     <div className="md:col-span-2">
                       <div
