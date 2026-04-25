@@ -491,8 +491,8 @@ const Profile = () => {
         <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
           <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
             <CardTitle className="text-[16px] font-bold flex items-center gap-3">
-              <div className="bg-orange-500/10 p-2 rounded-lg border border-orange-500/20">
-                <FiLock className="w-5 h-5 text-orange-500" />
+              <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                <FiLock className="w-5 h-5 text-brand-500" />
               </div>
               Change password
             </CardTitle>

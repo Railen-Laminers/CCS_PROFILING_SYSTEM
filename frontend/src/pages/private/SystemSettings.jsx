@@ -55,11 +55,8 @@ const SystemSettings = () => {
 
   const [notificationSettings, setNotificationSettings] = useState([
     { id: 1, title: 'Email Notifications', description: 'Receive email notifications for important updates', enabled: true },
-    { id: 2, title: 'Push Notifications', description: 'Receive push notifications on your device', enabled: false },
-    { id: 3, title: 'SMS Alerts', description: 'Get SMS alerts for critical system events', enabled: true },
-    { id: 4, title: 'Weekly Reports', description: 'Receive weekly summary reports via email', enabled: false },
-    { id: 5, title: 'Security Alerts', description: 'Get notified about security-related activities', enabled: true },
-    { id: 6, title: 'Maintenance Updates', description: 'Receive notifications about system maintenance', enabled: false },
+    { id: 2, title: 'Security Alerts', description: 'Get notified about security-related activities', enabled: true },
+    { id: 3, title: 'Maintenance Updates', description: 'Receive notifications about system maintenance', enabled: false },
   ]);
 
   const [securitySettings, setSecuritySettings] = useState([
@@ -328,10 +325,10 @@ const SystemSettings = () => {
           <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
             <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
               <CardTitle className="text-[16px] font-bold flex items-center gap-3">
-                <div className="bg-yellow-500/10 p-2 rounded-lg border border-yellow-500/20">
-                  <FiBell className="w-5 h-5 text-yellow-500" />
+                <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                  <FiBell className="w-5 h-5 text-brand-500" />
                 </div>
-                Push & Email notification matrix
+                System Notification Matrix
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -367,8 +364,8 @@ const SystemSettings = () => {
             <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
                 <CardTitle className="text-[16px] font-bold flex items-center gap-3">
-                  <div className="bg-orange-500/10 p-2 rounded-lg border border-orange-500/20">
-                    <FiShield className="w-5 h-5 text-orange-500" />
+                  <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                    <FiShield className="w-5 h-5 text-brand-500" />
                   </div>
                   Cybersecurity compliance & policies
                 </CardTitle>
