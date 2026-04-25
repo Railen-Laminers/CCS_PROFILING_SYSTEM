@@ -346,12 +346,16 @@ const SystemSettings = () => {
                     disabled={loadingSettings || savingGeneral}
                   >
                     {SEMESTER_ORDER.map((sem) => {
-                      const isDisabled = initialSettings && 
-                                       academicYear === initialSettings.academicYear && 
-                                       SEMESTER_ORDER.indexOf(sem) < SEMESTER_ORDER.indexOf(initialSettings.semester);
+                      const isYearChanged = initialSettings && academicYear !== initialSettings.academicYear;
+                      
+                      const isDisabled = initialSettings && (
+                        (isYearChanged && sem !== "1st Semester") || 
+                        (!isYearChanged && SEMESTER_ORDER.indexOf(sem) < SEMESTER_ORDER.indexOf(initialSettings.semester))
+                      );
+
                       return (
                         <option key={sem} value={sem} disabled={isDisabled}>
-                          {sem} {isDisabled ? '(Passed)' : ''}
+                          {sem} {isDisabled && !isYearChanged ? '(Passed)' : ''}
                         </option>
                       );
                     })}
