@@ -15,6 +15,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import CourseFormModal from '@/components/forms/CourseFormModal';
 import { courseAPI } from '@/services/api';
 import { useToast } from '@/contexts/ToastContext';
+import LoadingState from '@/components/ui/LoadingState';
 
 const CourseRow = ({ course }) => {
   const navigate = useNavigate();
@@ -143,13 +144,7 @@ const Instruction = () => {
 
       {/* Curriculum View */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-[#1E1E1E] rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
-          <div className="relative">
-            <div className="w-12 h-12 rounded-full border-4 border-gray-200 dark:border-gray-800"></div>
-            <div className="w-12 h-12 rounded-full border-4 border-t-brand-500 border-r-brand-500 border-b-transparent border-l-transparent animate-spin absolute top-0 left-0"></div>
-          </div>
-          <p className="text-sm font-bold text-gray-400 mt-4 uppercase tracking-widest">Fetching Curriculum...</p>
-        </div>
+        <LoadingState message="Fetching Curriculum..." />
       ) : (
         <div className="space-y-12 pb-12">
           {[1, 2, 3, 4].map((year) => (

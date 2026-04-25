@@ -3,6 +3,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { systemSettingsAPI } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
+import LoadingState from '../../components/ui/LoadingState';
 import axios from 'axios';
 import {
   FiUsers, FiDatabase, FiShield, FiHardDrive, FiUpload, FiPlus,
@@ -214,11 +215,7 @@ const SystemSettings = () => {
   };
 
   if (authLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
-      </div>
-    );
+    return <LoadingState message="Checking Authentication..." />;
   }
 
   return (

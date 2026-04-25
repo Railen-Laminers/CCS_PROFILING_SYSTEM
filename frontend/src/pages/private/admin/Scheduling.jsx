@@ -2,6 +2,7 @@ import { FiEdit2, FiFilter, FiHome, FiPlus, FiRefreshCw, FiSearch, FiServer, FiT
 import RoomFormModal from '@/components/forms/RoomFormModal';
 import SchedulingFilters from '@/components/filters/SchedulingFilters';
 import EmptyState from '@/components/ui/EmptyState';
+import LoadingState from '@/components/ui/LoadingState';
 import { useScheduling } from '@/hooks/useScheduling';
 
 const Scheduling = () => {
@@ -60,12 +61,7 @@ const Scheduling = () => {
       />
 
       {loading ? (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="relative">
-            <div className="w-12 h-12 rounded-full border-4 border-gray-200 dark:border-gray-800"></div>
-            <div className="w-12 h-12 rounded-full border-4 border-t-brand-500 border-r-brand-500 border-b-transparent border-l-transparent animate-spin absolute top-0 left-0"></div>
-          </div>
-        </div>
+        <LoadingState message="Fetching Facilities..." />
       ) : (
         <>
           {rooms.length > 0 ? (

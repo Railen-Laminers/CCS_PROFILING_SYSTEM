@@ -2,6 +2,7 @@ import React from 'react';
 import { FiUsers, FiPower, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { Spinner } from '@/components/ui/Skeleton.jsx';
 import EmptyState from '@/components/ui/EmptyState';
+import LoadingState from '@/components/ui/LoadingState';
 
 const StudentTable = ({
     students,
@@ -14,13 +15,7 @@ const StudentTable = ({
     deletingUserId
 }) => {
     if (loading) {
-        return (
-            <div className="bg-white dark:bg-[#1E1E1E] rounded-[2rem] shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
-                <div className="flex justify-center items-center py-16">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-500"></div>
-                </div>
-            </div>
-        );
+        return <LoadingState message="Fetching Students..." />;
     }
 
     if (students.length === 0) {

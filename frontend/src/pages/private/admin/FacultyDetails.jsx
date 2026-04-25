@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Skeleton.jsx';
 import EmptyState from '@/components/ui/EmptyState';
+import LoadingState from '@/components/ui/LoadingState';
 import { BulletList, SectionSubhead, formatDate, parseList, renderTags } from '@/lib/facultyHelpers';
 import { useFacultyDetails } from '@/hooks/useFacultyDetails';
 import FacultyFormModal from '@/components/forms/FacultyFormModal';
@@ -37,11 +38,7 @@ const FacultyDetails = () => {
     } = useFacultyDetails();
 
     if (loading) {
-        return (
-            <div className="flex justify-center items-center py-20">
-                <Spinner className="h-10 w-10 border-brand-500" />
-            </div>
-        );
+        return <LoadingState message="Fetching Faculty Details..." />;
     }
 
     if (error || !faculty) {
@@ -156,9 +153,7 @@ const FacultyDetails = () => {
             {/* Tab Content Rendering */}
             <div className="relative min-h-[400px]">
                 {isTabLoading ? (
-                    <div className="flex justify-center items-center h-[300px]">
-                        <Spinner className="h-8 w-8 border-brand-500" />
-                    </div>
+                    <LoadingState message="Fetching Tab Content..." className="border-none shadow-none bg-transparent" />
                 ) : (
                     <div className="animate-in fade-in duration-300 text-left">
 

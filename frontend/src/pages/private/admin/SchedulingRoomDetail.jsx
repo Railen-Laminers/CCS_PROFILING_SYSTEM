@@ -5,6 +5,7 @@ import ClassFormModal from '@/components/forms/ClassFormModal';
 import { Calendar } from 'react-big-calendar';
 import { localizer } from '@/lib/schedulingHelpers';
 import { useSchedulingRoomDetail } from '@/hooks/useSchedulingRoomDetail';
+import LoadingState from '@/components/ui/LoadingState';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const CustomEvent = ({ event }) => {
@@ -96,9 +97,7 @@ const SchedulingRoomDetail = () => {
 
       <Card className="overflow-hidden shadow-sm p-4 relative bg-white dark:bg-[#1E1E1E] border-none">
         {loading ? (
-          <div className="flex items-center justify-center min-h-[600px]">
-            <div className="relative border-brand-500 w-12 h-12 rounded-full border-t-2 animate-spin"></div>
-          </div>
+          <LoadingState message="Fetching Room Schedule..." className="min-h-[600px] border-none shadow-none bg-transparent" />
         ) : (
           <div className="h-[700px] font-sans rbc-theme-container">
             <Calendar

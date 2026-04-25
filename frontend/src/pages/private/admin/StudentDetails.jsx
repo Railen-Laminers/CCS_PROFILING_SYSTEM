@@ -12,6 +12,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
+import LoadingState from '@/components/ui/LoadingState';
 import { formatDate } from '@/lib/utils';
 import { BulletList, SectionSubhead, renderTags } from '@/lib/studentHelpers';
 
@@ -70,11 +71,7 @@ const StudentDetails = () => {
 
     // ── Loading State ────────────────────────────────────────────
     if (loading) {
-        return (
-            <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#F97316]"></div>
-            </div>
-        );
+        return <LoadingState message="Fetching Student Details..." />;
     }
 
     // ── Error State ──────────────────────────────────────────────
@@ -196,9 +193,7 @@ const StudentDetails = () => {
             {/* Tab Content Rendering */}
             <div className="relative min-h-[400px]">
                 {isTabLoading ? (
-                    <div className="flex justify-center items-center h-[300px]">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
-                    </div>
+                    <LoadingState message="Fetching Tab Content..." className="border-none shadow-none bg-transparent" />
                 ) : (
                     <div className="animate-in fade-in duration-300">
 

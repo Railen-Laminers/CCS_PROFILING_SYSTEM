@@ -17,6 +17,7 @@ import {
 } from 'react-icons/fi';
 import { HiOutlineAcademicCap } from 'react-icons/hi';
 import EmptyState from '@/components/ui/EmptyState';
+import LoadingState from '@/components/ui/LoadingState';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -32,7 +33,7 @@ const Dashboard = () => {
   const COLORS = ['#F97316', '#3B82F6', '#10B981', '#8B5CF6', '#EC4899'];
 
   if (!user) {
-    return <div className="p-6 text-gray-600 dark:text-gray-400">Loading...</div>;
+    return <LoadingState message="Initializing Session..." />;
   }
 
   // Formatting tooltips

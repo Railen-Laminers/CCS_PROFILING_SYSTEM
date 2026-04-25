@@ -3,6 +3,7 @@ import { FiUsers, FiMail, FiPhone, FiMapPin, FiTrash2, FiPower } from 'react-ico
 import EditIcon from '@/components/ui/EditIcon';
 import { Spinner } from '@/components/ui/Skeleton.jsx';
 import EmptyState from '@/components/ui/EmptyState';
+import LoadingState from '@/components/ui/LoadingState';
 import { parseList } from '@/lib/facultyHelpers';
 
 // Helper to safely render a research item (string or object)
@@ -172,11 +173,7 @@ const FacultyCard = ({ member, navigate, handleEdit, handleDelete, deletingUserI
 
 const FacultyGrid = ({ faculty, loading, navigate, handleEdit, handleDelete, deletingUserId, handleToggleStatus, togglingUserId }) => {
     if (loading) {
-        return (
-            <div className="flex justify-center items-center py-20 min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
-            </div>
-        );
+        return <LoadingState message="Fetching Faculty Members..." />;
     }
 
     if (faculty.length === 0) {
