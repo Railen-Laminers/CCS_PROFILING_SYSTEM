@@ -47,18 +47,7 @@ axiosInstance.interceptors.response.use(
 export const authAPI = {
   login: async (identifier, password) => {
     const response = await axiosInstance.post('/auth/login', { identifier, password });
-    if (!response.data.require2FA) {
-      setAuthToken(response.data.token);
-    }
-    return response.data;
-  },
-  verify2FA: async (userId, otp) => {
-    const response = await axiosInstance.post('/auth/verify-2fa', { userId, otp });
     setAuthToken(response.data.token);
-    return response.data;
-  },
-  toggle2FA: async (enabled) => {
-    const response = await axiosInstance.post('/auth/toggle-2fa', { enabled });
     return response.data.user;
   },
   logout: async () => {

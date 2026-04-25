@@ -16,15 +16,6 @@ class AuthController {
 
       const result = await AuthService.login(identifier, password);
 
-      if (result.require2FA) {
-        return res.status(200).json({
-          require2FA: true,
-          message: 'Verification code sent to your email',
-          email: result.email,
-          userId: result.userId
-        });
-      }
-
       res.status(200).json({
         message: 'Login successful',
         user: result.user,
@@ -135,52 +126,6 @@ class AuthController {
 
       res.status(200).json({
         message: 'Password reset successfully'
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /**
-   * Verify 2FA OTP and complete login
-   */
-  static async verify2FA(req, res, next) {
-    try {
-      const { userId, otp } = req.body;
-      if (!userId || !otp) {
-        return res.status(400).json({ message: 'Please provide userId and verification code' });
-      }
-
-      const result = await AuthService.verify2FA(userId, otp);
-
-      res.status(200).json({
-        message: 'Verification successful',
-        user: result.user,
-        token: result.token
-      });
-    } catch (error) {
-      if (error.message === 'Invalid or expired verification code.') {
-        return res.status(401).json({ message: error.message });
-      }
-      next(error);
-    }
-  }
-
-  /**
-   * Toggle 2FA status
-   */
-  static async toggle2FA(req, res, next) {
-    try {
-      const { enabled } = req.body;
-      if (enabled === undefined) {
-        return res.status(400).json({ message: 'Please provide enabled status' });
-      }
-
-      const user = await AuthService.toggle2FA(req.user._id, enabled);
-
-      res.status(200).json({
-        message: `2FA ${enabled ? 'enabled' : 'disabled'} successfully`,
-        user
       });
     } catch (error) {
       next(error);

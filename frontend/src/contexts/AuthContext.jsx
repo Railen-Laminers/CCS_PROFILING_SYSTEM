@@ -41,50 +41,15 @@ export const AuthProvider = ({ children }) => {
     setIsProcessing(true);
     try {
       setError(null);
-      const response = await authAPI.login(identifier, password);
-      
-      if (response.require2FA) {
-        return response; // Return the 2FA required info
-      }
-
-      setUser(response.user);
-      return response.user;
+      const userData = await authAPI.login(identifier, password);
+      setUser(userData);
+      return userData;
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Login failed';
       setError(errorMsg);
       throw err;
     } finally {
       setIsProcessing(false);
-    }
-  };
-
-  const verify2FA = async (userId, otp) => {
-    if (isProcessing) return;
-    setIsProcessing(true);
-    try {
-      setError(null);
-      const response = await authAPI.verify2FA(userId, otp);
-      setUser(response.user);
-      return response.user;
-    } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Verification failed';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const toggle2FA = async (enabled) => {
-    try {
-      setError(null);
-      const updatedUser = await authAPI.toggle2FA(enabled);
-      setUser(updatedUser);
-      return updatedUser;
-    } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to update 2FA status';
-      setError(errorMsg);
-      throw err;
     }
   };
 
@@ -122,10 +87,8 @@ export const AuthProvider = ({ children }) => {
         isProcessing,
         error,
         login,
-        verify2FA,
-        toggle2FA,
         logout,
-        refreshUser,
+        refreshUser,   // exposed
         isAuthenticated: !!user,
       }}
     >

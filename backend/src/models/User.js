@@ -92,18 +92,6 @@ const userSchema = new mongoose.Schema({
   password_reset_expires: {
     type: Date,
     default: null
-  },
-  is_2fa_enabled: {
-    type: Boolean,
-    default: false
-  },
-  two_fa_otp: {
-    type: String,
-    default: null
-  },
-  two_fa_otp_expires: {
-    type: Date,
-    default: null
   }
 }, {
   timestamps: true,
