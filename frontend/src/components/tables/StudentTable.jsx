@@ -41,14 +41,14 @@ const StudentTable = ({
                 <table className="w-full text-left border-collapse min-w-[800px]">
                     <thead>
                         <tr className="border-b border-gray-200 dark:border-gray-800">
-                            <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[7%]">Photo</th>
-                            <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[12%]">Student ID</th>
-                            <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[18%]">Name</th>
-                            <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[18%]">Program</th>
-                            <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[10%]">Year Level</th>
-                            <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[10%]">Section</th>
-                            <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[10%]">Status</th>
-                            <th className="pb-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 text-left w-[15%]">Actions</th>
+                            <th className="pb-4 text-[12px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[7%]">Photo</th>
+                            <th className="pb-4 text-[12px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[12%]">Student ID</th>
+                            <th className="pb-4 text-[12px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[18%]">Name</th>
+                            <th className="pb-4 text-[12px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[18%]">Program</th>
+                            <th className="pb-4 text-[12px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[10%]">Year Level</th>
+                            <th className="pb-4 text-[12px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[10%]">Section</th>
+                            <th className="pb-4 text-[12px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 w-[10%]">Status</th>
+                            <th className="pb-4 text-[12px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 text-left w-[15%]">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
@@ -61,28 +61,28 @@ const StudentTable = ({
                                 <tr
                                     key={student.user.id}
                                     onClick={() => navigate(`/students/${student.user.id}`)}
-                                    className="hover:bg-brand-500/10 transition-all duration-200 h-[64px] cursor-pointer group hover:shadow-[inset_0_0_20px_rgba(249,115,22,0.05)] relative z-10"
+                                    className="hover:bg-brand-500/10 transition-all duration-200 h-[68px] cursor-pointer group hover:shadow-[inset_0_0_20px_rgba(249,115,22,0.05)] relative z-10"
                                 >
-                                    <td className="py-2 px-1 pr-4 whitespace-nowrap pl-2">
+                                    <td className="py-2.5 px-1 pr-4 whitespace-nowrap pl-2">
                                         {profilePic ? (
                                             <img
                                                 src={profilePic}
                                                 alt={fullName}
-                                                className="w-9 h-9 rounded-[10px] object-cover border border-brand-200 dark:border-brand-500/20 shadow-sm"
+                                                className="w-10 h-10 rounded-[11px] object-cover border border-brand-200 dark:border-brand-500/20 shadow-sm"
                                             />
                                         ) : (
-                                            <div className="w-9 h-9 rounded-[10px] bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-[13px] font-bold border border-brand-200 dark:border-brand-500/20 shadow-sm">
+                                            <div className="w-10 h-10 rounded-[11px] bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-[13.5px] font-bold border border-brand-200 dark:border-brand-500/20 shadow-sm">
                                                 {initials}
                                             </div>
                                         )}
                                     </td>
-                                    <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-900 dark:text-gray-100 font-medium">{student.user.user_id}</td>
-                                    <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-300 group-hover:text-gray-900 dark:group-hover:text-zinc-100 transition-colors">{fullName}</td>
-                                    <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.program || 'N/A'}</td>
-                                    <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.year_level ? `${student.student.year_level} Year` : 'N/A'}</td>
-                                    <td className="py-2 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.section || 'N/A'}</td>
-                                    <td className="py-2 pr-4 whitespace-nowrap">
-                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${isActive
+                                    <td className="py-2.5 pr-4 whitespace-nowrap text-[14px] text-gray-900 dark:text-gray-100 font-medium">{student.user.user_id}</td>
+                                    <td className="py-2.5 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-300 group-hover:text-gray-900 dark:group-hover:text-zinc-100 transition-colors">{fullName}</td>
+                                    <td className="py-2.5 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.program || 'N/A'}</td>
+                                    <td className="py-2.5 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.year_level ? `${student.student.year_level} Year` : 'N/A'}</td>
+                                    <td className="py-2.5 pr-4 whitespace-nowrap text-[14px] text-gray-700 dark:text-zinc-400">{student.student?.section || 'N/A'}</td>
+                                    <td className="py-2.5 pr-4 whitespace-nowrap">
+                                        <span className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[12px] font-medium border ${isActive
                                                 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
                                                 : 'bg-gray-100 dark:bg-zinc-500/10 text-gray-600 dark:text-zinc-400 border-gray-200 dark:border-zinc-500/20'
                                             }`}>
@@ -90,37 +90,37 @@ const StudentTable = ({
                                             {isActive ? 'Active' : 'Inactive'}
                                         </span>
                                     </td>
-                                    <td className="py-2 px-1 whitespace-nowrap text-left" onClick={(e) => e.stopPropagation()}>
+                                    <td className="py-2.5 px-1 whitespace-nowrap text-left" onClick={(e) => e.stopPropagation()}>
                                         <div className="flex justify-start gap-3 items-center">
                                             <button
                                                 onClick={() => handleToggleStatus(student)}
-                                                className={`p-1.5 rounded-md transition-colors ${isActive
+                                                className={`p-1.5 rounded-lg transition-colors ${isActive
                                                         ? 'text-yellow-600 hover:bg-yellow-100 dark:hover:bg-yellow-900/20'
                                                         : 'text-green-600 hover:bg-green-100 dark:hover:bg-green-900/20'
                                                     }`}
                                                 title={isActive ? 'Deactivate' : 'Activate'}
                                                 disabled={togglingUserId !== null}
                                             >
-                                                {togglingUserId === student.user.id ? <Spinner /> : <FiPower className="w-[18px] h-[18px]" />}
+                                                {togglingUserId === student.user.id ? <Spinner /> : <FiPower className="w-[19px] h-[19px]" />}
                                             </button>
                                             <button
                                                 onClick={() => handleEdit(student)}
-                                                className="text-blue-500 hover:bg-blue-200 dark:hover:bg-blue-500/10 transition-colors p-1.5 rounded-md"
+                                                className="text-blue-500 hover:bg-blue-200 dark:hover:bg-blue-500/10 transition-colors p-1.5 rounded-lg"
                                                 title="Edit Student"
                                                 disabled={togglingUserId !== null || deletingUserId !== null}
                                             >
-                                                <FiEdit2 className="w-[18px] h-[18px] stroke-[1.5]" />
+                                                <FiEdit2 className="w-[19px] h-[19px] stroke-[1.5]" />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(student.user.id)}
-                                                className={`p-1.5 rounded-md transition-colors ${isActive
+                                                className={`p-1.5 rounded-lg transition-colors ${isActive
                                                         ? 'text-gray-400 cursor-not-allowed'
                                                         : 'text-red-500 hover:bg-red-100 dark:hover:bg-red-900/20'
                                                     }`}
                                                 title={isActive ? 'Must deactivate before deletion' : 'Delete Student'}
                                                 disabled={isActive || deletingUserId !== null || togglingUserId !== null}
                                             >
-                                                {deletingUserId === student.user.id ? <Spinner /> : <FiTrash2 className="w-[18px] h-[18px] stroke-[1.5]" />}
+                                                {deletingUserId === student.user.id ? <Spinner /> : <FiTrash2 className="w-[19px] h-[19px] stroke-[1.5]" />}
                                             </button>
                                         </div>
                                     </td>
