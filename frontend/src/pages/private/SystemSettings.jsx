@@ -41,8 +41,6 @@ const SystemSettings = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   // General settings state
-  const [systemTitle, setSystemTitle] = useState('');
-  const [institutionName, setInstitutionName] = useState('College of Computing Studies');
   const [interfaceLanguage, setInterfaceLanguage] = useState('English - North America');
   const [academicYear, setAcademicYear] = useState(() => {
     const currentYear = new Date().getFullYear();
@@ -136,8 +134,6 @@ const SystemSettings = () => {
       try {
         setLoadingSettings(true);
         const settings = await systemSettingsAPI.get(controller.signal);
-        setSystemTitle(settings?.systemTitle || '');
-        setInstitutionName('College of Computing Studies');
         setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
         setAcademicYear(settings?.academicYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`);
         setSemester(settings?.semester || '1st Semester');
@@ -162,14 +158,10 @@ const SystemSettings = () => {
     setSavingGeneral(true);
     try {
       const settings = await systemSettingsAPI.update({
-        systemTitle,
-        institutionName: 'College of Computing Studies',
         interfaceLanguage,
         academicYear,
         semester,
       });
-      setSystemTitle(settings?.systemTitle || '');
-      setInstitutionName('College of Computing Studies');
       setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
       setAcademicYear(settings?.academicYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`);
       setSemester(settings?.semester || '1st Semester');
@@ -189,8 +181,6 @@ const SystemSettings = () => {
     setSavingAppearance(true);
     try {
       const settings = await systemSettingsAPI.update({
-        systemTitle,
-        institutionName,
         interfaceLanguage,
         logo: logoFile,
       });
@@ -251,44 +241,31 @@ const SystemSettings = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <label className={labelClasses}>System Title</label>
-                    <input type="text" className={inputClasses} value={systemTitle} onChange={(e) => setSystemTitle(e.target.value)} disabled={loadingSettings || savingGeneral} />
-                  </div>
-                  <div className="opacity-80">
-                    <label className={labelClasses}>Institution Name</label>
-                    <input 
-                      type="text" 
-                      className={inputClasses} 
-                      value="College of Computing Studies" 
-                      disabled={true}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClasses}>Academic Year (Start Year)</label>
-                    <div className="relative group">
-                      <input 
-                        type="number" 
-                        className={`${inputClasses} pr-24`}
-                        placeholder="e.g. 2025"
-                        value={academicYear.split('-')[0]} 
-                        onChange={(e) => {
-                          const start = e.target.value;
-                          if (!start) {
-                            setAcademicYear('');
-                            return;
-                          }
-                          const end = parseInt(start) + 1;
-                          setAcademicYear(`${start}-${end}`);
-                        }}
-                        disabled={loadingSettings || savingGeneral} 
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 bg-brand-500/10 border border-brand-500/20 rounded-lg text-brand-500 text-xs font-bold pointer-events-none">
-                        {academicYear.includes('-') ? `AY ${academicYear}` : 'SET YEAR'}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                      <label className={labelClasses}>Academic Year (Start Year)</label>
+                      <div className="relative group">
+                        <input 
+                          type="number" 
+                          className={`${inputClasses} pr-24`}
+                          placeholder="e.g. 2025"
+                          value={academicYear.split('-')[0]} 
+                          onChange={(e) => {
+                            const start = e.target.value;
+                            if (!start) {
+                              setAcademicYear('');
+                              return;
+                            }
+                            const end = parseInt(start) + 1;
+                            setAcademicYear(`${start}-${end}`);
+                          }}
+                          disabled={loadingSettings || savingGeneral} 
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 bg-brand-500/10 border border-brand-500/20 rounded-lg text-brand-500 text-xs font-bold pointer-events-none">
+                          {academicYear.includes('-') ? `AY ${academicYear}` : 'SET YEAR'}
+                        </div>
                       </div>
                     </div>
-                  </div>
                   <div>
                     <label className={labelClasses}>Active Semester</label>
                     <select 

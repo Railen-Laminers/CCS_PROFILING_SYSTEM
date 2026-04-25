@@ -133,7 +133,7 @@ const RoleBadge = ({ collapsed, roleInfo, user }) => {
 
 const Sidebar = ({ isMobileDrawerOpen, setMobileDrawerOpen, collapsed }) => {
   const { user } = useAuth();
-  const { systemTitle, logoUrl } = useTheme();
+  const { logoUrl } = useTheme();
   const location = useLocation();
   const isDesktop = useDesktop();
 

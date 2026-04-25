@@ -4,8 +4,6 @@ const SystemSettings = require('../models/SystemSettings');
 
 const pickPublicSettings = (doc) => ({
   id: doc?._id,
-  systemTitle: doc?.systemTitle || '',
-  institutionName: doc?.institutionName || '',
   interfaceLanguage: doc?.interfaceLanguage || 'English - North America',
   academicYear: doc?.academicYear || '2023-2024',
   semester: doc?.semester || '1st Semester',
@@ -34,8 +32,6 @@ exports.updateSystemSettings = async (req, res, next) => {
     const settings = await getOrCreateSingleton();
 
     const nextData = {
-      systemTitle: req.body.systemTitle ?? settings.systemTitle,
-      institutionName: req.body.institutionName ?? settings.institutionName,
       interfaceLanguage: req.body.interfaceLanguage ?? settings.interfaceLanguage,
       academicYear: req.body.academicYear ?? settings.academicYear,
       semester: req.body.semester ?? settings.semester,

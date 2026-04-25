@@ -272,9 +272,9 @@ export const systemSettingsAPI = {
     // If `logo` is a File, send multipart. Otherwise send JSON.
     if (data?.logo instanceof File) {
       const formData = new FormData();
-      if (data.systemTitle !== undefined) formData.append('systemTitle', data.systemTitle);
-      if (data.institutionName !== undefined) formData.append('institutionName', data.institutionName);
       if (data.interfaceLanguage !== undefined) formData.append('interfaceLanguage', data.interfaceLanguage);
+      if (data.academicYear !== undefined) formData.append('academicYear', data.academicYear);
+      if (data.semester !== undefined) formData.append('semester', data.semester);
       formData.append('logo', data.logo);
 
       const response = await axiosInstance.put('/system-settings', formData, {
@@ -284,9 +284,9 @@ export const systemSettingsAPI = {
     }
 
     const response = await axiosInstance.put('/system-settings', {
-      systemTitle: data?.systemTitle,
-      institutionName: data?.institutionName,
       interfaceLanguage: data?.interfaceLanguage,
+      academicYear: data?.academicYear,
+      semester: data?.semester,
     });
     return response.data.settings;
   },

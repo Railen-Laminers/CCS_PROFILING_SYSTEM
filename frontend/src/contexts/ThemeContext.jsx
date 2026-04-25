@@ -21,7 +21,6 @@ export function ThemeProvider({ children }) {
   });
 
   const [brandingLoading, setBrandingLoading] = useState(true);
-  const [systemTitle, setSystemTitle] = useState('CCS Comprehensive Profiling System');
   const [logoUrl, setLogoUrl] = useState(null);
   const [academicYear, setAcademicYear] = useState('');
   const [semester, setSemester] = useState('');
@@ -57,7 +56,6 @@ export function ThemeProvider({ children }) {
       try {
         setBrandingLoading(true);
         const settings = await systemSettingsAPI.get(controller.signal);
-        setSystemTitle(settings?.systemTitle || 'CCS Comprehensive Profiling System');
         setLogoUrl(resolveLogoUrl(settings?.logoUrl));
         setAcademicYear(settings?.academicYear || '');
         setSemester(settings?.semester || '');
@@ -80,10 +78,9 @@ export function ThemeProvider({ children }) {
     return () => controller.abort();
   }, []);
 
-  // Sync browser tab title with system settings title
   useEffect(() => {
-    document.title = systemTitle?.trim() || 'CCS Comprehensive Profiling System';
-  }, [systemTitle]);
+    document.title = 'CCS Profiling';
+  }, []);
 
   // Sync favicon with uploaded system logo (fallback to default static icon)
   useEffect(() => {
@@ -111,14 +108,12 @@ export function ThemeProvider({ children }) {
       isDark: theme === 'dark',
       isLight: theme === 'light',
       brandingLoading,
-      systemTitle,
       logoUrl,
       academicYear,
       semester,
       refreshBranding: async () => {
         try {
           const settings = await systemSettingsAPI.get();
-          setSystemTitle(settings?.systemTitle || 'CCS Comprehensive Profiling System');
           setLogoUrl(resolveLogoUrl(settings?.logoUrl));
           setAcademicYear(settings?.academicYear || '');
           setSemester(settings?.semester || '');
@@ -129,7 +124,7 @@ export function ThemeProvider({ children }) {
         }
       },
     }),
-    [theme, brandingLoading, systemTitle, logoUrl, academicYear, semester]
+    [theme, brandingLoading, logoUrl, academicYear, semester]
   );
 
   return (

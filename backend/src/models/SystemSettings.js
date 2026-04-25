@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 
 const systemSettingsSchema = new mongoose.Schema(
   {
-    systemTitle: { type: String, trim: true, default: '' },
-    institutionName: { type: String, trim: true, default: '' },
     interfaceLanguage: { type: String, trim: true, default: 'English - North America' },
     academicYear: { type: String, trim: true, default: '2023-2024' },
     semester: { type: String, trim: true, default: '1st Semester' },

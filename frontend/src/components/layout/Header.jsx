@@ -10,7 +10,7 @@ import { useToast } from '@/contexts/ToastContext';
 
 export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
   const { user, logout, isProcessing } = useAuth();
-  const { theme, toggleTheme, systemTitle, logoUrl, academicYear, semester } = useTheme();
+  const { theme, toggleTheme, logoUrl, academicYear, semester } = useTheme();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -74,7 +74,7 @@ export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
             />
           ) : null}
           <h1 className="text-xl font-bold text-gray-800 dark:text-zinc-100 tracking-tight">
-            {systemTitle || 'CCS Profiling'}
+            CCS Profiling
           </h1>
         </div>
       </div>
