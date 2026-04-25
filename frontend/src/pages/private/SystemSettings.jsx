@@ -35,7 +35,7 @@ const SystemSettings = () => {
 
   const isAdmin = user?.role === 'admin';
   const allowedTabs = isAdmin
-    ? ['General', 'Notifications', 'Security', 'Appearance']
+    ? ['General', 'Security', 'Appearance']
     : ['Appearance'];
 
   const [activeTab, setActiveTab] = useState(0);
@@ -53,11 +53,6 @@ const SystemSettings = () => {
   const [savingAppearance, setSavingAppearance] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
-  const [notificationSettings, setNotificationSettings] = useState([
-    { id: 1, title: 'Email Notifications', description: 'Receive email notifications for important updates', enabled: true },
-    { id: 2, title: 'Security Alerts', description: 'Get notified about security-related activities', enabled: true },
-    { id: 3, title: 'Maintenance Updates', description: 'Receive notifications about system maintenance', enabled: false },
-  ]);
 
   const [securitySettings, setSecuritySettings] = useState([
     { id: 1, title: 'Two-Factor Authentication', description: 'Add an extra layer of security to your account', status: 'Enabled' },
@@ -71,11 +66,6 @@ const SystemSettings = () => {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef(null);
 
-  const toggleNotification = (id) => {
-    setNotificationSettings(notificationSettings.map(setting =>
-      setting.id === id ? { ...setting, enabled: !setting.enabled } : setting
-    ));
-  };
 
   const handleThemeChange = (e) => {
     const selectedTheme = e.target.value;
@@ -320,46 +310,9 @@ const SystemSettings = () => {
           </div>
         )}
 
-        {/* Notifications Tab (Admin only) */}
-        {isAdmin && activeTab === 1 && (
-          <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
-            <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-              <CardTitle className="text-[16px] font-bold flex items-center gap-3">
-                <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
-                  <FiBell className="w-5 h-5 text-brand-500" />
-                </div>
-                System Notification Matrix
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y divide-gray-100 dark:divide-gray-800">
-                {notificationSettings.map((setting) => (
-                  <div key={setting.id} className="p-8 flex items-center justify-between hover:bg-gray-50/30 dark:hover:bg-[#252525]/30 transition-all group">
-                    <div className="max-w-[80%]">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-bold text-[16px] text-gray-900 dark:text-white">{setting.title}</h3>
-                        {setting.enabled && <FiCheck className="w-4 h-4 text-green-500" />}
-                      </div>
-                      <p className="text-[14px] text-gray-500 dark:text-zinc-500 mt-1">{setting.description}</p>
-                    </div>
-                    <button onClick={() => toggleNotification(setting.id)} className={`relative inline-flex h-6 w-12 items-center rounded-full transition-all ${setting.enabled ? 'bg-brand-500' : 'bg-gray-200 dark:bg-zinc-800'}`}>
-                      <span className={`${setting.enabled ? 'translate-x-7' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform duration-300`} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className="p-8 border-t border-gray-100 dark:border-gray-800 flex justify-end">
-                <button className="relative group overflow-hidden rounded-xl bg-brand-500 px-10 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2">
-                  <span className="relative z-10">Save Matrix Changes</span>
-                  <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Security Tab (Admin only) */}
-        {isAdmin && activeTab === 2 && (
+        {isAdmin && activeTab === 1 && (
           <div className="space-y-10">
             <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
@@ -421,7 +374,7 @@ const SystemSettings = () => {
         )}
 
         {/* Appearance Tab – available to all authenticated users */}
-        {(activeTab === (isAdmin ? 3 : 0)) && (
+        {(activeTab === (isAdmin ? 2 : 0)) && (
           <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
             <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
               <CardTitle className="text-[16px] font-bold flex items-center gap-3">
