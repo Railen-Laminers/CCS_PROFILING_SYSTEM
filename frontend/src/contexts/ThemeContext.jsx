@@ -23,6 +23,8 @@ export function ThemeProvider({ children }) {
   const [brandingLoading, setBrandingLoading] = useState(true);
   const [systemTitle, setSystemTitle] = useState('CCS Comprehensive Profiling System');
   const [logoUrl, setLogoUrl] = useState(null);
+  const [academicYear, setAcademicYear] = useState('');
+  const [semester, setSemester] = useState('');
 
   // Update the DOM when theme changes
   useEffect(() => {
@@ -57,6 +59,8 @@ export function ThemeProvider({ children }) {
         const settings = await systemSettingsAPI.get(controller.signal);
         setSystemTitle(settings?.systemTitle || 'CCS Comprehensive Profiling System');
         setLogoUrl(resolveLogoUrl(settings?.logoUrl));
+        setAcademicYear(settings?.academicYear || '');
+        setSemester(settings?.semester || '');
       } catch (err) {
         // Only log errors that aren't cancelation errors
         if (axios.isCancel(err)) {
@@ -109,11 +113,15 @@ export function ThemeProvider({ children }) {
       brandingLoading,
       systemTitle,
       logoUrl,
+      academicYear,
+      semester,
       refreshBranding: async () => {
         try {
           const settings = await systemSettingsAPI.get();
           setSystemTitle(settings?.systemTitle || 'CCS Comprehensive Profiling System');
           setLogoUrl(resolveLogoUrl(settings?.logoUrl));
+          setAcademicYear(settings?.academicYear || '');
+          setSemester(settings?.semester || '');
         } catch (err) {
           if (!axios.isCancel(err)) {
             console.error('Failed to refresh branding:', err);
@@ -121,7 +129,7 @@ export function ThemeProvider({ children }) {
         }
       },
     }),
-    [theme, brandingLoading, systemTitle, logoUrl]
+    [theme, brandingLoading, systemTitle, logoUrl, academicYear, semester]
   );
 
   return (

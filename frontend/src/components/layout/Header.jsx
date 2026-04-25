@@ -10,7 +10,7 @@ import { useToast } from '@/contexts/ToastContext';
 
 export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
   const { user, logout, isProcessing } = useAuth();
-  const { theme, toggleTheme, systemTitle, logoUrl } = useTheme();
+  const { theme, toggleTheme, systemTitle, logoUrl, academicYear, semester } = useTheme();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -77,6 +77,20 @@ export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
             {systemTitle || 'CCS Profiling'}
           </h1>
         </div>
+      </div>
+
+      {/* System Status / Active Term Display */}
+      <div className="hidden md:flex items-center gap-3 px-4 py-1.5 bg-gray-50/50 dark:bg-white/[0.03] border border-gray-100 dark:border-gray-800/50 rounded-full shadow-inner-sm group hover:border-brand-500/20 transition-all duration-300">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse shadow-[0_0_8px_rgba(255,107,0,0.4)]" />
+          <span className="text-[11px] font-bold text-gray-600 dark:text-zinc-400 whitespace-nowrap uppercase tracking-widest group-hover:text-brand-500 transition-colors">
+            {semester || 'N/A'}
+          </span>
+        </div>
+        <div className="w-px h-3 bg-gray-200 dark:bg-gray-800" />
+        <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 tracking-[0.12em] whitespace-nowrap uppercase group-hover:text-gray-600 dark:group-hover:text-zinc-300 transition-colors">
+          AY {academicYear || 'N/A'}
+        </span>
       </div>
 
       <div className="flex items-center gap-4">
