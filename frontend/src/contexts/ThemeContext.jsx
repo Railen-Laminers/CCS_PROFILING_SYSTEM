@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { systemSettingsAPI } from '../services/api';
 import axios from 'axios'; // Add axios import
-import defaultLogo from '../assets/CCS_logo.png';
 
 const ThemeContext = createContext();
 
@@ -85,7 +84,8 @@ export function ThemeProvider({ children }) {
 
   // Sync favicon with uploaded system logo (fallback to default static icon)
   useEffect(() => {
-    const iconHref = logoUrl || defaultLogo;
+    const defaultIcon = '/CCS_logo.png';
+    const iconHref = logoUrl || defaultIcon;
 
     let favicon = document.querySelector("link[rel='icon']");
     if (!favicon) {
