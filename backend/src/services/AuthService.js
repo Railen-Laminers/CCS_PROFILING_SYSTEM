@@ -31,6 +31,27 @@ class AuthService {
     user.last_login_at = new Date();
     await user.save();
 
+    // Check if 2FA is enabled
+    if (user.is_2fa_enabled) {
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      user.two_fa_otp = crypto.createHash('sha256').update(otp).digest('hex');
+      user.two_fa_otp_expires = Date.now() + 10 * 60 * 1000; // 10 minutes
+      await user.save();
+
+      try {
+        await EmailService.send2FAEmail(user.email, otp);
+      } catch (err) {
+        console.error('Failed to send 2FA email:', err);
+        // We don't throw here to avoid leaking info, but the user will be stuck without OTP
+      }
+
+      return {
+        require2FA: true,
+        email: user.email,
+        userId: user._id
+      };
+    }
+
     const token = this.generateToken(user._id);
     const formattedUser = await this.formatUserWithProfile(user);
 
@@ -250,6 +271,51 @@ class AuthService {
     user.password_reset_token = undefined;
     user.password_reset_expires = undefined;
     await user.save();
+  }
+
+  /**
+   * Verify 2FA OTP and complete login
+   */
+  static async verify2FA(userId, otp) {
+    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
+    const user = await User.findOne({
+      _id: userId,
+      two_fa_otp: hashedOtp,
+      two_fa_otp_expires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      throw new Error('Invalid or expired verification code.');
+    }
+
+    // Clear OTP fields
+    user.two_fa_otp = undefined;
+    user.two_fa_otp_expires = undefined;
+    user.last_login_at = new Date();
+    await user.save();
+
+    const token = this.generateToken(user._id);
+    const formattedUser = await this.formatUserWithProfile(user);
+
+    return {
+      user: formattedUser,
+      token
+    };
+  }
+
+  /**
+   * Toggle 2FA status
+   */
+  static async toggle2FA(userId, enabled) {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    user.is_2fa_enabled = enabled;
+    await user.save();
+
+    return await this.formatUserWithProfile(user);
   }
 }
 

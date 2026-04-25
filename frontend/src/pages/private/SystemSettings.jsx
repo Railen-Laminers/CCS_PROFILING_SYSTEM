@@ -55,7 +55,7 @@ const SystemSettings = () => {
 
 
   const [securitySettings, setSecuritySettings] = useState([
-    { id: 1, title: 'Two-Factor Authentication', description: 'Add an extra layer of security to your account', status: 'Enabled' },
+    { id: 1, title: 'Two-Factor Authentication', description: 'Add an extra layer of security to your account', status: 'Disabled' },
     { id: 2, title: 'Session Timeout', description: 'Automatically log out after period of inactivity', status: '30 mins' },
     { id: 3, title: 'Password Policy', description: 'Enforce strong password requirements', status: 'Strong' },
     { id: 4, title: 'Login Attempts', description: 'Maximum failed login attempts before lockout', status: '5 max' },

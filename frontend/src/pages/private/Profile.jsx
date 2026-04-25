@@ -29,10 +29,12 @@ const formatDateInput = (value) => {
 };
 
 const Profile = () => {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, toggle2FA } = useAuth();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [is2faEnabled, setIs2faEnabled] = useState(false);
+  const [isToggling2FA, setIsToggling2FA] = useState(false);
   const fileInputRef = useRef(null);
   const modalFileInputRef = useRef(null);
 
@@ -91,6 +93,7 @@ const Profile = () => {
       setCurrentBase64(null);
       setDisplayUrl(originalPic);
     }
+    setIs2faEnabled(user.is_2fa_enabled || false);
     setLoading(false);
     setFieldErrors({});
     setTouched({});
@@ -315,6 +318,21 @@ const Profile = () => {
       showToast(msg, 'error');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggle2FA = async () => {
+    if (isToggling2FA) return;
+    setIsToggling2FA(true);
+    try {
+      const newState = !is2faEnabled;
+      await toggle2FA(newState);
+      setIs2faEnabled(newState);
+      showToast(`Two-factor authentication ${newState ? 'enabled' : 'disabled'} successfully.`, 'success');
+    } catch (err) {
+      showToast('Failed to update 2FA status', 'error');
+    } finally {
+      setIsToggling2FA(false);
     }
   };
 
@@ -581,6 +599,38 @@ const Profile = () => {
                   <p className="mt-1 text-xs text-red-500">{fieldErrors.confirmPassword}</p>
                 )}
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Two-Factor Authentication card */}
+        <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+          <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+            <CardTitle className="text-[16px] font-bold flex items-center gap-3">
+              <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                <FiLock className="w-5 h-5 text-brand-500" />
+              </div>
+              Two-factor authentication
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-8">
+            <div className="flex items-center justify-between">
+              <div className="max-w-md">
+                <h4 className="text-[14px] font-bold text-gray-900 dark:text-gray-100">Security verification</h4>
+                <p className="text-sm text-gray-500 dark:text-zinc-500 mt-1 leading-relaxed">
+                  Add an extra layer of security by requiring a verification code sent to your email when you log in.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleToggle2FA}
+                disabled={isToggling2FA}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${is2faEnabled ? 'bg-brand-500' : 'bg-gray-200 dark:bg-zinc-800'} ${isToggling2FA ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <span
+                  className={`${is2faEnabled ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                />
+              </button>
             </div>
           </CardContent>
         </Card>

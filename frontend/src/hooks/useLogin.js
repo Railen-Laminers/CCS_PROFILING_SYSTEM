@@ -5,7 +5,7 @@ import { useToast } from '../contexts/ToastContext';
 import { authAPI, contactAPI } from '../services/api';
 
 export const useLogin = () => {
-  const { login, error: authError, loading: authLoading, isProcessing } = useAuth();
+  const { login, verify2FA, error: authError, loading: authLoading, isProcessing } = useAuth();
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -29,6 +29,13 @@ export const useLogin = () => {
   const [identifierError, setIdentifierError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [serverError, setServerError] = useState('');
+
+  // 2FA State
+  const [step, setStep] = useState('login'); // 'login' or '2fa'
+  const [otp, setOtp] = useState('');
+  const [userId, setUserId] = useState(null);
+  const [mfaEmail, setMfaEmail] = useState('');
+  const [isVerifying2FA, setIsVerifying2FA] = useState(false);
 
   // Clear any stale errors when login page mounts
   useEffect(() => {
@@ -86,10 +93,37 @@ export const useLogin = () => {
     setServerError('');
 
     try {
-      await login(identifier, password);
+      const response = await login(identifier, password);
+      
+      if (response && response.require2FA) {
+        setUserId(response.userId);
+        setMfaEmail(response.email);
+        setStep('2fa');
+        showToast('Please check your email for the verification code', 'info');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      // The error is already handled by AuthContext and synced to serverError via useEffect
+    }
+  };
+
+  const handleVerify2FA = async (e) => {
+    if (e) e.preventDefault();
+    if (!otp || otp.length !== 6) {
+      showToast('Please enter a valid 6-digit verification code', 'error');
+      return;
+    }
+
+    setIsVerifying2FA(true);
+    setServerError('');
+    try {
+      await verify2FA(userId, otp);
       navigate('/dashboard');
     } catch (err) {
-      setServerError('Incorrect username/email or password');
+      setServerError(err.response?.data?.message || 'Verification failed');
+    } finally {
+      setIsVerifying2FA(false);
     }
   };
 
@@ -164,7 +198,21 @@ export const useLogin = () => {
     handlePasswordChange,
     togglePasswordVisibility,
     handleSubmit,
+    handleVerify2FA,
+    // Adding 2FA specific returns
+    step,
+    otp,
+    setOtp,
+    userId,
+    mfaEmail,
+    isVerifying2FA,
     handleForgotPassword,
-    handleContactSubmit
+    handleContactSubmit,
+    resetToLogin: () => {
+      setStep('login');
+      setOtp('');
+      setUserId(null);
+      setServerError('');
+    }
   };
 };
