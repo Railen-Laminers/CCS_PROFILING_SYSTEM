@@ -158,7 +158,7 @@ const Profile = () => {
 
     // Only validate personal info if admin
     if (canEditPersonalInfo) {
-      const fieldMap = { firstname, lastname, email, contactNumber };
+      const fieldMap = { firstname, lastname, email };
       Object.entries(fieldMap).forEach(([field, value]) => {
         const error = validateField(field, value);
         if (error) errors[field] = error;
@@ -285,16 +285,11 @@ const Profile = () => {
     try {
       const payload = {};
 
-      // Only include personal info if admin
+      // Only include essential personal info for admin
       if (canEditPersonalInfo) {
         payload.firstname = firstname.trim();
-        payload.middlename = middlename.trim() || null;
         payload.lastname = lastname.trim();
         payload.email = email.trim().toLowerCase();
-        payload.contact_number = contactNumber.trim() || null;
-        payload.gender = gender || null;
-        payload.address = address.trim() || null;
-        payload.birth_date = birthDate || null;
         if (currentBase64) {
           payload.profile_picture = currentBase64;
         }
@@ -471,22 +466,21 @@ const Profile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className={labelClasses}>User ID</label>
+                  <label className={labelClasses}>
+                    User ID <span className="lowercase font-normal opacity-60 italic ml-1">(Read-only)</span>
+                  </label>
                   <input type="text" className={inputClasses(false, false, null)} value={user.user_id || ''} disabled readOnly />
                 </div>
                 <div className="space-y-2">
-                  <label className={labelClasses}>Role</label>
+                  <label className={labelClasses}>
+                    Role <span className="lowercase font-normal opacity-60 italic ml-1">(Read-only)</span>
+                  </label>
                   <input type="text" className={inputClasses(false, false, null)} value={user.role || ''} disabled readOnly />
                 </div>
                 {renderField('First name', 'firstname', 'text', true, 'Enter first name')}
-                {renderField('Middle name', 'middlename', 'text', false, 'Enter middle name (optional)')}
                 {renderField('Last name', 'lastname', 'text', true, 'Enter last name')}
-                {renderField('Email', 'email', 'email', true, 'your@email.com')}
-                {renderField('Contact number', 'contactNumber', 'tel', false, '09XXXXXXXXX')}
-                {renderField('Gender', 'gender', 'select')}
-                {renderField('Birth date', 'birthDate', 'date')}
                 <div className="md:col-span-2">
-                  {renderField('Address', 'address', 'textarea', false, 'Your address')}
+                  {renderField('Email address', 'email', 'email', true, 'your@email.com')}
                 </div>
               </div>
             </CardContent>
