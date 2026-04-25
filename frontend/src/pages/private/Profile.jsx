@@ -407,7 +407,7 @@ const Profile = () => {
                 Account information
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 sm:p-8 space-y-8">
+            <CardContent className="p-8 space-y-8">
               {/* Profile Photo Section */}
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 pb-8 border-b border-gray-100 dark:border-gray-800/50">
                 <div className="relative group">
@@ -464,7 +464,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <label className={labelClasses}>
                     User ID <span className="lowercase font-normal opacity-60 italic ml-1">(Read-only)</span>
@@ -501,7 +501,7 @@ const Profile = () => {
             <p className="text-sm text-gray-500 dark:text-zinc-400">
               Leave password fields empty to keep your current password.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Current password */}
               <div className="space-y-2 md:col-span-2">
                 <label className={labelClasses}>Current password</label>
