@@ -13,6 +13,7 @@ const LessonPlan = require('../models/LessonPlan');
 const Material = require('../models/Material');
 const Room = require('../models/Room');
 const AcademicRecord = require('../models/AcademicRecord');
+const SystemSettings = require('../models/SystemSettings');
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -26,8 +27,8 @@ const connectDB = async () => {
 };
 
 // Helper function to generate section based on year level and section letter
-const generateSection = (yearLevel, sectionLetter) => {
-  return `${yearLevel}IT-${sectionLetter}`;
+const generateSection = (sectionLetter) => {
+  return `IT-${sectionLetter}`;
 };
 
 // Seed data
@@ -45,6 +46,7 @@ const seedData = async () => {
     await Material.deleteMany({});
     await Room.deleteMany({});
     await AcademicRecord.deleteMany({});
+    await SystemSettings.deleteMany({});
 
     console.log('👤 Creating Admin User...');
     // Create Admin User
@@ -61,6 +63,13 @@ const seedData = async () => {
       gender: 'male',
       address: 'Admin Address',
       is_active: true
+    });
+
+    console.log('⚙️ Initializing System Settings...');
+    await SystemSettings.create({
+      academicYear: '2023-2024',
+      semester: '1st Semester',
+      interfaceLanguage: 'English - North America'
     });
 
     // Create Students with proper year levels and sections
@@ -145,7 +154,7 @@ const seedData = async () => {
         user_id: createdStudentUsers[0]._id,
         parent_guardian_name: 'Roberto Cruz',
         emergency_contact: '09123456711',
-        section: generateSection(3, 'A'), // 3IT-A
+        section: generateSection('A'), // IT-A
         program: 'BSIT',
         year_level: 3,
         gpa: 1.75,
@@ -165,7 +174,7 @@ const seedData = async () => {
         user_id: createdStudentUsers[1]._id,
         parent_guardian_name: 'Antonio Lim',
         emergency_contact: '09123456712',
-        section: generateSection(3, 'B'), // 3IT-B
+        section: generateSection('B'), // IT-B
         program: 'BSIT',
         year_level: 3,
         gpa: 1.5,
@@ -185,7 +194,7 @@ const seedData = async () => {
         user_id: createdStudentUsers[2]._id,
         parent_guardian_name: 'Roberto Bautista',
         emergency_contact: '09123456713',
-        section: generateSection(2, 'A'), // 2IT-A
+        section: generateSection('A'), // IT-A
         program: 'BSIT',
         year_level: 2,
         gpa: 2.0,
@@ -205,7 +214,7 @@ const seedData = async () => {
         user_id: createdStudentUsers[3]._id,
         parent_guardian_name: 'Ricardo Mendoza',
         emergency_contact: '09123456714',
-        section: generateSection(3, 'A'), // 3IT-A (Sofia's section)
+        section: generateSection('A'), // IT-A
         program: 'BSIT',
         year_level: 3,
         gpa: 1.25,
@@ -225,7 +234,7 @@ const seedData = async () => {
         user_id: createdStudentUsers[4]._id,
         parent_guardian_name: 'Manuel Franco',
         emergency_contact: '09123456715',
-        section: generateSection(2, 'B'), // 2IT-B
+        section: generateSection('B'), // IT-B
         program: 'BSIT',
         year_level: 2,
         gpa: 1.0,
