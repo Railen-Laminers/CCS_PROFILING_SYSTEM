@@ -128,12 +128,21 @@ const SystemSettings = () => {
     return () => controller.abort();
   }, []);
 
+  // Automatically reset semester to 1st Semester when academic year changes
+  useEffect(() => {
+    if (initialSettings && academicYear !== initialSettings.academicYear) {
+      setSemester('1st Semester');
+    }
+  }, [academicYear, initialSettings]);
+
   const handleSaveGeneral = async (confirmed = false) => {
     if (!isAdmin) return;
 
     // Detect if rollover (Term transition) is triggered
-    const isRolloverTriggered = (academicYear !== initialSettings?.academicYear) || 
-                                (semester !== initialSettings?.semester);
+    // We compare current state values with the ones we loaded from the database
+    const isYearChanged = academicYear !== initialSettings?.academicYear;
+    const isSemesterChanged = semester !== initialSettings?.semester;
+    const isRolloverTriggered = isYearChanged || isSemesterChanged;
 
     if (isRolloverTriggered && !confirmed) {
       setShowRolloverModal(true);
@@ -338,7 +347,7 @@ const SystemSettings = () => {
                 </div>
               </div>
               <div className="mt-10 flex justify-end">
-                <button onClick={handleSaveGeneral} disabled={loadingSettings || savingGeneral} className="relative group overflow-hidden rounded-xl bg-brand-500 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
+                <button onClick={() => handleSaveGeneral()} disabled={loadingSettings || savingGeneral} className="relative group overflow-hidden rounded-xl bg-brand-500 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
                   <span className="relative z-10">{savingGeneral ? 'Saving…' : 'Save General Settings'}</span>
                 </button>
               </div>
@@ -450,7 +459,7 @@ const SystemSettings = () => {
             </div>
             {isAdmin && (
               <div className="flex justify-end pt-4">
-                <button onClick={handleSaveGeneral} disabled={loadingSettings || savingGeneral} className="text-[13px] font-bold text-brand-500 hover:text-brand-600 transition-colors uppercase tracking-widest">
+                <button onClick={() => handleSaveGeneral()} disabled={loadingSettings || savingGeneral} className="text-[13px] font-bold text-brand-500 hover:text-brand-600 transition-colors uppercase tracking-widest">
                   Save Language Setting
                 </button>
               </div>
