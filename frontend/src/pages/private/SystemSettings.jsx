@@ -296,31 +296,6 @@ const SystemSettings = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
-              <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-                <CardTitle className="text-[16px] font-bold flex items-center gap-3">
-                  <div className="bg-blue-500/10 p-2 rounded-lg border border-blue-500/20">
-                    <FiMail className="w-5 h-5 text-blue-500" />
-                  </div>
-                  Email Gateway (SMTP)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2"><label className={labelClasses}>SMTP Hostname</label><input type="text" className={inputClasses} placeholder="smtp.gmail.com" /></div>
-                  <div className="space-y-2"><label className={labelClasses}>Port protocol</label><input type="text" className={inputClasses} placeholder="587" /></div>
-                  <div className="space-y-2"><label className={labelClasses}>Outgoing Address</label><input type="email" className={inputClasses} placeholder="noreply@ccs.edu" /></div>
-                  <div className="space-y-2"><label className={labelClasses}>Sender Identifier</label><input type="text" className={inputClasses} placeholder="CCS Profiling System Administrator" /></div>
-                </div>
-                <div className="mt-10 flex justify-end gap-3">
-                  <button className="flex items-center gap-2 px-6 py-2 bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-[#252525] shadow-sm transition-all">Validate Connection</button>
-                  <button className="relative group overflow-hidden rounded-xl bg-brand-500 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
-                    <span className="relative z-10">Save Gateway Settings</span>
-                    <div className="absolute inset-0 h-full w-full scale-0 rounded-xl bg-white/20 transition-all duration-300 group-hover:scale-100"></div>
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         )}
 
