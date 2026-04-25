@@ -4,7 +4,7 @@ import {
     FiArrowLeft, FiEdit2, FiPrinter, FiMail, FiPhone, FiMapPin,
     FiBookOpen, FiUser, FiClock
 } from 'react-icons/fi';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Skeleton.jsx';
@@ -164,118 +164,147 @@ const FacultyDetails = () => {
 
                         {activeTab === 'Faculty Information' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-brand-500">
-                                    <FiUser className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-6">
-                                        <div>
-                                            <SectionSubhead>Full Name</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{fullName}</p>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiUser className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Personal Information
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-6">
+                                            <div>
+                                                <SectionSubhead>Full Name</SectionSubhead>
+                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{fullName}</p>
+                                            </div>
+                                            <div>
+                                                <SectionSubhead>Faculty ID</SectionSubhead>
+                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{u.user_id}</p>
+                                            </div>
+                                            <div>
+                                                <SectionSubhead>Gender</SectionSubhead>
+                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100 capitalize">{u.gender || 'Not Specified'}</p>
+                                            </div>
+                                            <div>
+                                                <SectionSubhead>Birthdate</SectionSubhead>
+                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{formatDate(u.birth_date)}</p>
+                                            </div>
+                                            <div>
+                                                <SectionSubhead>Department</SectionSubhead>
+                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{f?.department || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <SectionSubhead>Specialization</SectionSubhead>
+                                                <div className="mt-1">{renderTags(f?.specialization, "zinc")}</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <SectionSubhead>Faculty ID</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{u.user_id}</p>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Gender</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100 capitalize">{u.gender || 'Not Specified'}</p>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Birthdate</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{formatDate(u.birth_date)}</p>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Department</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{f?.department || 'N/A'}</p>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Specialization</SectionSubhead>
-                                            <div className="mt-1">{renderTags(f?.specialization, "zinc")}</div>
-                                        </div>
-                                    </div>
-                                </div>
+                                    </CardContent>
+                                </Card>
 
-                                <div className="flex items-center gap-2 text-brand-500">
-                                    <FiPhone className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact Information</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                                        <div>
-                                            <SectionSubhead>Contact Number</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{u.contact_number || 'Not Provided'}</p>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiPhone className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Contact Information
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                            <div>
+                                                <SectionSubhead>Contact Number</SectionSubhead>
+                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{u.contact_number || 'Not Provided'}</p>
+                                            </div>
+                                            <div>
+                                                <SectionSubhead>Email</SectionSubhead>
+                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{u.email}</p>
+                                            </div>
+                                            <div className="md:col-span-2">
+                                                <SectionSubhead>Address</SectionSubhead>
+                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{u.address || 'Not Provided'}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <SectionSubhead>Email</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{u.email}</p>
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <SectionSubhead>Address</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{u.address || 'Not Provided'}</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
 
                         {activeTab === 'Teaching Schedule' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-brand-500">
-                                    <FiClock className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Teaching Schedule</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    {teachingSchedule.length > 0 ? (
-                                        <BulletList items={teachingSchedule.map(s => s.display)} />
-                                    ) : (
-                                        <EmptyState
-                                            size="md"
-                                            icon={FiClock}
-                                            title="No Classes Scheduled"
-                                            description="This faculty member has no classes assigned to their schedule yet."
-                                        />
-                                    )}
-                                </div>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiClock className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Teaching Schedule
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        {teachingSchedule.length > 0 ? (
+                                            <BulletList items={teachingSchedule.map(s => s.display)} />
+                                        ) : (
+                                            <EmptyState
+                                                size="md"
+                                                icon={FiClock}
+                                                title="No Classes Scheduled"
+                                                description="This faculty member has no classes assigned to their schedule yet."
+                                            />
+                                        )}
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
 
                         {activeTab === 'Research Projects' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-brand-500">
-                                    <FiBookOpen className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Research Projects</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    {/* FIX: Convert objects to strings before rendering */}
-                                    <BulletList
-                                        items={(parseList(f?.research_projects) || []).map(project =>
-                                            `${project.title || 'Untitled'} (${project.year || 'N/A'}) – ${project.status || 'Unknown'}`
-                                        )}
-                                    />
-                                </div>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiBookOpen className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Research Projects
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <BulletList
+                                            items={(parseList(f?.research_projects) || []).map(project =>
+                                                `${project.title || 'Untitled'} (${project.year || 'N/A'}) – ${project.status || 'Unknown'}`
+                                            )}
+                                        />
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
 
                         {activeTab === 'Subjects Handled' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-brand-500">
-                                    <FiBookOpen className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Subjects Handled</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    {subjectsHandled.length > 0 ? (
-                                        renderTags(subjectsHandled.join(', '), "orange")
-                                    ) : (
-                                        <EmptyState
-                                            size="md"
-                                            icon={FiBookOpen}
-                                            title="No Subjects Assigned"
-                                            description="This faculty member has not been assigned any subjects handled yet."
-                                        />
-                                    )}
-                                </div>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiBookOpen className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Subjects Handled
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        {subjectsHandled.length > 0 ? (
+                                            renderTags(subjectsHandled.join(', '), "orange")
+                                        ) : (
+                                            <EmptyState
+                                                size="md"
+                                                icon={FiBookOpen}
+                                                title="No Subjects Assigned"
+                                                description="This faculty member has not been assigned any subjects handled yet."
+                                            />
+                                        )}
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
                     </div>

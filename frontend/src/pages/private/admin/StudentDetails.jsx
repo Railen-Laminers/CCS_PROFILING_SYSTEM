@@ -8,7 +8,7 @@ import {
 import StudentFormModal from '../../../components/forms/StudentFormModal';
 import StudentReport from '../../../components/reports/StudentReport';
 import { useStudentDetails } from '../../../hooks/useStudentDetails';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
@@ -205,73 +205,90 @@ const StudentDetails = () => {
                         {/* 1. Student Information */}
                         {activeTab === 'Student Information' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-[#F97316]">
-                                    <FiUser className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
-                                        <div><SectionSubhead>Full Name</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{fullName}</p></div>
-                                        <div><SectionSubhead>Student ID</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.user_id}</p></div>
-                                        <div><SectionSubhead>Gender</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100 capitalize">{student.gender || 'Not Specified'}</p></div>
-                                        <div><SectionSubhead>Birthdate</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{formatDate(student.birth_date)}</p></div>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-2 text-[#F97316]">
-                                    <FiPhone className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Contact & Emergency Details</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                                        <div><SectionSubhead>Contact Number</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.contact_number || 'Not Provided'}</p></div>
-                                        <div><SectionSubhead>Email</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.email}</p></div>
-                                        <div className="md:col-span-2"><SectionSubhead>Address</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.address || 'Not Provided'}</p></div>
-                                        <div className="pt-4 border-t border-gray-200 dark:border-gray-700 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                                            <div><SectionSubhead>Parent/Guardian</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.parent_guardian_name ? `${profile.parent_guardian_name} - ${profile.emergency_contact || 'No Contact'}` : 'Not Provided'}</p></div>
-                                            <div><SectionSubhead>Emergency Contact</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.emergency_contact || 'Not Provided'}</p></div>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiUser className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Personal Information
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
+                                            <div><SectionSubhead>Full Name</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{fullName}</p></div>
+                                            <div><SectionSubhead>Student ID</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.user_id}</p></div>
+                                            <div><SectionSubhead>Gender</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100 capitalize">{student.gender || 'Not Specified'}</p></div>
+                                            <div><SectionSubhead>Birthdate</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{formatDate(student.birth_date)}</p></div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </CardContent>
+                                </Card>
+
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiPhone className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Contact & Emergency Details
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                            <div><SectionSubhead>Contact Number</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.contact_number || 'Not Provided'}</p></div>
+                                            <div><SectionSubhead>Email</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.email}</p></div>
+                                            <div className="md:col-span-2"><SectionSubhead>Address</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{student.address || 'Not Provided'}</p></div>
+                                            <div className="pt-4 border-t border-gray-200 dark:border-gray-700 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                                <div><SectionSubhead>Parent/Guardian</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.parent_guardian_name ? `${profile.parent_guardian_name} - ${profile.emergency_contact || 'No Contact'}` : 'Not Provided'}</p></div>
+                                                <div><SectionSubhead>Emergency Contact</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.emergency_contact || 'Not Provided'}</p></div>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
 
                         {/* 2. Academic Record */}
                         {activeTab === 'Academic Record' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-[#F97316]">
-                                    <FiAward className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Academic Performance</h3>
-                                </div>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiAward className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Academic Performance
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        {/* Current Academic Status (from Profile) */}
+                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                                            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                                <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Course/Program</h4>
+                                                <p className="text-xl font-bold text-gray-900 dark:text-white">{profile?.program || 'N/A'}</p>
+                                            </div>
+                                            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                                <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Year Level</h4>
+                                                <p className="text-xl font-bold text-gray-900 dark:text-white">{formatYearLevel(profile?.year_level) || 'N/A'}</p>
+                                            </div>
+                                            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                                <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Semester</h4>
+                                                <p className="text-xl font-bold text-gray-900 dark:text-white">{currentRecord?.semester || 'N/A'}</p>
+                                            </div>
+                                            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                                <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Current GPA</h4>
+                                                <p className="text-3xl font-extrabold text-[#F97316]">{profile?.gpa ? Number(profile.gpa).toFixed(2) : 'N/A'}</p>
+                                            </div>
+                                        </div>
 
-                                {/* Current Academic Status (from Profile) */}
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Course/Program</h4>
-                                            <p className="text-xl font-bold text-gray-900 dark:text-white">{profile?.program || 'N/A'}</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+                                            <div><SectionSubhead>Current Subjects</SectionSubhead>{renderTags(profile?.current_subjects, null, "white")}</div>
+                                            <div><SectionSubhead>Academic Awards</SectionSubhead>{renderTags(profile?.academic_awards, null, "yellow")}</div>
+                                            <div><SectionSubhead>Quiz Bee Participations</SectionSubhead>{renderTags(profile?.quiz_bee_participations, null, "indigo")}</div>
+                                            <div><SectionSubhead>Programming Contests</SectionSubhead>{renderTags(profile?.programming_contests, null, "orange")}</div>
                                         </div>
-                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Year Level</h4>
-                                            <p className="text-xl font-bold text-gray-900 dark:text-white">{formatYearLevel(profile?.year_level) || 'N/A'}</p>
-                                        </div>
-                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Semester</h4>
-                                            <p className="text-xl font-bold text-gray-900 dark:text-white">{currentRecord?.semester || 'N/A'}</p>
-                                        </div>
-                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-1">Current GPA</h4>
-                                            <p className="text-3xl font-extrabold text-[#F97316]">{profile?.gpa ? Number(profile.gpa).toFixed(2) : 'N/A'}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 border-t border-gray-200 dark:border-gray-700 pt-6">
-                                        <div><SectionSubhead>Current Subjects</SectionSubhead>{renderTags(profile?.current_subjects, null, "white")}</div>
-                                        <div><SectionSubhead>Academic Awards</SectionSubhead>{renderTags(profile?.academic_awards, null, "yellow")}</div>
-                                        <div><SectionSubhead>Quiz Bee Participations</SectionSubhead>{renderTags(profile?.quiz_bee_participations, null, "indigo")}</div>
-                                        <div><SectionSubhead>Programming Contests</SectionSubhead>{renderTags(profile?.programming_contests, null, "orange")}</div>
-                                    </div>
-                                </div>
+                                    </CardContent>
+                                </Card>
 
                                 {/* Historical Records List */}
                                 <div className="pt-4">
@@ -350,157 +367,187 @@ const StudentDetails = () => {
                         {/* 3. Medical Record */}
                         {activeTab === 'Medical Record' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-[#F97316]">
-                                    <FiActivity className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Medical Information</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                                        <div><SectionSubhead>Blood Type</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.blood_type || 'Not Provided'}</p></div>
-                                        <div><SectionSubhead>Allergies</SectionSubhead>{renderTags(profile?.allergies, null, "red")}</div>
-                                        <div><SectionSubhead>Medical Conditions</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.medical_condition || 'None reported'}</p></div>
-                                        <div><SectionSubhead>Disabilities</SectionSubhead>{renderTags(profile?.disabilities, null, "blue")}</div>
-                                    </div>
-                                </div>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiActivity className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Medical Information
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                                            <div><SectionSubhead>Blood Type</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.blood_type || 'Not Provided'}</p></div>
+                                            <div><SectionSubhead>Allergies</SectionSubhead>{renderTags(profile?.allergies, null, "red")}</div>
+                                            <div><SectionSubhead>Medical Conditions</SectionSubhead><p className="text-base font-semibold text-gray-900 dark:text-gray-100">{profile?.medical_condition || 'None reported'}</p></div>
+                                            <div><SectionSubhead>Disabilities</SectionSubhead>{renderTags(profile?.disabilities, null, "blue")}</div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
 
                         {/* 4. Sports & Activities */}
                         {activeTab === 'Sports & Activities' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-[#F97316]">
-                                    <FiAward className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Sports and Athletic Activities</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                                        <div><SectionSubhead>Sports Played</SectionSubhead>{renderTags(profile?.sports_activities, "sportsPlayed", "orange")}</div>
-                                        <div><SectionSubhead>Athletic Achievements</SectionSubhead>{renderTags(profile?.sports_activities, "achievements", "yellow")}</div>
-                                        <div><SectionSubhead>Competitions Joined</SectionSubhead><div className="mt-1"><BulletList items={profile?.sports_activities?.competitions} /></div></div>
-                                        <div><SectionSubhead>Skills</SectionSubhead>{renderTags(profile?.sports_activities, "skills", "green")}</div>
-                                    </div>
-                                </div>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiAward className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Sports and Athletic Activities
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                                            <div><SectionSubhead>Sports Played</SectionSubhead>{renderTags(profile?.sports_activities, "sportsPlayed", "orange")}</div>
+                                            <div><SectionSubhead>Athletic Achievements</SectionSubhead>{renderTags(profile?.sports_activities, "achievements", "yellow")}</div>
+                                            <div><SectionSubhead>Competitions Joined</SectionSubhead><div className="mt-1"><BulletList items={profile?.sports_activities?.competitions} /></div></div>
+                                            <div><SectionSubhead>Skills</SectionSubhead>{renderTags(profile?.sports_activities, "skills", "green")}</div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
 
                         {/* 5. Organizations */}
                         {activeTab === 'Organizations' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-[#F97316]">
-                                    <FiUsers className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Organizations and Leadership</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                                        <div><SectionSubhead>Clubs Joined</SectionSubhead>{renderTags(profile?.organizations, "clubs", "purple")}</div>
-                                        <div><SectionSubhead>Student Council</SectionSubhead>{renderTags(profile?.organizations, "studentCouncil", "orange")}</div>
-                                        <div><SectionSubhead>Leadership Roles</SectionSubhead><div className="mt-1"><BulletList items={profile?.organizations?.roles} /></div></div>
-                                    </div>
-                                </div>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiUsers className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Organizations and Leadership
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                                            <div><SectionSubhead>Clubs Joined</SectionSubhead>{renderTags(profile?.organizations, "clubs", "purple")}</div>
+                                            <div><SectionSubhead>Student Council</SectionSubhead>{renderTags(profile?.organizations, "studentCouncil", "orange")}</div>
+                                            <div><SectionSubhead>Leadership Roles</SectionSubhead><div className="mt-1"><BulletList items={profile?.organizations?.roles} /></div></div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
 
                         {/* 6. Behavior & Discipline */}
                         {activeTab === 'Behavior & Discipline' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-[#F97316]">
-                                    <FiAlertTriangle className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Behavior and Disciplinary Records</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-2">Warnings</h4>
-                                            <p className="text-4xl font-extrabold text-yellow-500">{profile?.behavior_discipline_records?.warnings || 0}</p>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiAlertTriangle className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Behavior and Disciplinary Records
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                                <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-2">Warnings</h4>
+                                                <p className="text-4xl font-extrabold text-yellow-500">{profile?.behavior_discipline_records?.warnings || 0}</p>
+                                            </div>
+                                            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                                <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-2">Suspensions</h4>
+                                                <p className="text-4xl font-extrabold text-red-500">{profile?.behavior_discipline_records?.suspensions || 0}</p>
+                                            </div>
+                                            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
+                                                <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-2">Counseling Sessions</h4>
+                                                <p className="text-4xl font-extrabold text-blue-500">{profile?.behavior_discipline_records?.counseling || 0}</p>
+                                            </div>
                                         </div>
-                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-2">Suspensions</h4>
-                                            <p className="text-4xl font-extrabold text-red-500">{profile?.behavior_discipline_records?.suspensions || 0}</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+                                            <div>
+                                                <SectionSubhead>Incidents</SectionSubhead>
+                                                <p className={`text-base font-semibold mt-1 ${profile?.behavior_discipline_records?.incidents ? 'text-gray-900 dark:text-gray-100' : 'text-green-600 dark:text-green-400'}`}>
+                                                    {profile?.behavior_discipline_records?.incidents || 'No incidents recorded'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <SectionSubhead>Counseling Records</SectionSubhead>
+                                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100 mt-1">
+                                                    {profile?.behavior_discipline_records?.counselingRecords || 'No counseling records'}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm text-center">
-                                            <h4 className="text-sm font-medium text-zinc-600 dark:text-gray-400 mb-2">Counseling Sessions</h4>
-                                            <p className="text-4xl font-extrabold text-blue-500">{profile?.behavior_discipline_records?.counseling || 0}</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-gray-200 dark:border-gray-700 pt-6">
-                                        <div>
-                                            <SectionSubhead>Incidents</SectionSubhead>
-                                            <p className={`text-base font-semibold mt-1 ${profile?.behavior_discipline_records?.incidents ? 'text-gray-900 dark:text-gray-100' : 'text-green-600 dark:text-green-400'}`}>
-                                                {profile?.behavior_discipline_records?.incidents || 'No incidents recorded'}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <SectionSubhead>Counseling Records</SectionSubhead>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-gray-100 mt-1">
-                                                {profile?.behavior_discipline_records?.counselingRecords || 'No counseling records'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
 
                         {/* 7. Events & Competitions */}
                         {activeTab === 'Events & Competitions' && (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-2 text-[#F97316]">
-                                    <FiCalendar className="w-5 h-5" />
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Events and Competitions</h3>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 shadow-sm relative">
-                                    {isAllEventsLoading ? (
-                                        <div className="flex justify-center py-10">
-                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
-                                        </div>
-                                    ) : (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            <div>
-                                                <SectionSubhead>Curricular Events</SectionSubhead>
-                                                <div className="mt-4 space-y-3">
-                                                    {allParticipatedEvents?.filter(e => e.category === 'Curricular').length > 0 ? (
-                                                        allParticipatedEvents
-                                                            .filter(e => e.category === 'Curricular')
-                                                            .map((evt, i) => (
-                                                                <div key={i} className="p-4 bg-white dark:bg-[#1E1E1E] border border-indigo-100 dark:border-indigo-900/30 rounded-xl shadow-sm group hover:border-indigo-300 dark:hover:border-indigo-700 transition-all">
-                                                                    <div className="flex justify-between items-start">
-                                                                        <h5 className="font-bold text-indigo-700 dark:text-indigo-400">{evt.title}</h5>
-                                                                        <Badge color={evt.status === 'Completed' ? 'green' : 'blue'}>{evt.status}</Badge>
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+                                        <CardTitle className="text-[15px] font-bold flex items-center gap-3">
+                                            <div className="bg-brand-500/10 p-2 rounded-lg border border-brand-500/20">
+                                                <FiCalendar className="w-5 h-5 text-brand-500" />
+                                            </div>
+                                            Events and Competitions
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        {isAllEventsLoading ? (
+                                            <div className="flex justify-center py-10">
+                                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F97316]"></div>
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                <div>
+                                                    <SectionSubhead>Curricular Events</SectionSubhead>
+                                                    <div className="mt-4 space-y-3">
+                                                        {allParticipatedEvents?.filter(e => e.category === 'Curricular').length > 0 ? (
+                                                            allParticipatedEvents
+                                                                .filter(e => e.category === 'Curricular')
+                                                                .map((evt, i) => (
+                                                                    <div key={i} className="p-4 bg-white dark:bg-[#1E1E1E] border border-indigo-100 dark:border-indigo-900/30 rounded-xl shadow-sm group hover:border-indigo-300 dark:hover:border-indigo-700 transition-all">
+                                                                        <div className="flex justify-between items-start">
+                                                                            <h5 className="font-bold text-indigo-700 dark:text-indigo-400">{evt.title}</h5>
+                                                                            <Badge color={evt.status === 'Completed' ? 'green' : 'blue'}>{evt.status}</Badge>
+                                                                        </div>
+                                                                        {evt.start_datetime && (
+                                                                            <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                                                                                <FiCalendar className="w-3 h-3" /> {new Date(evt.start_datetime).toLocaleDateString()}
+                                                                            </p>
+                                                                        )}
                                                                     </div>
-                                                                    {evt.start_datetime && (
-                                                                        <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                                                                            <FiCalendar className="w-3 h-3" /> {new Date(evt.start_datetime).toLocaleDateString()}
-                                                                        </p>
-                                                                    )}
-                                                                </div>
-                                                            ))
-                                                    ) : <p className="text-sm text-gray-500 italic">No curricular events joined</p>}
+                                                                ))
+                                                        ) : <p className="text-sm text-gray-500 italic">No curricular events joined</p>}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <SectionSubhead>Extra-Curricular Events</SectionSubhead>
+                                                    <div className="mt-4 space-y-3">
+                                                        {allParticipatedEvents?.filter(e => e.category === 'Extra-Curricular').length > 0 ? (
+                                                            allParticipatedEvents
+                                                                .filter(e => e.category === 'Extra-Curricular')
+                                                                .map((evt, i) => (
+                                                                    <div key={i} className="p-4 bg-white dark:bg-[#1E1E1E] border border-orange-100 dark:border-orange-900/30 rounded-xl shadow-sm group hover:border-orange-300 dark:hover:border-orange-700 transition-all">
+                                                                        <div className="flex justify-between items-start">
+                                                                            <h5 className="font-bold text-orange-700 dark:text-orange-400">{evt.title}</h5>
+                                                                            <Badge color={evt.status === 'Completed' ? 'green' : 'blue'}>{evt.status}</Badge>
+                                                                        </div>
+                                                                        {evt.start_datetime && (
+                                                                            <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                                                                                <FiCalendar className="w-3 h-3" /> {new Date(evt.start_datetime).toLocaleDateString()}
+                                                                            </p>
+                                                                        )}
+                                                                    </div>
+                                                                ))
+                                                        ) : <p className="text-sm text-gray-500 italic">No extra-curricular events joined</p>}
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <SectionSubhead>Extra-Curricular Events</SectionSubhead>
-                                                <div className="mt-4 space-y-3">
-                                                    {allParticipatedEvents?.filter(e => e.category === 'Extra-Curricular').length > 0 ? (
-                                                        allParticipatedEvents
-                                                            .filter(e => e.category === 'Extra-Curricular')
-                                                            .map((evt, i) => (
-                                                                <div key={i} className="p-4 bg-white dark:bg-[#1E1E1E] border border-orange-100 dark:border-orange-900/30 rounded-xl shadow-sm group hover:border-orange-300 dark:hover:border-orange-700 transition-all">
-                                                                    <div className="flex justify-between items-start">
-                                                                        <h5 className="font-bold text-orange-700 dark:text-orange-400">{evt.title}</h5>
-                                                                        <Badge color={evt.status === 'Completed' ? 'green' : 'blue'}>{evt.status}</Badge>
-                                                                    </div>
-                                                                    {evt.start_datetime && (
-                                                                        <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                                                                            <FiCalendar className="w-3 h-3" /> {new Date(evt.start_datetime).toLocaleDateString()}
-                                                                        </p>
-                                                                    )}
-                                                                </div>
-                                                            ))
-                                                    ) : <p className="text-sm text-gray-500 italic">No extra-curricular events joined</p>}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
 
