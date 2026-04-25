@@ -13,6 +13,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
+import defaultLogo from '../../assets/CCS_logo.png';
 
 const TabNavigation = ({ tabs, activeTab, setActiveTab }) => (
   <div className="flex space-x-2 mb-8 overflow-x-auto p-2 bg-gray-100 dark:bg-[#252525] rounded-[1.25rem] border border-gray-200 dark:border-gray-800 shadow-inner">
@@ -103,7 +104,7 @@ const SystemSettings = () => {
 
   const resolvedLogoPreview = useMemo(() => {
     if (logoPreview) return logoPreview;
-    if (!storedLogoUrl) return null;
+    if (!storedLogoUrl) return defaultLogo;
     if (storedLogoUrl.startsWith('http')) return storedLogoUrl;
     return `${apiOrigin}${storedLogoUrl}`;
   }, [logoPreview, storedLogoUrl, apiOrigin]);
