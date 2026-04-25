@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useRef } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { systemSettingsAPI } from '../../services/api';
+import { useToast } from '../../contexts/ToastContext';
 import axios from 'axios';
 import {
   FiUsers, FiDatabase, FiShield, FiHardDrive, FiUpload, FiPlus,
@@ -30,7 +31,10 @@ const TabNavigation = ({ tabs, activeTab, setActiveTab }) => (
   </div>
 );
 
+const SEMESTER_ORDER = ["1st Semester", "2nd Semester", "Summer Term"];
+
 const SystemSettings = () => {
+  const { showToast } = useToast();
   const { theme, toggleTheme, isDark, refreshBranding } = useTheme();
   const { user, loading: authLoading } = useAuth();
 
@@ -177,6 +181,7 @@ const SystemSettings = () => {
       });
 
       setShowRolloverModal(false);
+      showToast(isRolloverTriggered ? 'System rollover completed successfully!' : 'Settings updated successfully!', 'success');
       await refreshBranding?.();
     } catch (err) {
       const msg = err?.response?.data?.message || 'Failed to save system settings';
@@ -340,9 +345,16 @@ const SystemSettings = () => {
                     onChange={(e) => setSemester(e.target.value)} 
                     disabled={loadingSettings || savingGeneral}
                   >
-                    <option>1st Semester</option>
-                    <option>2nd Semester</option>
-                    <option>Summer Term</option>
+                    {SEMESTER_ORDER.map((sem) => {
+                      const isDisabled = initialSettings && 
+                                       academicYear === initialSettings.academicYear && 
+                                       SEMESTER_ORDER.indexOf(sem) < SEMESTER_ORDER.indexOf(initialSettings.semester);
+                      return (
+                        <option key={sem} value={sem} disabled={isDisabled}>
+                          {sem} {isDisabled ? '(Passed)' : ''}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
               </div>
