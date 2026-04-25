@@ -329,10 +329,6 @@ export const instructionAPI = {
   deleteClass: async (id) => {
     await axiosInstance.delete(`/instruction/classes/${id}`);
   },
-  getAssignments: async (signal) => {
-    const response = await axiosInstance.get('/instruction/assignments', { signal });
-    return response.data;
-  },
   getLessonPlans: async (signal) => {
     const response = await axiosInstance.get('/instruction/lesson-plans', { signal });
     return response.data;

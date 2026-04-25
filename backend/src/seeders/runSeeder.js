@@ -9,7 +9,6 @@ const Faculty = require('../models/Faculty');
 const Course = require('../models/Course');
 const Event = require('../models/Event');
 const Class = require('../models/Class');
-const Assignment = require('../models/Assignment');
 const LessonPlan = require('../models/LessonPlan');
 const Material = require('../models/Material');
 const Room = require('../models/Room');
@@ -42,7 +41,6 @@ const seedData = async () => {
     await Course.deleteMany({});
     await Event.deleteMany({});
     await Class.deleteMany({});
-    await Assignment.deleteMany({});
     await LessonPlan.deleteMany({});
     await Material.deleteMany({});
     await Room.deleteMany({});

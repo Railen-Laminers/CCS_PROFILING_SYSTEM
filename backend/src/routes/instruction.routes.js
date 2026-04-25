@@ -13,7 +13,6 @@ router.post('/classes', authorize('faculty', 'admin'), InstructionController.cre
 router.put('/classes/:id', authorize('faculty', 'admin'), InstructionController.updateClass);
 router.delete('/classes/:id', authorize('faculty', 'admin'), InstructionController.deleteClass);
 
-router.get('/assignments', authorize('faculty', 'admin'), InstructionController.getAssignments);
 router.get('/lesson-plans', authorize('faculty', 'admin'), InstructionController.getLessonPlans);
 router.post('/lesson-plans', authorize('faculty', 'admin'), upload.single('attached_file'), InstructionController.createLessonPlan);
 router.delete('/lesson-plans/:id', authorize('faculty', 'admin'), InstructionController.deleteLessonPlan);

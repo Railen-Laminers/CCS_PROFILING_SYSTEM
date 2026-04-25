@@ -1,5 +1,4 @@
 const Class = require('../models/Class');
-const Assignment = require('../models/Assignment');
 const LessonPlan = require('../models/LessonPlan');
 const Material = require('../models/Material');
 const Faculty = require('../models/Faculty');
@@ -164,14 +163,6 @@ class InstructionController {
     }
   }
 
-  static async getAssignments(req, res, next) {
-    try {
-      const assignments = await Assignment.find().populate('class_id');
-      res.status(200).json(assignments);
-    } catch (error) {
-      next(error);
-    }
-  }
 
   static async getLessonPlans(req, res, next) {
     try {
