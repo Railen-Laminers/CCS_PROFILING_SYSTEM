@@ -8,6 +8,7 @@ router.use(protect);
 
 // User can see his own logs
 router.get('/me', ActivityLogController.myLogs);
+router.get('/me/range', ActivityLogController.myDateRange);   // NEW route
 
 // Admin only
 router.use(authorize('admin'));

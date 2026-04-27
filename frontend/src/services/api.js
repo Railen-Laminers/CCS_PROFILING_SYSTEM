@@ -354,12 +354,22 @@ export const instructionAPI = {
 };
 
 export const activityLogAPI = {
-  // Get current user's logs with pagination
-  getMyLogs: async (page = 1, limit = 10) => {
-    const response = await axiosInstance.get('/activity-logs/me', {
-      params: { page, limit }
-    });
-    return response.data; // { logs, pagination }
+  // Get current user's logs with optional filters and pagination
+  getMyLogs: async ({ page = 1, limit = 10, action = '', method = '', startDate = '', endDate = '' } = {}) => {
+    const params = { page, limit };
+    if (action) params.action = action;
+    if (method && method !== 'ALL') params.method = method;
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+
+    const response = await axiosInstance.get('/activity-logs/me', { params });
+    return response.data; // { logs, pagination, availableDateRange }
+  },
+
+  // Get min and max dates of current user's logs
+  getMyDateRange: async () => {
+    const response = await axiosInstance.get('/activity-logs/me/range');
+    return response.data; // { from, to }
   }
 };
 

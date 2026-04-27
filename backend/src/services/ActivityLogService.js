@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const ActivityLog = require('../models/ActivityLog');
 
 class ActivityLogService {
@@ -89,6 +90,21 @@ class ActivityLogService {
     };
   }
 
+  // NEW: Get the earliest and latest log dates for a specific user
+  static async getUserLogDateRange(userId) {
+    if (!userId) return { firstLogDate: null, lastLogDate: null };
+
+    const [oldest, newest] = await Promise.all([
+      ActivityLog.findOne({ actor_id: userId }).sort({ createdAt: 1 }).select('createdAt').lean(),
+      ActivityLog.findOne({ actor_id: userId }).sort({ createdAt: -1 }).select('createdAt').lean()
+    ]);
+
+    return {
+      firstLogDate: oldest ? oldest.createdAt : null,
+      lastLogDate: newest ? newest.createdAt : null
+    };
+  }
+
   static async getUserLogs(userId, page = 1, limit = 10) {
     if (!userId) return { logs: [], pagination: { total: 0, page, limit, totalPages: 0 } };
     const safePage = Math.max(parseInt(page, 10) || 1, 1);
@@ -142,10 +158,26 @@ class ActivityLogService {
         if (!changes || Object.keys(changes).length === 0) {
           return `${who} updated their profile at ${timestamp}.`;
         }
+
+        // Helper to detect profile picture fields
+        const isPictureField = (fieldName) => {
+          const pictureNames = ['profile_picture', 'profilePicture', 'avatar', 'photo', 'image', 'picture'];
+          return pictureNames.includes(fieldName.toLowerCase());
+        };
+
         const changeLines = Object.entries(changes).map(([field, { old, new: newVal }]) => {
           const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
+
+          if (isPictureField(field)) {
+            const oldDesc = old ? 'an image' : 'no image';
+            const newDesc = newVal ? 'a new image' : 'removed the image';
+            return `  ${fieldName}: ${oldDesc} → ${newDesc}`;
+          }
+
+          // For all other fields, show the actual old/new values
           return `  ${fieldName}: "${old}" → "${newVal}"`;
         });
+
         const header = `${who} updated the following fields at ${timestamp}:`;
         const oldNewHeader = `Old → New`;
         return `${header}\n${oldNewHeader}\n${changeLines.join('\n')}`;
@@ -202,7 +234,6 @@ class ActivityLogService {
       case 'EVENT_REGISTERED': {
         const title = metadata?.event_title || 'an event';
         const studentId = metadata?.student_user_id || 'a student';
-        // If actor is the student themselves
         if (log.actor_id && metadata?.student_user_id && log.actor_id.toString() === metadata.student_user_id.toString()) {
           return `${who} registered for event "${title}" at ${timestamp}.`;
         }
@@ -289,7 +320,7 @@ class ActivityLogService {
       case 'COURSE_DELETED':
         return `${who} deleted course "${metadata?.course_code}" - ${metadata?.course_title} at ${timestamp}.`;
 
-      // ========== ROOM ACTIONS (NEW) ==========
+      // ========== ROOM ACTIONS ==========
       case 'ROOM_CREATED':
         return `${who} created a new room "${metadata?.room_name}" (capacity: ${metadata?.capacity}) at ${timestamp}.`;
       case 'ROOM_UPDATED': {
