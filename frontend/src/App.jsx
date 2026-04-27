@@ -36,6 +36,7 @@ import FacultyDashboard from './pages/private/faculty/Dashboard';
 import FacultyMySchedule from './pages/private/faculty/MySchedule';
 import FacultyMyDetails from './pages/private/faculty/MyDetails';
 import FacultySkills from './pages/private/faculty/Skills';
+import ActivityLogs from './pages/private/ActivityLogs';
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -408,6 +409,17 @@ function AppContent() {
         }
       />
 
+      <Route
+        path="/activity-logs"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <ActivityLogs />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
       {/* Redirect root to dashboard */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
@@ -422,6 +434,8 @@ function AppContent() {
           </ProtectedRoute>
         }
       />
+
+
     </Routes>
   );
 }

@@ -22,12 +22,12 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
-    
+
     // Let the browser set Content-Type with boundary for FormData
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type'];
     }
-    
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -351,6 +351,16 @@ export const instructionAPI = {
   deleteMaterial: async (id) => {
     await axiosInstance.delete(`/instruction/materials/${id}`);
   },
+};
+
+export const activityLogAPI = {
+  // Get current user's logs with pagination
+  getMyLogs: async (page = 1, limit = 10) => {
+    const response = await axiosInstance.get('/activity-logs/me', {
+      params: { page, limit }
+    });
+    return response.data; // { logs, pagination }
+  }
 };
 
 

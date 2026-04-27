@@ -22,15 +22,17 @@ const instructionRoutes = require('./routes/instruction.routes');
 const roomRoutes = require('./routes/room.routes');
 const reportsRoutes = require('./routes/reports.routes');
 const systemSettingsRoutes = require('./routes/systemSettings.routes');
+const activityLogRoutes = require('./routes/activityLog.routes');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
+// const activityLogger = require('./middleware/activityLogger'); // <-- REMOVED / COMMENTED
 
 const app = express();
 
 // Security middleware
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" } // Allow cross-origin resource sharing
+  crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
 // CORS configuration
@@ -43,21 +45,20 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Logging middleware
+
+// Logging middleware (only for development console logs, not DB)
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Serve static uploads with CORS headers
+// Serve static uploads
 app.use('/uploads', (req, res, next) => {
-  // Set CORS headers for static files
   res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'http://localhost:5173');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Cross-Origin-Resource-Policy', 'cross-origin');
   next();
 }, express.static(path.join(__dirname, '../uploads'), {
-  setHeaders: (res, path, stat) => {
-    // Additional headers for images
+  setHeaders: (res) => {
     res.set('Cache-Control', 'public, max-age=31536000');
   }
 }));
@@ -78,6 +79,7 @@ app.use('/api/instruction', instructionRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/system-settings', systemSettingsRoutes);
+app.use('/api/activity-logs', activityLogRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

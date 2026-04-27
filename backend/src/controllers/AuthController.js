@@ -1,12 +1,16 @@
 const AuthService = require('../services/AuthService');
+const ActivityLogService = require('../services/ActivityLogService');
+const User = require('../models/User');
 
 class AuthController {
   /**
    * Login with identifier (user_id or email) and password
    */
   static async login(req, res, next) {
+    let identifier = null;
     try {
-      const { identifier, password } = req.body;
+      const { identifier: incomingIdentifier, password } = req.body;
+      identifier = incomingIdentifier;
 
       if (!identifier || !password) {
         return res.status(400).json({
@@ -16,6 +20,18 @@ class AuthController {
 
       const result = await AuthService.login(identifier, password);
 
+      await ActivityLogService.logActivity({
+        user: result.user,
+        action: 'LOGIN_SUCCESS',
+        method: req.method,
+        endpoint: req.originalUrl,
+        target_resource: 'auth',
+        status_code: 200,
+        ip_address: req.ip,
+        user_agent: req.get('user-agent') || null,
+        metadata: { identifier }
+      });
+
       res.status(200).json({
         message: 'Login successful',
         user: result.user,
@@ -23,6 +39,17 @@ class AuthController {
       });
     } catch (error) {
       if (error.message === 'The provided credentials are invalid.') {
+        await ActivityLogService.logActivity({
+          action: 'LOGIN_FAILED',
+          method: req.method,
+          endpoint: req.originalUrl,
+          target_resource: 'auth',
+          status_code: 401,
+          ip_address: req.ip,
+          user_agent: req.get('user-agent') || null,
+          metadata: { identifier }
+        });
+
         return res.status(401).json({
           message: error.message
         });
@@ -37,27 +64,65 @@ class AuthController {
   static async me(req, res, next) {
     try {
       const user = await AuthService.getCurrentUser(req.user._id);
-
-      res.status(200).json({
-        user
-      });
+      res.status(200).json({ user });
     } catch (error) {
       next(error);
     }
   }
 
   /**
-   * Update the authenticated user's profile
+   * Update the authenticated user's profile – only logs changed fields
    */
   static async updateProfile(req, res, next) {
     try {
-      const user = await AuthService.updateProfile(req.user._id, req.body);
-      res.status(200).json({ user });
+      // 1. Get current user before update
+      const currentUser = await User.findById(req.user._id).lean();
+      if (!currentUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // 2. Perform the update
+      const updatedUser = await AuthService.updateProfile(req.user._id, req.body);
+
+      // 3. Build changes object for fields that actually changed
+      const changes = {};
+      const allowedFields = ['firstname', 'lastname', 'email', 'profile_picture', 'phone', 'address'];
+
+      for (const field of allowedFields) {
+        // Only consider fields present in the request body
+        if (req.body.hasOwnProperty(field)) {
+          const oldValue = currentUser[field] || '';
+          const newValue = updatedUser[field] || '';
+          if (oldValue !== newValue) {
+            changes[field] = {
+              old: oldValue || '(empty)',
+              new: newValue || '(empty)'
+            };
+          }
+        }
+      }
+
+      // 4. Log only if there are actual changes
+      if (Object.keys(changes).length > 0) {
+        await ActivityLogService.logActivity({
+          user: req.user,
+          action: 'UPDATE_PROFILE',
+          method: req.method,
+          endpoint: req.originalUrl,
+          target_resource: 'auth',
+          status_code: 200,
+          ip_address: req.ip,
+          user_agent: req.get('user-agent') || null,
+          metadata: {
+            updated_fields: Object.keys(req.body),
+            changes: changes   // only changed fields
+          }
+        });
+      }
+
+      res.status(200).json({ user: updatedUser });
     } catch (error) {
-      if (
-        error.message === 'User not found.' ||
-        error.message === 'User not found'
-      ) {
+      if (error.message === 'User not found.' || error.message === 'User not found') {
         return res.status(404).json({ message: 'User not found' });
       }
       if (
@@ -84,6 +149,17 @@ class AuthController {
    */
   static async logout(req, res, next) {
     try {
+      await ActivityLogService.logActivity({
+        user: req.user,
+        action: 'LOGOUT',
+        method: req.method,
+        endpoint: req.originalUrl,
+        target_resource: 'auth',
+        status_code: 200,
+        ip_address: req.ip,
+        user_agent: req.get('user-agent') || null,
+      });
+
       res.status(200).json({
         message: 'Logout successful'
       });
@@ -104,10 +180,33 @@ class AuthController {
 
       await AuthService.forgotPassword(email);
 
+      const user = await User.findOne({ email }).lean();
+      await ActivityLogService.logActivity({
+        user: user ? { ...user, _id: user._id } : null,
+        action: 'FORGOT_PASSWORD_REQUEST',
+        method: req.method,
+        endpoint: req.originalUrl,
+        target_resource: 'auth',
+        status_code: 200,
+        ip_address: req.ip,
+        user_agent: req.get('user-agent') || null,
+        metadata: { email }
+      });
+
       res.status(200).json({
         message: 'Password reset email sent'
       });
     } catch (error) {
+      await ActivityLogService.logActivity({
+        action: 'FORGOT_PASSWORD_FAILED',
+        method: req.method,
+        endpoint: req.originalUrl,
+        status_code: 400,
+        ip_address: req.ip,
+        user_agent: req.get('user-agent') || null,
+        metadata: { email: req.body?.email, error: error.message }
+      }).catch(() => { });
+
       next(error);
     }
   }
@@ -124,10 +223,33 @@ class AuthController {
 
       await AuthService.resetPassword(token, email, password);
 
+      const user = await User.findOne({ email }).lean();
+      await ActivityLogService.logActivity({
+        user: user ? { ...user, _id: user._id } : null,
+        action: 'PASSWORD_RESET_SUCCESS',
+        method: req.method,
+        endpoint: req.originalUrl,
+        target_resource: 'auth',
+        status_code: 200,
+        ip_address: req.ip,
+        user_agent: req.get('user-agent') || null,
+        metadata: { email }
+      });
+
       res.status(200).json({
         message: 'Password reset successfully'
       });
     } catch (error) {
+      await ActivityLogService.logActivity({
+        action: 'PASSWORD_RESET_FAILED',
+        method: req.method,
+        endpoint: req.originalUrl,
+        status_code: 400,
+        ip_address: req.ip,
+        user_agent: req.get('user-agent') || null,
+        metadata: { email: req.body?.email, error: error.message }
+      }).catch(() => { });
+
       next(error);
     }
   }
