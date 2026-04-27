@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  FiArrowLeft, FiUser, FiSave, FiLoader, FiCamera, FiX,
-  FiMail, FiPhone, FiMapPin, FiBriefcase, FiEdit2
+  FiArrowLeft, FiUser, FiSave, FiLoader, FiCamera, FiX
 } from 'react-icons/fi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -53,12 +52,6 @@ export const MyDetails = () => {
   const [address, setAddress] = useState('');
   const [birthDate, setBirthDate] = useState('');
 
-  // Faculty specific fields
-  const [department, setDepartment] = useState('');
-  const [position, setPosition] = useState('');
-  const [officeLocation, setOfficeLocation] = useState('');
-  const [bio, setBio] = useState('');       // maps to specialization
-
   // Profile picture states
   const [originalProfilePicture, setOriginalProfilePicture] = useState('');
   const [currentBase64, setCurrentBase64] = useState(null);
@@ -78,8 +71,6 @@ export const MyDetails = () => {
       return;
     }
 
-    const faculty = currentUser.faculty || {};
-
     setFirstname(currentUser.firstname || '');
     setMiddlename(currentUser.middlename || '');
     setLastname(currentUser.lastname || '');
@@ -88,11 +79,6 @@ export const MyDetails = () => {
     setGender(currentUser.gender || '');
     setAddress(currentUser.address || '');
     setBirthDate(formatDateInput(currentUser.birth_date));
-
-    setDepartment(faculty.department || '');
-    setPosition(faculty.position || '');
-    setOfficeLocation(faculty.office_location || '');
-    setBio(faculty.specialization || faculty.bio || '');
 
     const originalPic = currentUser.profile_picture || '';
     setOriginalProfilePicture(originalPic);
@@ -259,11 +245,6 @@ export const MyDetails = () => {
         gender: gender || null,
         address: address.trim() || null,
         birth_date: birthDate || null,
-        // Faculty specific fields (sent at top level, same as student's extra fields)
-        department: department.trim() || null,
-        position: position.trim() || null,
-        office_location: officeLocation.trim() || null,
-        specialization: bio.trim() || null,
       };
 
       if (currentBase64) {
@@ -295,10 +276,6 @@ export const MyDetails = () => {
       case 'gender': value = gender; setter = setGender; error = fieldErrors.gender; isTouched = touched.gender; break;
       case 'address': value = address; setter = setAddress; error = fieldErrors.address; isTouched = touched.address; break;
       case 'birthDate': value = birthDate; setter = setBirthDate; error = fieldErrors.birthDate; isTouched = touched.birthDate; break;
-      case 'department': value = department; setter = setDepartment; error = fieldErrors.department; isTouched = touched.department; break;
-      case 'position': value = position; setter = setPosition; error = fieldErrors.position; isTouched = touched.position; break;
-      case 'officeLocation': value = officeLocation; setter = setOfficeLocation; error = fieldErrors.officeLocation; isTouched = touched.officeLocation; break;
-      case 'bio': value = bio; setter = setBio; error = fieldErrors.bio; isTouched = touched.bio; break;
       default: return null;
     }
 
@@ -462,28 +439,6 @@ export const MyDetails = () => {
                 {renderField('Birth date', 'birthDate', 'date')}
                 <div className="md:col-span-2">
                   {renderField('Complete address', 'address', 'textarea', false, 'Street, Barangay, City, Province, Zip Code')}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Professional Information Card (Faculty specific) */}
-          <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
-            <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
-              <CardTitle className="text-[16px] font-bold flex items-center gap-3">
-                <div className="bg-[#ff6b00]/10 p-2 rounded-lg border border-[#ff6b00]/20">
-                  <FiBriefcase className="w-5 h-5 text-[#ff6b00]" />
-                </div>
-                Professional Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {renderField('Department', 'department', 'text', false, 'e.g., Computer Science')}
-                {renderField('Position', 'position', 'text', false, 'e.g., Associate Professor')}
-                {renderField('Office Location', 'officeLocation', 'text', false, 'Building, Room number')}
-                <div className="md:col-span-2">
-                  {renderField('Bio / Specialization', 'bio', 'textarea', false, 'Research interests, teaching philosophy, etc.')}
                 </div>
               </div>
             </CardContent>

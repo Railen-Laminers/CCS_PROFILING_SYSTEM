@@ -6,6 +6,45 @@ import { useToast } from '@/contexts/ToastContext';
 import { FiBriefcase, FiBook, FiCalendar, FiFolder, FiAward, FiEdit2, FiSave, FiX, FiPlus } from 'react-icons/fi';
 import { authAPI, instructionAPI } from '@/services/api';
 
+const SectionCard = ({ icon: Icon, title, children }) => {
+    const { isDark } = useTheme();
+    return (
+        <div className={`${isDark ? 'bg-[#181818]' : 'bg-white'} rounded-xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm hover:shadow-md transition-shadow`}>
+            <div className="flex items-center gap-3 mb-4">
+                <Icon className="w-5 h-5 text-[#ff6b00]" />
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
+            </div>
+            {children}
+        </div>
+    );
+};
+
+const TagList = ({ items, emptyText = "None", onRemove, removable = false }) => (
+    <div className="flex flex-wrap gap-2">
+        {items && items.length > 0 ? (
+            items.map((item, idx) => (
+                <span key={idx} className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full flex items-center gap-2">
+                    {typeof item === 'object' ? item.title || JSON.stringify(item) : item}
+                    {removable && onRemove && (
+                        <button onClick={() => onRemove(idx)} className="text-red-500 hover:text-red-700">
+                            <FiX size={14} />
+                        </button>
+                    )}
+                </span>
+            ))
+        ) : (
+            <span className="text-sm text-gray-500 dark:text-gray-400">{emptyText}</span>
+        )}
+    </div>
+);
+
+const InfoRow = ({ label, value }) => (
+    <div className="flex flex-wrap py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-32">{label}</span>
+        <span className="text-sm text-gray-800 dark:text-white flex-1">{value || '—'}</span>
+    </div>
+);
+
 const FacultySkills = () => {
     const navigate = useNavigate();
     const { isDark } = useTheme();
@@ -120,42 +159,6 @@ const FacultySkills = () => {
     if (data.specialization) {
         skillsList.push(...data.specialization.split(',').map(s => s.trim()));
     }
-
-    const SectionCard = ({ icon: Icon, title, children }) => (
-        <div className={`${isDark ? 'bg-[#181818]' : 'bg-white'} rounded-xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm hover:shadow-md transition-shadow`}>
-            <div className="flex items-center gap-3 mb-4">
-                <Icon className="w-5 h-5 text-[#ff6b00]" />
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
-            </div>
-            {children}
-        </div>
-    );
-
-    const TagList = ({ items, emptyText = "None", onRemove, removable = false }) => (
-        <div className="flex flex-wrap gap-2">
-            {items && items.length > 0 ? (
-                items.map((item, idx) => (
-                    <span key={idx} className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full flex items-center gap-2">
-                        {typeof item === 'object' ? item.title || JSON.stringify(item) : item}
-                        {removable && onRemove && (
-                            <button onClick={() => onRemove(idx)} className="text-red-500 hover:text-red-700">
-                                <FiX size={14} />
-                            </button>
-                        )}
-                    </span>
-                ))
-            ) : (
-                <span className="text-sm text-gray-500 dark:text-gray-400">{emptyText}</span>
-            )}
-        </div>
-    );
-
-    const InfoRow = ({ label, value }) => (
-        <div className="flex flex-wrap py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
-            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-32">{label}</span>
-            <span className="text-sm text-gray-800 dark:text-white flex-1">{value || '—'}</span>
-        </div>
-    );
 
     return (
         <div className={`min-h-screen ${isDark ? 'bg-[#0a0a0a]' : 'bg-gray-50'} p-6 lg:p-8`}>

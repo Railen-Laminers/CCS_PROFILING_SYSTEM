@@ -90,13 +90,13 @@ const facultyMenuItems = [
     category: 'Personal',
     items: [
       { name: 'Profile', path: '/faculty/my-details', icon: FiUsers },
+      { name: 'Skills', path: '/faculty/skills', icon: FiStar },
     ]
   },
   {
     category: 'Management',
     items: [
       { name: 'Scheduling', path: '/faculty/my-schedule', icon: FiClock },
-      { name: 'Skills', path: '/faculty/skills', icon: FiStar },
     ]
   }
 ];
