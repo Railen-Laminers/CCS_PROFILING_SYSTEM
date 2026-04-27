@@ -4,7 +4,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { FiBriefcase, FiBook, FiCalendar, FiFolder, FiAward, FiEdit2, FiSave, FiX, FiPlus } from 'react-icons/fi';
-import { authAPI } from '@/services/api';
+import { authAPI, instructionAPI } from '@/services/api';
 
 const FacultySkills = () => {
     const navigate = useNavigate();
@@ -18,19 +18,28 @@ const FacultySkills = () => {
     const [faculty, setFaculty] = useState(null);
     const [formData, setFormData] = useState({
         specialization: '',
-        subjects_handled: [],
         research_projects: []
     });
-    const [newSubject, setNewSubject] = useState('');
+    const [teachingSchedule, setTeachingSchedule] = useState([]);
 
     useEffect(() => {
         if (user && user.role === 'faculty' && user.faculty) {
             setFaculty(user.faculty);
             setFormData({
                 specialization: user.faculty.specialization || '',
-                subjects_handled: user.faculty.subjects_handled || [],
                 research_projects: user.faculty.research_projects || []
             });
+
+            // Dynamically fetch the teaching schedule
+            const fetchSchedule = async () => {
+                try {
+                    const classes = await instructionAPI.getClasses({ instructor_id: user.faculty._id });
+                    setTeachingSchedule(Array.isArray(classes) ? classes : []);
+                } catch (err) {
+                    console.error('Failed to fetch teaching schedule:', err);
+                }
+            };
+            fetchSchedule();
         }
     }, [user]);
 
@@ -39,7 +48,6 @@ const FacultySkills = () => {
         try {
             await authAPI.updateProfile({
                 specialization: formData.specialization,
-                subjects_handled: formData.subjects_handled,
                 research_projects: formData.research_projects
             });
             await refreshUser();
@@ -57,28 +65,10 @@ const FacultySkills = () => {
         if (faculty) {
             setFormData({
                 specialization: faculty.specialization || '',
-                subjects_handled: faculty.subjects_handled || [],
                 research_projects: faculty.research_projects || []
             });
         }
         setIsEditing(false);
-    };
-
-    const addSubject = () => {
-        if (newSubject.trim()) {
-            setFormData(prev => ({
-                ...prev,
-                subjects_handled: [...prev.subjects_handled, newSubject.trim()]
-            }));
-            setNewSubject('');
-        }
-    };
-
-    const removeSubject = (index) => {
-        setFormData(prev => ({
-            ...prev,
-            subjects_handled: prev.subjects_handled.filter((_, i) => i !== index)
-        }));
     };
 
     const addResearchProject = () => {
@@ -117,8 +107,12 @@ const FacultySkills = () => {
     }
 
     const data = faculty || {};
-    const subjectsHandled = data.subjects_handled || [];
-    const teachingSchedule = data.teaching_schedule || [];
+    const scheduledSubjects = [...new Set(teachingSchedule.map(cls => {
+        const code = cls.course_id?.course_code;
+        const title = cls.course_id?.course_title;
+        if (code && title) return `${code} - ${title}`;
+        return code || title;
+    }).filter(Boolean))];
     const researchProjects = data.research_projects || [];
 
     // Combine specialization and subjects into a skills list for read mode
@@ -126,7 +120,6 @@ const FacultySkills = () => {
     if (data.specialization) {
         skillsList.push(...data.specialization.split(',').map(s => s.trim()));
     }
-    skillsList.push(...subjectsHandled);
 
     const SectionCard = ({ icon: Icon, title, children }) => (
         <div className={`${isDark ? 'bg-[#181818]' : 'bg-white'} rounded-xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm hover:shadow-md transition-shadow`}>
@@ -213,7 +206,7 @@ const FacultySkills = () => {
                         </SectionCard>
 
                         <SectionCard icon={FiBook} title="Subjects Handled">
-                            <TagList items={subjectsHandled} emptyText="No subjects assigned" />
+                            <TagList items={scheduledSubjects} emptyText="No subjects assigned in schedule" />
                         </SectionCard>
 
                         <SectionCard icon={FiCalendar} title="Teaching Schedule">
@@ -222,11 +215,11 @@ const FacultySkills = () => {
                                     {teachingSchedule.map((sched, idx) => (
                                         <div key={idx} className="border-b border-gray-100 dark:border-gray-800 last:border-0 pb-2 last:pb-0">
                                             <div className="text-sm font-medium text-gray-800 dark:text-white">
-                                                {sched.courseCode || sched.course || `Course ${idx + 1}`}
+                                                {sched.course_id?.course_code || `Course ${idx + 1}`} {sched.course_id?.course_title ? `- ${sched.course_id.course_title}` : ''}
                                             </div>
                                             <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                {sched.day || sched.date} • {sched.startTime} – {sched.endTime}
-                                                {sched.room && ` • Room: ${sched.room}`}
+                                                {sched.schedule?.date} • {sched.schedule?.startTime} – {sched.schedule?.endTime}
+                                                {sched.room_id && ` • Room: ${sched.room_id.name}`}
                                             </div>
                                         </div>
                                     ))}
@@ -294,34 +287,8 @@ const FacultySkills = () => {
                             <InfoRow label="Position" value={data.position} />
                         </SectionCard>
 
-                        <SectionCard icon={FiBook} title="Subjects Handled / Skills">
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Add a subject or skill
-                                </label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={newSubject}
-                                        onChange={(e) => setNewSubject(e.target.value)}
-                                        className="flex-1 p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700"
-                                        placeholder="e.g., Machine Learning, Database Systems"
-                                        onKeyPress={(e) => e.key === 'Enter' && addSubject()}
-                                    />
-                                    <button
-                                        onClick={addSubject}
-                                        className="px-3 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600"
-                                    >
-                                        <FiPlus />
-                                    </button>
-                                </div>
-                            </div>
-                            <TagList
-                                items={formData.subjects_handled}
-                                removable={true}
-                                onRemove={removeSubject}
-                                emptyText="No subjects added yet"
-                            />
+                        <SectionCard icon={FiBook} title="Subjects Handled (Read-Only)">
+                            <TagList items={scheduledSubjects} emptyText="No subjects assigned in schedule" />
                         </SectionCard>
 
                         <SectionCard icon={FiFolder} title="Research Projects">
