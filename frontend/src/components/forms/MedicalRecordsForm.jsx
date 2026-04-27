@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FiArrowLeft, FiPlus, FiSave, FiX, FiLoader, FiEdit2 } from 'react-icons/fi';
+import { FiPlus, FiSave, FiX, FiLoader, FiEdit2 } from 'react-icons/fi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { authAPI } from '@/services/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
 const HeartIcon = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -10,7 +12,20 @@ const HeartIcon = ({ className }) => (
   </svg>
 );
 
-const MedicalRecordsForm = ({ onCancel, onBack }) => {
+// Consistent styling from Profile page
+const labelClasses = 'block text-[12px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-2 ml-1';
+const inputClasses = (error, touched, value) => {
+  const hasError = error && touched;
+  const isValid = touched && !error && value && value.toString().trim() !== '';
+  return `w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white border ${hasError
+    ? 'border-red-500 ring-red-500/10'
+    : isValid
+      ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
+      : 'border-gray-200 dark:border-gray-800'
+    } rounded-xl focus:ring-2 focus:ring-[#ff6b00] focus:border-transparent transition-all outline-none placeholder-gray-400 dark:placeholder-gray-500 text-[14px]`;
+};
+
+const MedicalRecordsForm = () => {
   const { user: currentUser, refreshUser } = useAuth();
   const { showToast } = useToast();
 
@@ -29,7 +44,7 @@ const MedicalRecordsForm = ({ onCancel, onBack }) => {
   // Backup for cancel
   const [originalData, setOriginalData] = useState(null);
 
-  // Load data from currentUser
+  // Load data
   useEffect(() => {
     if (currentUser && currentUser.student) {
       const student = currentUser.student;
@@ -53,7 +68,6 @@ const MedicalRecordsForm = ({ onCancel, onBack }) => {
     }
   }, [currentUser, showToast]);
 
-  // Handlers for allergies
   const addAllergy = () => {
     if (allergyInput.trim()) {
       setAllergies([...allergies, allergyInput.trim()]);
@@ -64,7 +78,6 @@ const MedicalRecordsForm = ({ onCancel, onBack }) => {
     setAllergies(allergies.filter((_, i) => i !== index));
   };
 
-  // Handlers for disabilities
   const addDisability = () => {
     if (disabilityInput.trim()) {
       setDisabilities([...disabilities, disabilityInput.trim()]);
@@ -76,7 +89,6 @@ const MedicalRecordsForm = ({ onCancel, onBack }) => {
   };
 
   const handleEdit = () => {
-    // Backup current data
     setOriginalData({
       bloodType,
       allergies: [...allergies],
@@ -112,7 +124,6 @@ const MedicalRecordsForm = ({ onCancel, onBack }) => {
       showToast('Medical records updated successfully!', 'success');
       await refreshUser();
 
-      // Update original data after successful save
       setOriginalData({
         bloodType,
         allergies: [...allergies],
@@ -129,258 +140,203 @@ const MedicalRecordsForm = ({ onCancel, onBack }) => {
     }
   };
 
-  // Helper to render blood type display text
-  const getBloodTypeText = (value) => {
-    if (!value) return '—';
-    return value;
-  };
-
-  // Helper to render read-only value with placeholder
-  const renderReadOnlyValue = (value, placeholder = '—') => {
+  const getBloodTypeText = (value) => value || '—';
+  const renderTags = (items, emptyText = '—') => {
+    if (items.length === 0) return <span className="text-gray-500 dark:text-gray-400 text-sm">{emptyText}</span>;
     return (
-      <div className="w-full p-2.5 bg-gray-50 dark:bg-[#18181B] rounded-lg border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm">
-        {value || placeholder}
+      <div className="flex flex-wrap gap-2">
+        {items.map((item, idx) => (
+          <span key={idx} className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full">
+            {item}
+          </span>
+        ))}
       </div>
     );
   };
 
-  const inputClass = `w-full p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none text-sm bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500`;
-  const labelClass = `text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300`;
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 flex items-center justify-center">
-        <FiLoader className="w-8 h-8 animate-spin text-orange-500 dark:text-orange-400" />
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ff6b00]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-gray-50 dark:bg-zinc-900">
-      {/* Back button */}
-      <button
-        onClick={onBack}
-        className="flex items-center text-sm font-medium mb-6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors"
-      >
-        <FiArrowLeft className="w-4 h-4 mr-2" />
-        Back to Dashboard
-      </button>
+    <div className="w-full space-y-8 pb-12">
 
-      {/* Main Card */}
-      <div className="max-w-4xl mx-auto rounded-xl shadow-sm overflow-hidden bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-gray-800">
-        <div className="p-8">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8 pb-2 border-b border-gray-100 dark:border-gray-800">
-            <div className="flex items-center gap-2">
-              <HeartIcon className="w-5 h-5 text-orange-500 dark:text-orange-400" />
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Medical Records</h2>
+      <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+        <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+          <CardTitle className="text-[16px] font-bold flex items-center gap-3">
+            <div className="bg-[#ff6b00]/10 p-2 rounded-lg border border-[#ff6b00]/20">
+              <HeartIcon className="w-5 h-5 text-[#ff6b00]" />
             </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
+            Medical Records
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8 space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Blood Type */}
-            <div className="space-y-1">
-              <label className={labelClass}>Blood Type</label>
+            <div className="space-y-2">
+              <label className={labelClasses}>Blood Type</label>
               {isEditing ? (
-                <div className="relative">
-                  <select
-                    value={bloodType}
-                    onChange={(e) => setBloodType(e.target.value)}
-                    className={`${inputClass} appearance-none cursor-pointer`}
-                  >
-                    <option value="">Select blood type</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                  </select>
-                  <svg className="w-4 h-4 text-gray-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
+                <select
+                  value={bloodType}
+                  onChange={(e) => setBloodType(e.target.value)}
+                  className={inputClasses(false, false, bloodType)}
+                >
+                  <option value="">Select blood type</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
               ) : (
-                renderReadOnlyValue(getBloodTypeText(bloodType))
+                <div className="w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl flex items-center text-gray-900 dark:text-white text-[14px]">
+                  {getBloodTypeText(bloodType)}
+                </div>
               )}
             </div>
 
-            {/* Allergies (array) */}
-            <div className="space-y-1">
-              <label className={labelClass}>Allergies</label>
+            {/* Allergies */}
+            <div className="space-y-2">
+              <label className={labelClasses}>Allergies</label>
               {isEditing ? (
-                <>
+                <div className="space-y-3">
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={allergyInput}
                       onChange={(e) => setAllergyInput(e.target.value)}
                       placeholder="Enter allergy (e.g., Peanuts, Penicillin)"
-                      className={inputClass}
+                      className={inputClasses(false, false, allergyInput)}
                     />
-                    <button
+                    <Button
                       type="button"
+                      variant="outline"
                       onClick={addAllergy}
-                      className="px-3 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex-shrink-0"
+                      className="rounded-xl w-11 h-11 p-0"
                     >
                       <FiPlus className="w-4 h-4" />
-                    </button>
+                    </Button>
                   </div>
-                  {allergies.length > 0 ? (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {allergies.map((allergy, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-red-50 text-red-700 dark:bg-red-900/50 dark:text-red-300"
+                  <div className="flex flex-wrap gap-2">
+                    {allergies.map((allergy, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 text-sm bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full flex items-center gap-2"
+                      >
+                        {allergy}
+                        <button
+                          type="button"
+                          onClick={() => removeAllergy(idx)}
+                          className="text-red-500 hover:text-red-700"
                         >
-                          {allergy}
-                          <button
-                            type="button"
-                            onClick={() => removeAllergy(index)}
-                            className="hover:bg-red-100 rounded-full p-0.5"
-                          >
-                            <FiX className="w-3 h-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-xs text-gray-400 italic mt-2">No allergies recorded</p>
-                  )}
-                </>
+                          <FiX size={14} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
               ) : (
-                <div className="w-full p-2.5 bg-gray-50 dark:bg-[#18181B] rounded-lg border border-gray-200 dark:border-gray-700 min-h-[42px]">
-                  {allergies.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {allergies.map((allergy, idx) => (
-                        <span key={idx} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-50 text-red-700 dark:bg-red-900/50 dark:text-red-300">
-                          {allergy}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-gray-400 dark:text-gray-500 text-sm">—</span>
-                  )}
+                <div className="w-full min-h-[44px] px-4 py-2 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-gray-900 dark:text-white text-[14px]">
+                  {renderTags(allergies, '—')}
                 </div>
               )}
             </div>
 
-            {/* Medical Condition (single string) */}
-            <div className="space-y-1">
-              <label className={labelClass}>Medical Condition</label>
+            {/* Medical Condition */}
+            <div className="space-y-2">
+              <label className={labelClasses}>Medical Condition</label>
               {isEditing ? (
-                <>
-                  <textarea
-                    value={medicalCondition}
-                    onChange={(e) => setMedicalCondition(e.target.value)}
-                    placeholder="e.g., Asthma, Diabetes, Hypertension"
-                    rows="2"
-                    className={`${inputClass} resize-none`}
-                  />
-                  <p className="text-xs text-gray-400">List any chronic conditions or health concerns</p>
-                </>
+                <textarea
+                  value={medicalCondition}
+                  onChange={(e) => setMedicalCondition(e.target.value)}
+                  rows={3}
+                  className={`${inputClasses(false, false, medicalCondition)} h-auto py-3 resize-y min-h-[88px]`}
+                  placeholder="e.g., Asthma, Diabetes, Hypertension"
+                />
               ) : (
-                renderReadOnlyValue(medicalCondition)
+                <div className="w-full min-h-[44px] px-4 py-2 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-gray-900 dark:text-white text-[14px]">
+                  {medicalCondition || '—'}
+                </div>
               )}
             </div>
 
-            {/* Disabilities (array) */}
-            <div className="space-y-1">
-              <label className={labelClass}>Disabilities / Special Needs</label>
+            {/* Disabilities */}
+            <div className="space-y-2">
+              <label className={labelClasses}>Disabilities / Special Needs</label>
               {isEditing ? (
-                <>
+                <div className="space-y-3">
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={disabilityInput}
                       onChange={(e) => setDisabilityInput(e.target.value)}
                       placeholder="Enter disability or special need"
-                      className={inputClass}
+                      className={inputClasses(false, false, disabilityInput)}
                     />
-                    <button
+                    <Button
                       type="button"
+                      variant="outline"
                       onClick={addDisability}
-                      className="px-3 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex-shrink-0"
+                      className="rounded-xl w-11 h-11 p-0"
                     >
                       <FiPlus className="w-4 h-4" />
-                    </button>
+                    </Button>
                   </div>
-                  {disabilities.length > 0 ? (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {disabilities.map((disability, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-purple-50 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300"
+                  <div className="flex flex-wrap gap-2">
+                    {disabilities.map((disability, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 text-sm bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full flex items-center gap-2"
+                      >
+                        {disability}
+                        <button
+                          type="button"
+                          onClick={() => removeDisability(idx)}
+                          className="text-red-500 hover:text-red-700"
                         >
-                          {disability}
-                          <button
-                            type="button"
-                            onClick={() => removeDisability(index)}
-                            className="hover:bg-purple-100 rounded-full p-0.5"
-                          >
-                            <FiX className="w-3 h-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-xs text-gray-400 italic mt-2">No disabilities recorded</p>
-                  )}
-                </>
+                          <FiX size={14} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
               ) : (
-                <div className="w-full p-2.5 bg-gray-50 dark:bg-[#18181B] rounded-lg border border-gray-200 dark:border-gray-700 min-h-[42px]">
-                  {disabilities.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {disabilities.map((disability, idx) => (
-                        <span key={idx} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-50 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300">
-                          {disability}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-gray-400 dark:text-gray-500 text-sm">—</span>
-                  )}
+                <div className="w-full min-h-[44px] px-4 py-2 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-gray-900 dark:text-white text-[14px]">
+                  {renderTags(disabilities, '—')}
                 </div>
               )}
             </div>
 
-            {/* Buttons */}
-            <div className="flex justify-end gap-3 mt-8">
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-3 pt-4">
               {isEditing ? (
                 <>
-                  <button
-                    type="button"
-                    onClick={handleCancelEdit}
-                    className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium rounded-lg transition-colors bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 dark:bg-transparent dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                  >
+                  <Button type="button" variant="outline" onClick={handleCancelEdit} className="gap-2">
                     <FiX className="w-4 h-4" />
                     Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-70"
-                  >
+                  </Button>
+                  <Button type="submit" disabled={saving} className="gap-2 bg-[#ff6b00] hover:bg-orange-600">
                     {saving ? <FiLoader className="w-4 h-4 animate-spin" /> : <FiSave className="w-4 h-4" />}
                     {saving ? 'Saving...' : 'Save Changes'}
-                  </button>
+                  </Button>
                 </>
               ) : (
-                <button
-                  type="button"
-                  onClick={handleEdit}
-                  className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-950/50 transition-colors"
-                >
+                <Button type="button" onClick={handleEdit} className="gap-2 bg-[#ff6b00] hover:bg-orange-600">
                   <FiEdit2 className="w-4 h-4" />
                   Edit Medical Records
-                </button>
+                </Button>
               )}
             </div>
           </form>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

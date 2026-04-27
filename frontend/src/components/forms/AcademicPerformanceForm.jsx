@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FiArrowLeft, FiPlus, FiSave, FiLoader, FiTrash2, FiEdit2, FiX } from 'react-icons/fi';
+import { FiPlus, FiSave, FiLoader, FiTrash2, FiEdit2, FiX } from 'react-icons/fi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { authAPI } from '@/services/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
 const GraduationCapIcon = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -11,7 +13,20 @@ const GraduationCapIcon = ({ className }) => (
   </svg>
 );
 
-const AcademicPerformanceForm = ({ onCancel, onBack }) => {
+// Consistent styling from Profile page
+const labelClasses = 'block text-[12px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-2 ml-1';
+const inputClasses = (error, touched, value) => {
+  const hasError = error && touched;
+  const isValid = touched && !error && value && value.toString().trim() !== '';
+  return `w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white border ${hasError
+      ? 'border-red-500 ring-red-500/10'
+      : isValid
+        ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
+        : 'border-gray-200 dark:border-gray-800'
+    } rounded-xl focus:ring-2 focus:ring-[#ff6b00] focus:border-transparent transition-all outline-none placeholder-gray-400 dark:placeholder-gray-500 text-[14px]`;
+};
+
+const AcademicPerformanceForm = () => {
   const { user: currentUser, refreshUser } = useAuth();
   const { showToast } = useToast();
 
@@ -33,7 +48,7 @@ const AcademicPerformanceForm = ({ onCancel, onBack }) => {
   // Backup for cancel
   const [originalData, setOriginalData] = useState(null);
 
-  // Load student data from auth context (user.student)
+  // Load student data
   useEffect(() => {
     if (currentUser && currentUser.student) {
       const student = currentUser.student;
@@ -58,7 +73,6 @@ const AcademicPerformanceForm = ({ onCancel, onBack }) => {
     }
   }, [currentUser, showToast]);
 
-  // Handlers for quiz bee participations
   const addQuizBee = () => setQuizBeeParticipations([...quizBeeParticipations, '']);
   const updateQuizBee = (index, value) => {
     const updated = [...quizBeeParticipations];
@@ -69,7 +83,6 @@ const AcademicPerformanceForm = ({ onCancel, onBack }) => {
     setQuizBeeParticipations(quizBeeParticipations.filter((_, i) => i !== index));
   };
 
-  // Handlers for programming contests
   const addProgrammingContest = () => setProgrammingContests([...programmingContests, '']);
   const updateProgrammingContest = (index, value) => {
     const updated = [...programmingContests];
@@ -124,16 +137,6 @@ const AcademicPerformanceForm = ({ onCancel, onBack }) => {
     }
   };
 
-  // Helper to render read-only value or placeholder
-  const renderReadOnlyValue = (value, placeholder = '—') => {
-    return (
-      <div className="w-full p-2.5 bg-gray-50 dark:bg-[#18181B] rounded-lg border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm">
-        {value || placeholder}
-      </div>
-    );
-  };
-
-  // Helper to render tags for arrays
   const renderTags = (items, emptyText = 'No items listed') => {
     if (items.length === 0) {
       return <span className="text-sm text-gray-400 dark:text-gray-500 italic">{emptyText}</span>;
@@ -149,77 +152,85 @@ const AcademicPerformanceForm = ({ onCancel, onBack }) => {
     );
   };
 
-  const labelClass = `text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300`;
-  const editableInputClass = `w-full p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none text-sm bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500`;
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 flex items-center justify-center">
-        <FiLoader className="w-8 h-8 animate-spin text-orange-500 dark:text-orange-400" />
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ff6b00]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-gray-50 dark:bg-zinc-900">
-      {/* Back button */}
-      <button
-        onClick={onBack}
-        className="flex items-center text-sm font-medium mb-6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors"
-      >
-        <FiArrowLeft className="w-4 h-4 mr-2" />
-        Back to Dashboard
-      </button>
+    <div className="w-full space-y-8 pb-12">
 
-      {/* Main Card */}
-      <div className="max-w-4xl mx-auto rounded-xl shadow-sm overflow-hidden bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-gray-800">
-        <div className="p-6">
-          {/* Header - no edit button */}
-          <div className="flex items-center gap-2 mb-6 pb-2 border-b border-gray-100 dark:border-gray-800">
-            <GraduationCapIcon className="w-5 h-5 text-orange-500 dark:text-orange-400" />
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Academic Performance</h2>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Program & Year Level (always read-only) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className={labelClass}>Course/Program</label>
-                {renderReadOnlyValue(program)}
+      <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+        <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+          <CardTitle className="text-[16px] font-bold flex items-center gap-3">
+            <div className="bg-[#ff6b00]/10 p-2 rounded-lg border border-[#ff6b00]/20">
+              <GraduationCapIcon className="w-5 h-5 text-[#ff6b00]" />
+            </div>
+            Academic Performance
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8 space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Program & Year Level */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className={labelClasses}>Course/Program</label>
+                <input
+                  type="text"
+                  className={inputClasses(false, false, null)}
+                  value={program}
+                  disabled
+                  readOnly
+                />
               </div>
-              <div className="space-y-1">
-                <label className={labelClass}>Year Level</label>
-                {renderReadOnlyValue(yearLevel)}
+              <div className="space-y-2">
+                <label className={labelClasses}>Year Level</label>
+                <input
+                  type="text"
+                  className={inputClasses(false, false, null)}
+                  value={yearLevel}
+                  disabled
+                  readOnly
+                />
               </div>
             </div>
 
-            {/* GPA (always read-only) */}
-            <div className="space-y-1">
-              <label className={labelClass}>GPA</label>
-              {renderReadOnlyValue(gpa)}
+            {/* GPA */}
+            <div className="space-y-2">
+              <label className={labelClasses}>GPA</label>
+              <input
+                type="text"
+                className={inputClasses(false, false, null)}
+                value={gpa}
+                disabled
+                readOnly
+              />
             </div>
 
-            {/* Current Subjects (always read-only) */}
-            <div className="space-y-1">
-              <label className={labelClass}>Current Subjects</label>
-              <div className="p-2.5 bg-gray-50 dark:bg-[#18181B] rounded-lg border border-gray-200 dark:border-gray-700 min-h-[42px]">
+            {/* Current Subjects */}
+            <div className="space-y-2">
+              <label className={labelClasses}>Current Subjects</label>
+              <div className="w-full min-h-[44px] px-4 py-2 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-gray-900 dark:text-white text-[14px]">
                 {renderTags(currentSubjects, 'No subjects listed')}
               </div>
             </div>
 
-            {/* Academic Awards (always read-only) */}
-            <div className="space-y-1">
-              <label className={labelClass}>Academic Awards</label>
-              <div className="p-2.5 bg-gray-50 dark:bg-[#18181B] rounded-lg border border-gray-200 dark:border-gray-700 min-h-[42px]">
+            {/* Academic Awards */}
+            <div className="space-y-2">
+              <label className={labelClasses}>Academic Awards</label>
+              <div className="w-full min-h-[44px] px-4 py-2 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-gray-900 dark:text-white text-[14px]">
                 {renderTags(academicAwards, 'No awards listed')}
               </div>
             </div>
 
             {/* Quiz Bee Participations */}
             <div className="space-y-2">
-              <label className={labelClass}>Quiz Bee Participations</label>
+              <label className={labelClasses}>Quiz Bee Participations</label>
               {isEditing ? (
-                <>
+                <div className="space-y-3">
                   {quizBeeParticipations.map((item, index) => (
                     <div key={index} className="flex gap-2">
                       <input
@@ -227,47 +238,41 @@ const AcademicPerformanceForm = ({ onCancel, onBack }) => {
                         value={item}
                         onChange={(e) => updateQuizBee(index, e.target.value)}
                         placeholder="e.g., Regional Quiz Bee 2024"
-                        className={editableInputClass}
+                        className={inputClasses(false, false, item)}
                       />
-                      <button
+                      <Button
                         type="button"
+                        variant="outline"
                         onClick={() => removeQuizBee(index)}
-                        className="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
+                        className="rounded-xl w-11 h-11 p-0 text-red-500 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
                       >
                         <FiTrash2 className="w-4 h-4" />
-                      </button>
+                      </Button>
                     </div>
                   ))}
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
+                    size="sm"
                     onClick={addQuizBee}
-                    className="mt-1 inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
+                    className="gap-2 mt-2"
                   >
-                    <FiPlus className="w-4 h-4" /> Add Quiz Bee Participation
-                  </button>
-                </>
+                    <FiPlus className="w-4 h-4" />
+                    Add Quiz Bee Participation
+                  </Button>
+                </div>
               ) : (
-                <div className="p-2.5 bg-gray-50 dark:bg-[#18181B] rounded-lg border border-gray-200 dark:border-gray-700 min-h-[42px]">
-                  {quizBeeParticipations.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {quizBeeParticipations.map((item, idx) => (
-                        <span key={idx} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm text-gray-700 dark:text-gray-300">
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-gray-400 dark:text-gray-500 text-sm">—</span>
-                  )}
+                <div className="w-full min-h-[44px] px-4 py-2 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-gray-900 dark:text-white text-[14px]">
+                  {renderTags(quizBeeParticipations, '—')}
                 </div>
               )}
             </div>
 
             {/* Programming Contests */}
             <div className="space-y-2">
-              <label className={labelClass}>Programming Contests</label>
+              <label className={labelClasses}>Programming Contests</label>
               {isEditing ? (
-                <>
+                <div className="space-y-3">
                   {programmingContests.map((item, index) => (
                     <div key={index} className="flex gap-2">
                       <input
@@ -275,77 +280,59 @@ const AcademicPerformanceForm = ({ onCancel, onBack }) => {
                         value={item}
                         onChange={(e) => updateProgrammingContest(index, e.target.value)}
                         placeholder="e.g., ICPC 2023"
-                        className={editableInputClass}
+                        className={inputClasses(false, false, item)}
                       />
-                      <button
+                      <Button
                         type="button"
+                        variant="outline"
                         onClick={() => removeProgrammingContest(index)}
-                        className="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
+                        className="rounded-xl w-11 h-11 p-0 text-red-500 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
                       >
                         <FiTrash2 className="w-4 h-4" />
-                      </button>
+                      </Button>
                     </div>
                   ))}
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
+                    size="sm"
                     onClick={addProgrammingContest}
-                    className="mt-1 inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
+                    className="gap-2 mt-2"
                   >
-                    <FiPlus className="w-4 h-4" /> Add Programming Contest
-                  </button>
-                </>
+                    <FiPlus className="w-4 h-4" />
+                    Add Programming Contest
+                  </Button>
+                </div>
               ) : (
-                <div className="p-2.5 bg-gray-50 dark:bg-[#18181B] rounded-lg border border-gray-200 dark:border-gray-700 min-h-[42px]">
-                  {programmingContests.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {programmingContests.map((item, idx) => (
-                        <span key={idx} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm text-gray-700 dark:text-gray-300">
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-gray-400 dark:text-gray-500 text-sm">—</span>
-                  )}
+                <div className="w-full min-h-[44px] px-4 py-2 bg-gray-50 dark:bg-[#18181B] border border-gray-200 dark:border-gray-800 rounded-xl text-gray-900 dark:text-white text-[14px]">
+                  {renderTags(programmingContests, '—')}
                 </div>
               )}
             </div>
 
-            {/* Buttons - only Edit Participations in read mode, Cancel+Save Changes in edit mode */}
-            <div className="flex justify-end gap-3 mt-8">
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-3 pt-4">
               {isEditing ? (
                 <>
-                  <button
-                    type="button"
-                    onClick={handleCancelEdit}
-                    className="flex items-center gap-2 px-6 py-2 text-sm font-medium rounded-lg transition-colors bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 dark:bg-transparent dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                  >
+                  <Button type="button" variant="outline" onClick={handleCancelEdit} className="gap-2">
                     <FiX className="w-4 h-4" />
                     Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="flex items-center gap-2 px-6 py-2 text-sm font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-70"
-                  >
+                  </Button>
+                  <Button type="submit" disabled={saving} className="gap-2 bg-[#ff6b00] hover:bg-orange-600">
                     {saving ? <FiLoader className="w-4 h-4 animate-spin" /> : <FiSave className="w-4 h-4" />}
                     {saving ? 'Saving...' : 'Save Changes'}
-                  </button>
+                  </Button>
                 </>
               ) : (
-                <button
-                  type="button"
-                  onClick={handleEdit}
-                  className="flex items-center gap-2 px-6 py-2 text-sm font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-950/50 transition-colors"
-                >
+                <Button type="button" onClick={handleEdit} className="gap-2 bg-[#ff6b00] hover:bg-orange-600">
                   <FiEdit2 className="w-4 h-4" />
                   Edit Participations
-                </button>
+                </Button>
               )}
             </div>
           </form>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FiArrowLeft, FiSearch, FiCalendar, FiUsers, FiClock } from 'react-icons/fi';
-import { useTheme } from '@/contexts/ThemeContext';
+import { FiSearch, FiCalendar, FiUsers, FiClock } from 'react-icons/fi';
 import { eventAPI } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
 const TrophyIcon = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -17,8 +18,7 @@ const BookIcon = ({ className }) => (
   </svg>
 );
 
-const EventsForm = ({ onCancel, onBack }) => {
-  const { isDark } = useTheme();
+const EventsForm = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
@@ -103,11 +103,10 @@ const EventsForm = ({ onCancel, onBack }) => {
     try {
       await eventAPI.respondToInvitation(eventId, response);
       setInvitations(prev => prev.filter(inv => inv.event_id !== eventId));
-      
+
       if (response === 'accepted') {
         setRegisteredEventIds(prev => [...prev, eventId]);
         showToast('Invitation accepted! You are now registered.', 'success');
-        // Refresh all events to update participant count
         const allEvents = await eventAPI.getEvents();
         setEvents(allEvents);
       } else {
@@ -126,131 +125,124 @@ const EventsForm = ({ onCancel, onBack }) => {
     return date.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   };
 
-  const inputClass = `w-full pl-12 pr-4 py-2.5 rounded-lg border-none focus:ring-2 focus:ring-orange-500/20 outline-none text-sm ${isDark ? 'bg-gray-800 text-gray-100' : 'bg-gray-100 text-gray-800'}`;
-
   if (loading) {
     return (
-      <div className={`min-h-screen p-4 md:p-8 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-        </div>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ff6b00]" />
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen p-4 md:p-8 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <button
-        onClick={onBack}
-        className={`flex items-center text-sm font-medium mb-6 ${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'}`}
-      >
-        <FiArrowLeft className="w-4 h-4 mr-2" />
-        Back to Dashboard
-      </button>
+    <div className="w-full space-y-8 pb-12">
+      {/* Header - no back button */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+          Events & Competitions
+        </h1>
+      </div>
 
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-8">
-          <h1 className={`text-2xl font-bold mb-2 ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>Events & Competitions</h1>
-          <p className="text-gray-500">Browse and register for upcoming school events, competitions, and activities</p>
-        </div>
-
-        <div className={`rounded-xl border p-6 mb-6 shadow-sm ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-          <div className="flex items-center gap-4 mb-4">
+      {/* Filters Card */}
+      <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+        <CardContent className="p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <FiSearch className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                className={inputClass}
+                className="w-full h-11 pl-12 pr-4 bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white border border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-[#ff6b00] focus:border-transparent transition-all outline-none placeholder-gray-400 dark:placeholder-gray-500 text-[14px]"
                 placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className={`rounded-lg px-4 py-2 ${isDark ? 'bg-gray-700 border border-gray-600' : 'bg-white border border-gray-200'}`}>
-              <span className="text-gray-500 text-sm">{registeredEventIds.length} Registered</span>
+            <div className="flex items-center justify-between sm:justify-end gap-4">
+              <div className="px-4 py-2 bg-gray-50 dark:bg-[#18181B] rounded-xl border border-gray-200 dark:border-gray-800">
+                <span className="text-sm text-gray-600 dark:text-gray-400">{registeredEventIds.length} Registered</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
               <button
                 key={category.key}
                 onClick={() => setActiveCategory(category.key)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === category.key
-                    ? 'bg-orange-500 text-white'
-                    : `${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeCategory === category.key
+                    ? 'bg-[#ff6b00] text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
               >
                 {category.label}
               </button>
             ))}
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Invitations Section */}
-        {invitations.length > 0 && (
-          <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-500">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className={`text-lg font-bold flex items-center gap-2 ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>
-                <div className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse"></div>
-                Pending Invitations
-                <span className="ml-2 px-2 py-0.5 bg-brand-500/10 text-brand-500 text-[10px] font-black uppercase rounded-full border border-brand-500/20">
-                  {invitations.length} New
-                </span>
-              </h2>
-              {invitations.length > 3 && (
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest animate-pulse">Scroll →</span>
-              )}
-            </div>
-            
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
-              {invitations.map((inv) => (
-                <div 
-                  key={inv.event_id}
-                  className={`flex-shrink-0 w-[280px] sm:w-[320px] p-5 rounded-[1.5rem] border-2 border-brand-500/20 shadow-sm relative overflow-hidden snap-start transition-all hover:border-brand-500/40 group ${isDark ? 'bg-brand-500/5' : 'bg-brand-50/30'}`}
-                >
-                  <div className="absolute top-0 right-0 p-3">
-                    <FiCalendar className="w-4 h-4 text-brand-500/20 group-hover:text-brand-500/40 transition-colors" />
-                  </div>
-                  
-                  <div className="mb-4">
-                    <h3 className={`font-bold text-[15px] leading-tight mb-1 truncate ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>{inv.title}</h3>
-                    <p className="text-[11px] font-medium text-gray-500 flex items-center gap-1.5">
-                      <FiClock className="w-3 h-3" />
-                      {formatDate(inv.start_datetime)}
-                    </p>
-                  </div>
-                  
-                  <div className="flex gap-2.5">
-                    <button
-                      onClick={() => handleRespond(inv.event_id, 'accepted')}
-                      disabled={respondingId === inv.event_id}
-                      className="flex-[2] py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 disabled:opacity-50 shadow-sm shadow-brand-500/20"
-                    >
-                      {respondingId === inv.event_id ? '...' : 'Accept Invite'}
-                    </button>
-                    <button
-                      onClick={() => handleRespond(inv.event_id, 'declined')}
-                      disabled={respondingId === inv.event_id}
-                      className={`flex-1 py-2.5 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 disabled:opacity-50 ${isDark ? 'bg-zinc-800 text-gray-400 hover:text-gray-200' : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'}`}
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Invitations Section */}
+      {invitations.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#ff6b00] animate-pulse"></div>
+              Pending Invitations
+              <span className="ml-2 px-2 py-0.5 bg-[#ff6b00]/10 text-[#ff6b00] text-[10px] font-black uppercase rounded-full border border-[#ff6b00]/20">
+                {invitations.length} New
+              </span>
+            </h2>
           </div>
-        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[400px]">
-          {filteredEvents.map((event) => (
-            <div
-              key={event.event_id}
-              className={`rounded-xl border p-5 shadow-sm hover:shadow-md transition-shadow ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className={`px-2 py-1 text-xs rounded ${event.category === 'Curricular' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+            {invitations.map((inv) => (
+              <div
+                key={inv.event_id}
+                className="flex-shrink-0 w-[280px] sm:w-[320px] p-5 rounded-2xl border-2 border-[#ff6b00]/20 shadow-sm relative overflow-hidden snap-start transition-all hover:border-[#ff6b00]/40 bg-white dark:bg-[#1E1E1E]"
+              >
+                <div className="absolute top-0 right-0 p-3">
+                  <FiCalendar className="w-4 h-4 text-[#ff6b00]/20" />
+                </div>
+
+                <div className="mb-4">
+                  <h3 className="font-bold text-[15px] leading-tight mb-1 truncate text-gray-900 dark:text-gray-100">{inv.title}</h3>
+                  <p className="text-[11px] font-medium text-gray-500 flex items-center gap-1.5">
+                    <FiClock className="w-3 h-3" />
+                    {formatDate(inv.start_datetime)}
+                  </p>
+                </div>
+
+                <div className="flex gap-2.5">
+                  <button
+                    onClick={() => handleRespond(inv.event_id, 'accepted')}
+                    disabled={respondingId === inv.event_id}
+                    className="flex-[2] py-2.5 bg-[#ff6b00] hover:bg-orange-600 text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 disabled:opacity-50 shadow-sm shadow-[#ff6b00]/20"
+                  >
+                    {respondingId === inv.event_id ? '...' : 'Accept Invite'}
+                  </button>
+                  <button
+                    onClick={() => handleRespond(inv.event_id, 'declined')}
+                    disabled={respondingId === inv.event_id}
+                    className="flex-1 py-2.5 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 disabled:opacity-50 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  >
+                    Decline
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Events Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {filteredEvents.map((event) => (
+          <Card key={event.event_id} className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className={`px-2 py-1 text-xs rounded-full ${event.category === 'Curricular'
+                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                    : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                  }`}>
                   {event.category}
                 </span>
                 {event.category === 'Curricular' ? (
@@ -259,51 +251,52 @@ const EventsForm = ({ onCancel, onBack }) => {
                   <TrophyIcon className="w-5 h-5 text-yellow-500" />
                 )}
               </div>
-              <h3 className={`font-bold mb-2 ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>{event.title}</h3>
-              <div className="flex items-center gap-2 text-gray-500 text-sm mb-2">
+              <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100">{event.title}</h3>
+              <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
                 <FiCalendar className="w-4 h-4" />
                 {formatDate(event.start_datetime)}
               </div>
               {event.venue && (
-                <div className="flex items-center gap-2 text-gray-500 text-sm mb-2">
+                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
                   <FiUsers className="w-4 h-4" />
                   {event.venue}
                 </div>
               )}
-              <p className={`text-sm mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 {event.description || 'No description provided.'}
               </p>
-              <div className="flex justify-between items-center text-xs text-gray-400 mb-3">
+              <div className="flex justify-between items-center text-xs text-gray-400">
                 <span>Participants: {event.participant_count}{event.max_participants ? ` / ${event.max_participants}` : ''}</span>
                 <span className="capitalize">Status: {event.status}</span>
               </div>
               {isRegistered(event.event_id) ? (
-                <button
+                <Button
                   onClick={() => handleUnregister(event.event_id)}
                   disabled={registeringId === event.event_id}
-                  className="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-red-100 text-red-700 border border-red-300 hover:bg-red-200 disabled:opacity-50"
+                  variant="outline"
+                  className="w-full gap-2 text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
                 >
                   {registeringId === event.event_id ? 'Processing...' : 'Unregister'}
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
                   onClick={() => handleRegister(event.event_id)}
                   disabled={registeringId === event.event_id || (event.max_participants && event.participant_count >= event.max_participants)}
-                  className="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-orange-500 text-white hover:bg-orange-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="w-full gap-2 bg-[#ff6b00] hover:bg-orange-600"
                 >
                   {registeringId === event.event_id ? 'Processing...' : 'Register Now'}
-                </button>
+                </Button>
               )}
-            </div>
-          ))}
-        </div>
-
-        {filteredEvents.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No events found matching your search.</p>
-          </div>
-        )}
+            </CardContent>
+          </Card>
+        ))}
       </div>
+
+      {filteredEvents.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-500 dark:text-gray-400">No events found matching your search.</p>
+        </div>
+      )}
     </div>
   );
 };

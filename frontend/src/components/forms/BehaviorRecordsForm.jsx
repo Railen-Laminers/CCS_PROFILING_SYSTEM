@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { FiArrowLeft, FiLoader, FiAlertTriangle } from 'react-icons/fi';
+import { FiLoader, FiAlertTriangle } from 'react-icons/fi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { userAPI } from '@/services/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 const AlertIcon = ({ className }) => (
   <svg
@@ -15,8 +16,21 @@ const AlertIcon = ({ className }) => (
   </svg>
 );
 
-const BehaviorRecordsForm = ({ onCancel, onBack }) => {
-  const { user: currentUser, refreshUser } = useAuth();
+// Consistent styling from Profile page
+const labelClasses = 'block text-[12px] font-bold text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-2 ml-1';
+const inputClasses = (error, touched, value) => {
+  const hasError = error && touched;
+  const isValid = touched && !error && value && value.toString().trim() !== '';
+  return `w-full h-11 px-4 bg-gray-50 dark:bg-[#18181B] text-gray-900 dark:text-white border ${hasError
+    ? 'border-red-500 ring-red-500/10'
+    : isValid
+      ? 'border-green-500/40 dark:border-green-500/30 bg-green-500/[0.02]'
+      : 'border-gray-200 dark:border-gray-800'
+    } rounded-xl focus:ring-2 focus:ring-[#ff6b00] focus:border-transparent transition-all outline-none placeholder-gray-400 dark:placeholder-gray-500 text-[14px]`;
+};
+
+const BehaviorRecordsForm = () => {
+  const { user: currentUser } = useAuth();
   const { showToast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -53,72 +67,68 @@ const BehaviorRecordsForm = ({ onCancel, onBack }) => {
     fetchData();
   }, [currentUser, showToast]);
 
-  const labelClass = `text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300`;
-  const readOnlyContainerClass = `w-full p-2.5 bg-gray-50 dark:bg-[#18181B] rounded-lg border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm`;
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 flex items-center justify-center">
-        <FiLoader className="w-8 h-8 animate-spin text-orange-500 dark:text-orange-400" />
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ff6b00]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-gray-50 dark:bg-zinc-900">
-      {/* Back button */}
-      <button
-        onClick={onBack}
-        className="flex items-center text-sm font-medium mb-6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors"
-      >
-        <FiArrowLeft className="w-4 h-4 mr-2" />
-        Back to Dashboard
-      </button>
+    <div className="w-full space-y-8 pb-12">
 
-      {/* Main Card */}
-      <div className="max-w-4xl mx-auto rounded-xl shadow-sm overflow-hidden bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-gray-800">
-        <div className="p-8">
-          {/* Header */}
-          <div className="flex items-center gap-2 mb-8 pb-2 border-b border-gray-100 dark:border-gray-800">
-            <AlertIcon className="w-5 h-5 text-orange-500 dark:text-orange-400" />
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Behavior & Discipline Records
-            </h2>
-          </div>
-
+      <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+        <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
+          <CardTitle className="text-[16px] font-bold flex items-center gap-3">
+            <div className="bg-[#ff6b00]/10 p-2 rounded-lg border border-[#ff6b00]/20">
+              <AlertIcon className="w-5 h-5 text-[#ff6b00]" />
+            </div>
+            Behavior & Discipline Records
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8 space-y-8">
           {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gray-50 dark:bg-[#18181B] p-4 rounded-xl border border-gray-200 dark:border-gray-800 text-center">
               <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Warnings</h4>
               <p className="text-4xl font-extrabold text-yellow-500">{warnings}</p>
             </div>
-            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm text-center">
+            <div className="bg-gray-50 dark:bg-[#18181B] p-4 rounded-xl border border-gray-200 dark:border-gray-800 text-center">
               <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Suspensions</h4>
               <p className="text-4xl font-extrabold text-red-500">{suspensions}</p>
             </div>
-            <div className="bg-white dark:bg-[#1E1E1E] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm text-center">
+            <div className="bg-gray-50 dark:bg-[#18181B] p-4 rounded-xl border border-gray-200 dark:border-gray-800 text-center">
               <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Counseling Sessions</h4>
               <p className="text-4xl font-extrabold text-blue-500">{counseling}</p>
             </div>
           </div>
 
           {/* Incidents Field (read‑only) */}
-          <div className="space-y-1 mb-4">
-            <label className={labelClass}>Incidents</label>
-            <div className={readOnlyContainerClass}>
-              {incidents || <span className="text-gray-400 dark:text-gray-500">—</span>}
-            </div>
+          <div className="space-y-2">
+            <label className={labelClasses}>Incidents</label>
+            <input
+              type="text"
+              className={inputClasses(false, false, incidents)}
+              value={incidents || '—'}
+              disabled
+              readOnly
+            />
           </div>
 
           {/* Counseling Records Field (read‑only) */}
-          <div className="space-y-1 mb-4">
-            <label className={labelClass}>Counseling Records</label>
-            <div className={readOnlyContainerClass}>
-              {counselingRecords || <span className="text-gray-400 dark:text-gray-500">—</span>}
-            </div>
+          <div className="space-y-2">
+            <label className={labelClasses}>Counseling Records</label>
+            <input
+              type="text"
+              className={inputClasses(false, false, counselingRecords)}
+              value={counselingRecords || '—'}
+              disabled
+              readOnly
+            />
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
