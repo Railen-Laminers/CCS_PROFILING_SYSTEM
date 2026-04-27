@@ -227,6 +227,87 @@ class ActivityLogService {
         return `${who} ${response} the invitation to event "${title}" at ${timestamp}.`;
       }
 
+      // ========== INSTRUCTION / CLASS ACTIONS ==========
+      case 'CLASS_CREATED': {
+        const course = metadata?.course || 'class';
+        const section = metadata?.section || '';
+        const date = metadata?.date || 'a date';
+        if (metadata?.series_id) {
+          return `${who} scheduled ${metadata.count} recurring sessions from ${metadata.first_date} to ${metadata.last_date} for ${course} (${section}) at ${timestamp}.`;
+        }
+        return `${who} created a new class:  (${section}) scheduled on ${date} at ${timestamp}.`;
+      }
+      case 'CLASS_UPDATED': {
+        const changes = metadata?.changes;
+        if (!changes || Object.keys(changes).length === 0) {
+          return `${who} updated class ${metadata?.class_id} at ${timestamp}.`;
+        }
+        const changeLines = Object.entries(changes).map(([field, { old, new: newVal }]) => {
+          const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
+          return `  ${fieldName}: "${old}" → "${newVal}"`;
+        });
+        return `${who} updated the following class details at ${timestamp}:\n${changeLines.join('\n')}`;
+      }
+      case 'CLASS_DELETED': {
+        const course = metadata?.course || 'a course';
+        const section = metadata?.section || '';
+        return `${who} deleted class "${metadata?.class_id}" (${course} - ${section}) at ${timestamp}.`;
+      }
+      case 'LESSON_PLAN_CREATED': {
+        const topic = metadata?.topic || 'a lesson plan';
+        const courseTitle = metadata?.course_title || 'the course';
+        return `${who} created a lesson plan for "${topic}" (course: ${courseTitle}) at ${timestamp}.`;
+      }
+      case 'LESSON_PLAN_DELETED': {
+        const topic = metadata?.topic || 'a lesson plan';
+        return `${who} deleted the lesson plan "${topic}" at ${timestamp}.`;
+      }
+      case 'MATERIAL_CREATED': {
+        const title = metadata?.title || 'a material';
+        const courseTitle = metadata?.course_title || 'the course';
+        return `${who} uploaded a new material "${title}" for ${courseTitle} at ${timestamp}.`;
+      }
+      case 'MATERIAL_DELETED': {
+        const title = metadata?.title || 'a material';
+        return `${who} deleted the material "${title}" at ${timestamp}.`;
+      }
+
+      // ========== COURSE ACTIONS ==========
+      case 'COURSE_CREATED':
+        return `${who} created a new course "${metadata?.course_code}" - ${metadata?.course_title} at ${timestamp}.`;
+      case 'COURSE_UPDATED': {
+        const changes = metadata?.changes;
+        if (!changes || Object.keys(changes).length === 0) {
+          return `${who} updated course "${metadata?.course_code}" at ${timestamp}.`;
+        }
+        const changeLines = Object.entries(changes).map(([field, { old, new: newVal }]) => {
+          const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
+          return `  ${fieldName}: "${old}" → "${newVal}"`;
+        });
+        return `${who} updated the following course details for ${metadata?.course_code} at ${timestamp}:\n${changeLines.join('\n')}`;
+      }
+      case 'COURSE_DELETED':
+        return `${who} deleted course "${metadata?.course_code}" - ${metadata?.course_title} at ${timestamp}.`;
+
+      // ========== ROOM ACTIONS (NEW) ==========
+      case 'ROOM_CREATED':
+        return `${who} created a new room "${metadata?.room_name}" (capacity: ${metadata?.capacity}) at ${timestamp}.`;
+      case 'ROOM_UPDATED': {
+        const changes = metadata?.changes;
+        if (!changes || Object.keys(changes).length === 0) {
+          return `${who} updated room "${metadata?.room_name}" (no changes) at ${timestamp}.`;
+        }
+        const changeLines = Object.entries(changes).map(([field, { old, new: newVal }]) => {
+          const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
+          return `  ${fieldName}: "${old}" → "${newVal}"`;
+        });
+        const header = `${who} updated the following fields of room "${metadata?.room_name}" at ${timestamp}:`;
+        const oldNewHeader = `Old → New`;
+        return `${header}\n${oldNewHeader}\n${changeLines.join('\n')}`;
+      }
+      case 'ROOM_DELETED':
+        return `${who} deleted room "${metadata?.room_name}" (originally capacity: ${metadata?.capacity}) at ${timestamp}.`;
+
       default:
         return `${who} performed ${action} at ${timestamp}.`;
     }
