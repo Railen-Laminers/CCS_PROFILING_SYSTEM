@@ -26,11 +26,6 @@ const connectDB = async () => {
   }
 };
 
-// Helper function to generate section based on year level and section letter
-const generateSection = (sectionLetter) => {
-  return `IT-${sectionLetter}`;
-};
-
 // Seed data
 const seedData = async () => {
   try {
@@ -72,213 +67,86 @@ const seedData = async () => {
       interfaceLanguage: 'English - North America'
     });
 
-    // Create Students with proper year levels and sections
-    const studentUsersData = [
-      {
-        firstname: 'John Michael',
-        middlename: 'Rodriguez',
-        lastname: 'Cruz',
-        user_id: '2023001', // 3rd year
-        email: 'john.cruz@ccs.edu',
-        password: 'password',
-        role: 'student',
-        birth_date: '2003-05-15',
-        contact_number: '09123456701',
-        gender: 'male',
-        address: '123 Mabini Street, Manila',
-        is_active: true
-      },
-      {
-        firstname: 'Maria Angelica',
-        middlename: 'Santos',
-        lastname: 'Lim',
-        user_id: '2023002', // 3rd year
-        email: 'maria.lim@ccs.edu',
-        password: 'password',
-        role: 'student',
-        birth_date: '2004-02-20',
-        contact_number: '09123456702',
-        gender: 'female',
-        address: '456 Taft Avenue, Manila',
-        is_active: true
-      },
-      {
-        firstname: 'Carlos',
-        middlename: 'Miguel',
-        lastname: 'Bautista',
-        user_id: '2024001', // 2nd year
-        email: 'carlos.bautista@ccs.edu',
-        password: 'password',
-        role: 'student',
-        birth_date: '2003-11-08',
-        contact_number: '09123456703',
-        gender: 'male',
-        address: '789 Aurora Boulevard, Quezon City',
-        is_active: true
-      },
-      {
-        firstname: 'Sofia',
-        middlename: 'Garcia',
-        lastname: 'Mendoza',
-        user_id: '2023003', // 3rd year
-        email: 'sofia.mendoza@ccs.edu',
-        password: 'password',
-        role: 'student',
-        birth_date: '2004-07-22',
-        contact_number: '09123456704',
-        gender: 'female',
-        address: '321 EDSA, Mandaluyong City',
-        is_active: true
-      },
-      {
-        firstname: 'Nathaniel',
-        middlename: 'Torres',
-        lastname: 'Franco',
-        user_id: '2024002', // 2nd year
-        email: 'nathaniel.franco@ccs.edu',
-        password: 'password',
-        role: 'student',
-        birth_date: '2003-09-10',
-        contact_number: '09123456705',
-        gender: 'male',
-        address: '654 Bonifacio Street, Makati City',
-        is_active: true
-      }
-    ];
+    // Create 1000 Students with details
+    console.log('🌱 Generating 1000 student records...');
 
-    console.log('🎓 Creating Student Users...');
+    // Helper functions for random data generation
+    const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const getRandomElement = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    const firstNames = ['John', 'Jane', 'Michael', 'Emily', 'Chris', 'Jessica', 'David', 'Sarah', 'James', 'Linda', 'Robert', 'Patricia', 'Charles', 'Jennifer', 'Joseph', 'Maria', 'Thomas', 'Susan', 'Daniel', 'Lisa'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin'];
+    const middleInitials = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const programs = ['BSIT', 'BSCS', 'BSIS'];
+    const genders = ['male', 'female'];
+    const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+    const sports = ['Basketball', 'Volleyball', 'Swimming', 'Chess', 'Badminton', 'Soccer', 'Table Tennis', 'Lawn Tennis'];
+    const orgs = ['Google Developer Student Chapter', 'Tech Society', 'Student Council', 'Photography Club', 'Game Development Club', 'Red Cross Youth', 'Literary Guild'];
+    const cities = ['Manila', 'Quezon City', 'Makati', 'Pasig', 'Taguig', 'Caloocan'];
+    const streets = ['Mabini', 'Taft', 'Rizal', 'Aurora', 'Bonifacio', 'EDSA'];
+    const allergies = ['Peanuts', 'Dust', 'Pollen', 'Shellfish', 'None'];
+    const medicalConditions = ['Asthma', 'None', 'Hypertension', 'Migraine'];
+
+    const studentUsersData = [];
+    const currentYear = new Date().getFullYear();
+
+    for (let i = 1; i <= 1000; i++) {
+      const firstname = getRandomElement(firstNames);
+      const lastname = getRandomElement(lastNames);
+      const entryYear = currentYear - getRandomInt(0, 3); // For 1st to 4th year students
+      const user_id = `${entryYear}${String(i).padStart(4, '0')}`;
+      studentUsersData.push({
+        firstname,
+        middlename: getRandomElement(middleInitials) + '.',
+        lastname,
+        user_id,
+        email: `${firstname.toLowerCase()}.${lastname.toLowerCase()}${i}@ccs.edu`,
+        password: 'password',
+        role: 'student',
+        birth_date: `${getRandomInt(1998, 2005)}-${String(getRandomInt(1, 12)).padStart(2, '0')}-${String(getRandomInt(1, 28)).padStart(2, '0')}`,
+        contact_number: `09${getRandomInt(100000000, 999999999)}`,
+        gender: getRandomElement(genders),
+        address: `${getRandomInt(1, 1000)} ${getRandomElement(streets)} Street, ${getRandomElement(cities)}`,
+        is_active: Math.random() > 0.1 // 90% active
+      });
+    }
+
+    console.log('🎓 Creating 1000 Student Users...');
     const createdStudentUsers = await User.create(studentUsersData);
 
-    const studentProfiles = [
-      {
-        user_id: createdStudentUsers[0]._id,
-        parent_guardian_name: 'Roberto Cruz',
-        emergency_contact: '09123456711',
-        section: generateSection('A'), // IT-A
-        program: 'BSIT',
-        year_level: 3,
-        gpa: 1.75,
-        current_subjects: ['IT 301 - Database Management Systems 1', 'IT 350 - Software Engineering', 'IT 205 - Web Development Fundamentals'],
-        academic_awards: ["Dean's List (2023)", 'Best in Programming Award (2024)'],
-        quiz_bee_participations: ['Regional Quiz Bee 2024'],
-        programming_contests: ['CCC Coding Competition 2024 - 2nd Place'],
-        blood_type: 'O',
-        disabilities: [],
-        medical_condition: null,
-        allergies: ['Peanuts'],
-        sports_activities: { sportsPlayed: ['Basketball', 'Swimming'], achievements: 'Basketball Team Captain 2024' },
-        organizations: { clubs: ['Google Developer Student Chapter', 'Tech Society'], positions: ['President'] },
-        behavior_discipline_records: { warnings: 0, suspensions: 0, counseling: 0, incidents: '', counselingRecords: '' }
-      },
-      {
-        user_id: createdStudentUsers[1]._id,
-        parent_guardian_name: 'Antonio Lim',
-        emergency_contact: '09123456712',
-        section: generateSection('B'), // IT-B
-        program: 'BSIT',
-        year_level: 3,
-        gpa: 1.5,
-        current_subjects: ['IT 301 - Database Management Systems 1', 'IT 350 - Software Engineering', 'IT 205 - Web Development Fundamentals'],
-        academic_awards: ["Dean's List (2024)"],
-        quiz_bee_participations: ['National Quiz Bee 2023'],
-        programming_contests: [],
-        blood_type: 'A',
-        disabilities: [],
-        medical_condition: 'Asthma',
-        allergies: ['Dust', ' pollen'],
-        sports_activities: { sportsPlayed: ['Badminton', 'Volleyball'], achievements: 'Intramural Champion 2024' },
-        organizations: { clubs: ['Student Council', 'Photography Club'], positions: ['Secretary'] },
-        behavior_discipline_records: { warnings: 0, suspensions: 0, counseling: 0, incidents: '', counselingRecords: '' }
-      },
-      {
-        user_id: createdStudentUsers[2]._id,
-        parent_guardian_name: 'Roberto Bautista',
-        emergency_contact: '09123456713',
-        section: generateSection('A'), // IT-A
-        program: 'BSIT',
-        year_level: 2,
-        gpa: 2.0,
-        current_subjects: ['IT 201 - Data Structures & Algorithms', 'IT 205 - Web Development Fundamentals', 'IT 102 - Computer Programming 1'],
-        academic_awards: [],
-        quiz_bee_participations: [],
-        programming_contests: ['Hackathon 2024 Participant'],
-        blood_type: 'B',
-        disabilities: [],
-        medical_condition: null,
-        allergies: [],
-        sports_activities: { sportsPlayed: ['Basketball'], achievements: '' },
-        organizations: { clubs: ['Game Development Club'], positions: ['Member'] },
-        behavior_discipline_records: { warnings: 0, suspensions: 0, counseling: 0, incidents: '', counselingRecords: '' }
-      },
-      {
-        user_id: createdStudentUsers[3]._id,
-        parent_guardian_name: 'Ricardo Mendoza',
-        emergency_contact: '09123456714',
-        section: generateSection('A'), // IT-A
-        program: 'BSIT',
-        year_level: 3,
-        gpa: 1.25,
-        current_subjects: ['IT 301 - Database Management Systems 1', 'IT 350 - Software Engineering', 'IT 205 - Web Development Fundamentals'],
+    const studentProfiles = [];
+    for (let i = 0; i < createdStudentUsers.length; i++) {
+      const user = createdStudentUsers[i];
+      const entryYear = parseInt(user.user_id.substring(0, 4));
+      const year_level = Math.max(1, Math.min(4, currentYear - entryYear + 1));
+      const program = getRandomElement(programs);
+      const sectionLetter = getRandomElement(['A', 'B', 'C', 'D']);
+      const section = `${program.replace('BS', '')}-${year_level}${sectionLetter}`;
+
+      studentProfiles.push({
+        user_id: user._id,
+        parent_guardian_name: `${getRandomElement(firstNames)} ${user.lastname}`,
+        emergency_contact: `09${getRandomInt(100000000, 999999999)}`,
+        section,
+        program,
+        year_level,
+        gpa: (Math.random() * (3.0) + 1.0).toFixed(2), // GPA between 1.0 and 4.0
+        current_subjects: [],
         academic_awards: [],
         quiz_bee_participations: [],
         programming_contests: [],
-        blood_type: 'AB',
+        blood_type: getRandomElement(bloodTypes),
         disabilities: [],
-        medical_condition: 'None',
-        allergies: [],
-        sports_activities: { sportsPlayed: ['Swimming'], achievements: 'Regional Swimming Competition 2023 - 3rd Place' },
-        organizations: { clubs: ['Debate Club', 'Science Club'], positions: ['Vice President'] },
+        medical_condition: getRandomElement(medicalConditions),
+        allergies: [getRandomElement(allergies)],
+        sports_activities: { sportsPlayed: [getRandomElement(sports)], achievements: '' },
+        organizations: { clubs: [getRandomElement(orgs)], positions: ['Member'] },
         behavior_discipline_records: { warnings: 0, suspensions: 0, counseling: 0, incidents: '', counselingRecords: '' }
-      },
-      {
-        user_id: createdStudentUsers[4]._id,
-        parent_guardian_name: 'Manuel Franco',
-        emergency_contact: '09123456715',
-        section: generateSection('B'), // IT-B
-        program: 'BSIT',
-        year_level: 2,
-        gpa: 1.0,
-        current_subjects: ['IT 201 - Data Structures & Algorithms', 'IT 205 - Web Development Fundamentals', 'IT 102 - Computer Programming 1'],
-        academic_awards: ['With Honors (2024)'],
-        quiz_bee_participations: [],
-        programming_contests: ['ICPC Asia Qualifier 2024'],
-        blood_type: 'O',
-        disabilities: ['Dyslexia'],
-        medical_condition: null,
-        allergies: ['Shellfish'],
-        sports_activities: { sportsPlayed: ['Chess'], achievements: 'National Chess Tournament 2023 - Champion' },
-        organizations: { clubs: ['Chess Club'], positions: ['President'] },
-        behavior_discipline_records: { warnings: 0, suspensions: 0, counseling: 0, incidents: '', counselingRecords: '' }
-      }
-    ];
-
-    console.log('📝 Creating Student Profiles...');
-    const createdStudents = await Student.insertMany(studentProfiles);
-
-    console.log('🏛️ Creating Historical Academic Records...');
-    for (const student of createdStudents) {
-      if (student.year_level > 1) {
-        // Create record for Year 1, Sem 1
-        await AcademicRecord.create({
-          student_id: student._id,
-          year_level: '1st Year',
-          semester: '1st Semester',
-          gpa: (Math.random() * (2.0 - 1.0) + 1.0).toFixed(2),
-          current_subjects: ['IT 101 - Introduction to Computing', 'IT 102 - Computer Programming 1'],
-          academic_awards: student.year_level === 3 ? ["Dean's List"] : []
-        });
-
-        // Create record for Year 1, Sem 2
-        await AcademicRecord.create({
-          student_id: student._id,
-          year_level: '1st Year',
-          semester: '2nd Semester',
-          gpa: (Math.random() * (2.0 - 1.0) + 1.0).toFixed(2),
-          current_subjects: ['IT 103 - Discrete Mathematics', 'GE 101 - Purposive Communication'],
-          academic_awards: []
-        });
-      }
+      });
     }
+
+    console.log('📝 Creating 1000 Student Profiles...');
+    await Student.insertMany(studentProfiles);
 
     // Create Faculty Users
     const facultyUsersData = [
