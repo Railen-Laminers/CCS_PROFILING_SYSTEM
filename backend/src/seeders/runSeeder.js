@@ -133,8 +133,8 @@ const seedData = async () => {
         gpa: (Math.random() * (3.0) + 1.0).toFixed(2), // GPA between 1.0 and 4.0
         current_subjects: [],
         academic_awards: [],
-        quiz_bee_participations: [],
-        programming_contests: [],
+        quiz_bee_participations: Math.random() > 0.7 ? [getRandomElement(['Math Quiz Bee', 'Science Quiz Bee', 'IT Quiz Bee', 'History Quiz Bee', 'Regionals', 'National Level'])] : [],
+        programming_contests: Math.random() > 0.8 ? [getRandomElement(['Hackathon 2024', 'Coding Cup', 'Code Sprint', 'Logic Master', 'Vite Hackathon', 'React Challenge'])] : [],
         blood_type: getRandomElement(bloodTypes),
         disabilities: [],
         medical_condition: getRandomElement(medicalConditions),
