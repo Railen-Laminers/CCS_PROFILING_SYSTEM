@@ -22,8 +22,8 @@ const TabNavigation = ({ tabs, activeTab, setActiveTab }) => (
         key={index}
         onClick={() => setActiveTab(index)}
         className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-[1.25rem] relative z-10 focus:outline-none ${activeTab === index
-            ? 'bg-white dark:bg-[#1E1E1E] text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10'
-            : 'text-zinc-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-[#2C2C2C]'
+          ? 'bg-white dark:bg-[#1E1E1E] text-brand-600 dark:text-brand-500 shadow-sm ring-1 ring-zinc-200 dark:ring-white/10'
+          : 'text-zinc-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-[#2C2C2C]'
           }`}
       >
         {tab}
@@ -41,8 +41,7 @@ const SystemSettings = () => {
 
   const isAdmin = user?.role === 'admin';
 
-  // General settings state
-  const [interfaceLanguage, setInterfaceLanguage] = useState('English - North America');
+  // General settings state (interfaceLanguage removed)
   const [academicYear, setAcademicYear] = useState(() => {
     const currentYear = new Date().getFullYear();
     return `${currentYear}-${currentYear + 1}`;
@@ -115,7 +114,7 @@ const SystemSettings = () => {
       try {
         setLoadingSettings(true);
         const settings = await systemSettingsAPI.get(controller.signal);
-        setInterfaceLanguage(settings?.interfaceLanguage || 'English - North America');
+        // Removed interfaceLanguage
         setAcademicYear(settings?.academicYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`);
         setSemester(settings?.semester || '1st Semester');
         setStoredLogoUrl(settings?.logoUrl || null);
@@ -144,7 +143,6 @@ const SystemSettings = () => {
     if (!isAdmin) return;
 
     // Detect if rollover (Term transition) is triggered
-    // We compare current state values with the ones we loaded from the database
     const isYearChanged = academicYear !== initialSettings?.academicYear;
     const isSemesterChanged = semester !== initialSettings?.semester;
     const isRolloverTriggered = isYearChanged || isSemesterChanged;
@@ -157,24 +155,22 @@ const SystemSettings = () => {
     setSaveError(null);
     setSavingGeneral(true);
     try {
+      // Removed interfaceLanguage from the update payload
       const settings = await systemSettingsAPI.update({
-        interfaceLanguage,
         academicYear,
         semester,
       });
-      
+
       const newSettings = {
-        interfaceLanguage: settings?.interfaceLanguage || 'English - North America',
         academicYear: settings?.academicYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,
         semester: settings?.semester || '1st Semester',
         logoUrl: settings?.logoUrl || null
       };
 
-      setInterfaceLanguage(newSettings.interfaceLanguage);
       setAcademicYear(newSettings.academicYear);
       setSemester(newSettings.semester);
       setStoredLogoUrl(newSettings.logoUrl);
-      
+
       // Update initial settings to match new state
       setInitialSettings({
         academicYear: newSettings.academicYear,
@@ -197,8 +193,8 @@ const SystemSettings = () => {
     setSaveError(null);
     setSavingAppearance(true);
     try {
+      // Removed interfaceLanguage from appearance update as well
       const settings = await systemSettingsAPI.update({
-        interfaceLanguage,
         logo: logoFile,
       });
       setStoredLogoUrl(settings?.logoUrl || null);
@@ -258,16 +254,16 @@ const SystemSettings = () => {
                   </li>
                 </ul>
                 <div className="mt-10 flex gap-3">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1" 
+                  <Button
+                    variant="outline"
+                    className="flex-1"
                     onClick={() => setShowRolloverModal(false)}
                     disabled={savingGeneral}
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white" 
+                  <Button
+                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
                     onClick={() => handleSaveGeneral(true)}
                     loading={savingGeneral}
                   >
@@ -313,11 +309,11 @@ const SystemSettings = () => {
                 <div>
                   <label className={labelClasses}>Academic Year (Start Year)</label>
                   <div className="relative group">
-                    <input 
-                      type="number" 
+                    <input
+                      type="number"
                       className={`${inputClasses} pr-24`}
                       placeholder="e.g. 2025"
-                      value={academicYear.split('-')[0]} 
+                      value={academicYear.split('-')[0]}
                       onChange={(e) => {
                         const start = e.target.value;
                         if (!start) {
@@ -327,7 +323,7 @@ const SystemSettings = () => {
                         const end = parseInt(start) + 1;
                         setAcademicYear(`${start}-${end}`);
                       }}
-                      disabled={loadingSettings || savingGeneral} 
+                      disabled={loadingSettings || savingGeneral}
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 bg-brand-500/10 border border-brand-500/20 rounded-lg text-brand-500 text-xs font-bold pointer-events-none">
                       {academicYear.includes('-') ? `AY ${academicYear}` : 'SET YEAR'}
@@ -336,17 +332,17 @@ const SystemSettings = () => {
                 </div>
                 <div>
                   <label className={labelClasses}>Active Semester</label>
-                  <select 
-                    className={inputClasses} 
-                    value={semester} 
-                    onChange={(e) => setSemester(e.target.value)} 
+                  <select
+                    className={inputClasses}
+                    value={semester}
+                    onChange={(e) => setSemester(e.target.value)}
                     disabled={loadingSettings || savingGeneral}
                   >
                     {SEMESTER_ORDER.map((sem) => {
                       const isYearChanged = initialSettings && academicYear !== initialSettings.academicYear;
-                      
+
                       const isDisabled = initialSettings && (
-                        (isYearChanged && sem !== "1st Semester") || 
+                        (isYearChanged && sem !== "1st Semester") ||
                         (!isYearChanged && SEMESTER_ORDER.indexOf(sem) < SEMESTER_ORDER.indexOf(initialSettings.semester))
                       );
 
@@ -388,8 +384,8 @@ const SystemSettings = () => {
                 <div className="md:col-span-2">
                   <div
                     className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 cursor-pointer group ${isDragOver
-                        ? 'border-brand-500 bg-brand-500/5 shadow-inner'
-                        : 'border-gray-200 dark:border-gray-800 hover:border-brand-500/50 hover:bg-brand-500/[0.02]'
+                      ? 'border-brand-500 bg-brand-500/5 shadow-inner'
+                      : 'border-gray-200 dark:border-gray-800 hover:border-brand-500/50 hover:bg-brand-500/[0.02]'
                       }`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
@@ -430,7 +426,7 @@ const SystemSettings = () => {
           </Card>
         )}
 
-        {/* Interface Preferences - Available to all */}
+        {/* Visual Appearance (Theme only, no interface language) */}
         <Card className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
           <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-zinc-900/10">
             <CardTitle className="text-[15px] font-bold flex items-center gap-3">
@@ -440,7 +436,7 @@ const SystemSettings = () => {
               Visual Appearance
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-8 space-y-10">
+          <CardContent className="p-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
               <div className="md:col-span-1">
                 <h4 className="text-[14px] font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Theme Preference</h4>
@@ -455,28 +451,6 @@ const SystemSettings = () => {
                 </div>
               </div>
             </div>
-            <hr className="border-gray-100 dark:border-gray-800" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-              <div className="md:col-span-1">
-                <h4 className="text-[14px] font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Interface Language</h4>
-                <p className="text-[12px] text-gray-500 dark:text-zinc-500 mt-1">Select your preferred language for the system interface.</p>
-              </div>
-              <div className="md:col-span-2">
-                <div className="max-w-sm">
-                  <select className={inputClasses} value={interfaceLanguage} onChange={(e) => setInterfaceLanguage(e.target.value)} disabled={loadingSettings || (isAdmin && savingGeneral)}>
-                    <option>English - North America</option>
-                    <option>Filipino - PH</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            {isAdmin && (
-              <div className="flex justify-end pt-4">
-                <button onClick={() => handleSaveGeneral()} disabled={loadingSettings || savingGeneral} className="text-[13px] font-bold text-brand-500 hover:text-brand-600 transition-colors uppercase tracking-widest">
-                  Save Language Setting
-                </button>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
