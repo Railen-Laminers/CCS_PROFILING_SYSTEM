@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { FiX, FiSave, FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiX, FiSave, FiEye, FiEyeOff, FiPlus } from 'react-icons/fi';
 import { userAPI } from '../../services/api';
 import { Spinner } from '@/components/ui/Skeleton.jsx';
+
+const PREDEFINED_ACTIVITIES = [
+    'Basketball', 'Volleyball', 'Programming', 'Quiz Bee', 'Chess', 'Football/Soccer',
+    'Swimming', 'Track and Field', 'Badminton', 'Table Tennis', 'Dance', 'Music/Band',
+    'Art/Painting', 'Drama/Theater', 'Debate', 'Robotics', 'Science Club', 'Math Club',
+    'Writing/Journalism', 'Photography', 'Coding Club', 'Student Council', 'Environmental Club',
+    'Taekwondo/Martial Arts', 'Baseball', 'Tennis', 'Cheerleading', 'Choir/Singing',
+    'Gaming/Esports', 'Cooking/Culinary', 'Gardening', 'Archery', 'Cycling', 'Skateboarding', 'Yoga/Fitness'
+];
 
 const DEFAULT_FORM_DATA = {
     firstname: '',
@@ -50,6 +59,8 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [allergyInput, setAllergyInput] = useState('');
+    const [disabilityInput, setDisabilityInput] = useState('');
 
     // Helper to convert arrays to comma-separated strings (for form fields)
     const stringifyArray = (val) => {
@@ -145,6 +156,11 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 if (isCreate && !value) return 'Please confirm your password.';
                 if (value && value !== formData.password) return 'Passwords do not match.';
                 break;
+            case 'contact_number':
+                if (value && !/^(\+?63|0)[9]\d{9}$/.test(value.replace(/\s/g, ''))) {
+                    return 'Invalid Philippine mobile number (e.g., 09123456789 or +639123456789).';
+                }
+                break;
             case 'year_level':
                 if (value && (value < 1 || value > 4)) return 'Year level must be between 1 and 4.';
                 break;
@@ -201,6 +217,50 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
     const getErrorMessage = (err) => {
         if (err.response?.data?.errors) return err.response.data.errors;
         return {};
+    };
+
+    const addItem = (field, value, setInput) => {
+        if (!value.trim()) return;
+        setFormData(prev => {
+            const current = (prev[field] || '').split(',').map(s => s.trim()).filter(Boolean);
+            if (current.includes(value.trim())) return prev;
+            return {
+                ...prev,
+                [field]: [...current, value.trim()].join(', ')
+            };
+        });
+        setInput('');
+    };
+
+    const removeItem = (field, index) => {
+        setFormData(prev => {
+            const current = (prev[field] || '').split(',').map(s => s.trim()).filter(Boolean);
+            const updated = current.filter((_, i) => i !== index);
+            return {
+                ...prev,
+                [field]: updated.join(', ')
+            };
+        });
+    };
+
+    const toggleActivity = (activity) => {
+        setFormData(prev => {
+            const current = typeof prev.sportsPlayed === 'string'
+                ? prev.sportsPlayed.split(',').map(s => s.trim()).filter(Boolean)
+                : [];
+
+            let updated;
+            if (current.includes(activity)) {
+                updated = current.filter(i => i !== activity);
+            } else {
+                updated = [...current, activity];
+            }
+
+            return {
+                ...prev,
+                sportsPlayed: updated.join(', ')
+            };
+        });
     };
 
     const handleInputChange = (e) => {
@@ -397,25 +457,31 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                                {renderField('First Name', 'firstname', 'text', true, null, 'Maximum 255 characters', 'Enter first name')}
-                                {renderField('Middle Name', 'middlename', 'text', false, null, 'Maximum 255 characters', 'Enter middle name')}
-                                {renderField('Last Name', 'lastname', 'text', true, null, 'Maximum 255 characters', 'Enter last name')}
                                 {renderField('Student ID', 'user_id', 'text', true, null, 'Exactly 7 digits (e.g., 2024001)', 'e.g., 2024001')}
+                                {renderField('First name', 'firstname', 'text', true, null, 'Maximum 255 characters', 'Enter first name')}
+                                {renderField('Middle name', 'middlename', 'text', false, null, 'Maximum 255 characters', 'Enter middle name (optional)')}
+                                {renderField('Last name', 'lastname', 'text', true, null, 'Maximum 255 characters', 'Enter last name')}
+
+                                <div className="md:col-span-2">
+                                    {renderField('Email address', 'email', 'email', true, null, 'Valid email address', 'your@email.com')}
+                                </div>
+
+                                {renderField('Contact number', 'contact_number', 'tel', false, null, '09XXXXXXXXX', '09XXXXXXXXX')}
                                 {renderField('Gender', 'gender', 'select', false, [
+                                    { value: '', label: 'Prefer not to say' },
                                     { value: 'male', label: 'Male' },
                                     { value: 'female', label: 'Female' },
                                     { value: 'other', label: 'Other' }
                                 ])}
-                                {renderField('Birth Date', 'birth_date', 'date')}
 
-                                <div className="md:col-span-2 mt-4 mb-2 text-sm font-bold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-800 pb-2">Contact & Emergency Details</div>
-                                {renderField('Email', 'email', 'email', true, null, 'Valid email address', 'student@example.com')}
-                                {renderField('Contact Number', 'contact_number', 'tel', false, null, '11-digit mobile number', '09XXXXXXXXX')}
+                                {renderField('Birth date', 'birth_date', 'date')}
+                                <div className="md:col-span-1"></div>
+
                                 <div className="md:col-span-2">
-                                    {renderField('Address', 'address', 'textarea', false, null, null, 'Full address')}
+                                    {renderField('Complete address', 'address', 'textarea', false, null, null, 'Street, Barangay, City, Province, Zip Code')}
                                 </div>
-                                {renderField('Parent/Guardian Name', 'parent_guardian_name', 'text', false, null, null, 'Full name of guardian')}
-                                {renderField('Emergency Contact', 'emergency_contact', 'tel', false, null, null, '09XXXXXXXXX')}
+                                {renderField('Parent/Guardian name', 'parent_guardian_name', 'text', false, null, null, 'Full name of parent or guardian')}
+                                {renderField('Emergency contact number', 'emergency_contact', 'tel', false, null, null, '+63 XXX XXX XXXX')}
                             </div>
                         </div>
 
@@ -487,18 +553,18 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                                {renderField('Program', 'program', 'select', false, [
+                                {renderField('Course/Program', 'program', 'select', false, [
                                     { value: 'BSIT', label: 'BS Information Technology' },
                                     { value: 'BSCS', label: 'BS Computer Science' },
                                     { value: 'BSIS', label: 'BS Information Systems' }
                                 ])}
-                                {renderField('Section', 'section', 'text', false, null, null, 'e.g., IT-A')}
                                 {renderField('Year Level', 'year_level', 'select', false, [
                                     { value: '1', label: '1st Year' },
                                     { value: '2', label: '2nd Year' },
                                     { value: '3', label: '3rd Year' },
                                     { value: '4', label: '4th Year' }
                                 ])}
+                                {renderField('Section', 'section', 'text', false, null, null, 'e.g., IT-A')}
                                 {renderField('GPA', 'gpa', 'number', false, null, 'Range: 0.00 to 5.00', 'e.g., 1.25', 0, 5, 0.01)}
                                 <div className="md:col-span-2">
                                     {renderField('Academic Awards', 'academic_awards', 'text', false, null, 'Separate with commas', "e.g., Dean's Lister, Honor Roll")}
@@ -520,12 +586,67 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                     { value: 'AB+', label: 'AB+' }, { value: 'AB-', label: 'AB-' },
                                     { value: 'O+', label: 'O+' }, { value: 'O-', label: 'O-' }
                                 ])}
-                                {renderField('Allergies', 'allergies', 'text', false, null, 'Separate with commas', 'e.g., Peanuts, Dust')}
-                                <div className="md:col-span-2">
-                                    {renderField('Medical Condition', 'medical_condition', 'textarea', false, null, null, 'Describe any conditions')}
+
+                                <div className="space-y-2 text-left">
+                                    <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5 focus:outline-none">
+                                        Allergies
+                                    </label>
+                                    <div className="flex gap-2 mb-2">
+                                        <input
+                                            type="text"
+                                            value={allergyInput}
+                                            onChange={(e) => setAllergyInput(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' ? (e.preventDefault(), addItem('allergies', allergyInput, setAllergyInput)) : null}
+                                            placeholder="e.g., Peanuts, Penicillin"
+                                            className="flex-grow h-11 px-4 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-brand-500 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                                        />
+                                        <button type="button" onClick={() => addItem('allergies', allergyInput, setAllergyInput)} className="h-11 px-4 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors shadow-sm flex items-center justify-center">
+                                            <FiPlus className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {(formData.allergies || '').split(',').map(s => s.trim()).filter(Boolean).map((item, idx) => (
+                                            <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/40 rounded-full text-xs font-medium group transition-all animate-in zoom-in-95 duration-200">
+                                                {item}
+                                                <button type="button" onClick={() => removeItem('allergies', idx)} className="hover:text-red-900 dark:hover:text-red-100 transition-colors">
+                                                    <FiX className="w-3.5 h-3.5" />
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
+
                                 <div className="md:col-span-2">
-                                    {renderField('Disabilities', 'disabilities', 'text', false, null, 'Separate with commas', 'e.g., Visual, Hearing')}
+                                    {renderField('Medical Condition', 'medical_condition', 'textarea', false, null, null, 'e.g., Asthma, Diabetes, Hypertension')}
+                                </div>
+
+                                <div className="md:col-span-2 space-y-2 text-left">
+                                    <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-1.5 focus:outline-none">
+                                        Disabilities / Special Needs
+                                    </label>
+                                    <div className="flex gap-2 mb-2">
+                                        <input
+                                            type="text"
+                                            value={disabilityInput}
+                                            onChange={(e) => setDisabilityInput(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' ? (e.preventDefault(), addItem('disabilities', disabilityInput, setDisabilityInput)) : null}
+                                            placeholder="Enter disability or special need"
+                                            className="flex-grow h-11 px-4 bg-gray-50 dark:bg-[#252525] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-brand-500 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                                        />
+                                        <button type="button" onClick={() => addItem('disabilities', disabilityInput, setDisabilityInput)} className="h-11 px-4 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors shadow-sm flex items-center justify-center">
+                                            <FiPlus className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {(formData.disabilities || '').split(',').map(s => s.trim()).filter(Boolean).map((item, idx) => (
+                                            <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/40 rounded-full text-xs font-medium group transition-all animate-in zoom-in-95 duration-200">
+                                                {item}
+                                                <button type="button" onClick={() => removeItem('disabilities', idx)} className="hover:text-purple-900 dark:hover:text-purple-100 transition-colors">
+                                                    <FiX className="w-3.5 h-3.5" />
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -538,10 +659,35 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                                {renderField('Sports Played', 'sportsPlayed', 'text', false, null, 'Separate with commas', 'e.g., Basketball, Volleyball')}
-                                {renderField('Athletic Achievements', 'athleticAchievements', 'text', false, null, 'Separate with commas', 'e.g., MVP 2023, Gold Medal')}
-                                {renderField('Competitions Joined', 'competitions', 'text', false, null, 'Separate with commas', 'e.g., Intramurals 2023')}
-                                {renderField('Skills', 'skills', 'text', false, null, 'Separate with commas', 'e.g., Programming, Writing, Designing')}
+                                <div className="md:col-span-2 text-left">
+                                    <label className="block text-[13px] font-bold text-gray-900 dark:text-gray-300 mb-2.5 uppercase tracking-widest">
+                                        Sports & Activities Played
+                                    </label>
+                                    <div className="flex flex-wrap gap-2 p-5 bg-gray-50/50 dark:bg-[#18181B]/30 border border-gray-200 dark:border-gray-800 rounded-2xl">
+                                        {PREDEFINED_ACTIVITIES.map((activity, index) => {
+                                            const isActive = (formData.sportsPlayed || '').split(',').map(s => s.trim()).includes(activity);
+                                            return (
+                                                <button
+                                                    key={index}
+                                                    type="button"
+                                                    onClick={() => toggleActivity(activity)}
+                                                    className={`px-3.5 py-2 rounded-xl border text-[13px] font-medium transition-all duration-200 ${isActive
+                                                        ? 'bg-[#F97316] text-white border-[#F97316] shadow-sm shadow-[#F97316]/20'
+                                                        : 'bg-white dark:bg-[#252525] text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-orange-500/50 dark:hover:border-orange-500/50'
+                                                        }`}
+                                                >
+                                                    {activity}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                    <p className="mt-2 text-[11px] text-gray-500 dark:text-gray-400">Click on the activities to toggle selection.</p>
+                                </div>
+                                {renderField('Achievements & Awards', 'athleticAchievements', 'text', false, null, 'Separate with commas', 'e.g., Regional Champion, MVP 2024')}
+                                {renderField('Competitions Participated', 'competitions', 'text', false, null, 'Separate with commas', 'e.g., Intramurals 2023, District Meet')}
+                                <div className="md:col-span-2">
+                                    {renderField('Skills & Talents', 'skills', 'text', false, null, 'Separate with commas', 'e.g., Programming, Writing, Graphic Design')}
+                                </div>
                             </div>
                         </div>
 
@@ -549,14 +695,14 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                         <div>
                             <div className="flex items-center gap-3 mb-5">
                                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold ring-1 ring-brand-500/20">06</span>
-                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Organizations</h3>
+                                <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Organizations & Leadership</h3>
                                 <div className="h-[1px] flex-grow bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent ml-2"></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-11">
-                                {renderField('Clubs Joined', 'clubs', 'text', false, null, 'Separate with commas', 'e.g., IT Club, Coding Society')}
-                                {renderField('Student Council', 'studentCouncil', 'text', false, null, 'Separate with commas', 'e.g., Year Representative')}
+                                {renderField('Clubs Joined', 'clubs', 'text', false, null, 'Separate with commas', 'e.g., IT Club, Coding Society, Red Cross')}
+                                {renderField('Student Council', 'studentCouncil', 'text', false, null, 'Separate with commas', 'e.g., Year Representative, Officer')}
                                 <div className="md:col-span-2">
-                                    {renderField('Leadership Roles', 'leadershipRoles', 'text', false, null, 'Separate with commas', 'e.g., President, Secretary')}
+                                    {renderField('Leadership Roles', 'leadershipRoles', 'text', false, null, 'Separate with commas', 'e.g., President, Secretary, Auditor')}
                                 </div>
                             </div>
                         </div>
@@ -571,12 +717,12 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pl-11">
                                 {renderField('Warnings', 'warnings', 'number', false, null, null, '0', 0)}
                                 {renderField('Suspensions', 'suspensions', 'number', false, null, null, '0', 0)}
-                                {renderField('Counseling', 'counseling', 'number', false, null, null, '0', 0)}
+                                {renderField('Counseling Sessions', 'counseling', 'number', false, null, null, '0', 0)}
                                 <div className="md:col-span-3">
-                                    {renderField('Incidents', 'incidents', 'textarea', false, null, null, 'Describe incidents')}
+                                    {renderField('Incidents', 'incidents', 'textarea', false, null, null, 'e.g., Late arrival, Unprofessional conduct')}
                                 </div>
                                 <div className="md:col-span-3">
-                                    {renderField('Counseling Records', 'counseling_records', 'textarea', false, null, null, 'Details of counseling')}
+                                    {renderField('Counseling Records', 'counseling_records', 'textarea', false, null, null, 'Summarize counseling outcomes or notes')}
                                 </div>
                             </div>
                         </div>
