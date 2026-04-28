@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigate } from 'react-router-dom';
-import { FiSun, FiMoon, FiUser, FiMenu, FiChevronsLeft, FiChevronsRight, FiSettings, FiLogOut, FiClock } from 'react-icons/fi';
+import { FiUser, FiMenu, FiChevronsLeft, FiChevronsRight, FiSettings, FiLogOut, FiClock } from 'react-icons/fi';
 import { Button } from '@/components/ui/Button';
 import { NotificationDropdown } from '@/components/ui/NotificationDropdown';
 import { useToast } from '@/contexts/ToastContext';
 
 export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
   const { user, logout, isProcessing } = useAuth();
-  const { theme, toggleTheme, logoUrl, academicYear, semester } = useTheme();
+  const { logoUrl, academicYear, semester } = useTheme();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -70,14 +70,6 @@ export const Header = ({ onMenuClick, onToggleSidebar, sidebarCollapsed }) => {
         {/* Activity Log button removed from here – now inside profile dropdown */}
 
         <NotificationDropdown size="md" />
-
-        <div className="flex items-center gap-2">
-          <FiSun className={`w-5 h-5 transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
-          <button onClick={toggleTheme} className="relative flex items-center w-[32px] h-[18px] bg-gray-200 dark:bg-gray-700 rounded-full p-[2px] transition-colors duration-300 focus:outline-none hover:bg-gray-300 dark:hover:bg-gray-600 shadow-inner" aria-label="Toggle theme">
-            <div className={`absolute w-[14px] h-[14px] bg-white dark:bg-slate-300 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${theme === 'dark' ? 'translate-x-[14px]' : 'translate-x-0'}`} />
-          </button>
-          <FiMoon className={`w-5 h-5 transition-colors duration-300 stroke-[2] ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
-        </div>
 
         {/* User dropdown - now includes Activity Log item */}
         <div className="relative pl-1 sm:pl-0" ref={dropdownRef}>
