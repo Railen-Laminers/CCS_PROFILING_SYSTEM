@@ -74,9 +74,12 @@ class StudentSearchService {
       query['organizations.clubs'] = { $in: filters.organizations };
     }
 
-    // Filter by skills
+    // Filter by skills (now includes quiz bee and programming contests)
     if (filters.skills && filters.skills.length > 0) {
-      query['sports_activities.skills'] = { $in: filters.skills };
+      query.$or = [
+        { 'quiz_bee_participations': { $in: filters.skills } },
+        { 'programming_contests': { $in: filters.skills } }
+      ];
     }
 
     // Execute query
@@ -166,8 +169,14 @@ class StudentSearchService {
    * Get distinct skills from all students
    */
   static async getDistinctSkills() {
-    const skills = await Student.distinct('sports_activities.skills');
-    return skills.filter(s => s).sort();
+    const [quizBee, programming] = await Promise.all([
+      Student.distinct('quiz_bee_participations'),
+      Student.distinct('programming_contests')
+    ]);
+    
+    // Combine and get unique values, filtering out nulls/empties
+    const combined = [...new Set([...quizBee, ...programming])];
+    return combined.filter(s => s && typeof s === 'string').map(s => s.trim()).filter(Boolean).sort();
   }
 
   /**

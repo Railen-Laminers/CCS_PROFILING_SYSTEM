@@ -400,7 +400,19 @@ const StudentDetails = () => {
                                             <div><SectionSubhead>Sports Played</SectionSubhead>{renderTags(profile?.sports_activities, "sportsPlayed", "orange")}</div>
                                             <div><SectionSubhead>Athletic Achievements</SectionSubhead>{renderTags(profile?.sports_activities, "achievements", "yellow")}</div>
                                             <div><SectionSubhead>Competitions Joined</SectionSubhead><div className="mt-1"><BulletList items={profile?.sports_activities?.competitions} /></div></div>
-                                            <div><SectionSubhead>Skills</SectionSubhead>{renderTags(profile?.sports_activities, "skills", "green")}</div>
+                                            <div className="md:col-span-2">
+                                                <SectionSubhead>Skills & Academic Competencies</SectionSubhead>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                                                    <div>
+                                                        <p className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-tighter mb-1.5">Quiz Bee Participations</p>
+                                                        {renderTags(profile?.quiz_bee_participations, null, "indigo")}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-tighter mb-1.5">Programming Contests</p>
+                                                        {renderTags(profile?.programming_contests, null, "orange")}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </CardContent>
                                 </Card>

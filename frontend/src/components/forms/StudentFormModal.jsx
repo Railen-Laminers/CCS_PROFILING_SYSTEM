@@ -38,12 +38,13 @@ const DEFAULT_FORM_DATA = {
     sportsPlayed: '',
     athleticAchievements: '',
     competitions: '',
-    skills: '',
     clubs: '',
     studentCouncil: '',
     leadershipRoles: '',
     behavior_discipline_records: '',
     academic_awards: '',
+    quiz_bee_participations: '',
+    programming_contests: '',
     warnings: 0,
     suspensions: 0,
     counseling: 0,
@@ -77,6 +78,8 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
 
                 // Convert array fields to comma strings
                 formattedData.academic_awards = stringifyArray(formattedData.academic_awards);
+                formattedData.quiz_bee_participations = stringifyArray(formattedData.quiz_bee_participations);
+                formattedData.programming_contests = stringifyArray(formattedData.programming_contests);
                 formattedData.disabilities = stringifyArray(formattedData.disabilities);
                 formattedData.allergies = stringifyArray(formattedData.allergies);
 
@@ -85,12 +88,10 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                     formattedData.sportsPlayed = stringifyArray(formattedData.sports_activities.sportsPlayed);
                     formattedData.athleticAchievements = stringifyArray(formattedData.sports_activities.achievements);
                     formattedData.competitions = stringifyArray(formattedData.sports_activities.competitions);
-                    formattedData.skills = stringifyArray(formattedData.sports_activities.skills);
                 } else {
                     formattedData.sportsPlayed = '';
                     formattedData.athleticAchievements = '';
                     formattedData.competitions = '';
-                    formattedData.skills = '';
                 }
 
                 // Handle organizations object
@@ -304,8 +305,7 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                 sports_activities: {
                     sportsPlayed: typeof formData.sportsPlayed === 'string' ? formData.sportsPlayed.split(',').map(s => s.trim()).filter(Boolean) : [],
                     achievements: typeof formData.athleticAchievements === 'string' ? formData.athleticAchievements.split(',').map(s => s.trim()).filter(Boolean) : [],
-                    competitions: typeof formData.competitions === 'string' ? formData.competitions.split(',').map(s => s.trim()).filter(Boolean) : [],
-                    skills: typeof formData.skills === 'string' ? formData.skills.split(',').map(s => s.trim()).filter(Boolean) : []
+                    competitions: typeof formData.competitions === 'string' ? formData.competitions.split(',').map(s => s.trim()).filter(Boolean) : []
                 },
                 organizations: {
                     clubs: typeof formData.clubs === 'string' ? formData.clubs.split(',').map(s => s.trim()).filter(Boolean) : [],
@@ -313,6 +313,8 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                     roles: typeof formData.leadershipRoles === 'string' ? formData.leadershipRoles.split(',').map(s => s.trim()).filter(Boolean) : []
                 },
                 academic_awards: typeof formData.academic_awards === 'string' ? formData.academic_awards.split(',').map(s => s.trim()).filter(Boolean) : [],
+                quiz_bee_participations: typeof formData.quiz_bee_participations === 'string' ? formData.quiz_bee_participations.split(',').map(s => s.trim()).filter(Boolean) : [],
+                programming_contests: typeof formData.programming_contests === 'string' ? formData.programming_contests.split(',').map(s => s.trim()).filter(Boolean) : [],
                 behavior_discipline_records: {
                     warnings: parseInt(formData.warnings) || 0,
                     suspensions: parseInt(formData.suspensions) || 0,
@@ -569,6 +571,12 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 <div className="md:col-span-2">
                                     {renderField('Academic Awards', 'academic_awards', 'text', false, null, 'Separate with commas', "e.g., Dean's Lister, Honor Roll")}
                                 </div>
+                                <div className="md:col-span-2">
+                                    {renderField('Quiz Bee Participations', 'quiz_bee_participations', 'text', false, null, 'Separate with commas', "e.g., Regionals 2023, Math Quiz Bee")}
+                                </div>
+                                <div className="md:col-span-2">
+                                    {renderField('Programming Contests', 'programming_contests', 'text', false, null, 'Separate with commas', "e.g., Hackathon 2024, Coding Cup")}
+                                </div>
                             </div>
                         </div>
 
@@ -685,9 +693,6 @@ const StudentFormModal = ({ isOpen, onClose, mode = 'create', initialData = null
                                 </div>
                                 {renderField('Achievements & Awards', 'athleticAchievements', 'text', false, null, 'Separate with commas', 'e.g., Regional Champion, MVP 2024')}
                                 {renderField('Competitions Participated', 'competitions', 'text', false, null, 'Separate with commas', 'e.g., Intramurals 2023, District Meet')}
-                                <div className="md:col-span-2">
-                                    {renderField('Skills & Talents', 'skills', 'text', false, null, 'Separate with commas', 'e.g., Programming, Writing, Graphic Design')}
-                                </div>
                             </div>
                         </div>
 
