@@ -298,17 +298,78 @@ const seedData = async () => {
       }
     ];
 
-    // Create IT-related courses (Curriculum)
+    // Comprehensive Curriculum Data (BSIT, BSCS, BSIS)
     const courseData = [
-      { units: 3, course_code: 'IT 101', course_title: 'Introduction to Computing', year_level: 1, semester: 1, syllabus: 'Week 1: History of Computing\nWeek 2: Hardware Basics\nWeek 3: Operating Systems Overview' },
-      { units: 3, course_code: 'IT 102', course_title: 'Computer Programming 1', year_level: 1, semester: 1, syllabus: 'Week 1: Visual Basic Environment\nWeek 2: Variables & Types\nWeek 3: Control Structures' },
-      { units: 3, course_code: 'IT 103', course_title: 'Discrete Mathematics', year_level: 1, semester: 2, syllabus: 'Logic, Sets, Relations, Functions, and Boolean Algebra.' },
-      { units: 3, course_code: 'IT 201', course_title: 'Data Structures & Algorithms', year_level: 2, semester: 1, syllabus: 'Arrays, Linked Lists, Stacks, Queues, Trees, and Graphs.' },
-      { units: 3, course_code: 'IT 205', course_title: 'Web Development Fundamentals', year_level: 2, semester: 1, syllabus: 'Week 1: HTML5 Semantics\nWeek 2: CSS Layouts flexbox/grid\nWeek 3: Client-side storage' },
-      { units: 3, course_code: 'IT 301', course_title: 'Database Management Systems 1', year_level: 3, semester: 1, syllabus: 'Normalization, ER Diagrams, SQL Queries, and Transactions.' },
-      { units: 3, course_code: 'IT 350', course_title: 'Software Engineering', year_level: 3, semester: 2, syllabus: 'Agile vs Waterfall, Requirements gathering, Modeling, Testing.' },
-      { units: 4, course_code: 'IT 405', course_title: 'Integrative Programming', year_level: 4, semester: 1, syllabus: 'RESTful APIs, Microservices, Middleware, and Cloud Integration.' },
-      { units: 3, course_code: 'IT 440', course_title: 'Capstone Project 1', year_level: 4, semester: 1, syllabus: 'Topic defense, Literature review, Methodology.' }
+      // BSIT - Year 1
+      { units: 3, course_code: 'IT 111', course_title: 'Introduction to Computing', year_level: 1, semester: 1, program: 'BSIT', syllabus: 'History of Computing, Hardware, Software, and Digital Literacy.' },
+      { units: 3, course_code: 'IT 112', course_title: 'Computer Programming 1', year_level: 1, semester: 1, program: 'BSIT', syllabus: 'Logic formulation and basic C++ programming.' },
+      { units: 3, course_code: 'IT 121', course_title: 'Computer Programming 2', year_level: 1, semester: 2, program: 'BSIT', syllabus: 'Advanced C++ and introductory data structures.' },
+      { units: 3, course_code: 'IT 122', course_title: 'Discrete Mathematics', year_level: 1, semester: 2, program: 'BSIT', syllabus: 'Set theory, logic, and proof techniques for IT.' },
+      
+      // BSIT - Year 2
+      { units: 3, course_code: 'IT 211', course_title: 'Data Structures & Algorithms', year_level: 2, semester: 1, program: 'BSIT', syllabus: 'Stacks, Queues, Trees, and Sorting algorithms.' },
+      { units: 3, course_code: 'IT 212', course_title: 'Web Development 1', year_level: 2, semester: 1, program: 'BSIT', syllabus: 'HTML5, CSS3, and JavaScript fundamentals.' },
+      { units: 3, course_code: 'IT 221', course_title: 'Database Management Systems 1', year_level: 2, semester: 2, program: 'BSIT', syllabus: 'Relational databases, SQL, and Normalization.' },
+      { units: 3, course_code: 'IT 222', course_title: 'Object Oriented Programming', year_level: 2, semester: 2, program: 'BSIT', syllabus: 'Java programming and design patterns.' },
+      { units: 3, course_code: 'IT 223', course_title: 'Networking 1', year_level: 2, semester: 2, program: 'BSIT', syllabus: 'OSI Model, TCP/IP, and basic routing.' },
+
+      // BSIT - Year 3
+      { units: 3, course_code: 'IT 311', course_title: 'Software Engineering', year_level: 3, semester: 1, program: 'BSIT', syllabus: 'SDLC, Agile methodologies, and project documentation.' },
+      { units: 3, course_code: 'IT 312', course_title: 'Mobile Development', year_level: 3, semester: 1, program: 'BSIT', syllabus: 'Android and iOS development using React Native.' },
+      { units: 3, course_code: 'IT 321', course_title: 'Information Assurance and Security', year_level: 3, semester: 2, program: 'BSIT', syllabus: 'Cryptography, Risk Management, and Cybersecurity.' },
+      { units: 3, course_code: 'IT 322', course_title: 'Human Computer Interaction', year_level: 3, semester: 2, program: 'BSIT', syllabus: 'UI/UX design principles and user testing.' },
+      { units: 3, course_code: 'IT 323', course_title: 'Capstone Project 1', year_level: 3, semester: 2, program: 'BSIT', syllabus: 'Proposal and requirements gathering.' },
+
+      // BSIT - Year 4
+      { units: 3, course_code: 'IT 411', course_title: 'Capstone Project 2', year_level: 4, semester: 1, program: 'BSIT', syllabus: 'Implementation and system testing.' },
+      { units: 3, course_code: 'IT 412', course_title: 'Social and Professional Issues', year_level: 4, semester: 1, program: 'BSIT', syllabus: 'IT Ethics and legal frameworks.' },
+      { units: 3, course_code: 'IT 421', course_title: 'Integrative Programming', year_level: 4, semester: 2, program: 'BSIT', syllabus: 'System integration and middleware.' },
+
+      // BSCS - Year 1
+      { units: 3, course_code: 'CS 111', course_title: 'Computer Science Fundamentals', year_level: 1, semester: 1, program: 'BSCS', syllabus: 'Foundations of computing and computational thinking.' },
+      { units: 3, course_code: 'CS 112', course_title: 'Programming Fundamentals', year_level: 1, semester: 1, program: 'BSCS', syllabus: 'C programming and memory management.' },
+      { units: 3, course_code: 'CS 121', course_title: 'Object Oriented Programming', year_level: 1, semester: 2, program: 'BSCS', syllabus: 'C++ and OOP principles.' },
+      { units: 3, course_code: 'CS 122', course_title: 'Discrete Structures', year_level: 1, semester: 2, program: 'BSCS', syllabus: 'Mathematical structures for computer science.' },
+
+      // BSCS - Year 2
+      { units: 3, course_code: 'CS 211', course_title: 'Algorithms & Complexity', year_level: 2, semester: 1, program: 'BSCS', syllabus: 'Big O notation, Graph theory, and Dynamic Programming.' },
+      { units: 3, course_code: 'CS 212', course_title: 'Computer Architecture', year_level: 2, semester: 1, program: 'BSCS', syllabus: 'Digital logic and assembly language.' },
+      { units: 3, course_code: 'CS 221', course_title: 'Operating Systems', year_level: 2, semester: 2, program: 'BSCS', syllabus: 'Processes, Threads, and Memory Management.' },
+      { units: 3, course_code: 'CS 222', course_title: 'Theory of Computation', year_level: 2, semester: 2, program: 'BSCS', syllabus: 'Automata theory and formal languages.' },
+
+      // BSCS - Year 3
+      { units: 3, course_code: 'CS 311', course_title: 'Software Engineering', year_level: 3, semester: 1, program: 'BSCS', syllabus: 'Formal methods and software quality.' },
+      { units: 3, course_code: 'CS 312', course_title: 'Artificial Intelligence', year_level: 3, semester: 1, program: 'BSCS', syllabus: 'Search algorithms, ML, and Neural Networks.' },
+      { units: 3, course_code: 'CS 321', course_title: 'Database Systems', year_level: 3, semester: 2, program: 'BSCS', syllabus: 'Internals of DBMS and query optimization.' },
+      { units: 3, course_code: 'CS 322', course_title: 'CS Thesis 1', year_level: 3, semester: 2, program: 'BSCS', syllabus: 'Research methodology and topic selection.' },
+
+      // BSCS - Year 4
+      { units: 3, course_code: 'CS 411', course_title: 'CS Thesis 2', year_level: 4, semester: 1, program: 'BSCS', syllabus: 'Full research implementation.' },
+      { units: 3, course_code: 'CS 412', course_title: 'Computer Graphics', year_level: 4, semester: 1, program: 'BSCS', syllabus: 'Rendering pipelines and OpenGL.' },
+      { units: 3, course_code: 'CS 421', course_title: 'Parallel and Distributed Systems', year_level: 4, semester: 2, program: 'BSCS', syllabus: 'Distributed computing models.' },
+
+      // BSIS - Year 1
+      { units: 3, course_code: 'IS 111', course_title: 'Introduction to Information Systems', year_level: 1, semester: 1, program: 'BSIS', syllabus: 'Role of IS in modern business.' },
+      { units: 3, course_code: 'IS 112', course_title: 'Business Processes', year_level: 1, semester: 1, program: 'BSIS', syllabus: 'Process modeling and organizational structures.' },
+      { units: 3, course_code: 'IS 121', course_title: 'IT Infrastructure', year_level: 1, semester: 2, program: 'BSIS', syllabus: 'Hardware, Networks, and Cloud services.' },
+      { units: 3, course_code: 'IS 122', course_title: 'Personal Productivity Tools', year_level: 1, semester: 2, program: 'BSIS', syllabus: 'Advanced office apps and scripting.' },
+
+      // BSIS - Year 2
+      { units: 3, course_code: 'IS 211', course_title: 'Database Systems', year_level: 2, semester: 1, program: 'BSIS', syllabus: 'Data modeling for business applications.' },
+      { units: 3, course_code: 'IS 212', course_title: 'Enterprise Architecture', year_level: 2, semester: 1, program: 'BSIS', syllabus: 'IT alignment with business goals.' },
+      { units: 3, course_code: 'IS 221', course_title: 'Systems Analysis and Design', year_level: 2, semester: 2, program: 'BSIS', syllabus: 'Requirements elicitation and UML.' },
+      { units: 3, course_code: 'IS 222', course_title: 'IS Strategy, Management and Acquisition', year_level: 2, semester: 2, program: 'BSIS', syllabus: 'Strategic planning and IT procurement.' },
+
+      // BSIS - Year 3
+      { units: 3, course_code: 'IS 311', course_title: 'Project Management', year_level: 3, semester: 1, program: 'BSIS', syllabus: 'PMP principles and tools.' },
+      { units: 3, course_code: 'IS 312', course_title: 'Decision Support Systems', year_level: 3, semester: 1, program: 'BSIS', syllabus: 'BI and Data Analytics for decision making.' },
+      { units: 3, course_code: 'IS 321', course_title: 'E-Business', year_level: 3, semester: 2, program: 'BSIS', syllabus: 'E-commerce models and digital marketing.' },
+      { units: 3, course_code: 'IS 322', course_title: 'IS Thesis 1', year_level: 3, semester: 2, program: 'BSIS', syllabus: 'IS research and case studies.' },
+
+      // BSIS - Year 4
+      { units: 3, course_code: 'IS 411', course_title: 'IS Thesis 2', year_level: 4, semester: 1, program: 'BSIS', syllabus: 'Final IS research presentation.' },
+      { units: 3, course_code: 'IS 412', course_title: 'IT Audit and Controls', year_level: 4, semester: 1, program: 'BSIS', syllabus: 'Risk management and internal controls.' },
+      { units: 3, course_code: 'IS 421', course_title: 'Quality Management', year_level: 4, semester: 2, program: 'BSIS', syllabus: 'TQM and Six Sigma in IT.' }
     ];
 
     console.log('👨‍🏫 Creating Faculty Users...');
