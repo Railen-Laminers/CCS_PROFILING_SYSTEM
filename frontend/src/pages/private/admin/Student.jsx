@@ -252,7 +252,7 @@ const ImportModal = ({ isOpen, onClose, onImport, isImporting }) => {
                     >
                         Cancel
                     </button>
-                    <button
+                    {/* <button
                         onClick={handleSubmit}
                         disabled={isImporting || !selectedFile}
                         className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-all active:scale-95"
@@ -268,7 +268,7 @@ const ImportModal = ({ isOpen, onClose, onImport, isImporting }) => {
                                 Import Students
                             </>
                         )}
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>
