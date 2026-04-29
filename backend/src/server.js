@@ -94,40 +94,24 @@ app.use('*', (req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// MongoDB connection with caching for serverless environments
-let isConnected = false;
+// MongoDB connection
 const connectDB = async () => {
-  if (isConnected) return;
-  
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI);
-    isConnected = true;
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Error: ${error.message}`);
-    // Don't exit in serverless, just throw so the request fails and can retry
-    throw error;
+    process.exit(1);
   }
 };
-
-// Middleware to ensure DB connection
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    res.status(500).json({ message: 'Database connection failed' });
-  }
-});
 
 // Start server
 const PORT = process.env.PORT || 5000;
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
+connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
   });
-}
+});
 
 module.exports = app;
